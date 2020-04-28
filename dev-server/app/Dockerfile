@@ -3,10 +3,12 @@ FROM alpine:3.10
 # Some ENV variables
 ENV PATH="/mattermost/bin:${PATH}"
 
-# Version	-->		https://releases.mattermost.com/5.20.0-rc5/mattermost-5.20.0-rc5-linux-amd64.tar.gz
+# Version
+# https://releases.mattermost.com/5.20.0-rc5/mattermost-5.20.0-rc5-linux-amd64.tar.gz
 ENV MM_VERSION=
 
-# Branch	--> 	https://releases.mattermost.com/mattermost-platform/master/mattermost-enterprise-linux-amd64.tar.gz
+# Branch
+# https://releases.mattermost.com/mattermost-platform/master/mattermost-enterprise-linux-amd64.tar.gz
 ENV MM_BRANCH=master
 
 ARG PUID=2000
