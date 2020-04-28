@@ -12,3 +12,5 @@ mm-license.txt
 
 node_modules
 npm-debug.log
+dev-server/cypress/e2e
+dev-server/webhook/src
