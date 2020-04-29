@@ -12,5 +12,7 @@ mm-license.txt
 
 node_modules
 npm-debug.log
-dev-server/cypress/e2e
-dev-server/webhook/src
+mattermost-e2e/cypress/e2e
+mattermost-e2e/webhook/e2e
+
+.env*
