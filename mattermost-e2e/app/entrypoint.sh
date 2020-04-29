@@ -25,6 +25,8 @@ if [ "$1" = 'mattermost' ]; then
       esac
   done
 
+  echo "Configuration file at" $MM_CONFIG
+
   if [ ! -f $MM_CONFIG ]
   then
     # If there is no configuration file, create it with some default values

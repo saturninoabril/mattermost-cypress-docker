@@ -26,12 +26,15 @@ up:
 	cd mattermost-e2e && docker run --net mattermost-e2e_mm-test appropriate/curl:latest sh -c "until curl --max-time 5 --output - http://elasticsearch:9200; do echo waiting for elasticsearch; sleep 5; done;"
 	@echo --- elasticsearch: confirmed running
 
+	# Ensure that mm-license.txt is at root folder
+	cp mm-license.txt mattermost-e2e/app/mm-license.txt
+
 	cd mattermost-e2e/app && docker build -t mattermost-e2e/app .
-	docker run -it -d --net mattermost-e2e_mm-test --name mattermost-e2e_app --rm -e MM_USERNAME=mmuser -e MM_PASSWORD=mmuser_password -e MM_DBNAME=mattermost --env MM_EMAILSETTINGS_SMTPSERVER=inbucket --env MM_EMAILSETTINGS_SMTPPORT=10025 --env MM_ELASTICSEARCHSETTINGS_CONNECTIONURL=http://elasticsearch:9200 --env MM_SQLSETTINGS_DATASOURCE="postgres://mmuser:mostest@postgres:5432/migrated?sslmode=disable&connect_timeout=10" --env MM_SQLSETTINGS_DRIVERNAME=postgres --env MM_SERVICESETTINGS_ALLOWEDUNTRUSTEDINTERNALCONNECTIONS="localhost 127.0.0.1 mattermost-e2e_webhook" -v `pwd`:`pwd` -p 8000:8000 mattermost-e2e/app:latest
+	docker run -it -d --net mattermost-e2e_mm-test --name mattermost-e2e_app --rm --env-file=./.env -v `pwd`:`pwd` -p 8000:8000 mattermost-e2e/app:latest
 	docker run --net mattermost-e2e_mm-test --rm appropriate/curl:latest sh -c "until curl --max-time 5 --output - http://mattermost-e2e_app:8000; do echo waiting for mattermost-e2e_app; sleep 5; done;"
 	@echo --- app: started running
 
-	# docker exec app mattermost license upload ~/mm-license.txt
+	docker exec mattermost-e2e_app mattermost license upload `pwd`/mm-license.txt
 	@echo --- app: uploaded EE license
 
 	docker exec mattermost-e2e_app mattermost config set TeamSettings.MaxUsersPerTeam 1000
