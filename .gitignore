@@ -14,6 +14,7 @@ config.json
 
 node_modules
 npm-debug.log
+e2e/results
 mattermost-e2e/cypress/e2e
 mattermost-e2e/webhook/e2e
 
