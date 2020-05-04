@@ -51,6 +51,7 @@ COPY . .
 COPY entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]
 WORKDIR /mattermost
+
 CMD ["mattermost"]
 
 # Expose port 8000 of the container

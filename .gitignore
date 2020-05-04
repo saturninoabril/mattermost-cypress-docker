@@ -18,3 +18,6 @@ mattermost-e2e/cypress/e2e
 mattermost-e2e/webhook/e2e
 
 .env*
+
+# Local machine specific files
+.DS_Store

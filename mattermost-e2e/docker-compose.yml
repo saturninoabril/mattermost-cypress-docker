@@ -1,16 +1,5 @@
 version: '2.4'
 services:
-  # app:
-  #   extends:
-  #       file: docker-compose.common.yml
-  #       service: app
-  mysql:
-    extends:
-        file: docker-compose.common.yml
-        service: mysql
-    tmpfs: /var/lib/mysql
-    volumes:
-     - "./docker/mysql.conf.d:/etc/mysql/conf.d"
   postgres:
     extends:
         file: docker-compose.common.yml
@@ -38,13 +27,45 @@ services:
     networks:
       - mm-test
     depends_on:
-      - mysql
       - postgres
       - minio
       - inbucket
       - openldap
       - elasticsearch
-    command: postgres:5432 mysql:3306 minio:9000 inbucket:10080 openldap:389 elasticsearch:9200
+    command: postgres:5432 minio:9000 inbucket:10080 openldap:389 elasticsearch:9200
+
+  app:
+    build: app
+    networks:
+      - mm-test
+    depends_on: 
+      - start_dependencies
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    environment: 
+      MM_USERNAME: mmuser
+      MM_PASSWORD: mmuser_password
+      MM_DBNAME: mattermost
+      MM_EMAILSETTINGS_SMTPSERVER: inbucket
+      MM_EMAILSETTINGS_SMTPPORT: 10025
+      MM_ELASTICSEARCHSETTINGS_CONNECTIONURL: http://elasticsearch:9200
+      MM_SQLSETTINGS_DATASOURCE: "postgres://mmuser:mostest@postgres:5432/migrated?sslmode=disable&connect_timeout=10"
+      MM_SQLSETTINGS_DRIVERNAME: postgres
+      MM_SERVICESETTINGS_ALLOWEDUNTRUSTEDINTERNALCONNECTIONS: "localhost 127.0.0.1 mattermost-e2e_webhook"
+    ports:
+      - "8000:8000"
+
+  webhook:
+    build: webhook
+    networks:
+      - mm-test
+    depends_on: 
+      - start_dependencies
 
 networks:
   mm-test:
