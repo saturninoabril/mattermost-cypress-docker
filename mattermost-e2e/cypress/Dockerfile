@@ -32,20 +32,20 @@ COPY ./e2e /usr/src/e2e
 
 # # point Cypress at the /root/cache no matter what user account is used
 # # see https://on.cypress.io/caching
-# ENV CYPRESS_CACHE_FOLDER=/root/.cache/Cypress
-# RUN npm install -g "cypress@4.4.1"
-# RUN cypress verify
+ENV CYPRESS_CACHE_FOLDER=/root/.cache/Cypress
+RUN npm install -g "cypress@4.0.2"
+RUN cypress verify
 
 # # Cypress cache and installed version
 # # should be in the root user's home folder
-# RUN cypress cache path
-# RUN cypress cache list
-# RUN cypress info
+RUN cypress cache path
+RUN cypress cache list
+RUN cypress info
 
 # # give every user read access to the "/root" folder where the binary is cached
 # # we really only need to worry about the top folder, fortunately
-# RUN ls -la /root
-# RUN chmod 755 /root
+RUN ls -la /root
+RUN chmod 755 /root
 
 RUN echo  " node version:    $(node -v) \n" \
   "npm version:     $(npm -v) \n" \
