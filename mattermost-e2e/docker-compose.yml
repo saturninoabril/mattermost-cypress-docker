@@ -59,14 +59,14 @@ services:
     ports:
       - "8000:8000"
 
-  webhook:
-    build: webhook
-    networks:
-      - mm-test
-    depends_on: 
-      - start_dependencies
-    environment:
-      CYPRESS_baseUrl: http://app:8000
+  # webhook:
+  #   build: webhook
+  #   networks:
+  #     - mm-test
+  #   depends_on: 
+  #     - start_dependencies
+  #   environment:
+  #     CYPRESS_baseUrl: http://app:8000
 
 networks:
   mm-test:

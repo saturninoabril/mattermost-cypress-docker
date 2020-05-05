@@ -36,8 +36,8 @@ up:
 	cd mattermost-e2e && docker-compose exec app mattermost sampledata -w 4 -u 60 --deactivated-users=200
 	@echo --- app: loaded test data
 
-	docker run --net mattermost-e2e_mm-test --rm appropriate/curl:latest sh -c "until curl --max-time 5 --output - http://webhook:3000; do echo waiting for webhook; sleep 5; done;"
-	@echo --- webhook: confirmed running
+	# docker run --net mattermost-e2e_mm-test --rm appropriate/curl:latest sh -c "until curl --max-time 5 --output - http://webhook:3000; do echo waiting for webhook; sleep 5; done;"
+	# @echo --- webhook: confirmed running
 
 	# docker run --net mattermost-e2e_mm-test --rm --name mattermost-e2e_cypress -e CYPRESS_baseUrl=http://app:8000 -e CYPRESS_webhookBaseUrl=http://webhook:3000 mattermost-e2e/cypress
 	# @echo --- Cypress tests: completed
