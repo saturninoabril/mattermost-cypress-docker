@@ -7,6 +7,8 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
+// Stage: @prod
+
 import users from '../../../fixtures/users.json';
 
 const channelUrl = '/ad-1/channels/suscipit-4';
