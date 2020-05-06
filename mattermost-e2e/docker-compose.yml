@@ -56,17 +56,19 @@ services:
       MM_ELASTICSEARCHSETTINGS_CONNECTIONURL: http://elasticsearch:9200
       MM_SQLSETTINGS_DATASOURCE: "postgres://mmuser:mostest@postgres:5432/migrated?sslmode=disable&connect_timeout=10"
       MM_SQLSETTINGS_DRIVERNAME: postgres
+      MM_SERVICESETTINGS_ALLOWEDUNTRUSTEDINTERNALCONNECTIONS: "localhost 192.168.16.0/20"
     ports:
       - "8000:8000"
 
-  # webhook:
-  #   build: webhook
-  #   networks:
-  #     - mm-test
-  #   depends_on: 
-  #     - start_dependencies
-  #   environment:
-  #     CYPRESS_baseUrl: http://app:8000
+  webhook:
+    build: webhook
+    networks:
+      - mm-test
+    depends_on: 
+      - start_dependencies
+    environment:
+      CYPRESS_baseUrl: http://app:8000
+      CYPRESS_webhookBaseUrl: http://webhook:3000
 
 networks:
   mm-test:
