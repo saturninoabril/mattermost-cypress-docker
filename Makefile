@@ -7,7 +7,7 @@ build: setup
 	cp -r e2e mattermost-e2e/cypress
 	cd mattermost-e2e/cypress && docker build -t mattermost-e2e/cypress .
 
-up:
+start:
 	cd mattermost-e2e && docker-compose up -d
 	@echo --- Dependencies started
 
@@ -26,12 +26,9 @@ up:
 	docker run --net mattermost-e2e_mm-test --rm appropriate/curl:latest sh -c "until curl --max-time 5 --output - http://app:8000; do echo waiting for mattermost-e2e_app; sleep 5; done;"
 	@echo --- app: confirmed running
 
-	# EE license should be at `mattermost-cypress-docker/mattermost-e2e/app/mm-license.txt`
+	# EE license should be at `mattermost-cypress-docker/mattermost-e2e/app/mm-license.txt` before docker image build
 	cd mattermost-e2e && docker-compose exec app mattermost license upload /mm-license.txt
 	@echo --- app: uploaded EE license
-
-	cd mattermost-e2e && docker-compose exec app mattermost config set TeamSettings.MaxUsersPerTeam 1000
-	@echo --- app: updated system config
 
 	cd mattermost-e2e && docker-compose exec app mattermost sampledata -w 4 -u 60 --deactivated-users=200
 	@echo --- app: loaded test data
@@ -43,19 +40,14 @@ up:
 	# @echo --- Cypress tests: completed
 
 stop:
-	cd mattermost-e2e && docker-compose stop
-	@echo --- Docker containers: stopped
-
-clean:
 	cd mattermost-e2e && docker-compose down -v
 	cd mattermost-e2e && docker-compose rm -v
 	@echo --- Docker containers: cleaned up
 
-app-stop:
-	docker stop mattermost-e2e_app
-
-webhook-stop:
-	docker stop mattermost-e2e_webhook
+	rm -rf mattermost-e2e/cypress/e2e
+	rm -rf mattermost-e2e/webhook/e2e
+	rm mattermost-e2e/app/mm-license.txt
+	@echo --- Files and license: removed from required directories
 
 setup:
 	cp -r e2e mattermost-e2e/cypress
@@ -63,5 +55,14 @@ setup:
 	cp -r mm-license.txt mattermost-e2e/app/mm-license.txt
 	@echo --- Files and license: updated and copied to required directories
 
+app-stop:
+	docker stop mattermost-e2e_app
+
+webhook-stop:
+	docker stop mattermost-e2e_webhook
+
 copy-webapp-e2e:
 	cp -r ../mattermost-webapp/e2e .
+
+copy-license:
+	cp -r ../mm-license.txt .

@@ -101,6 +101,7 @@ if [ "$1" = 'mattermost' ]; then
     jq '.TeamSettings.LockTeammateNameDisplay = false' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
     jq '.TeamSettings.SiteName = "Mattermost"' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
     jq '.TeamSettings.TeammateNameDisplay = "username"' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
+    jq '.TeamSettings.MaxUsersPerTeam = 1000' $MM_CONFIG > $MM_CONFIG.tmp && mv $MM_CONFIG.tmp $MM_CONFIG
   else
     echo "Using existing config file" $MM_CONFIG
   fi
