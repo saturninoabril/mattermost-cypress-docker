@@ -55,7 +55,8 @@ setup:
 	cp -r e2e mattermost-e2e/cypress
 
 	# Allow the subnet address set on docker-compose network
-	sed -i '' 's|"AllowedUntrustedInternalConnections": "localhost"|"AllowedUntrustedInternalConnections": "localhost 192.168.16.0/20"|g' mattermost-e2e/cypress/e2e/cypress/fixtures/partial_default_config.json
+	# On Mac, command should start as "sed -i '' 's|..."
+	sed -i 's|"AllowedUntrustedInternalConnections": "localhost"|"AllowedUntrustedInternalConnections": "localhost 192.168.16.0/20"|g' mattermost-e2e/cypress/e2e/cypress/fixtures/partial_default_config.json
 
 	@echo --- Files and license: updated and copied to required directories
 
