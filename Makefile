@@ -2,10 +2,10 @@
 
 build: setup
 	cd mattermost-e2e && docker-compose build
-	@echo --- All services build
+	@echo --- All services built
 
-	cp -r e2e mattermost-e2e/cypress
 	cd mattermost-e2e/cypress && docker build -t mattermost-e2e/cypress .
+	@echo --- Cypress image built
 
 start:
 	cd mattermost-e2e && docker-compose up -d
@@ -50,9 +50,13 @@ stop:
 	@echo --- Files and license: removed from required directories
 
 setup:
-	cp -r e2e mattermost-e2e/cypress
-	cp -r e2e mattermost-e2e/webhook
 	cp -r mm-license.txt mattermost-e2e/app/mm-license.txt
+	cp -r e2e mattermost-e2e/webhook
+	cp -r e2e mattermost-e2e/cypress
+
+	# Allow the subnet address set on docker-compose network
+	sed -i '' 's|"AllowedUntrustedInternalConnections": "localhost"|"AllowedUntrustedInternalConnections": "localhost 192.168.16.0/20"|g' mattermost-e2e/cypress/e2e/cypress/fixtures/partial_default_config.json
+
 	@echo --- Files and license: updated and copied to required directories
 
 app-stop:

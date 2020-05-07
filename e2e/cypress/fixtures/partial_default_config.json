@@ -43,6 +43,7 @@
         "Enable": false
     },
     "ServiceSettings": {
+        "AllowedUntrustedInternalConnections": "localhost",
         "EnableAPITeamDeletion": true,
         "EnableBotAccountCreation": true,
         "EnableCommands": true,
