@@ -67,6 +67,7 @@ webhook-stop:
 	docker stop mattermost-e2e_webhook
 
 copy-webapp-e2e:
+	rm -rf e2e
 	cp -r ../mattermost-webapp/e2e .
 
 copy-license:
