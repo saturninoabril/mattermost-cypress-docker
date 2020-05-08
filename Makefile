@@ -50,7 +50,7 @@ stop:
 	@echo --- Files and license: removed from required directories
 
 setup:
-	cp -r mm-license.txt mattermost-e2e/app/mm-license.txt
+	cp mm-license.txt mattermost-e2e/app/mm-license.txt
 	cp -r e2e mattermost-e2e/webhook
 	cp -r e2e mattermost-e2e/cypress
 
