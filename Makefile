@@ -7,7 +7,7 @@ build: setup
 	cd mattermost-e2e/cypress && docker build -t mattermost-e2e/cypress .
 	@echo --- Cypress image built
 
-start:
+run:
 	cd mattermost-e2e && docker-compose up -d
 	@echo --- Dependencies started
 

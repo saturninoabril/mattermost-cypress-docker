@@ -7,6 +7,10 @@ ENV PATH="/mattermost/bin:${PATH}"
 # https://releases.mattermost.com/5.20.0-rc5/mattermost-5.20.0-rc5-linux-amd64.tar.gz
 ENV MM_VERSION=
 
+# PR Build
+# https://pr-builds.mattermost.com/mattermost-server/14507/mattermost-enterprise-linux-amd64.tar.gz
+ENV MM_PR_BUILD=
+
 # Branch
 # https://releases.mattermost.com/mattermost-platform/master/mattermost-enterprise-linux-amd64.tar.gz
 ENV MM_BRANCH=master
@@ -32,6 +36,7 @@ RUN apk add --no-cache \
 # Get Mattermost
 RUN mkdir -p /mattermost/data /mattermost/plugins /mattermost/client/plugins \
     && if [ ! -z "$MM_VERSION" ]; then curl https://releases.mattermost.com/$MM_VERSION/mattermost-$MM_VERSION-linux-amd64.tar.gz | tar -xvz ; \
+	  elif [ ! -z "$MM_PR_BUILD" ] ; then curl https://pr-builds.mattermost.com/mattermost-server/$MM_PR_BUILD/mattermost-enterprise-linux-amd64.tar.gz | tar -xvz ; \
       else curl https://releases.mattermost.com/mattermost-platform/$MM_BRANCH/mattermost-enterprise-linux-amd64.tar.gz | tar -xvz ; fi \
     && cp /mattermost/config/config.json /config.json.save \
     && rm -rf /mattermost/config/config.json \

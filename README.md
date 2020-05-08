@@ -8,7 +8,7 @@ Config that can't be modified during testing should be declared as environment v
 
 ##### Running E2E testing
 1. `make build` to pull source files, copy to required directories and build docker images
-2. `make start` to spin up test server and start Cypress testing
+2. `make run` to spin up test server and start Cypress testing
 3. `make stop` to stop and remove dependencies.
 
 Note: See ``Makefile`` for other essential commands and ``docker`` / ``docker-compose`` for direct commands

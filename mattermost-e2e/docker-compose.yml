@@ -47,7 +47,7 @@ services:
       nofile:
         soft: 65536
         hard: 65536
-    environment: 
+    environment:
       MM_USERNAME: mmuser
       MM_PASSWORD: mmuser_password
       MM_DBNAME: mattermost
