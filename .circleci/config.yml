@@ -9,6 +9,7 @@ jobs:
     environment:
       COMPOSE_PROJECT_NAME: "circleci"
     steps:
+      - setup_remote_docker
       - checkout
       - attach_workspace:
           at: ~/mattermost-cypress-docker
