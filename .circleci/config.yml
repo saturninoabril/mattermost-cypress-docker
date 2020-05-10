@@ -3,8 +3,8 @@ orbs:
   node: circleci/node@1.1.6
 jobs:
   build-and-test:
-    machine:
-      image: ubuntu-1604:201903-01
+    docker:
+      - image: circleci/golang:1.13-alpine
     working_directory: ~/mattermost-cypress-docker
     environment:
       COMPOSE_PROJECT_NAME: "circleci"
@@ -17,7 +17,8 @@ jobs:
           command: |
             pwd
             ls -rtl
-      - setup_remote_docker
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Install Docker client
           command: |
