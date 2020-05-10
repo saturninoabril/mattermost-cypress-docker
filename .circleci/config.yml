@@ -10,6 +10,7 @@ jobs:
           POSTGRES_USER: mmuser
           POSTGRES_PASSWORD: mostest
           POSTGRES_DB: mattermost_test
+          TEST_DATABASE_URL: postgres://mmuser:mostest@localhost:5432/mattermost_test
       - image: jhillyerd/inbucket:release-1.2.0
       - image: osixia/openldap:1.2.2
         environment:
@@ -42,7 +43,7 @@ jobs:
           MM_EMAILSETTINGS_SMTPSERVER: inbucket
           MM_EMAILSETTINGS_SMTPPORT: 10025
           MM_ELASTICSEARCHSETTINGS_CONNECTIONURL: http://localhost:9200
-          MM_SQLSETTINGS_DATASOURCE: "postgres://mmuser:mostest@localhost:5432/migrated?sslmode=disable&connect_timeout=10"
+          MM_SQLSETTINGS_DATASOURCE: "postgres://mmuser:mostest@localhost:5432/mattermost_test?sslmode=disable&connect_timeout=10"
           MM_SQLSETTINGS_DRIVERNAME: postgres
     working_directory: ~/mattermost-cypress-docker
     environment:
@@ -52,6 +53,13 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/mattermost-cypress-docker
+      - run: sudo apt-get update
+      - run: sudo apt-get install postgresql-client-9.6
+      - run: whoami
+      - run: |
+          psql \
+          -d $TEST_DATABASE_URL \
+          -c "CREATE DATABASE migrated; CREATE DATABASE latest;"
       - run:
           name: Checks
           command: |
@@ -70,7 +78,7 @@ jobs:
           name: install-npm
           command: cd e2e && npm install
       - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
             - ./e2e/node_modules
       - run: # run tests
