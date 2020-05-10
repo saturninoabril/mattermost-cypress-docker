@@ -3,8 +3,8 @@ orbs:
   node: circleci/node@1.1.6
 jobs:
   build-and-test:
-    docker:
-      - image: circleci/golang:1.13-alpine
+    machine:
+      image: ubuntu-1604:201903-01
     working_directory: ~/mattermost-cypress-docker
     environment:
       COMPOSE_PROJECT_NAME: "circleci"
