@@ -18,6 +18,7 @@ jobs:
           LDAP_DOMAIN: "mm.test.com"
           LDAP_ADMIN_PASSWORD: "mostest"
       - image: minio/minio:RELEASE.2019-10-11T00-38-09Z
+        environment:
           MINIO_ACCESS_KEY: minioaccesskey
           MINIO_SECRET_KEY: miniosecretkey
           MINIO_SSE_MASTER_KEY: "my-minio-key:6368616e676520746869732070617373776f726420746f206120736563726574"
