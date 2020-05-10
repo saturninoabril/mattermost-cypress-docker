@@ -36,7 +36,7 @@ RUN apk add --no-cache \
 # Get Mattermost
 RUN mkdir -p /mattermost/data /mattermost/plugins /mattermost/client/plugins \
     && if [ ! -z "$MM_VERSION" ]; then curl https://releases.mattermost.com/$MM_VERSION/mattermost-$MM_VERSION-linux-amd64.tar.gz | tar -xvz ; \
-	  elif [ ! -z "$MM_PR_BUILD" ] ; then curl https://pr-builds.mattermost.com/mattermost-server/$MM_PR_BUILD/mattermost-enterprise-linux-amd64.tar.gz | tar -xvz ; \
+      elif [ ! -z "$MM_PR_BUILD" ] ; then curl https://pr-builds.mattermost.com/mattermost-server/$MM_PR_BUILD/mattermost-enterprise-linux-amd64.tar.gz | tar -xvz ; \
       else curl https://releases.mattermost.com/mattermost-platform/$MM_BRANCH/mattermost-enterprise-linux-amd64.tar.gz | tar -xvz ; fi \
     && cp /mattermost/config/config.json /config.json.save \
     && rm -rf /mattermost/config/config.json \
