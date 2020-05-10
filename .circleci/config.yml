@@ -32,14 +32,14 @@ jobs:
           http.cors.allow-credentials: "true"
           transport.host: "127.0.0.1"
           ES_JAVA_OPTS: "-Xms512m -Xmx512m"
-    working_directory: ~/mattermost-cypress-docker
+    working_directory: ~/mattermost-cypress-docker/e2e
     environment:
       COMPOSE_PROJECT_NAME: "circleci"
     steps:
       - setup_remote_docker
       - checkout
       - attach_workspace:
-          at: ~/mattermost-cypress-docker
+          at: ~/mattermost-cypress-docker/e2e
       - run:
           name: Checks
           command: |
@@ -54,21 +54,19 @@ jobs:
       #       set -x
       #       curl -L https://github.com/docker/compose/releases/download/1.25.3/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
       #       chmod +x /usr/local/bin/docker-compose
+      - restore_cache: # special step to restore the dependency cache
+          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
-          name: Build Docker compose
-          command: |
-            make build
-          background: true
-      - run:
-          name: Run server
-          command: |
-            make run
-          background: true
-      - run:
-          name: Run cypress test
-          command: |
-            docker run --net mattermost-e2e_mm-test --rm --name mattermost-e2e_cypress -e CYPRESS_baseUrl=http://app:8000 -e CYPRESS_webhookBaseUrl=http://webhook:3000 mattermost-e2e/cypress
-          background: true
+          name: install-npm
+          command: npm install
+      - save_cache: # special step to save the dependency cache
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - ./node_modules
+      - run: # run tests
+          name: test
+          command: npm run test:ci
 workflows:
     build-and-test:
       jobs:
