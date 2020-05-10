@@ -5,7 +5,7 @@ jobs:
   build-and-test:
     docker:
       - image: cypress/browsers:node10.16.3-chrome80-ff73
-      - image: postgres:9.4
+      - image: mattermost/mattermost-prod-db:latest
         environment:
           POSTGRES_USER: mmuser
           POSTGRES_PASSWORD: mostest
@@ -32,6 +32,13 @@ jobs:
           http.cors.allow-credentials: "true"
           transport.host: "127.0.0.1"
           ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      - image: mattermost/mattermost-enterprise-edition:master
+          environment:
+            DB_HOST: loclhost
+            DB_PORT_NUMBER: 5432
+            MM_DBNAME: mattermost_test
+            MM_USERNAME: mmuser
+            MM_PASSWORD: mostest
     working_directory: ~/mattermost-cypress-docker
     environment:
       COMPOSE_PROJECT_NAME: "circleci"
@@ -54,16 +61,13 @@ jobs:
       #       set -x
       #       curl -L https://github.com/docker/compose/releases/download/1.25.3/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
       #       chmod +x /usr/local/bin/docker-compose
-      - restore_cache: # special step to restore the dependency cache
-          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
-          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: install-npm
           command: cd e2e && npm install
       - save_cache: # special step to save the dependency cache
           key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
-            - ./node_modules
+            - ./e2e/node_modules
       - run: # run tests
           name: test
           command: cd e2e && npm run test:ci
