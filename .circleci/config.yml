@@ -19,15 +19,15 @@ jobs:
             ls -rtl
             which docker
             which docker-compose
-      - run:
-          name: Install Docker client
-          command: apk add docker-cli
-      - run:
-          name: Install Docker Compose
-          command: |
-            set -x
-            curl -L https://github.com/docker/compose/releases/download/1.25.3/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-            chmod +x /usr/local/bin/docker-compose
+      # - run:
+      #     name: Install Docker client
+      #     command: apk add docker-cli
+      # - run:
+      #     name: Install Docker Compose
+      #     command: |
+      #       set -x
+      #       curl -L https://github.com/docker/compose/releases/download/1.25.3/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+      #       chmod +x /usr/local/bin/docker-compose
       - run:
           name: Build Docker compose
           command: |
