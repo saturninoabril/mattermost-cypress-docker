@@ -18,7 +18,9 @@ jobs:
             pwd
             ls -rtl
             which docker
+            docker --version
             which docker-compose
+            docker-compose --version
       # - run:
       #     name: Install Docker client
       #     command: apk add docker-cli
