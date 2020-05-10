@@ -3,8 +3,14 @@ orbs:
   node: circleci/node@1.1.6
 jobs:
   build-and-test:
-    machine:
-      image: ubuntu-1604:201903-01
+    docker:
+      - image: cypress/browsers:node10.16.3-chrome80-ff73
+      - image: alpine:3.10
+      - image: postgres:9.4
+      - image: node:10
+      - image: jhillyerd/inbucket:release-1.2.0
+      - image: osixia/openldap:1.2.2
+      - image: mattermost/mattermost-elasticsearch-docker:6.5.1
     working_directory: ~/mattermost-cypress-docker
     environment:
       COMPOSE_PROJECT_NAME: "circleci"
