@@ -6,20 +6,23 @@ jobs:
     docker:
       - image: cypress/browsers:node10.16.3-chrome80-ff73
       - image: postgres:9.4
-      - image: jhillyerd/inbucket:release-1.2.0
-      - image: osixia/openldap:1.2.2
-      - image: mattermost/mattermost-elasticsearch-docker:6.5.1
         environment:
           POSTGRES_USER: mmuser
           POSTGRES_PASSWORD: mostest
           POSTGRES_DB: mattermost_test
-          MINIO_ACCESS_KEY: minioaccesskey
-          MINIO_SECRET_KEY: miniosecretkey
-          MINIO_SSE_MASTER_KEY: "my-minio-key:6368616e676520746869732070617373776f726420746f206120736563726574"
+      - image: jhillyerd/inbucket:release-1.2.0
+      - image: osixia/openldap:1.2.2
+        environment:
           LDAP_TLS_VERIFY_CLIENT: "never"
           LDAP_ORGANISATION: "Mattermost Test"
           LDAP_DOMAIN: "mm.test.com"
           LDAP_ADMIN_PASSWORD: "mostest"
+      - image: minio/minio:RELEASE.2019-10-11T00-38-09Z
+          MINIO_ACCESS_KEY: minioaccesskey
+          MINIO_SECRET_KEY: miniosecretkey
+          MINIO_SSE_MASTER_KEY: "my-minio-key:6368616e676520746869732070617373776f726420746f206120736563726574"
+      - image: mattermost/mattermost-elasticsearch-docker:6.5.1
+        environment:
           http.host: "0.0.0.0"
           http.port: 9200
           http.cors.enabled: "true"
