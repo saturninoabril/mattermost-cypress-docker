@@ -17,11 +17,11 @@ describe('Keyboard Shortcuts', () => {
     before(() => {
         // # Login as sysadmin and update config
         cy.apiLogin('sysadmin');
-        cy.apiUpdateConfig({
-            TeamSettings: {
-                ExperimentalTownSquareIsReadOnly: true,
-            },
-        });
+        // cy.apiUpdateConfig({
+        //     TeamSettings: {
+        //         ExperimentalTownSquareIsReadOnly: true,
+        //     },
+        // });
 
         // # Create and login as new user
         cy.apiCreateAndLoginAsNewUser();
