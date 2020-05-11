@@ -58,27 +58,18 @@ jobs:
       - run: sudo apt-get install postgresql-client-9.6
       - run: whoami
       - run: |
-          psql \
-          -d $TEST_DATABASE_URL \
-          -c "CREATE DATABASE migrated;"
+          psql -d $TEST_DATABASE_URL -c "CREATE DATABASE migrated;"
       - run: |
-          psql \
-          -d $TEST_DATABASE_URL \
-          -c "CREATE DATABASE latest;"
+          psql -d $TEST_DATABASE_URL -c "CREATE DATABASE latest;"
+      - run:
+          name: Restore mattermost_test DB
+          command: |
+            psql -d $TEST_DATABASE_URL mattermost_test < mattermost-e2e/test-data/postgresql_mattermost_test_db.sql
       - run:
           name: Checks
           command: |
             pwd
             ls -rtl
-      # - run:
-      #     name: Install Docker client
-      #     command: apk add docker-cli
-      # - run:
-      #     name: Install Docker Compose
-      #     command: |
-      #       set -x
-      #       curl -L https://github.com/docker/compose/releases/download/1.25.3/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-      #       chmod +x /usr/local/bin/docker-compose
       - run:
           name: install-npm
           command: cd e2e && npm install
