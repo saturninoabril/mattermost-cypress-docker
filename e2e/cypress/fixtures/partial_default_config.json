@@ -32,6 +32,14 @@
     "Office365Settings": {
         "Enable": false
     },
+    "PasswordSettings": {
+        "MinimumLength": 5,
+        "Lowercase": false,
+        "Number": false,
+        "Uppercase": false,
+        "Symbol": false,
+        "Enable": false
+    },
     "PluginSettings": {
         "Enable": true,
         "EnableMarketplace": true,
@@ -43,6 +51,8 @@
         "Enable": false
     },
     "ServiceSettings": {
+        "SiteURL": "http://localhost",
+        "ListenAddress": ":8065",
         "AllowedUntrustedInternalConnections": "localhost",
         "EnableAPITeamDeletion": true,
         "EnableBotAccountCreation": true,
@@ -69,6 +79,7 @@
         "ExperimentalViewArchivedChannels": false,
         "LockTeammateNameDisplay": false,
         "SiteName": "Mattermost",
-        "TeammateNameDisplay": "username"
+        "TeammateNameDisplay": "username",
+        "MaxUsersPerTeam": 1000
     }
 }
