@@ -73,7 +73,6 @@ const removePermission = (permissionCheckBoxTestId) => {
 };
 
 const deleteExistingTeamOverrideSchemes = () => {
-    cy.apiLogin('sysadmin');
     cy.apiGetSchemes('team').then((res) => {
         res.body.forEach((scheme) => {
             cy.apiDeleteScheme(scheme.id);
@@ -127,8 +126,6 @@ const createPostPermissionCheck = (enabled) => {
 };
 
 const resetPermissionsToDefault = () => {
-    // # Login as sysadmin and navigate to system scheme page
-    cy.apiLogin('sysadmin');
     cy.visit('/admin_console/user_management/permissions/system_scheme');
 
     // # Click reset to defaults and confirm
@@ -144,6 +141,9 @@ const resetPermissionsToDefault = () => {
 
 describe('Team Scheme Channel Mentions Permissions Test', () => {
     before(() => {
+        // # Login as sysadmin and navigate to system scheme page
+        cy.apiLogin('sysadmin');
+
         // * Check if server has license
         cy.requireLicense();
 
@@ -158,7 +158,10 @@ describe('Team Scheme Channel Mentions Permissions Test', () => {
     });
 
     after(() => {
+        // # Login as sysadmin and navigate to system scheme page
+        cy.apiLogin('sysadmin');
         resetPermissionsToDefault();
+        deleteExistingTeamOverrideSchemes();
     });
 
     it('MM-23018 - Create a team override scheme', () => {
@@ -206,12 +209,12 @@ describe('Team Scheme Channel Mentions Permissions Test', () => {
     });
 });
 
-const checkChannelPermission = (permissionName, hasChannelPermisisonCheckFunc, notHasChannelPermissionCheckFunc) => {
+const checkChannelPermission = (permissionName, hasChannelPermissionCheckFunc, notHasChannelPermissionCheckFunc) => {
     // # Setup user as a regular channel member
     setUserTeamAndChannelMemberships();
 
     // * Ensure user can use channel mentions by default
-    hasChannelPermisisonCheckFunc();
+    hasChannelPermissionCheckFunc();
 
     // # Login as sysadmin again
     cy.apiLogin('sysadmin');
@@ -275,7 +278,7 @@ const checkChannelPermission = (permissionName, hasChannelPermisisonCheckFunc, n
         setUserTeamAndChannelMemberships(true, false);
 
         // * Ensure user can use channel mentions as channel admin
-        hasChannelPermisisonCheckFunc();
+        hasChannelPermissionCheckFunc();
 
         // # Navigate back to team scheme as sysadmin
         cy.apiLogin('sysadmin');
@@ -297,7 +300,7 @@ const checkChannelPermission = (permissionName, hasChannelPermisisonCheckFunc, n
         setUserTeamAndChannelMemberships(true, true);
 
         // * Ensure user can use channel mentions as team admin
-        hasChannelPermisisonCheckFunc();
+        hasChannelPermissionCheckFunc();
 
         // # Navigate back to system scheme as sysadmin
         cy.apiLogin('sysadmin');
