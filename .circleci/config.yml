@@ -1,9 +1,15 @@
 version: 2.1
 orbs:
   node: circleci/node@1.1.6
+
+workflows:
+  build-and-test:
+    jobs:
+      - build-and-test:
+          context: cypress-circleci-env
+
 jobs:
   build-and-test:
-    context: cypress-circleci-env
     docker:
       - image: circleci/node:10.20.1-stretch-browsers
         environment:
@@ -74,7 +80,3 @@ jobs:
       - run: # run tests
           name: test
           command: cd e2e && node run_tests.js --group='@commands'
-workflows:
-    build-and-test:
-      jobs:
-        - build-and-test
