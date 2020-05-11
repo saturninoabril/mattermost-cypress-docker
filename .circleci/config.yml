@@ -84,4 +84,4 @@ jobs:
             - ./e2e/node_modules
       - run: # run tests
           name: test
-          command: cd e2e && node run_tests.js --group='@commands'
+          command: cd e2e && node run_tests.js --stage='@prod'
