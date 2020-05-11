@@ -84,7 +84,7 @@ jobs:
             - ./e2e/node_modules
       - run: # run tests
           name: Start webhook server
-          command: cd e2e && node webhook_serve.js
+          command: cd e2e && nohup node webhook_serve.js > webhook_serve.log &
       - run: # run tests
           name: Run Cypress Test
           command: cd e2e && node run_tests.js --stage='@prod'
