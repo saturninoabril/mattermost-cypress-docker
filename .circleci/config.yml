@@ -3,6 +3,7 @@ orbs:
   node: circleci/node@1.1.6
 jobs:
   build-and-test:
+    context: cypress-circleci-env
     docker:
       - image: circleci/node:10.20.1-stretch-browsers
         environment:
@@ -53,23 +54,17 @@ jobs:
       - setup_remote_docker
       - checkout
       - attach_workspace:
-          at: ~/mattermost-cypress-docker
-      - run: sudo apt-get update
-      - run: sudo apt-get install postgresql-client-9.6
-      - run: whoami
-      - run: |
-          psql -d $TEST_DATABASE_URL -c "CREATE DATABASE migrated;"
-      - run: |
+          at: ~/mattermost-cypress-docker- run: |
           psql -d $TEST_DATABASE_URL -c "CREATE DATABASE latest;"
       - run:
-          name: Restore mattermost_test DB
+          name: Set and restore Postgres DB
           command: |
+            whoami
+            sudo apt-get update
+            sudo apt-get install postgresql-client-9.6
+            psql -d $TEST_DATABASE_URL -c "CREATE DATABASE migrated;"
+            psql -d $TEST_DATABASE_URL -c "CREATE DATABASE latest;"
             psql -d $TEST_DATABASE_URL mattermost_test < mattermost-e2e/test-data/postgresql_mattermost_test_db.sql
-      - run:
-          name: Checks
-          command: |
-            pwd
-            ls -rtl
       - run:
           name: install-npm
           command: cd e2e && npm install
@@ -79,7 +74,7 @@ jobs:
             - ./e2e/node_modules
       - run: # run tests
           name: test
-          command: cd e2e && npm run test:ci
+          command: cd e2e && node run_tests.js --group='@commands'
 workflows:
     build-and-test:
       jobs:
