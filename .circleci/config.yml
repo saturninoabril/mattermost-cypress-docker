@@ -54,8 +54,7 @@ jobs:
       - setup_remote_docker
       - checkout
       - attach_workspace:
-          at: ~/mattermost-cypress-docker- run: |
-          psql -d $TEST_DATABASE_URL -c "CREATE DATABASE latest;"
+          at: ~/mattermost-cypress-docker
       - run:
           name: Set and restore Postgres DB
           command: |
