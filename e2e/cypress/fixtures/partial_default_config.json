@@ -1,6 +1,6 @@
 {
     "ServiceSettings": {
-        "SiteURL": "http://localhost",
+        "SiteURL": "http://localhost:8065",
         "WebsocketURL": "",
         "LicenseFileLocation": "",
         "ListenAddress": ":8065",
@@ -75,9 +75,6 @@
         "ExperimentalGroupUnreadChannels": "disabled",
         "ExperimentalChannelOrganization": false,
         "ExperimentalChannelSidebarOrganization": "disabled",
-        "ImageProxyType": "",
-        "ImageProxyURL": "",
-        "ImageProxyOptions": "",
         "EnableAPITeamDeletion": true,
         "ExperimentalEnableHardenedMode": false,
         "DisableLegacyMFA": true,
@@ -85,7 +82,7 @@
         "EnableEmailInvitations": true,
         "DisableBotsWhenOwnerIsDeactivated": true,
         "EnableBotAccountCreation": true,
-        "EnableSVGs": false,
+        "EnableSVGs": true,
         "EnableLatex": false
     },
     "TeamSettings": {
@@ -492,7 +489,7 @@
         "RestrictCreationToDomains": ""
     },
     "ImageProxySettings": {
-        "Enable": false,
+        "Enable": true,
         "ImageProxyType": "local",
         "RemoteImageProxyURL": "",
         "RemoteImageProxyOptions": ""
