@@ -44,7 +44,7 @@ jobs:
           ES_JAVA_OPTS: "-Xms512m -Xmx512m"
       - image: mattermost/mattermost-enterprise-edition:master
         environment:
-          DB_HOST: loclhost
+          DB_HOST: localhost
           DB_PORT_NUMBER: 5432
           MM_DBNAME: mattermost_test
           MM_USERNAME: mmuser
