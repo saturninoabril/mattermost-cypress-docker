@@ -97,4 +97,4 @@ jobs:
             export BROWSER=chrome
             export HEADLESS=true
 
-            cd e2e && node run_tests.js --stage='@prod'
+            cd e2e && node run_tests.js --stage='@prod' --group='@commands'
