@@ -41,7 +41,7 @@ function saveDashboard(report, branch) {
 
     const rpClient = new RPClient(reporterOptions);
 
-    rpClient.checkConnect().then((response) => {
+    rpClient.checkConnect().then(() => {
         console.log('You have successfully connected to the automation dashboard server.');
     }, (error) => {
         console.log('Error connecting to automation dashboard server');
