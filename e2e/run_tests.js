@@ -306,11 +306,13 @@ async function runTests() {
 
     // Generate short summary, write to file and then send report via webhook
     const summary = generateShortSummary(jsonReport);
+    console.log(summary);
     writeJsonToFile(summary, 'summary.json', mochawesomeReportDir);
 
     const result = await saveArtifacts(`../${mochawesomeReportDir}`, bucketFolder);
     if (result && result.success) {
         console.log('Successfully uploaded artifacts.');
+        console.log(`https://${process.env.AWS_S3_BUCKET}.s3.amazonaws.com/${bucketFolder}/mochawesome.html`)
     }
 
     // Send test report to "QA: UI Test Automation" channel via webhook

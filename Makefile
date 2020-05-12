@@ -72,3 +72,6 @@ copy-webapp-e2e:
 
 copy-license:
 	cp -r ../mm-license.txt .
+
+pg_dump-mattermost-postgres:
+	cd mattermost-e2e/test-data && docker exec mattermost-postgres pg_dump -d mattermost_test -U mmuser > postgresql_mattermost_test_db.sql
