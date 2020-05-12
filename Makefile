@@ -27,8 +27,8 @@ run:
 	@echo --- app: confirmed running
 
 	# EE license should be at `mattermost-cypress-docker/mattermost-e2e/app/mm-license.txt` before docker image build
-	# cd mattermost-e2e && docker-compose exec app mattermost license upload /mm-license.txt
-	# @echo --- app: uploaded EE license
+	cd mattermost-e2e && docker-compose exec app mattermost license upload /mm-license.txt
+	@echo --- app: uploaded EE license
 
 	cd mattermost-e2e && docker-compose exec app mattermost sampledata -w 4 -u 60 --deactivated-users=200
 	@echo --- app: loaded test data
@@ -46,11 +46,11 @@ stop:
 
 	rm -rf mattermost-e2e/cypress/e2e
 	rm -rf mattermost-e2e/webhook/e2e
-	# rm mattermost-e2e/app/mm-license.txt
+	rm mattermost-e2e/app/mm-license.txt
 	@echo --- Files and license: removed from required directories
 
 setup:
-	# cp mm-license.txt mattermost-e2e/app/mm-license.txt
+	cp mm-license.txt mattermost-e2e/app/mm-license.txt
 	cp -r e2e mattermost-e2e/webhook
 	cp -r e2e mattermost-e2e/cypress
 
