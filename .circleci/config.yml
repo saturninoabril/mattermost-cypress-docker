@@ -92,7 +92,7 @@ jobs:
             export BRANCH=master
             export BUILD_ID=$CIRCLE_BUILD_NUM
 
-            export DASHBOARD_ENABLE=true
+            # export DASHBOARD_ENABLE=true
 
             export BROWSER=chrome
             export HEADLESS=true
