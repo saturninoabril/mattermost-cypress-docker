@@ -87,4 +87,4 @@ jobs:
           name: Run Cypress Test
           command: |
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
-            cd e2e && node run_tests.js --stage='@prod' --group='@interactive_dialog'
+            cd e2e && node run_tests.js --stage='@prod'
