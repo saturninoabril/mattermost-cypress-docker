@@ -41,9 +41,16 @@ function saveDashboard(report, branch) {
 
     const rpClient = new RPClient(reporterOptions);
 
+    rpClient.checkConnect().then((response) => {
+        console.log('You have successfully connected to the automation dashboard server.');
+    }, (error) => {
+        console.log('Error connecting to automation dashboard server');
+        console.dir(error);
+    });
+
     // Start Launch
     const launchObj = rpClient.startLaunch({
-        name: `Cypress Test - ${branch} branch`,
+        name: `Cypress Test ${branch} branch`,
         startTime: report.stats.start,
         description: `Cypress test report with ${branch} branch`,
     });
@@ -65,7 +72,6 @@ function saveDashboard(report, branch) {
         };
 
         const suiteObj = rpClient.startTestItem(suiteData, launchObj.tempId);
-
         const tests = getAllTests(suite.suites);
         tests.forEach((test) => {
             let status;
@@ -85,7 +91,6 @@ function saveDashboard(report, branch) {
             };
 
             const itemObj = rpClient.startTestItem(testData, launchObj.tempId, suiteObj.tempId);
-
             startTime += test.duration;
             rpClient.finishTestItem(itemObj.tempId, {
                 status,
@@ -104,9 +109,14 @@ function saveDashboard(report, branch) {
         rpClient.finishTestItem(suiteObj.tempId, {endTime: startTime});
     });
 
-    rpClient.finishLaunch(launchObj.tempId, {endTime: startTime});
-
-    console.log('Successfully sent automation dashboard data.');
+    const finished = rpClient.finishLaunch(launchObj.tempId, {endTime: startTime});
+    return finished.promise.then(() => {
+        console.log('Successfully sent automation dashboard data.');
+        return {success: true};
+    }, (error) => {
+        console.log('Encountered error while sending automation dashboard data.', error);
+        return {error};
+    });
 }
 
 module.exports = {saveDashboard};

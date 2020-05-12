@@ -178,7 +178,7 @@ async function runTests() {
 
     // Save data to automation dashboard
     if (DASHBOARD_ENABLE === 'true') {
-        saveDashboard(jsonReport, BRANCH);
+        await saveDashboard(jsonReport, BRANCH);
     }
 
     // exit with the number of failed tests
