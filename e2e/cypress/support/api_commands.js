@@ -268,6 +268,33 @@ Cypress.Commands.add('apiCreateCommand', (command = {}) => {
 });
 
 // *****************************************************************************
+// Elasticsearch
+// https://api.mattermost.com/#tag/elasticsearch
+// *****************************************************************************
+
+/**
+ * Test Elasticsearch configuration directly via API
+ * Test the current Elasticsearch configuration to see if the Elasticsearch server can be contacted successfully.
+ * Optionally provide a configuration in the request body to test.
+ * If no valid configuration is present in the request body the current server configuration will be tested.
+ * This API assume that the user is logged in and has cookie to access
+ * @param {Object} config 
+ */
+Cypress.Commands.add('apiElasticsearchTest', (config) => {
+    const uniqueName = `${name}-${getRandomInt(9999).toString()}`;
+
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: '/api/v4/elasticsearch/test',
+        method: 'POST',
+        body: config,
+    }).then((response) => {
+        expect(response.status).to.equal(201);
+        cy.wrap(response);
+    });
+});
+
+// *****************************************************************************
 // Email
 // *****************************************************************************
 

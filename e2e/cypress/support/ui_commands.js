@@ -486,7 +486,6 @@ Cypress.Commands.add('uploadFile', {prevSubject: true}, (targetInput, fileName, 
     cy.fixture(fileName, 'binary').then((content) => {
         return Cypress.Blob.binaryStringToBlob(content, fileType).then((blob) => {
             const el = targetInput[0];
-            cy.log('el:' + el);
             const testFile = new File([blob], fileName, {type: fileType});
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(testFile);
