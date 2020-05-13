@@ -295,6 +295,24 @@ Cypress.Commands.add('apiElasticsearchTest', (config) => {
 });
 
 // *****************************************************************************
+// Email
+// *****************************************************************************
+
+/**
+ * Test SMTP setup
+ */
+Cypress.Commands.add('apiEmailTest', () => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: '/api/v4/email/test',
+        method: 'POST',
+    }).then((response) => {
+        expect(response.status, 'SMTP not setup at sysadmin config').to.equal(200);
+        cy.wrap(response);
+    });
+});
+
+// *****************************************************************************
 // Teams
 // https://api.mattermost.com/#tag/teams
 // *****************************************************************************
