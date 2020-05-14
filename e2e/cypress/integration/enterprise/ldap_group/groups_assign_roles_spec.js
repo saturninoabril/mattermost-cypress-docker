@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @enterprise @ldap_group
+// Group: @enterprise @ldap @ldap_group
 
 // # Function to get all the teams associated to group and unlink them
 const getTeamsAssociatedToGroupAndUnlink = (groupId) => {
@@ -57,7 +57,9 @@ describe('System Console', () => {
         cy.apiUpdateConfig({LdapSettings: {Enable: true}});
 
         // # Check and run LDAP Sync job
-        cy.checkRunLDAPSync();
+        if (Cypress.env('runLDAPSync')) {
+            cy.checkRunLDAPSync();
+        }
     });
 
     it('MM-20058 - System Admin can map roles to teams and channels via group configuration page', () => {
