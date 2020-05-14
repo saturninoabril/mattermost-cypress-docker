@@ -7,7 +7,8 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @enterprise @ldap_group
+// Stage: @prod
+// Group: @enterprise @ldap @ldap_group
 
 describe('Group Synced Team - Bot invitation flow', () => {
     let groupConstrainedTeam;

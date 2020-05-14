@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @enterprise @ldap_group
+// Group: @enterprise @ldap @ldap_group
 
 const waitUntilConfigSave = () => {
     cy.waitUntil(() => cy.get('#saveSetting').then((el) => {
@@ -27,7 +27,9 @@ describe('System Console', () => {
         cy.apiUpdateConfig({LdapSettings: {Enable: true}});
 
         // # Check and run LDAP Sync job
-        cy.checkRunLDAPSync();
+        if (Cypress.env('runLDAPSync')) {
+            cy.checkRunLDAPSync();
+        }
     });
 
     it('MM-20059 - System Admin can map roles to groups from Team Configuration screen', () => {

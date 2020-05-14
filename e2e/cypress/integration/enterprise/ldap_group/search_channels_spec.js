@@ -7,7 +7,8 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @enterprise @ldap_group
+// Stage: @prod
+// Group: @enterprise @ldap @ldap_group
 
 import uuid from 'uuid/v4';
 const PAGE_SIZE = 10;

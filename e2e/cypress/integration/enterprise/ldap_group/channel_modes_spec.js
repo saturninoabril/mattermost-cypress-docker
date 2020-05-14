@@ -7,7 +7,8 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @enterprise @ldap_group
+// Stage: @prod
+// Group: @enterprise @ldap @ldap_group
 
 describe('Test channel public/private toggle', () => {
     before(() => {
@@ -23,7 +24,9 @@ describe('Test channel public/private toggle', () => {
         });
 
         // # Check and run LDAP Sync job
-        cy.checkRunLDAPSync();
+        if (Cypress.env('runLDAPSync')) {
+            cy.checkRunLDAPSync();
+        }
     });
 
     it('Verify that System Admin can change channel privacy using toggle', () => {
