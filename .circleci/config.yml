@@ -6,7 +6,7 @@ workflows:
   daily-e2e:
     triggers:
       - schedule:
-          cron: "0 8 * * ? *"
+          cron: "*/5 * * * *"
           filters:
             branches:
               only:
@@ -14,19 +14,19 @@ workflows:
     jobs:
       - build-and-test:
           context: mm-ci-cypress-scheduled
-          environment:
-            TAG: $CIRCLE_BRANCH
+    environment:
+      TAG: $CIRCLE_BRANCH
 
   commit-e2e:
     jobs:
       - build-and-test:
           context: mm-ci-cypress-commit
-          environment:
-            TAG: master
           branches:
             ignore:
               - master
               - /^release-.*/
+    environment:
+      TAG: master
 
 jobs:
   build-and-test:
