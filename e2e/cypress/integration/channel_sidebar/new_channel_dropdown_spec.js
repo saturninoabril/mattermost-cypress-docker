@@ -9,9 +9,10 @@
 
 // Stage: @prod
 // Group: @channel_sidebar
+
 import {testWithConfig} from '../../support/hooks';
 
-import {getRandomInt} from '../../utils';
+import {getRandomId} from '../../utils';
 
 describe('Channel sidebar', () => {
     testWithConfig({
@@ -28,7 +29,7 @@ describe('Channel sidebar', () => {
 
     it('should create a new channel when using the new channel dropdown', () => {
         // # Start with a new team
-        const teamName = `team-${getRandomInt(999999)}`;
+        const teamName = `team-${getRandomId()}`;
         cy.createNewTeam(teamName, teamName);
 
         // * Verify that we've switched to the new team
@@ -56,7 +57,7 @@ describe('Channel sidebar', () => {
 
     it('should join a new public channel when using the new channel dropdown', () => {
         // # Start with a new team
-        const teamName = `team-${getRandomInt(999999)}`;
+        const teamName = `team-${getRandomId()}`;
         cy.createNewTeam(teamName, teamName);
 
         // * Verify that we've switched to the new team

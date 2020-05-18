@@ -107,9 +107,9 @@ jobs:
             # export DASHBOARD_ENABLE=true
 
             export BROWSER=chrome
-            export HEADLESS=false
+            # export HEADLESS=false
 
-            export CYPRESS_chromeWebSecurity=false
+            # export CYPRESS_chromeWebSecurity=false
             export CYPRESS_runLDAPSync=false
 
             cd e2e && node run_tests.js --stage='@prod'

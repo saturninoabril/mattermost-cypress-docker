@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {getRandomInt} from '../../../utils';
+import {getRandomId} from '../../../utils';
 import users from '../../../fixtures/users.json';
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 
@@ -841,7 +841,7 @@ describe('Channel Moderation Test', () => {
 
         it('Effect of changing System Schemes on a Channel for which Channel Moderation Settings was never modified', () => {
             // # Reset system scheme to default and create a new channel to ensure that this channels moderation settings have never been modified
-            const randomChannelName = 'NeverModifiedChannel' + getRandomInt(1000);
+            const randomChannelName = 'NeverModifiedChannel' + getRandomId();
             createNewChannel(randomChannelName, 'sysadmin');
 
             goToSystemScheme();
@@ -864,7 +864,7 @@ describe('Channel Moderation Test', () => {
 
         it('Effect of changing Team Override Schemes on a Channel for which Channel Moderation Settings was never modified', () => {
             // # Reset system scheme to default and create a new channel to ensure that this channels moderation settings have never been modified
-            const randomChannelName = 'NeverModifiedChannel' + getRandomInt(1000);
+            const randomChannelName = 'NeverModifiedChannel' + getRandomId();
             createNewChannel(randomChannelName, 'sysadmin');
             goToPermissionsAndCreateTeamOverrideScheme(`${randomChannelName}`);
             deleteOrEditTeamScheme(`${randomChannelName}`, 'edit');
@@ -888,7 +888,7 @@ describe('Channel Moderation Test', () => {
         });
 
         it('Effect of changing Team Override Schemes on a Channel for which Channel Moderation Settings was modified', () => {
-            const teamOverrideSchemeName = 'autem' + getRandomInt(1000);
+            const teamOverrideSchemeName = 'autem' + getRandomId();
 
             // # Reset system scheme to default and create a new channel to ensure that this channels moderation settings have never been modified
             visitAutemChannelConfigPage();
@@ -921,7 +921,7 @@ describe('Channel Moderation Test', () => {
         });
 
         it('Manage Members removed for Public Channels', () => {
-            const teamOverrideSchemeName = 'autem' + getRandomInt(1000);
+            const teamOverrideSchemeName = 'autem' + getRandomId();
 
             // # Create a new team override scheme and remove manage public channel members
             goToPermissionsAndCreateTeamOverrideScheme(`${teamOverrideSchemeName}`);
@@ -959,7 +959,7 @@ describe('Channel Moderation Test', () => {
         });
 
         it('Manage Members removed for Private Channels / Permissions inherited when channel converted from Public to Private', () => {
-            const teamOverrideSchemeName = 'autem' + getRandomInt(1000);
+            const teamOverrideSchemeName = 'autem' + getRandomId();
 
             // # Create a new team override scheme and remove manage private channel members from it
             // * Ensure that manage public channel members is checked
