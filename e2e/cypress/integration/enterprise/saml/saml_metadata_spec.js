@@ -7,6 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
+// Stage: @prod @smoke
 // Group: @enterprise @saml
 
 /**
@@ -28,12 +29,12 @@ describe('SystemConsole->SAML 2.0 - Get Metadata from Idp Flow', () => {
         cy.apiUpdateConfig({
             SamlSettings: {
                 Enable: true,
+                AssertionConsumerServiceURL: Cypress.config('baseUrl') + '/login/sso/saml',
                 IdpMetadataUrl: '',
                 IdpUrl: testIdpUrl,
                 IdpDescriptorUrl: testIdpDescriptorUrl,
             },
-        });
-        cy.apiGetConfig().then((response) => {
+        }).then((response) => {
             config = response.body;
         });
 
