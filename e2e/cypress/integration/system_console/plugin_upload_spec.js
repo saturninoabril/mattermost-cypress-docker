@@ -7,7 +7,8 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @system_console
+// Stage: @prod
+// Group: @system_console @plugin
 
 /**
  * Note : This test requires draw plugin tar file under fixtures folder.
@@ -35,7 +36,7 @@ describe('Draw Plugin - Upload', () => {
         cy.visit('/ad-1/channels/town-square');
 
         // #If draw plugin is already enabled , unInstall it
-        cy.uninstallPluginById(pluginId);
+        cy.apiRemovePluginById(pluginId);
         cy.visit('/admin_console/plugins/plugin_management');
     });
 
