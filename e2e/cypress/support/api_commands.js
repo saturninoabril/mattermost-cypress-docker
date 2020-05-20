@@ -1052,7 +1052,7 @@ Cypress.Commands.add('promoteUser', (userId) => {
  * @param {String} pluginDownloadUrl - URL used to download the plugin
  * @param {String} force - Set to 'true' to overwrite a previously installed plugin with the same ID, if any
  */
-Cypress.Commands.add('installPluginFromUrl', (pluginDownloadUrl, force = false) => {
+Cypress.Commands.add('apiInstallPluginFromUrl', (pluginDownloadUrl, force = false) => {
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: `/api/v4/plugins/install_from_url?plugin_download_url=${encodeURIComponent(pluginDownloadUrl)}&force=${force}`,
@@ -1065,11 +1065,11 @@ Cypress.Commands.add('installPluginFromUrl', (pluginDownloadUrl, force = false) 
 });
 
 /**
- * Uninstall plugin by id.
+ * Remove the plugin with the provided ID from the server. All plugin files are deleted.
  *
  * @param {String} pluginId - Id of the plugin to uninstall
  */
-Cypress.Commands.add('uninstallPluginById', (pluginId) => {
+Cypress.Commands.add('apiRemovePluginById', (pluginId) => {
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: `/api/v4/plugins/${encodeURIComponent(pluginId)}`,
@@ -1087,7 +1087,7 @@ Cypress.Commands.add('uninstallPluginById', (pluginId) => {
  * Get all user`s plugins.
  *
  */
-Cypress.Commands.add('getAllPlugins', () => {
+Cypress.Commands.add('apiGetAllPlugins', () => {
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: '/api/v4/plugins',
@@ -1104,7 +1104,7 @@ Cypress.Commands.add('getAllPlugins', () => {
  *
  * @param {String} pluginId - Id of the plugin to enable
  */
-Cypress.Commands.add('enablePluginById', (pluginId) => {
+Cypress.Commands.add('apiEnablePluginById', (pluginId) => {
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: `/api/v4/plugins/${encodeURIComponent(pluginId)}/enable`,
@@ -1119,17 +1119,10 @@ Cypress.Commands.add('enablePluginById', (pluginId) => {
 
 /**
  * Upload binary file by name and Type *
- * @param {String} fileName - name of the plugin to upload
+ * @param {String} filename - name of the plugin to upload
  */
-Cypress.Commands.add('uploadBinaryFileByName', (fileName) => {
-    const formData = new FormData();
-
-    cy.fixture(fileName, 'binary', {timeout: 1200000}).
-        then(Cypress.Blob.binaryStringToBlob).
-        then((blob) => {
-            formData.set('plugin', blob, fileName);
-            formRequest('POST', '/api/v4/plugins', formData);
-        });
+Cypress.Commands.add('apiUploadPlugin', (filename) => {
+    cy.apiUploadFile('/api/v4/plugins', 'POST', 'plugin', filename, 201);
 });
 
 /**
@@ -1346,14 +1339,14 @@ Cypress.Commands.add('apiUploadSAMLPrivateKey', (fileName) => {
  * @param {String} formName
  * @param {String} fileName
  */
-Cypress.Commands.add('apiUploadFile', (url, method, formName, fileName) => {
+Cypress.Commands.add('apiUploadFile', (url, method, formName, fileName, successStatus = 200) => {
     const formData = new FormData();
 
     cy.fixture(fileName, 'binary', {timeout: 1200000}).
         then(Cypress.Blob.binaryStringToBlob).
         then((blob) => {
             formData.set(formName, blob, fileName);
-            formRequest(method, url, formData, 200);
+            formRequest(method, url, formData, successStatus);
         });
 });
 
