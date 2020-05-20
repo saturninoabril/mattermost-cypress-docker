@@ -78,81 +78,6 @@ describe('Interactive Dialog', () => {
         cy.reload();
     });
 
-    it('ID15888 - UI check', () => {
-        // # Post a slash command
-        cy.get('#postListContent').should('be.visible');
-        cy.postMessage(`/${createdCommand.trigger}`);
-
-        // * Verify that the interactive dialog modal open up
-        cy.get('#interactiveDialogModal').should('be.visible').within(() => {
-            // * Verify that the header of modal contains icon URL, title and close button
-            cy.get('.modal-header').should('be.visible').within(($elForm) => {
-                cy.get('#interactiveDialogIconUrl').should('be.visible').and('have.attr', 'src', fullDialog.dialog.icon_url);
-                cy.get('#interactiveDialogModalLabel').should('be.visible').and('have.text', fullDialog.dialog.title);
-                cy.wrap($elForm).find('button.close').should('be.visible').and('contain', '×').and('contain', 'Close');
-
-                cy.get('#interactiveDialogModalLabel').should('be.visible').and('have.text', fullDialog.dialog.title);
-            });
-
-            // * Verify that the body contains all the elements
-            cy.get('.modal-body').should('be.visible').children().each(($elForm, index) => {
-                const element = fullDialog.dialog.elements[index];
-
-                cy.wrap($elForm).find('label.control-label').scrollIntoView().should('exist').and('have.text', `${element.display_name} ${element.optional ? '(optional)' : '*'}`);
-
-                if (['someuserselector', 'somechannelselector', 'someoptionselector'].includes(element.name)) {
-                    cy.wrap($elForm).find('input').should('be.visible').and('have.attr', 'autocomplete', 'off').and('have.attr', 'placeholder', element.placeholder);
-
-                    // * Verify that the suggestion list or autocomplete open up on click of input element
-                    cy.wrap($elForm).find('#suggestionList').should('not.be.visible');
-                    cy.wrap($elForm).find('input').click();
-                    cy.wrap($elForm).find('#suggestionList').scrollIntoView().should('be.visible').children().then((el) => {
-                        if (element.name === 'someuserselector' && config.ElasticsearchSettings.EnableIndexing) {
-                            return;
-                        }
-
-                        cy.wrap(el).should('have.length', optionsLength[element.name]);
-                    });
-                } else if (element.name === 'someradiooptions') {
-                    cy.wrap($elForm).find('input').should('be.visible').and('have.length', optionsLength[element.name]);
-
-                    // * Verify that no option is selected by default
-                    cy.wrap($elForm).find('input').each(($elInput) => {
-                        cy.wrap($elInput).should('not.be.checked');
-                    });
-                } else if (element.name === 'boolean_input') {
-                    cy.wrap($elForm).find('.checkbox').should('be.visible').within(() => {
-                        cy.get('#boolean_input').
-                            should('be.visible').
-                            and('be.checked');
-
-                        cy.get('span').should('have.text', element.placeholder);
-                    });
-                } else {
-                    cy.wrap($elForm).find(`#${element.name}`).should('be.visible').and('have.value', element.default).and('have.attr', 'placeholder', element.placeholder);
-                }
-
-                // * Verify that input element are given with the correct type of "input", "email", "number" and "password".
-                // * To take advantage of supported built-in validation.
-                if (inputTypes[element.name]) {
-                    cy.wrap($elForm).find(`#${element.name}`).should('have.attr', 'type', inputTypes[element.name]);
-                }
-
-                if (element.help_text) {
-                    cy.wrap($elForm).find('.help-text').should('exist').and('have.text', element.help_text);
-                }
-            });
-
-            // * Verify that the footer contains cancel and submit buttons
-            cy.get('.modal-footer').should('be.visible').within(($elForm) => {
-                cy.wrap($elForm).find('#interactiveDialogCancel').should('be.visible').and('have.text', 'Cancel');
-                cy.wrap($elForm).find('#interactiveDialogSubmit').should('be.visible').and('have.text', fullDialog.dialog.submit_label);
-            });
-
-            closeInteractiveDialog();
-        });
-    });
-
     it('ID15888 - Cancel button works', () => {
         // # Post a slash command
         cy.postMessage(`/${createdCommand.trigger}`);
@@ -205,35 +130,6 @@ describe('Interactive Dialog', () => {
             } else {
                 cy.wrap($elForm).find('div.error-text').should('not.be.visible');
             }
-        });
-
-        closeInteractiveDialog();
-    });
-
-    it('ID15888 - Email validation', () => {
-        // # Post a slash command
-        cy.postMessage(`/${createdCommand.trigger}`);
-
-        // * Verify that the interactive dialog modal open up
-        cy.get('#interactiveDialogModal').should('be.visible');
-
-        // # Enter invalid and valid email
-        // Verify that error is: shown for invalid email and not shown for valid email.
-        [
-            {valid: false, value: 'invalid-email'},
-            {valid: true, value: 'test@mattermost.com'},
-        ].forEach((testCase) => {
-            cy.get('#someemail').scrollIntoView().clear().type(testCase.value);
-
-            cy.get('#interactiveDialogSubmit').click();
-
-            cy.get('.modal-body').should('be.visible').children().eq(1).within(($elForm) => {
-                if (testCase.valid) {
-                    cy.wrap($elForm).find('div.error-text').should('not.be.visible');
-                } else {
-                    cy.wrap($elForm).find('div.error-text').should('be.visible').and('have.text', 'Must be a valid email address.').and('have.css', 'color', 'rgb(253, 89, 96)');
-                }
-            });
         });
 
         closeInteractiveDialog();

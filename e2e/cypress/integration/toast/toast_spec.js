@@ -47,28 +47,6 @@ describe('toasts', () => {
         cy.findAllByTestId('postView').should('be.visible');
     });
 
-    it('Unread messages toast is shown when visiting a channel with unreads and should disappear if scrolled to bottom', () => {
-        // # Add enough messages
-        for (let index = 0; index < 30; index++) {
-            cy.postMessageAs({sender: otherUser, message: `This is an old message [${index}]`, channelId: townsquareChannelId});
-        }
-
-        visitTownSquareAndWaitForPageToLoad();
-
-        // * find the toast
-        cy.get('div.toast').should('be.visible');
-
-        // * check that the message is correct
-        cy.get('div.toast__message>span').should('be.visible').first().contains('30 new messages');
-        cy.get('div.post-list__dynamic').should('be.visible').scrollTo('bottom', {duration: 1000});
-
-        // * should hide the scroll to new message button as it is at the bottom
-        cy.get('div.toast__jump').should('not.be.visible');
-
-        // * As time elapsed the toast should be hidden
-        cy.get('div.toast').should('be.not.visible');
-    });
-
     it('should show new message indicator when posts arrive and user is not at bottom', () => {
         visitTownSquareAndWaitForPageToLoad();
         scrollUpAndPostAMessage().then(() => {

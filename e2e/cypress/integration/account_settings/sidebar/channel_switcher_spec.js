@@ -105,31 +105,6 @@ describe('Account Settings > Sidebar > Channel Switcher', () => {
         // * focus should be on the input box
         cy.get('#post_textbox').should('be.focused');
     });
-
-    it('Cmd/Ctrl+Shift+M closes Channel Switch modal and sets focus to mentions', () => {
-        // # patch user info
-        cy.apiPatchMe({notify_props: {first_name: 'false', mention_keys: 'user-1'}});
-
-        // # Go to a known team and channel
-        cy.visit(`/${testTeam.name}/channels/town-square`);
-        cy.get('#channelHeaderTitle').should('be.visible').should('contain', 'Town Square');
-
-        // # Type CTRL/CMD+K
-        cy.get('#post_textbox').cmdOrCtrlShortcut('K');
-
-        // * Channel switcher hint should be visible
-        cy.get('#quickSwitchHint').should('be.visible').should('contain', 'Type to find a channel. Use ▲▼ to browse, ENTER to select, ESC to dismiss.');
-
-        // # Type CTRL/CMD+shift+m
-        cy.get('#quickSwitchInput').cmdOrCtrlShortcut('{shift}M');
-
-        // * Suggestion list should be visible
-        cy.get('#suggestionList').should('not.be.visible');
-
-        // * searchbox should appear
-        cy.get('#searchBox').should('have.attr', 'value', 'user-1 @user-1 ');
-        cy.get('.sidebar--right__title').should('contain', 'Recent Mentions');
-    });
 });
 
 function verifyChannelSwitch(team, channel) {

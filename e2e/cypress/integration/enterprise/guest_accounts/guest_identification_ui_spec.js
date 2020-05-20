@@ -214,17 +214,6 @@ describe('MM-18045 Verify Guest User Identification in different screens', () =>
         });
     });
 
-    it('Verify Guest Badge in @mentions Autocomplete', () => {
-        // # Start a draft in Channel containing "@user"
-        cy.get('#post_textbox').type('@user');
-
-        // * Verify Guest Badge is displayed at mention auto-complete
-        cy.get('#suggestionList').should('be.visible');
-        cy.findByTestId(`mentionSuggestion_${guest.username}`).within(($el) => {
-            cy.wrap($el).find('.Badge').should('be.visible').and('have.text', 'GUEST');
-        });
-    });
-
     it('Verify Guest Badge not displayed in Search Autocomplete', () => {
         // # Search for the Guest User
         cy.get('#searchBox').type('from:user');

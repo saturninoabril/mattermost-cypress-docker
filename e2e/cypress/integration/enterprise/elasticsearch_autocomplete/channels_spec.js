@@ -80,26 +80,6 @@ describe('Autocomplete with Elasticsearch - Channel', () => {
         });
     });
 
-    it('private channel I do belong to appears', () => {
-        // # Create private channel and add new user to it (sets @privateChannel alias)
-        createPrivateChannel(team.id, user).then((channel) => {
-            // # Go to off-topic channel to partially reload the page
-            cy.get('#sidebarChannelContainer').should('be.visible').within(() => {
-                cy.findAllByText('Off-Topic').should('be.visible').click();
-            });
-
-            // # Search for the private channel
-            searchForChannel(channel.name);
-
-            // * Suggestion list should appear
-            cy.get('#suggestionList').should('be.visible');
-
-            // * Channel should appear in the list
-            cy.queryByTestId(channel.name).
-                should('be.visible');
-        });
-    });
-
     it('channel outside of team does not appear', () => {
         const teamName = 'elastic-private-' + Date.now();
         const baseUrl = Cypress.config('baseUrl');

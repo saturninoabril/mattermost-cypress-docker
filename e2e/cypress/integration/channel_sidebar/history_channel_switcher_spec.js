@@ -39,27 +39,4 @@ describe('Channel sidebar', () => {
         cy.get('.SidebarChannelNavigator_backButton').should('not.exist');
         cy.get('.SidebarChannelNavigator_forwardButton').should('not.exist');
     });
-
-    it('should switch to channel when using the channel switcher', () => {
-        // # Start with a new team
-        const teamName = `team-${getRandomId()}`;
-        cy.createNewTeam(teamName, teamName);
-
-        // * Verify that we've switched to the new team
-        cy.get('#headerTeamName').should('contain', teamName);
-
-        // # Click the Channel Switcher button
-        cy.get('.SidebarChannelNavigator_jumpToButton').should('be.visible').click();
-
-        // # Search for Off-Topic and press Enter
-        cy.get('.channel-switcher__suggestion-box #quickSwitchInput').type('Off-Topic');
-        cy.get('.channel-switcher__suggestion-box #suggestionList').should('be.visible');
-        cy.get('.channel-switcher__suggestion-box #quickSwitchInput').type('{enter}');
-
-        // * Verify that the channel switcher is closed and the active channel is now Off-Topic
-        cy.get('.channel-switch__modal').should('not.be.visible');
-        cy.url().should('include', `/${teamName}/channels/off-topic`);
-        cy.get('#channelHeaderTitle').should('contain', 'Off-Topic');
-        cy.get('.SidebarChannel.active:contains(Off-Topic)').should('be.visible');
-    });
 });

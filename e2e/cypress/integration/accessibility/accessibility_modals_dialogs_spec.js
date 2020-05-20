@@ -207,58 +207,6 @@ describe('Verify Accessibility Support in Modals & Dialogs', () => {
         });
     });
 
-    it('MM-22623 Accessibility Support in Manage Channel Members Dialog screen', () => {
-        cy.visit('/ad-1/channels/off-topic');
-
-        // # Adding at least two other users in the channel
-        cy.getCurrentChannelId().then((channelId) => {
-            cy.apiGetUserByEmail(user1.email).then((res) => {
-                const user = res.body;
-                cy.apiAddUserToChannel(channelId, user.id);
-            });
-            cy.apiGetUserByEmail(user2.email).then((res) => {
-                const user = res.body;
-                cy.apiAddUserToChannel(channelId, user.id);
-            });
-        });
-
-        // # Open Channel Members Dialog
-        cy.get('#channelHeaderDropdownIcon').click();
-        cy.findByText('Manage Members').click();
-
-        // * Verify the accessibility support in Manage Members Dialog`
-        cy.get('#channelMembersModal').should('have.attr', 'role', 'dialog').and('have.attr', 'aria-labelledby', 'channelMembersModalLabel').within(() => {
-            cy.get('#channelMembersModalLabel').should('be.visible').and('contain', 'Off-Topic Members');
-            cy.get('.modal-header button.close').should('have.attr', 'aria-label', 'Close');
-
-            // * Verify the accessibility support in search input
-            cy.get('#searchUsersInput').should('have.attr', 'placeholder', 'Search users').focus().type(' {backspace}').wait(TIMEOUTS.TINY).tab({shift: true}).tab().tab();
-
-            // * Verify channel name is highlighted and reader reads the channel name
-            cy.get('.more-modal__list>div').children().eq(0).as('selectedRow');
-            cy.get('@selectedRow').within(() => {
-                cy.get('.more-modal__actions button').
-                    should('have.class', 'a11y--active a11y--focused');
-                cy.get('.more-modal__name').invoke('text').then((user) => {
-                    selectedRowText = user.split(' - ')[0].replace('@', '');
-                    cy.get('.more-modal__actions button .sr-only').should('have.text', selectedRowText);
-                });
-
-                // * Verify image alt is displayed
-                cy.get('img.Avatar').should('have.attr', 'alt', 'user profile image');
-            });
-
-            // * Press Tab again and verify if focus changes to next row
-            cy.focused().tab();
-            cy.get('.more-modal__list>div').children().eq(1).as('selectedRow').
-                get('.more-modal__actions button').
-                should('have.class', 'a11y--active a11y--focused');
-
-            // * Verify accessibility support in search total results
-            cy.get('#searchableUserListTotal').should('have.attr', 'aria-live', 'polite');
-        });
-    });
-
     it('MM-24050 Verify Accessibility Support in Invite People Flow', () => {
         // # Open Invite People
         cy.get('#sidebarHeaderDropdownButton').should('be.visible').click();

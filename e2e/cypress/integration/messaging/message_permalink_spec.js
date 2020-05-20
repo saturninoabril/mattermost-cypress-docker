@@ -40,57 +40,6 @@ describe('Message permalink', () => {
         }
     });
 
-    it('M13675-Copy a permalink and paste into another channel', () => {
-        const message = 'Hello' + Date.now();
-        const channelName = 'test-message-channel-1';
-        let linkText;
-        let permalinkId;
-
-        // # Create new DM channel with user's email
-        cy.apiGetUsers(['user-1', 'sysadmin']).then((userResponse) => {
-            const userEmailArray = [userResponse.body[1].id, userResponse.body[0].id];
-
-            cy.apiCreateDirectChannel(userEmailArray).then(() => {
-                cy.visit('/ad-1/messages/@sysadmin');
-
-                // # Post message to use
-                cy.postMessage(message);
-
-                cy.getLastPostId().then((postId) => {
-                    permalinkId = postId;
-
-                    // # Check if ... button is visible in last post right side
-                    cy.get(`#CENTER_button_${postId}`).should('not.be.visible');
-
-                    // # Click on ... button of last post
-                    cy.clickPostDotMenu(postId);
-
-                    // # Click on permalink option
-                    cy.get(`#permalink_${postId}`).should('be.visible').click().wait(TIMEOUTS.SMALL);
-
-                    // * Check clipboard contains permalink
-                    cy.task('getClipboard').should('contain', `/ad-1/pl/${postId}`).then((text) => {
-                        linkText = text;
-                    });
-                });
-            });
-        });
-
-        // # Get current team id
-        cy.getCurrentTeamId().then((teamId) => {
-            // # create public channel to post permalink
-            cy.apiCreateChannel(teamId, channelName, channelName, 'O', 'Test channel').then((response) => {
-                testChannel = response.body;
-
-                cy.apiSaveMessageDisplayPreference('compact');
-                verifyPermalink(message, testChannel, linkText, permalinkId);
-
-                cy.apiSaveMessageDisplayPreference('clean');
-                verifyPermalink(message, testChannel, linkText, permalinkId);
-            });
-        });
-    });
-
     it('Permalink highlight should fade after timeout and change to channel url', () => {
         ignoreUncaughtException();
         const message = 'Hello' + Date.now();

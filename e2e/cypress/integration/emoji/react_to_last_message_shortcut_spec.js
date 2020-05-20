@@ -74,24 +74,6 @@ describe('Keyboard shortcut for adding reactions to last message in channel or t
         });
     });
 
-    it('Should open emoji picker for last message by shortcut in the channel view when the focus is not on the center text box', () => {
-        // # Click anywhere to take focus away from center text box
-        cy.get('#lhsList').within(() => {
-            cy.findByText('Town Square').click();
-        });
-
-        // # Emulate react to last message shortcut without focus on center
-        pressShortcutReactToLastMessage();
-
-        // Add reaction on the opened emoji picker
-        addingReactionWithEmojiPicker();
-
-        // * Check if the emoji picker has the entered reaction to last message
-        cy.getLastPostId().then((lastPostId) => {
-            checkingIfReactionsWereAddedToPost(lastPostId);
-        });
-    });
-
     it('Should open emoji picker for last message by shortcut when focus is on RHS comment with root post only', () => {
         // # Mouseover the last post and click post comment icon.
         cy.clickPostCommentIcon();
@@ -276,114 +258,6 @@ describe('Keyboard shortcut for adding reactions to last message in channel or t
                 cy.findByLabelText('remove reaction smile').should('not.exist');
             });
         });
-    });
-
-    it('Should open emoji picker for last post by shortcut on center when RHS is open but focus is on Center textbox', () => {
-        // # Mouseover the entered post and click post comment icon.
-        cy.clickPostCommentIcon();
-
-        // * Check that the RHS is open
-        cy.get('#rhsContainer').should('be.visible');
-
-        // # Post a replies in RHS.
-        cy.postMessageReplyInRHS(MESSAGES.SMALL);
-        cy.postMessageReplyInRHS(MESSAGES.TINY);
-
-        // # Save the post id in RHS, where reaction should not be added
-        cy.getLastPostId().then((lastPostId) => {
-            cy.get(`#${lastPostId}_message`).as('postInRHS');
-        });
-
-        // # Incoming posts from other user
-        cy.postMessageAs({
-            sender: users['user-2'],
-            message: MESSAGES.MEDIUM,
-            channelId
-        });
-        cy.wait(TIMEOUTS.SMALL);
-
-        // # Click anywhere to take focus away from RHS text box
-        cy.get('#lhsList').within(() => {
-            cy.findByText('Town Square').click();
-        });
-
-        // # Focus back on Center textbox and enter shortcut
-        pressShortcutReactToLastMessage('CENTER');
-
-        // * Check that emoji picker is opened when focus is on CENTER textbox
-        addingReactionWithEmojiPicker();
-
-        // # This post is in Center, where reaction is to be added
-        cy.getLastPostId().then((lastPostId) => {
-            cy.get(`#${lastPostId}_message`).as('postInCenter');
-        });
-
-        // * Check if the emoji picker has the entered reaction to the message in the center
-        cy.get('@postInCenter').within(() => {
-            checkingIfReactionsWereAddedToPost('', false);
-        });
-
-        // * Check if the emoji picker has not entered reaction to the message in the RHS
-        cy.get('@postInRHS').within(() => {
-            cy.findByLabelText('reactions').should('not.exist');
-            cy.findByLabelText('remove reaction smile').should('not.exist');
-        });
-
-        cy.closeRHS();
-    });
-
-    it('Should open emoji picker for last message by shortcut on center when RHS is open but focus is neither on RHS nor Center text box ', () => {
-        // # Mouseover the entered post and click post comment icon.
-        cy.clickPostCommentIcon();
-
-        // * Check that the RHS is open
-        cy.get('#rhsContainer').should('be.visible');
-
-        // # Post a replies in RHS.
-        cy.postMessageReplyInRHS(MESSAGES.SMALL);
-        cy.postMessageReplyInRHS(MESSAGES.TINY);
-
-        // # Save the post id in RHS, where reaction should not be added
-        cy.getLastPostId().then((lastPostId) => {
-            cy.get(`#${lastPostId}_message`).as('postInRHS');
-        });
-
-        // # Incoming posts from other user
-        cy.postMessageAs({
-            sender: users['user-2'],
-            message: MESSAGES.MEDIUM,
-            channelId
-        });
-        cy.wait(TIMEOUTS.SMALL);
-
-        // # Click anywhere to take focus away from RHS text box
-        cy.get('#lhsList').within(() => {
-            cy.findByText('Town Square').click();
-        });
-
-        // # Enter shortcut without focus on Center textbox
-        pressShortcutReactToLastMessage();
-
-        // * Check that emoji picker is opened when focus is not on CENTER textbox
-        addingReactionWithEmojiPicker();
-
-        // # This post is in Center, where reaction is to be added
-        cy.getLastPostId().then((lastPostId) => {
-            cy.get(`#${lastPostId}_message`).as('postInCenter');
-        });
-
-        // * Check if the emoji picker has the entered reaction to the message in the center
-        cy.get('@postInCenter').within(() => {
-            checkingIfReactionsWereAddedToPost('', false);
-        });
-
-        // * Check if the emoji picker has not entered reaction to the message in the RHS
-        cy.get('@postInRHS').within(() => {
-            cy.findByLabelText('reactions').should('not.exist');
-            cy.findByLabelText('remove reaction smile').should('not.exist');
-        });
-
-        cy.closeRHS();
     });
 
     it('Should not open emoji picker by shortcut when the last message is not in the user view anymore', () => {

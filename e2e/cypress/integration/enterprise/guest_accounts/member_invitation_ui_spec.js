@@ -188,37 +188,6 @@ describe('Guest Account - Member Invitation Flow', () => {
         cy.get('.InvitationModal').should('not.exist');
     });
 
-    it('MM-18040 Verify Invite New/Existing Users', () => {
-        // # Login as new user and get the user id
-        cy.apiCreateNewUser().then((newUser) => {
-            cy.apiAddUserToTeam(testTeam.id, newUser.id);
-
-            // # Logout sysadmin, then login as new user
-            cy.apiLogout();
-            cy.apiLogin(newUser.username, newUser.password);
-            cy.visit(`/${testTeam.name}`);
-        });
-
-        // # Search and add an existing member by username who is part of the team
-        invitePeople(sysadmin.username, 1, sysadmin.username);
-
-        // * Verify the content and message in next screen
-        verifyInvitationError(sysadmin.username, 'This person is already a team member.');
-
-        // # Search and add an existing member by email who is not part of the team
-        invitePeople(user1.email, 1, user1.username);
-
-        // * Verify the content and message in next screen
-        verifyInvitationSuccess(user1.username, 'This member has been added to the team.');
-
-        // # Search and add a new member by email who is not part of the team
-        const email = `temp-${getRandomId().toString()}@mattermost.com`;
-        invitePeople(email, 1, email);
-
-        // * Verify the content and message in next screen
-        verifyInvitationSuccess(email, 'An invitation email has been sent.');
-    });
-
     it('MM-22037 Invite Member via Email containing upper case letters', () => {
         // # Invite a email containing uppercase letters
         const email = `tEMp-${getRandomId()}@mattermost.com`;
