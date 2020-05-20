@@ -1306,26 +1306,26 @@ Cypress.Commands.add('apiGetMetadataFromIdp', (samlMetadataUrl) => {
 
 /**
  * Upload SAML IDP certificate directly via API
- * @param {String} filename
+ * @param {String} fileName
  */
-Cypress.Commands.add('apiUploadSAMLIDPCert', (filename) => {
-    cy.apiUploadFile('/api/v4/saml/certificate/idp', 'POST', 'certificate', filename);
+Cypress.Commands.add('apiUploadSAMLIDPCert', (fileName) => {
+    cy.apiUploadFile('/api/v4/saml/certificate/idp', 'POST', 'certificate', fileName);
 });
 
 /**
  * Upload SAML public certificate directly via API
- * @param {String} filename
+ * @param {String} fileName
  */
-Cypress.Commands.add('apiUploadSAMLPublicCert', (filename) => {
-    cy.apiUploadFile('/api/v4/saml/certificate/public', 'POST', 'certificate', filename);
+Cypress.Commands.add('apiUploadSAMLPublicCert', (fileName) => {
+    cy.apiUploadFile('/api/v4/saml/certificate/public', 'POST', 'certificate', fileName);
 });
 
 /**
  * Upload SAML private Key directly via API
- * @param {String} filename
+ * @param {String} fileName
  */
-Cypress.Commands.add('apiUploadSAMLPrivateKey', (filename) => {
-    cy.apiUploadFile('/api/v4/saml/certificate/private', 'POST', 'certificate', filename);
+Cypress.Commands.add('apiUploadSAMLPrivateKey', (fileName) => {
+    cy.apiUploadFile('/api/v4/saml/certificate/private', 'POST', 'certificate', fileName);
 });
 
 // *****************************************************************************
@@ -1337,15 +1337,15 @@ Cypress.Commands.add('apiUploadSAMLPrivateKey', (filename) => {
  * @param {String} url
  * @param {String} method
  * @param {String} formName
- * @param {String} filename
+ * @param {String} fileName
  */
-Cypress.Commands.add('apiUploadFile', (url, method, formName, filename, successStatus = 200) => {
+Cypress.Commands.add('apiUploadFile', (url, method, formName, fileName, successStatus = 200) => {
     const formData = new FormData();
 
-    cy.fixture(filename, 'binary', {timeout: 1200000}).
+    cy.fixture(fileName, 'binary', {timeout: 1200000}).
         then(Cypress.Blob.binaryStringToBlob).
         then((blob) => {
-            formData.set(formName, blob, filename);
+            formData.set(formName, blob, fileName);
             formRequest(method, url, formData, successStatus);
         });
 });
