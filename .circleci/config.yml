@@ -98,16 +98,13 @@ jobs:
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
             - ./e2e/node_modules
-      - run: # run tests
+      - run:
           name: Run Cypress Test
           command: |
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
-            # export TYPE=DAILY
             export BRANCH=master
             export BUILD_ID=$CIRCLE_BUILD_NUM
-
-            # export DASHBOARD_ENABLE=true
 
             export BROWSER=chrome
             # export HEADLESS=false
@@ -116,3 +113,24 @@ jobs:
             export CYPRESS_runLDAPSync=false
 
             cd e2e && node run_tests.js --stage='@prod'
+
+      - run:
+          name: Save and publish reports
+          command: |
+            export DIAGNOSTIC_USER_ID=`psql -d $TEST_DATABASE_URL -t -c "SELECT id FROM users WHERE username='sysadmin';"`
+            export DIAGNOSTIC_TEAM_ID=`psql -d $TEST_DATABASE_URL -t -c "SELECT id FROM teams WHERE name='ad-1';"`
+
+            # export TYPE=DAILY
+            export BRANCH=master
+            export BUILD_ID=$CIRCLE_BUILD_NUM
+
+            # This is how it should be on main org repo
+            # Should match the tag in mattermost/mattermost-enterprise-edition image
+            # export BUILD_TAG="${CIRCLE_SHA1:0:7}"
+
+            # Temporarily set tag
+            export BUILD_TAG=abcdefg
+
+            # export DASHBOARD_ENABLE=true
+
+            cd e2e && node save_report.js
