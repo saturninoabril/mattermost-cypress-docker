@@ -497,6 +497,9 @@ Cypress.Commands.add('apiSaveUserPreference', (preferences = [], userId = 'me') 
         url: `/api/v4/users/${userId}/preferences`,
         method: 'PUT',
         body: preferences,
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        cy.wrap(response);
     });
 });
 

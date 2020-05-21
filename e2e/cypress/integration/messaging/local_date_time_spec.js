@@ -24,8 +24,9 @@ describe('Messaging', () => {
             },
         });
 
-        // # Login as user-1
+        // # Login as user-1 and update time format preference
         cy.apiLogin('user-1');
+        setTo24HourTimeFormat(false);
 
         // # Create and visit new channel
         cy.createAndVisitNewChannel().then((channel) => {
