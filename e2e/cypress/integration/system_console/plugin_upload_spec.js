@@ -87,4 +87,3 @@ describe('Draw Plugin - Upload', () => {
         cy.findByTestId('com.mattermost.draw-plugin').should('not.exist');
     });
 });
-

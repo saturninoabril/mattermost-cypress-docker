@@ -89,7 +89,7 @@ Cypress.Commands.add('apiGetBots', () => {
  * All parameters required except purpose and header
  */
 Cypress.Commands.add('apiCreateChannel', (teamId, name, displayName, type = 'O', purpose = '', header = '') => {
-    const uniqueName = `${name}-${getRandomId().toString()}`;
+    const uniqueName = `${name}-${getRandomId()}`;
 
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -268,33 +268,6 @@ Cypress.Commands.add('apiCreateCommand', (command = {}) => {
 });
 
 // *****************************************************************************
-// Elasticsearch
-// https://api.mattermost.com/#tag/elasticsearch
-// *****************************************************************************
-
-/**
- * Test Elasticsearch configuration directly via API
- * Test the current Elasticsearch configuration to see if the Elasticsearch server can be contacted successfully.
- * Optionally provide a configuration in the request body to test.
- * If no valid configuration is present in the request body the current server configuration will be tested.
- * This API assume that the user is logged in and has cookie to access
- * @param {Object} config 
- */
-Cypress.Commands.add('apiElasticsearchTest', (config) => {
-    const uniqueName = `${name}-${getRandomId().toString()}`;
-
-    return cy.request({
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-        url: '/api/v4/elasticsearch/test',
-        method: 'POST',
-        body: config,
-    }).then((response) => {
-        expect(response.status).to.equal(201);
-        cy.wrap(response);
-    });
-});
-
-// *****************************************************************************
 // Email
 // *****************************************************************************
 
@@ -326,7 +299,7 @@ Cypress.Commands.add('apiEmailTest', () => {
  * All parameters required
  */
 Cypress.Commands.add('apiCreateTeam', (name, displayName, type = 'O') => {
-    const uniqueName = `${name}-${getRandomId().toString()}`;
+    const uniqueName = `${name}-${getRandomId()}`;
 
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -723,8 +696,7 @@ Cypress.Commands.add('apiCreateNewUser', (user = {}, teamIds = [], bypassTutoria
         firstName = `First${randomId}`,
         lastName = `Last${randomId}`,
         nickname = `NewE2ENickname${randomId}`,
-        password = 'password123'
-    } = user;
+        password = 'password123'} = user;
 
     const createUserOption = {
         headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -1122,7 +1094,7 @@ Cypress.Commands.add('apiEnablePluginById', (pluginId) => {
  * @param {String} filename - name of the plugin to upload
  */
 Cypress.Commands.add('apiUploadPlugin', (filename) => {
-    cy.apiUploadFile('/api/v4/plugins', 'POST', 'plugin', filename, 201);
+    cy.apiUploadFile('plugin', filename, {url: '/api/v4/plugins', method: 'POST', successStatus: 201});
 });
 
 /**
@@ -1273,10 +1245,8 @@ Cypress.Commands.add('apiActivateUser', (userId, active = true) => {
 
 /**
  * Get SAML certificate status directly via API.
- *
- * @param {String} samlMetadataUrl
  */
-Cypress.Commands.add('apiGetSAMLCertificateStatus', (samlMetadataUrl) => {
+Cypress.Commands.add('apiGetSAMLCertificateStatus', () => {
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: '/api/v4/saml/certificate/status',
@@ -1306,26 +1276,26 @@ Cypress.Commands.add('apiGetMetadataFromIdp', (samlMetadataUrl) => {
 
 /**
  * Upload SAML IDP certificate directly via API
- * @param {String} fileName
+ * @param {String} filename
  */
-Cypress.Commands.add('apiUploadSAMLIDPCert', (fileName) => {
-    cy.apiUploadFile('/api/v4/saml/certificate/idp', 'POST', 'certificate', fileName);
+Cypress.Commands.add('apiUploadSAMLIDPCert', (filename) => {
+    cy.apiUploadFile('certificate', filename, {url: '/api/v4/saml/certificate/idp', method: 'POST', successStatus: 201});
 });
 
 /**
  * Upload SAML public certificate directly via API
- * @param {String} fileName
+ * @param {String} filename
  */
-Cypress.Commands.add('apiUploadSAMLPublicCert', (fileName) => {
-    cy.apiUploadFile('/api/v4/saml/certificate/public', 'POST', 'certificate', fileName);
+Cypress.Commands.add('apiUploadSAMLPublicCert', (filename) => {
+    cy.apiUploadFile('certificate', filename, {url: '/api/v4/saml/certificate/public', method: 'POST', successStatus: 200});
 });
 
 /**
  * Upload SAML private Key directly via API
- * @param {String} fileName
+ * @param {String} filename
  */
-Cypress.Commands.add('apiUploadSAMLPrivateKey', (fileName) => {
-    cy.apiUploadFile('/api/v4/saml/certificate/private', 'POST', 'certificate', fileName);
+Cypress.Commands.add('apiUploadSAMLPrivateKey', (filename) => {
+    cy.apiUploadFile('certificate', filename, {url: '/api/v4/saml/certificate/private', method: 'POST', successStatus: 200});
 });
 
 // *****************************************************************************
@@ -1334,19 +1304,21 @@ Cypress.Commands.add('apiUploadSAMLPrivateKey', (fileName) => {
 
 /**
  * Upload file directly via API
- * @param {String} url
- * @param {String} method
- * @param {String} formName
- * @param {String} fileName
+ * @param {String} name - name of form
+ * @param {String} filename - name of a file to upload
+ * @param {Object} options - request options
+ * @param {String} options.url
+ * @param {String} options.method
+ * @param {Number} options.successStatus
  */
-Cypress.Commands.add('apiUploadFile', (url, method, formName, fileName, successStatus = 200) => {
+Cypress.Commands.add('apiUploadFile', (name, filename, options = {}) => {
     const formData = new FormData();
 
-    cy.fixture(fileName, 'binary', {timeout: 1200000}).
+    cy.fixture(filename, 'binary', {timeout: 1200000}).
         then(Cypress.Blob.binaryStringToBlob).
         then((blob) => {
-            formData.set(formName, blob, fileName);
-            formRequest(method, url, formData, successStatus);
+            formData.set(name, blob, filename);
+            formRequest(options.method, options.url, formData, options.successStatus);
         });
 });
 
@@ -1356,7 +1328,7 @@ Cypress.Commands.add('apiUploadFile', (url, method, formName, fileName, successS
  * @param {String} url - HTTP resource URL
  * @param {FormData} FormData - Key value pairs representing form fields and value
  */
-function formRequest(method, url, formData, successStatus = 201) {
+function formRequest(method, url, formData, successStatus) {
     const baseUrl = Cypress.config('baseUrl');
     const xhr = new XMLHttpRequest();
     xhr.open(method, url, false);

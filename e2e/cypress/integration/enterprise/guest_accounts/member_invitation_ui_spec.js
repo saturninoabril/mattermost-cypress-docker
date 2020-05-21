@@ -114,7 +114,7 @@ describe('Guest Account - Member Invitation Flow', () => {
     });
 
     it('MM-18039 Verify UI Elements of Members Invitation Flow', () => {
-        const email = `temp-${getRandomId().toString()}@mattermost.com`;
+        const email = `temp-${getRandomId()}@mattermost.com`;
 
         // # Open Invite People
         cy.get('#sidebarHeaderDropdownButton').should('be.visible').click();
@@ -212,7 +212,7 @@ describe('Guest Account - Member Invitation Flow', () => {
         verifyInvitationSuccess(user1.username, 'This member has been added to the team.');
 
         // # Search and add a new member by email who is not part of the team
-        const email = `temp-${getRandomId().toString()}@mattermost.com`;
+        const email = `temp-${getRandomId()}@mattermost.com`;
         invitePeople(email, 1, email);
 
         // * Verify the content and message in next screen
