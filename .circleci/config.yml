@@ -136,6 +136,9 @@ jobs:
             # Temporarily set tag
             export BUILD_TAG=latest
 
+            export BROWSER=chrome
+            # export HEADLESS=false
+
             # export DASHBOARD_ENABLE=true
             # export FULL_REPORT=true
 
