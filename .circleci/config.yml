@@ -120,17 +120,23 @@ jobs:
             export DIAGNOSTIC_USER_ID=`psql -d $TEST_DATABASE_URL -t -c "SELECT id FROM users WHERE username='sysadmin';"`
             export DIAGNOSTIC_TEAM_ID=`psql -d $TEST_DATABASE_URL -t -c "SELECT id FROM teams WHERE name='ad-1';"`
 
-            # export TYPE=DAILY
+            # export TYPE=MASTER
             export BRANCH=master
             export BUILD_ID=$CIRCLE_BUILD_NUM
+
+            # This is how it should be on main org repo
+            # export PULL_REQUEST=$CIRCLE_PULL_REQUESTS
+            # Temporarily set PR
+            # export PULL_REQUEST=latest
 
             # This is how it should be on main org repo
             # Should match the tag in mattermost/mattermost-enterprise-edition image
             # export BUILD_TAG="${CIRCLE_SHA1:0:7}"
 
             # Temporarily set tag
-            export BUILD_TAG=abcdefg
+            export BUILD_TAG=latest
 
             # export DASHBOARD_ENABLE=true
+            # export FULL_REPORT=true
 
             cd e2e && node save_report.js
