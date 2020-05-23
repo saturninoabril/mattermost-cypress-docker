@@ -171,11 +171,9 @@ function generateTestReport(summary, isUploadedToS3, reportLink) {
             }],
         };
     } else {
-        reportLink = 'https://something';
-        isUploadedToS3 = true
         let summary = `${stats.passPercent.toFixed(2)}% (${stats.passes}/${stats.tests}) in ${stats.suites} suites`;
         if (isUploadedToS3) {
-            summary = `[${stats.passPercent.toFixed(2)}% (${stats.passes}/${stats.tests}) in ${stats.suites} suites](${reportLink})`;
+            summary = `[${summary}](${reportLink})`;
         }
 
         return {

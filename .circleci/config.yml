@@ -127,7 +127,7 @@ jobs:
             # This is how it should be on main org repo
             # export PULL_REQUEST=$CIRCLE_PULL_REQUESTS
             # Temporarily set PR
-            # export PULL_REQUEST=latest
+            # export PULL_REQUEST=
 
             # This is how it should be on main org repo
             # Should match the tag in mattermost/mattermost-enterprise-edition image
