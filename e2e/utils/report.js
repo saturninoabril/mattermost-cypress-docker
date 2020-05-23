@@ -3,8 +3,11 @@
 
 /* eslint-disable no-console */
 
+const os = require('os');
 const axios = require('axios');
 const fse = require('fs-extra');
+
+const {MOCHAWESOME_REPORT_DIR} = require('./constants');
 
 const MAX_FAILED_TITLES = 5;
 
@@ -68,6 +71,14 @@ function generateShortSummary(report) {
     };
 }
 
+function removeOldGeneratedReports() {
+    [
+        'all.json',
+        'summary.json',
+        'mochawesome.html',
+    ].forEach((file) => fse.removeSync(`${MOCHAWESOME_REPORT_DIR}/${file}`));
+}
+
 function writeJsonToFile(jsonObject, filename, dir) {
     fse.writeJson(`${dir}/${filename}`, jsonObject).
         then(() => console.log('Successfully written:', filename)).
@@ -82,7 +93,15 @@ const result = [
 ];
 
 function generateTestReport(summary, isUploadedToS3, reportLink) {
-    const {BRANCH, BROWSER} = process.env;
+    const {
+        BRANCH,
+        BROWSER,
+        BUILD_TAG,
+        FULL_REPORT,
+        HEADLESS,
+        PULL_REQUEST,
+        TYPE,
+    } = process.env;
     const {statsFieldValue, stats} = summary;
 
     let testResult;
@@ -102,31 +121,74 @@ function generateTestReport(summary, isUploadedToS3, reportLink) {
         };
     }
 
-    return {
-        username: 'Cypress UI Test',
-        icon_url: 'https://www.mattermost.org/wp-content/uploads/2016/04/icon.png',
-        attachments: [{
-            color: testResult.color,
-            author_name: 'Cypress UI Test',
-            author_icon: 'https://www.mattermost.org/wp-content/uploads/2016/04/icon.png',
-            author_link: 'https://www.mattermost.com',
-            title: `Cypress UI Test Automation ${testResult.status}!`,
-            fields: [
-                {
-                    short: false,
-                    title: 'Environment',
-                    value: `Branch: **${BRANCH}**, Browser: **${BROWSER}**`,
-                },
-                awsS3Fields,
-                {
-                    short: false,
-                    title: `Key metrics (required support: ${testResult.priority})`,
-                    value: statsFieldValue,
-                }
-            ],
-            image_url: 'https://pbs.twimg.com/profile_images/1044345247440896001/pXI1GDHW_bigger.jpg'
-        }],
-    };
+    let dockerImageLink;
+    if (BUILD_TAG) {
+        dockerImageLink = `[mattermost-enterprise-edition:${BUILD_TAG}](https://hub.docker.com/r/mattermost/mattermost-enterprise-edition/tags?page=1&page_size=1&name=${BUILD_TAG})`;
+    }
+
+    let title;
+
+    switch (TYPE) {
+    case 'PR':
+        title = `E2E for Pull Request Build: [${BRANCH}](${PULL_REQUEST}) with ${BUILD_TAG ? dockerImageLink : ''}`;
+        break;
+    case 'RELEASE':
+        title = `E2E for Release Build with ${BUILD_TAG ? dockerImageLink : ''}`;
+        break;
+    case 'MASTER':
+        title = `E2E for Master Nightly Build (Prod tests) with ${BUILD_TAG ? dockerImageLink : ''}`;
+        break;
+    case 'MASTER_UNSTABLE':
+            title = `E2E for Master Nightly Build (Unstable tests) with ${BUILD_TAG ? dockerImageLink : ''}`;
+            break;
+    default:
+        title = 'Cypress UI Test';
+    }
+
+    if (FULL_REPORT) {
+        return {
+            username: 'Cypress UI Test',
+            icon_url: 'https://www.mattermost.org/wp-content/uploads/2016/04/icon.png',
+            attachments: [{
+                color: testResult.color,
+                author_name: 'Cypress UI Test',
+                author_icon: 'https://www.mattermost.org/wp-content/uploads/2016/04/icon.png',
+                author_link: 'https://www.mattermost.com',
+                title,
+                fields: [
+                    {
+                        short: false,
+                        title: 'Environment',
+                        value: `Branch: **${BRANCH}**, Browser: **${BROWSER}**`,
+                    },
+                    awsS3Fields,
+                    {
+                        short: false,
+                        title: `Key metrics (required support: ${testResult.priority})`,
+                        value: statsFieldValue,
+                    },
+                ],
+            }],
+        };
+    } else {
+        let summary = `${stats.passPercent.toFixed(2)}% (${stats.passes}/${stats.tests}) in ${stats.suites} suites`;
+        if (isUploadedToS3) {
+            summary = `[${summary}](${reportLink})`;
+        }
+
+        return {
+            username: 'Cypress UI Test',
+            icon_url: 'https://www.mattermost.org/wp-content/uploads/2016/04/icon.png',
+            attachments: [{
+                color: testResult.color,
+                author_name: 'Webapp End-to-end Testing',
+                author_icon: 'https://www.mattermost.org/wp-content/uploads/2016/04/icon.png',
+                author_link: 'https://www.mattermost.com/',
+                title,
+                text: `${summary} | ${(stats.duration / (60 * 1000)).toFixed(2)} mins | ${os.type()} ${BROWSER} (${HEADLESS === 'false', 'headed', 'headless'})`,
+            }],
+        }
+    }
 }
 
 function generateDiagnosticReport(summary, serverInfo) {
@@ -170,6 +232,7 @@ module.exports = {
     generateShortSummary,
     generateTestReport,
     getAllTests,
+    removeOldGeneratedReports,
     sendReport,
     writeJsonToFile,
 };

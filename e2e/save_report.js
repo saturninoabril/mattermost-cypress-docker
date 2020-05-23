@@ -15,9 +15,9 @@
  *   For saving reports to Automation dashboard
  *      - DASHBOARD_ENABLE, DASHBOARD_ENDPOINT and DASHBOARD_TOKEN
  *   For sending hooks to Mattermost channels
- *      - WEBHOOK_URL and DIAGNOSTIC_WEBHOOK_URL
+ *      - FULL_REPORT, WEBHOOK_URL and DIAGNOSTIC_WEBHOOK_URL
  *   Test type
- *      - TYPE=[type], e.g. "DAILY", "PR", "RELEASE"
+ *      - TYPE=[type], e.g. "MASTER", "PR", "RELEASE"
  */
 
 const {merge} = require('mochawesome-merge');
@@ -27,8 +27,9 @@ const {
     generateDiagnosticReport,
     generateShortSummary,
     generateTestReport,
+    removeOldGeneratedReports,
     sendReport,
-    writeJsonToFile
+    writeJsonToFile,
 } = require('./utils/report');
 const {saveArtifacts} = require('./utils/artifacts');
 const {MOCHAWESOME_REPORT_DIR} = require('./utils/constants');
@@ -49,6 +50,8 @@ const saveReport = async () => {
         WEBHOOK_URL,
     } = process.env;
 
+    removeOldGeneratedReports();
+
     // Merge all json reports into one single json report
     const jsonReport = await merge({files: [`${MOCHAWESOME_REPORT_DIR}/**/*.json`]});
     writeJsonToFile(jsonReport, 'all.json', MOCHAWESOME_REPORT_DIR);
@@ -58,8 +61,8 @@ const saveReport = async () => {
         jsonReport,
         {
             reportDir: MOCHAWESOME_REPORT_DIR,
-            reportTitle: `Build:${BUILD_ID} Branch: ${BRANCH} Commit: ${BUILD_TAG}`,
-        }
+            reportTitle: `Build:${BUILD_ID} Branch: ${BRANCH} Tag: ${BUILD_TAG}`,
+        },
     );
 
     // Generate short summary, write to file and then send report via webhook
@@ -79,8 +82,8 @@ const saveReport = async () => {
     }
 
     // Send diagnostic report via webhook
-    // Send on "DAILY" type only
-    if (TYPE === 'DAILY' && DIAGNOSTIC_WEBHOOK_URL && DIAGNOSTIC_USER_ID && DIAGNOSTIC_TEAM_ID) {
+    // Send on "RELEASE" type only
+    if (TYPE === 'RELEASE' && DIAGNOSTIC_WEBHOOK_URL && DIAGNOSTIC_USER_ID && DIAGNOSTIC_TEAM_ID) {
         const data = generateDiagnosticReport(summary, {userId: DIAGNOSTIC_USER_ID, teamId: DIAGNOSTIC_TEAM_ID});
         await sendReport('test info for diagnostic analysis', DIAGNOSTIC_WEBHOOK_URL, data);
     }

@@ -131,5 +131,6 @@ jobs:
             export BROWSER=chrome
 
             export DASHBOARD_ENABLE=true
+            export FULL_REPORT=true
 
             cd e2e && node save_report.js
