@@ -123,7 +123,7 @@ function generateTestReport(summary, isUploadedToS3, reportLink) {
 
     let dockerImageLink;
     if (BUILD_TAG) {
-        dockerImageLink = `[mattermost-enterprise-edition:${BUILD_TAG}](https://hub.docker.com/r/mattermost/mattermost-enterprise-edition/tags?page=1&page_size=1&name=${BUILD_TAG})`;
+        dockerImageLink = `[mattermost-enterprise-edition:${BUILD_TAG}](https://hub.docker.com/r/mattermost/mattermost-enterprise-edition/tags?name=${BUILD_TAG})`;
     }
 
     let title;
