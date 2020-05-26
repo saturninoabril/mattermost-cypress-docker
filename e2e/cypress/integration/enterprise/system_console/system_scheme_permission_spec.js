@@ -8,6 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
+// Group: @enterprise @system_console
 
 import users from '../../../fixtures/users.json';
 

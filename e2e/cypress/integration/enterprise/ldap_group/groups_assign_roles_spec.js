@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @enterprise @ldap @ldap_group
+// Group: @enterprise @ldap_group
 
 // # Function to get all the teams associated to group and unlink them
 const getTeamsAssociatedToGroupAndUnlink = (groupId) => {
