@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @enterprise @ldap @ldap_group
+// Group: @enterprise @ldap_group
 
 describe('Group Synced Team - Bot invitation flow', () => {
     let groupConstrainedTeam;

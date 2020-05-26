@@ -7,8 +7,8 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: @prod
-// Group: @enterprise @ldap @ldap_group
+// Stage: @prod @smoke
+// Group: @enterprise @ldap_group
 
 describe('Test channel public/private toggle', () => {
     before(() => {
