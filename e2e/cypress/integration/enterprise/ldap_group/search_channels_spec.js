@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @enterprise @ldap @ldap_group
+// Group: @enterprise @ldap_group
 
 import {v4 as uuidv4} from 'uuid';
 const PAGE_SIZE = 10;
