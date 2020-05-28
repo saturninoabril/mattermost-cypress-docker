@@ -848,12 +848,23 @@ Cypress.Commands.add('requireLicense', () => {
     });
 });
 
+const getDefaultConfig = () => {
+    const fromCypressEnv = {
+        LdapSettings: {
+            LdapServer: Cypress.env('ldapServer'),
+            LdapPort: Cypress.env('ldapPort'),
+        },
+    };
+
+    return merge(partialDefaultConfig, fromCypressEnv);
+}
+
 Cypress.Commands.add('apiUpdateConfig', (newSettings = {}) => {
     // # Get current settings
     return cy.request('/api/v4/config').then((response) => {
         const oldSettings = response.body;
 
-        const settings = merge(oldSettings, partialDefaultConfig, newSettings);
+        const settings = merge(oldSettings, getDefaultConfig(), newSettings);
 
         // # Set the modified settings
         return cy.request({
@@ -1238,6 +1249,11 @@ Cypress.Commands.add('apiActivateUser', (userId, active = true) => {
     cy.externalRequest({user: users.sysadmin, method: 'put', baseUrl, path: `users/${userId}/active`, data: {active}});
 });
 
+// *****************************************************************************
+// Groups
+// https://api.mattermost.com/#tag/groups
+// *****************************************************************************
+
 /**
  * Get all groups via the API
  *
@@ -1275,6 +1291,98 @@ Cypress.Commands.add('apiPatchGroup', (groupID, patch) => {
         method: 'PUT',
         timeout: 60000,
         body: patch,
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap(response);
+    });
+});
+
+/**
+ * Get all LDAP groups via the API
+ *
+ * @param {Integer} page - The desired page of the paginated list
+ * @param {Integer} perPage - The number of groups per page
+ *
+ */
+Cypress.Commands.add('apiGetLDAPGroups', (page = 0, perPage = 100) => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/ldap/groups?page=${page}&per_page=${perPage}`,
+        method: 'GET',
+        timeout: 60000,
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap(response);
+    });
+});
+
+/**
+ * Retrieve the list of groups associated with a given team via API
+ * @param {String} teamId - Team GUID
+ */
+Cypress.Commands.add('apiAddLDAPGroupLink', (remoteId) => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/ldap/groups/${remoteId}/link`,
+        method: 'POST',
+    }).then((response) => {
+        return cy.wrap(response);
+    });
+});
+
+/**
+ * Retrieve the list of groups associated with a given team via API
+ * @param {String} teamId - Team GUID
+ */
+Cypress.Commands.add('apiGetTeamGroups', (teamId) => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/teams/${teamId}/groups`,
+        method: 'GET',
+        timeout: 60000,
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap(response);
+    });
+});
+
+/**
+ * Delete a link from a team to a group via API
+ * @param {String} groupId - Group GUID
+ * @param {String} teamId - Team GUID
+ */
+Cypress.Commands.add('apiDeleteLinkFromTeamToGroup', (groupId, teamId) => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/groups/${groupId}/teams/${teamId}/link`,
+        method: 'DELETE',
+        timeout: 60000,
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap(response);
+    });
+});
+
+// *****************************************************************************
+// JOBS
+// https://api.mattermost.com/#tag/jobs
+// *****************************************************************************
+
+/**
+ * Get the jobs of the given type via API
+ *
+ * @param {String} type - jobs type like "data_retention", "message_export", "elasticsearch_post_indexing", 
+ *                                       "elasticsearch_post_aggregation", "bleve_post_indexing", "ldap_sync", 
+ *                                       "migrations", "plugins"
+ * @param {String} page
+ * @param {String} perPage
+ *
+ */
+Cypress.Commands.add('apiGetJobsPerType', (type, page = 0, perPage = 60) => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/jobs/type/${type}?page=${page}&per_page=${perPage}`,
+        method: 'GET',
     }).then((response) => {
         expect(response.status).to.equal(200);
         return cy.wrap(response);

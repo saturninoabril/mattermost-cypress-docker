@@ -65,7 +65,7 @@ jobs:
       - run:
           name: Wait for Elasticsearch
           command: |
-            until curl --max-time 5 --output - localhost:9000; do echo waiting for Elasticsearch; sleep 5; done;
+            until curl --max-time 5 --output - localhost:9200; do echo waiting for Elasticsearch; sleep 5; done;
       - checkout
       - attach_workspace:
           at: ~/mattermost-cypress-docker
