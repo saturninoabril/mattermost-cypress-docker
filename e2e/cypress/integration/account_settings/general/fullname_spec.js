@@ -15,7 +15,6 @@ import {getRandomId} from '../../../utils';
 describe('Account Settings > Sidebar > General', () => {
     // # number to identify particular user
     const randomId = getRandomId();
-
     before(() => {
         cy.apiLogin('sysadmin');
         cy.apiGetTeamByName('ad-1').then((res) => {

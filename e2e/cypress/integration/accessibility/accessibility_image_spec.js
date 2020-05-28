@@ -9,6 +9,7 @@
 
 // Stage: @prod
 // Group: @accessibility
+
 import users from '../../fixtures/users.json';
 
 const otherUser = users['user-1'];

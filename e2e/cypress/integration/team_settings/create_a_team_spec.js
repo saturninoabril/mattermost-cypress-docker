@@ -20,7 +20,7 @@ describe('Teams Suite', () => {
     });
 
     it('TS13872 Create a team', async () => {
-        const teamURL = `team-test-${getRandomId().toString()}`;
+        const teamURL = `team-test-${getRandomId()}`;
 
         // # Click hamburger main menu
         cy.get('#sidebarHeaderDropdownButton').click();

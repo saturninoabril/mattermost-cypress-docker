@@ -8,6 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
+// Group: @enterprise @system_console
 
 import {getRandomId} from '../../../utils';
 import * as TIMEOUTS from '../../../fixtures/timeouts';
