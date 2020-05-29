@@ -75,6 +75,7 @@ jobs:
             whoami
             sudo apt-get update
             sudo apt-get install postgresql-client-9.6
+            psql -d $TEST_DATABASE_URL -c "DROP DATABASE IF EXISTS mattermost_test;"
             psql -d $TEST_DATABASE_URL -c "CREATE DATABASE migrated;"
             psql -d $TEST_DATABASE_URL -c "CREATE DATABASE latest;"
             psql -d $TEST_DATABASE_URL mattermost_test < mattermost-e2e/test-data/postgresql_mattermost_test_db.sql
