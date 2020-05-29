@@ -114,7 +114,7 @@ describe('Guest Account - Member Invitation Flow', () => {
     });
 
     it('MM-18039 Verify UI Elements of Members Invitation Flow', () => {
-        const email = `temp-${getRandomId().toString()}@mattermost.com`;
+        const email = `temp-${getRandomId()}@mattermost.com`;
 
         // # Open Invite People
         cy.get('#sidebarHeaderDropdownButton').should('be.visible').click();

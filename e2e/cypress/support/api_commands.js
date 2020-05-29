@@ -89,7 +89,7 @@ Cypress.Commands.add('apiGetBots', () => {
  * All parameters required except purpose and header
  */
 Cypress.Commands.add('apiCreateChannel', (teamId, name, displayName, type = 'O', purpose = '', header = '') => {
-    const uniqueName = `${name}-${getRandomId().toString()}`;
+    const uniqueName = `${name}-${getRandomId()}`;
 
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -268,33 +268,6 @@ Cypress.Commands.add('apiCreateCommand', (command = {}) => {
 });
 
 // *****************************************************************************
-// Elasticsearch
-// https://api.mattermost.com/#tag/elasticsearch
-// *****************************************************************************
-
-/**
- * Test Elasticsearch configuration directly via API
- * Test the current Elasticsearch configuration to see if the Elasticsearch server can be contacted successfully.
- * Optionally provide a configuration in the request body to test.
- * If no valid configuration is present in the request body the current server configuration will be tested.
- * This API assume that the user is logged in and has cookie to access
- * @param {Object} config 
- */
-Cypress.Commands.add('apiElasticsearchTest', (config) => {
-    const uniqueName = `${name}-${getRandomId().toString()}`;
-
-    return cy.request({
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-        url: '/api/v4/elasticsearch/test',
-        method: 'POST',
-        body: config,
-    }).then((response) => {
-        expect(response.status).to.equal(201);
-        cy.wrap(response);
-    });
-});
-
-// *****************************************************************************
 // Email
 // *****************************************************************************
 
@@ -326,7 +299,7 @@ Cypress.Commands.add('apiEmailTest', () => {
  * All parameters required
  */
 Cypress.Commands.add('apiCreateTeam', (name, displayName, type = 'O') => {
-    const uniqueName = `${name}-${getRandomId().toString()}`;
+    const uniqueName = `${name}-${getRandomId()}`;
 
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -726,8 +699,7 @@ Cypress.Commands.add('apiCreateNewUser', (user = {}, teamIds = [], bypassTutoria
         firstName = `First${randomId}`,
         lastName = `Last${randomId}`,
         nickname = `NewE2ENickname${randomId}`,
-        password = 'password123'
-    } = user;
+        password = 'password123'} = user;
 
     const createUserOption = {
         headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -879,12 +851,23 @@ Cypress.Commands.add('requireLicense', () => {
     });
 });
 
+const getDefaultConfig = () => {
+    const fromCypressEnv = {
+        LdapSettings: {
+            LdapServer: Cypress.env('ldapServer'),
+            LdapPort: Cypress.env('ldapPort'),
+        },
+    };
+
+    return merge(partialDefaultConfig, fromCypressEnv);
+}
+
 Cypress.Commands.add('apiUpdateConfig', (newSettings = {}) => {
     // # Get current settings
     return cy.request('/api/v4/config').then((response) => {
         const oldSettings = response.body;
 
-        const settings = merge(oldSettings, partialDefaultConfig, newSettings);
+        const settings = merge(oldSettings, getDefaultConfig(), newSettings);
 
         // # Set the modified settings
         return cy.request({
@@ -1055,7 +1038,7 @@ Cypress.Commands.add('promoteUser', (userId) => {
  * @param {String} pluginDownloadUrl - URL used to download the plugin
  * @param {String} force - Set to 'true' to overwrite a previously installed plugin with the same ID, if any
  */
-Cypress.Commands.add('installPluginFromUrl', (pluginDownloadUrl, force = false) => {
+Cypress.Commands.add('apiInstallPluginFromUrl', (pluginDownloadUrl, force = false) => {
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: `/api/v4/plugins/install_from_url?plugin_download_url=${encodeURIComponent(pluginDownloadUrl)}&force=${force}`,
@@ -1068,11 +1051,11 @@ Cypress.Commands.add('installPluginFromUrl', (pluginDownloadUrl, force = false) 
 });
 
 /**
- * Uninstall plugin by id.
+ * Remove the plugin with the provided ID from the server. All plugin files are deleted.
  *
  * @param {String} pluginId - Id of the plugin to uninstall
  */
-Cypress.Commands.add('uninstallPluginById', (pluginId) => {
+Cypress.Commands.add('apiRemovePluginById', (pluginId) => {
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: `/api/v4/plugins/${encodeURIComponent(pluginId)}`,
@@ -1090,7 +1073,7 @@ Cypress.Commands.add('uninstallPluginById', (pluginId) => {
  * Get all user`s plugins.
  *
  */
-Cypress.Commands.add('getAllPlugins', () => {
+Cypress.Commands.add('apiGetAllPlugins', () => {
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: '/api/v4/plugins',
@@ -1107,7 +1090,7 @@ Cypress.Commands.add('getAllPlugins', () => {
  *
  * @param {String} pluginId - Id of the plugin to enable
  */
-Cypress.Commands.add('enablePluginById', (pluginId) => {
+Cypress.Commands.add('apiEnablePluginById', (pluginId) => {
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: `/api/v4/plugins/${encodeURIComponent(pluginId)}/enable`,
@@ -1122,17 +1105,10 @@ Cypress.Commands.add('enablePluginById', (pluginId) => {
 
 /**
  * Upload binary file by name and Type *
- * @param {String} fileName - name of the plugin to upload
+ * @param {String} filename - name of the plugin to upload
  */
-Cypress.Commands.add('uploadBinaryFileByName', (fileName) => {
-    const formData = new FormData();
-
-    cy.fixture(fileName, 'binary', {timeout: 1200000}).
-        then(Cypress.Blob.binaryStringToBlob).
-        then((blob) => {
-            formData.set('plugin', blob, fileName);
-            formRequest('POST', '/api/v4/plugins', formData);
-        });
+Cypress.Commands.add('apiUploadPlugin', (filename) => {
+    cy.apiUploadFile('plugin', filename, {url: '/api/v4/plugins', method: 'POST', successStatus: 201});
 });
 
 /**
@@ -1277,20 +1253,239 @@ Cypress.Commands.add('apiActivateUser', (userId, active = true) => {
 });
 
 // *****************************************************************************
+// Groups
+// https://api.mattermost.com/#tag/groups
+// *****************************************************************************
+
+/**
+ * Get all groups via the API
+ *
+ * @param {Integer} page - The desired page of the paginated list
+ * @param {Integer} perPage - The number of groups per page
+ *
+ */
+Cypress.Commands.add('apiGetGroups', (page = 0, perPage = 100) => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/groups?page=${page}&per_page=${perPage}`,
+        method: 'GET',
+        timeout: 60000,
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap(response);
+    });
+});
+
+/**
+  * Get LDAP groups
+  *
+  * @param {Integer} page - The desired page of the paginated list
+  * @param {Integer} perPage - The number of groups per page
+  *
+  */
+Cypress.Commands.add('apiGetLDAPGroups', (page = 0, perPage = 100) => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/ldap/groups?page=${page}&per_page=${perPage}`,
+        method: 'GET',
+        timeout: 60000,
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap(response);
+    });
+});
+
+/**
+ * Patch a group directly via API
+ *
+ * @param {String} name - The new name for the group
+ * @param {Object} patch
+ *   {Boolean} allow_reference - Whether to allow reference (group mention) or not  - true/false
+ *   {String} name - Name for the group, used for group mentions
+ *   {String} display_name - Display name for the group
+ *   {String} description - Description for the group
+ *
+ */
+Cypress.Commands.add('apiPatchGroup', (groupID, patch) => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/groups/${groupID}/patch`,
+        method: 'PUT',
+        timeout: 60000,
+        body: patch,
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap(response);
+    });
+});
+
+/**
+ * Get all LDAP groups via the API
+ * @param {Integer} page - The desired page of the paginated list
+ * @param {Integer} perPage - The number of groups per page
+ *
+ */
+Cypress.Commands.add('apiGetLDAPGroups', (page = 0, perPage = 100) => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/ldap/groups?page=${page}&per_page=${perPage}`,
+        method: 'GET',
+        timeout: 60000,
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap(response);
+    });
+});
+
+/**
+ * Retrieve the list of groups associated with a given team via API
+ * @param {String} teamId - Team GUID
+ */
+Cypress.Commands.add('apiAddLDAPGroupLink', (remoteId) => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/ldap/groups/${remoteId}/link`,
+        method: 'POST',
+    }).then((response) => {
+        expect(response.status).to.be.oneOf([200, 201]);
+        return cy.wrap(response);
+    });
+});
+
+/**
+ * Retrieve the list of groups associated with a given team via API
+ * @param {String} teamId - Team GUID
+ */
+Cypress.Commands.add('apiGetTeamGroups', (teamId) => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/teams/${teamId}/groups`,
+        method: 'GET',
+        timeout: 60000,
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap(response);
+    });
+});
+
+Cypress.Commands.add('apiLinkGroup', (groupID) => {
+    return linkUnlinkGroup(groupID, 'POST');
+});
+
+Cypress.Commands.add('apiUnlinkGroup', (groupID) => {
+    return linkUnlinkGroup(groupID, 'DELETE');
+});
+
+function linkUnlinkGroup(groupID, httpMethod) {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/ldap/groups/${groupID}/link`,
+        method: httpMethod,
+        timeout: 60000,
+    }).then((response) => {
+        expect(response.status).to.be.oneOf([200, 201, 204]);
+        return cy.wrap(response);
+    });
+}
+
+Cypress.Commands.add('apiGetGroupTeams', (groupID) => {
+    return getGroupSyncables(groupID, 'team');
+});
+
+Cypress.Commands.add('apiGetGroupTeam', (groupID, teamID) => {
+    return getGroupSyncable(groupID, 'team', teamID);
+});
+
+Cypress.Commands.add('apiGetGroupChannels', (groupID) => {
+    return getGroupSyncables(groupID, 'channel');
+});
+
+Cypress.Commands.add('apiGetGroupChannel', (groupID, channelID) => {
+    return getGroupSyncable(groupID, 'channel', channelID);
+});
+
+function getGroupSyncable(groupID, syncableType, syncableID) {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/groups/${groupID}/${syncableType}s/${syncableID}`,
+        method: 'GET',
+        timeout: 60000,
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap(response);
+    });
+}
+
+/**
+ * Delete a link from a team to a group via API
+ * @param {String} groupId - Group GUID
+ * @param {String} teamId - Team GUID
+ */
+Cypress.Commands.add('apiDeleteLinkFromTeamToGroup', (groupId, teamId) => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/groups/${groupId}/teams/${teamId}/link`,
+        method: 'DELETE',
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap(response);
+    });
+});
+
+function getGroupSyncables(groupID, syncableType) {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/groups/${groupID}/${syncableType}s?page=0&per_page=100`,
+        method: 'GET',
+        timeout: 60000,
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap(response);
+    });
+}
+
+Cypress.Commands.add('apiUnlinkGroupTeam', (groupID, teamID) => {
+    return linkUnlinkGroupSyncable(groupID, teamID, 'team', 'DELETE');
+});
+
+Cypress.Commands.add('apiLinkGroupTeam', (groupID, teamID) => {
+    return linkUnlinkGroupSyncable(groupID, teamID, 'team', 'POST');
+});
+
+Cypress.Commands.add('apiUnlinkGroupChannel', (groupID, channelID) => {
+    return linkUnlinkGroupSyncable(groupID, channelID, 'channel', 'DELETE');
+});
+
+Cypress.Commands.add('apiLinkGroupChannel', (groupID, channelID) => {
+    return linkUnlinkGroupSyncable(groupID, channelID, 'channel', 'POST');
+});
+
+function linkUnlinkGroupSyncable(groupID, syncableID, syncableType, httpMethod) {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/groups/${groupID}/${syncableType}s/${syncableID}/link`,
+        method: httpMethod,
+        timeout: 60000,
+        body: {auto_add: true},
+    }).then((response) => {
+        expect(response.status).to.be.oneOf([200, 201, 204]);
+        return cy.wrap(response);
+    });
+}
+
+// *****************************************************************************
 // SAML
 // https://api.mattermost.com/#tag/SAML
 // *****************************************************************************
 
 /**
  * Get SAML certificate status directly via API.
- *
- * @param {String} samlMetadataUrl
  */
-Cypress.Commands.add('apiGetSAMLCertificateStatus', (samlMetadataUrl) => {
+Cypress.Commands.add('apiGetSAMLCertificateStatus', () => {
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: '/api/v4/saml/certificate/status',
-        method: 'GET'
+        method: 'GET',
     }).then((response) => {
         expect(response.status).to.equal(200);
         return cy.wrap(response);
@@ -1307,7 +1502,7 @@ Cypress.Commands.add('apiGetMetadataFromIdp', (samlMetadataUrl) => {
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: '/api/v4/saml/metadatafromidp',
         method: 'POST',
-        body: {saml_metadata_url: samlMetadataUrl}
+        body: {saml_metadata_url: samlMetadataUrl},
     }).then((response) => {
         expect(response.status, 'Failed to obtain metadata from Identity Provider URL').to.equal(200);
         return cy.wrap(response);
@@ -1316,26 +1511,26 @@ Cypress.Commands.add('apiGetMetadataFromIdp', (samlMetadataUrl) => {
 
 /**
  * Upload SAML IDP certificate directly via API
- * @param {String} fileName
+ * @param {String} filename
  */
-Cypress.Commands.add('apiUploadSAMLIDPCert', (fileName) => {
-    cy.apiUploadFile('/api/v4/saml/certificate/idp', 'POST', 'certificate', fileName);
+Cypress.Commands.add('apiUploadSAMLIDPCert', (filename) => {
+    cy.apiUploadFile('certificate', filename, {url: '/api/v4/saml/certificate/idp', method: 'POST', successStatus: 201});
 });
 
 /**
  * Upload SAML public certificate directly via API
- * @param {String} fileName
+ * @param {String} filename
  */
-Cypress.Commands.add('apiUploadSAMLPublicCert', (fileName) => {
-    cy.apiUploadFile('/api/v4/saml/certificate/public', 'POST', 'certificate', fileName);
+Cypress.Commands.add('apiUploadSAMLPublicCert', (filename) => {
+    cy.apiUploadFile('certificate', filename, {url: '/api/v4/saml/certificate/public', method: 'POST', successStatus: 200});
 });
 
 /**
  * Upload SAML private Key directly via API
- * @param {String} fileName
+ * @param {String} filename
  */
-Cypress.Commands.add('apiUploadSAMLPrivateKey', (fileName) => {
-    cy.apiUploadFile('/api/v4/saml/certificate/private', 'POST', 'certificate', fileName);
+Cypress.Commands.add('apiUploadSAMLPrivateKey', (filename) => {
+    cy.apiUploadFile('certificate', filename, {url: '/api/v4/saml/certificate/private', method: 'POST', successStatus: 200});
 });
 
 // *****************************************************************************
@@ -1344,19 +1539,21 @@ Cypress.Commands.add('apiUploadSAMLPrivateKey', (fileName) => {
 
 /**
  * Upload file directly via API
- * @param {String} url
- * @param {String} method
- * @param {String} formName
- * @param {String} fileName
+ * @param {String} name - name of form
+ * @param {String} filename - name of a file to upload
+ * @param {Object} options - request options
+ * @param {String} options.url
+ * @param {String} options.method
+ * @param {Number} options.successStatus
  */
-Cypress.Commands.add('apiUploadFile', (url, method, formName, fileName) => {
+Cypress.Commands.add('apiUploadFile', (name, filename, options = {}) => {
     const formData = new FormData();
 
-    cy.fixture(fileName, 'binary', {timeout: 1200000}).
+    cy.fixture(filename, 'binary', {timeout: 1200000}).
         then(Cypress.Blob.binaryStringToBlob).
         then((blob) => {
-            formData.set(formName, blob, fileName);
-            formRequest(method, url, formData, 200);
+            formData.set(name, blob, filename);
+            formRequest(options.method, options.url, formData, options.successStatus);
         });
 });
 
@@ -1366,7 +1563,7 @@ Cypress.Commands.add('apiUploadFile', (url, method, formName, fileName) => {
  * @param {String} url - HTTP resource URL
  * @param {FormData} FormData - Key value pairs representing form fields and value
  */
-function formRequest(method, url, formData, successStatus = 201) {
+function formRequest(method, url, formData, successStatus) {
     const baseUrl = Cypress.config('baseUrl');
     const xhr = new XMLHttpRequest();
     xhr.open(method, url, false);
