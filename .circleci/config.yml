@@ -125,7 +125,7 @@ jobs:
 
             # -- Change as needed
             export TYPE=RELEASE
-            export BRANCH=master
+            export BRANCH=release-5.24
             # Temporarily set tag
             export BUILD_TAG=release-5.24
             export DASHBOARD_ENABLE=true
