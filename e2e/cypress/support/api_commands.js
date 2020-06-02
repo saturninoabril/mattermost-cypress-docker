@@ -857,7 +857,7 @@ const getDefaultConfig = () => {
     };
 
     return merge(partialDefaultConfig, fromCypressEnv);
-}
+};
 
 Cypress.Commands.add('apiUpdateConfig', (newSettings = {}) => {
     // # Get current settings
@@ -1274,12 +1274,12 @@ Cypress.Commands.add('apiGetGroups', (page = 0, perPage = 100) => {
 });
 
 /**
-  * Get LDAP groups
-  *
-  * @param {Integer} page - The desired page of the paginated list
-  * @param {Integer} perPage - The number of groups per page
-  *
-  */
+ * Get LDAP groups
+ *
+ * @param {Integer} page - The desired page of the paginated list
+ * @param {Integer} perPage - The number of groups per page
+ *
+ */
 Cypress.Commands.add('apiGetLDAPGroups', (page = 0, perPage = 100) => {
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -1317,10 +1317,9 @@ Cypress.Commands.add('apiPatchGroup', (groupID, patch) => {
 });
 
 /**
- * Get all LDAP groups via the API
- * @param {Integer} page - The desired page of the paginated list
+ * Get all LDAP groups via API
+ * @param {Integer} page - The page to select
  * @param {Integer} perPage - The number of groups per page
- *
  */
 Cypress.Commands.add('apiGetLDAPGroups', (page = 0, perPage = 100) => {
     return cy.request({
@@ -1335,16 +1334,16 @@ Cypress.Commands.add('apiGetLDAPGroups', (page = 0, perPage = 100) => {
 });
 
 /**
- * Retrieve the list of groups associated with a given team via API
- * @param {String} teamId - Team GUID
+ * Add a link for LDAP group via API
+ * @param {String} remoteId - remote ID of the group
  */
 Cypress.Commands.add('apiAddLDAPGroupLink', (remoteId) => {
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: `/api/v4/ldap/groups/${remoteId}/link`,
         method: 'POST',
+        timeout: 60000,
     }).then((response) => {
-        expect(response.status).to.be.oneOf([200, 201]);
         return cy.wrap(response);
     });
 });
@@ -1358,6 +1357,23 @@ Cypress.Commands.add('apiGetTeamGroups', (teamId) => {
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: `/api/v4/teams/${teamId}/groups`,
         method: 'GET',
+        timeout: 60000,
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap(response);
+    });
+});
+
+/**
+ * Delete a link from a team to a group via API
+ * @param {String} groupId - Group GUID
+ * @param {String} teamId - Team GUID
+ */
+Cypress.Commands.add('apiDeleteLinkFromTeamToGroup', (groupId, teamId) => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/groups/${groupId}/teams/${teamId}/link`,
+        method: 'DELETE',
         timeout: 60000,
     }).then((response) => {
         expect(response.status).to.equal(200);
@@ -1412,22 +1428,6 @@ function getGroupSyncable(groupID, syncableType, syncableID) {
         return cy.wrap(response);
     });
 }
-
-/**
- * Delete a link from a team to a group via API
- * @param {String} groupId - Group GUID
- * @param {String} teamId - Team GUID
- */
-Cypress.Commands.add('apiDeleteLinkFromTeamToGroup', (groupId, teamId) => {
-    return cy.request({
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-        url: `/api/v4/groups/${groupId}/teams/${teamId}/link`,
-        method: 'DELETE',
-    }).then((response) => {
-        expect(response.status).to.equal(200);
-        return cy.wrap(response);
-    });
-});
 
 function getGroupSyncables(groupID, syncableType) {
     return cy.request({

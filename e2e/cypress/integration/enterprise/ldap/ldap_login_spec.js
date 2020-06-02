@@ -48,8 +48,8 @@ context('ldap', () => {
             const ldapSetting = {
                 LdapSettings: {
                     EnableAdminFilter: true,
-                    AdminFilter: '(cn=dev*)'
-                }
+                    AdminFilter: '(cn=dev*)',
+                },
             };
             cy.apiUpdateConfig(ldapSetting).then(() => {
                 cy.doLDAPLogin(testSettings).then(() => {
@@ -77,8 +77,8 @@ context('ldap', () => {
             testSettings.user = user1;
             const ldapSetting = {
                 LdapSettings: {
-                    UserFilter: '(cn=no_users)'
-                }
+                    UserFilter: '(cn=no_users)',
+                },
             };
             cy.apiLogin('sysadmin').then(() => {
                 cy.apiUpdateConfig(ldapSetting).then(() => {
@@ -93,8 +93,8 @@ context('ldap', () => {
             testSettings.user = user1;
             const ldapSetting = {
                 LdapSettings: {
-                    UserFilter: '(cn=test*)'
-                }
+                    UserFilter: '(cn=test*)',
+                },
             };
             cy.apiLogin('sysadmin').then(() => {
                 cy.apiUpdateConfig(ldapSetting).then(() => {
@@ -111,8 +111,8 @@ context('ldap', () => {
             testSettings.user = guest1;
             const ldapSetting = {
                 LdapSettings: {
-                    GuestFilter: '(cn=no_guests)'
-                }
+                    GuestFilter: '(cn=no_guests)',
+                },
             };
             cy.apiLogin('sysadmin').then(() => {
                 cy.apiUpdateConfig(ldapSetting).then(() => {
@@ -127,8 +127,8 @@ context('ldap', () => {
             testSettings.user = guest1;
             const ldapSetting = {
                 LdapSettings: {
-                    GuestFilter: '(cn=board*)'
-                }
+                    GuestFilter: '(cn=board*)',
+                },
             };
             cy.apiLogin('sysadmin').then(() => {
                 cy.apiUpdateConfig(ldapSetting).then(() => {
