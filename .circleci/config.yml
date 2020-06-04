@@ -115,7 +115,7 @@ jobs:
             export CYPRESS_chromeWebSecurity=true
             export CYPRESS_runLDAPSync=false
 
-            cd e2e && node run_tests.js --stage='@prod'
+            cd e2e && node run_tests.js --stage='@prod' --invert
 
       - run:
           name: Save and publish reports
@@ -124,7 +124,7 @@ jobs:
             export DIAGNOSTIC_TEAM_ID=`psql -d $TEST_DATABASE_URL -t -c "SELECT id FROM teams WHERE name='ad-1';"`
 
             # -- Change as needed
-            export TYPE=MASTER
+            export TYPE=MASTER_UNSTABLE
             export BRANCH=master
             # Temporarily set tag
             export BUILD_TAG=master
