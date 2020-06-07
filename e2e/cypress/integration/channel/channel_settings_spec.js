@@ -13,8 +13,17 @@
 
 describe('Channel Settings', () => {
     before(() => {
-        // # Go to Main Channel View with "user-1"
-        cy.toMainChannelView('user-1');
+        // # Login as test user and visit town-square
+        cy.apiCreateAndLoginAsNewUser().then(() => {
+            // # Create private channel
+            cy.apiGetTeamByName('ad-1').then((res) => {
+                cy.apiCreateChannel(res.body.id, 'channel', 'Private Channel', 'P').then(() => {
+
+                    // # Visit town-square channel
+                    cy.visit('/ad-1/channels/town-square');
+                });
+            });
+        });
     });
 
     it('C15052 All channel types have appropriate close button', () => {

@@ -14,8 +14,8 @@ import * as TIMEOUTS from '../../../../fixtures/timeouts';
 
 describe('AS14318 Theme Colors - Color Picker', () => {
     before(() => {
-        // Login as user-1 and visit town-square channel
-        cy.apiLogin('user-1');
+        // Login and visit town-square channel
+        cy.apiCreateAndLoginAsNewUser();
         cy.visit('/ad-1/channels/town-square');
     });
 
@@ -25,10 +25,6 @@ describe('AS14318 Theme Colors - Color Picker', () => {
         cy.get('#displayButton').click();
         cy.get('#themeTitle').click();
         cy.get('#customThemes').click();
-    });
-
-    after(() => {
-        cy.apiSaveThemePreference();
     });
 
     afterEach(() => {

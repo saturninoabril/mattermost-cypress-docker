@@ -22,13 +22,21 @@ function verifyChannelWasProperlyClosed(channelName) {
 }
 
 describe('Close direct messages', () => {
+    let testUser;
+    let otherUser;
+
     before(() => {
-        cy.apiLogin('user-1');
-        cy.visit('/ad-1/channels/town-square');
+        cy.apiLogin('sysadmin');
+        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => otherUser = user);
+        cy.apiCreateAndLoginAsNewUser().then((user) => {
+            testUser = user;
+
+            cy.visit('/ad-1/channels/town-square');
+        });
     });
 
     it('Through channel header dropdown menu', () => {
-        cy.createAndVisitNewDirectMessageWith('sysadmin').then((channel) => {
+        createAndVisitDMChannel([testUser.id, otherUser.id]).then((channel) => {
             // # Open channel header dropdown menu and click on Close Direct Message
             cy.get('#channelHeaderDropdownIcon').click();
             cy.findByText('Close Direct Message').click();
@@ -38,23 +46,47 @@ describe('Close direct messages', () => {
     });
 
     it('Through x button on channel sidebar item', () => {
-        cy.createAndVisitNewDirectMessageWith('sysadmin').then((channel) => {
+        createAndVisitDMChannel([testUser.id, otherUser.id]).then((channel) => {
             // # Click on the x button on the sidebar channel item
             cy.get('#sidebarItem_' + channel.name + '>span.btn-close').click({force: true});
 
             verifyChannelWasProperlyClosed(channel.name);
         });
     });
+
+    function createAndVisitDMChannel(userIds) {
+        return cy.apiCreateDirectChannel(userIds).then((res) => {
+            const channel = res.body;
+
+            // # Visit the new channel
+            cy.visit(`/ad-1/channels/${channel.name}`);
+
+            // * Verify channel's display name
+            cy.get('#channelHeaderTitle').should('contain', channel.display_name);
+
+            return cy.wrap(channel);
+        });
+    }
 });
 
 describe('Close group messages', () => {
+    let testUser;
+    let otherUser1;
+    let otherUser2;
+
     before(() => {
-        cy.apiLogin('user-1');
-        cy.visit('/ad-1/channels/town-square');
+        cy.apiLogin('sysadmin');
+        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => otherUser1 = user);
+        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => otherUser2 = user);
+        cy.apiCreateAndLoginAsNewUser().then((user) => {
+            testUser = user;
+
+            cy.visit('/ad-1/channels/town-square');
+        });
     });
 
     it('Through channel header dropdown menu', () => {
-        cy.createAndVisitNewGroupMessageWith(['sysadmin', 'samuel.tucker']).then((channel) => {
+        createAndVisitGMChannel([otherUser1, otherUser2], testUser).then((channel) => {
             // # Open channel header dropdown menu and click on Close Direct Message
             cy.get('#channelHeaderDropdownIcon').click();
             cy.findByText('Close Group Message').click();
@@ -64,11 +96,28 @@ describe('Close group messages', () => {
     });
 
     it('Through x button on channel sidebar item', () => {
-        cy.createAndVisitNewGroupMessageWith(['sysadmin', 'samuel.tucker']).then((channel) => {
+        createAndVisitGMChannel([otherUser1, otherUser2], testUser).then((channel) => {
             // # Click on the x button on the sidebar channel item
             cy.get('#sidebarItem_' + channel.name + '>span.btn-close').click({force: true});
 
             verifyChannelWasProperlyClosed(channel.name);
         });
     });
+
+    function createAndVisitGMChannel(users, currentUser) {
+        const userIds = users.map((user) => user.id);
+        return cy.apiCreateGroupChannel(userIds).then((res) => {
+            const channel = res.body;
+
+            // # Visit the new channel
+            cy.visit(`/ad-1/channels/${channel.name}`);
+            console.log('channel.display_name', channel.display_name);
+            // * Verify channel's display name
+            const displayName = channel.display_name.split(', ').filter((username => username !== currentUser.username)).join(', ');
+            console.log('displayNem', displayName);
+            cy.get('#channelHeaderTitle').should('contain', displayName);
+
+            return cy.wrap(channel);
+        });
+    }
 });

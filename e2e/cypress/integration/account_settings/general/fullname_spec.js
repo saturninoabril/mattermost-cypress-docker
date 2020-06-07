@@ -40,7 +40,7 @@ describe('Account Settings > Sidebar > General', () => {
     });
 
     it('M17459 - Filtering by first name with Korean characters', () => {
-        cy.apiLogin('user-1');
+        cy.apiLogin('sysadmin');
         cy.get('@newuser').then((user) => {
             cy.visit('/ad-1/channels/town-square');
 

@@ -10,18 +10,18 @@
 // Stage: @prod
 // Group: @accessibility
 
-import users from '../../fixtures/users.json';
-
-const otherUser = users['user-1'];
-
 // * Verify the accessibility support in the different images
 
 describe('Verify Accessibility Support in Different Images', () => {
+    let otherUser;
+
     before(() => {
         cy.apiLogin('sysadmin');
 
         // Visit the Off Topic channel
         cy.visit('/ad-1/channels/off-topic');
+
+        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => otherUser = user);
     });
 
     it('MM-24075 Accessibility support in different images', () => {
@@ -43,11 +43,8 @@ describe('Verify Accessibility Support in Different Images', () => {
 
         // # Post a message as a different user
         cy.getCurrentChannelId().then((channelId) => {
-            cy.apiGetUserByEmail(otherUser.email).then((emailResponse) => {
-                cy.apiAddUserToChannel(channelId, emailResponse.body.id);
-                const message = `hello from ${otherUser.username}: ${Date.now()}`;
-                cy.postMessageAs({sender: otherUser, message, channelId});
-            });
+            const message = `hello from ${otherUser.username}: ${Date.now()}`;
+            cy.postMessageAs({sender: otherUser, message, channelId});
         });
 
         // # Open profile popover

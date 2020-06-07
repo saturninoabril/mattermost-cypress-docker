@@ -10,10 +10,7 @@
 // Stage: @prod
 // Group: @accessibility
 
-import users from '../../fixtures/users.json';
 import * as TIMEOUTS from '../../fixtures/timeouts';
-
-const user1 = users['user-1'];
 
 function verifySearchAutocomplete(index, type = 'user') {
     cy.get('#search-autocomplete__popover').find('.search-autocomplete__item').eq(index).should('be.visible').and('have.class', 'selected a11y--focused').within((el) => {
@@ -173,54 +170,53 @@ describe('Verify Accessibility Support in different input fields', () => {
         verifySearchAutocomplete(0, 'channel');
     });
 
-    it('MM-22625 Verify Accessibility Support in Message Autocomplete', () => {
+    it.only('MM-22625 Verify Accessibility Support in Message Autocomplete', () => {
         // # Adding at least one other user in the channel
         cy.getCurrentChannelId().then((channelId) => {
-            cy.apiGetUserByEmail(user1.email).then((res) => {
-                const user = res.body;
-                cy.apiAddUserToChannel(channelId, user.id);
+            cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => {
+                cy.apiAddUserToChannel(channelId, user.id).then(() => {
+                    // * Verify Accessibility support in post input field
+                    cy.get('#post_textbox').should('have.attr', 'aria-label', `write to ${testChannel.display_name}`).clear().focus();
+
+                    // # Ensure User list is cached once in UI
+                    cy.get('#post_textbox').type('@').wait(TIMEOUTS.SMALL);
+
+                    // # Select the first user in the list
+                    cy.get('#suggestionList').find('.mentions__name').eq(0).within((el) => {
+                        cy.get('.mention--align').invoke('text').then((text) => {
+                            cy.wrap(el).parents('body').find('#post_textbox').clear().type(text);
+                        });
+                    });
+
+                    // # Trigger the user autocomplete again
+                    cy.get('#post_textbox').clear().type('@').wait(TIMEOUTS.SMALL).type('{downarrow}');
+
+                    // * Verify Accessibility Support in message autocomplete
+                    verifyMessageAutocomplete(1);
+
+                    // # Press Up arrow and verify if focus changes
+                    cy.focused().type('{downarrow}{uparrow}{uparrow}');
+
+                    // * Verify Accessibility Support in message autocomplete
+                    verifyMessageAutocomplete(0);
+
+                    // # Trigger the channel autocomplete filter and ensure channel list is cached once
+                    cy.get('#post_textbox').clear().type('~').wait(TIMEOUTS.SMALL);
+
+                    // # Trigger the channel autocomplete again
+                    cy.get('#post_textbox').clear().type('~').wait(TIMEOUTS.SMALL).type('{downarrow}{downarrow}');
+
+                    // * Verify Accessibility Support in message autocomplete
+                    verifyMessageAutocomplete(2, 'channel');
+
+                    // # Press Up arrow and verify if focus changes
+                    cy.focused().type('{downarrow}{uparrow}{uparrow}');
+
+                    // * Verify Accessibility Support in message autocomplete
+                    verifyMessageAutocomplete(0, 'channel');
+                });
             });
         });
-
-        // * Verify Accessibility support in post input field
-        cy.get('#post_textbox').should('have.attr', 'aria-label', `write to ${testChannel.display_name}`).clear().focus();
-
-        // # Ensure User list is cached once in UI
-        cy.get('#post_textbox').type('@').wait(TIMEOUTS.SMALL);
-
-        // # Select the first user in the list
-        cy.get('#suggestionList').find('.mentions__name').eq(0).within((el) => {
-            cy.get('.mention--align').invoke('text').then((text) => {
-                cy.wrap(el).parents('body').find('#post_textbox').clear().type(text);
-            });
-        });
-
-        // # Trigger the user autocomplete again
-        cy.get('#post_textbox').clear().type('@').wait(TIMEOUTS.SMALL).type('{downarrow}');
-
-        // * Verify Accessibility Support in message autocomplete
-        verifyMessageAutocomplete(1);
-
-        // # Press Up arrow and verify if focus changes
-        cy.focused().type('{downarrow}{uparrow}{uparrow}');
-
-        // * Verify Accessibility Support in message autocomplete
-        verifyMessageAutocomplete(0);
-
-        // # Trigger the channel autocomplete filter and ensure channel list is cached once
-        cy.get('#post_textbox').clear().type('~').wait(TIMEOUTS.SMALL);
-
-        // # Trigger the channel autocomplete again
-        cy.get('#post_textbox').clear().type('~').wait(TIMEOUTS.SMALL).type('{downarrow}{downarrow}');
-
-        // * Verify Accessibility Support in message autocomplete
-        verifyMessageAutocomplete(2, 'channel');
-
-        // # Press Up arrow and verify if focus changes
-        cy.focused().type('{downarrow}{uparrow}{uparrow}');
-
-        // * Verify Accessibility Support in message autocomplete
-        verifyMessageAutocomplete(1, 'channel');
     });
 
     it('MM-22625 Verify Accessibility Support in Main Post Input', () => {

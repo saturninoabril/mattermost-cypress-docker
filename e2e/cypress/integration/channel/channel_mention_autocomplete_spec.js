@@ -16,10 +16,13 @@ import * as TIMEOUTS from '../../fixtures/timeouts';
 describe('Channel', () => {
     let testTeam;
     let testChannel;
+    let testUser;
 
     before(() => {
-        // # Build data to test and login as user-1
-        cy.apiLogin('user-1');
+        // # Build data to test and login as new user
+        cy.apiCreateAndLoginAsNewUser().then((user) => {
+            testUser = user;
+        });
         cy.apiCreateTeam('test-team', 'Test Team').then((response) => {
             testTeam = response.body;
 
@@ -31,7 +34,7 @@ describe('Channel', () => {
                 cy.apiCreateChannel(testTeam.id, 'test-channel', 'Test Channel').then((cRes) => {
                     testChannel = cRes.body;
 
-                    cy.apiLogin('user-1');
+                    cy.apiLogin(testUser.username, testUser.password);
                     cy.visit(`/${testTeam.name}/channels/town-square`);
                 });
             });
@@ -76,15 +79,12 @@ describe('Channel', () => {
     });
 
     it('Getting removed from a channel should alter channel mention autocomplete lists accordingly', () => {
-        // # Remove user-1 from the test channel
-        cy.apiGetMe().then((res) => {
-            const userId = res.body.id;
-            return cy.removeUserFromChannel(testChannel.id, userId);
-        }).then((res) => {
+        // # Remove test user from the test channel
+        cy.removeUserFromChannel(testChannel.id, testUser.id).then((res) => {
             expect(res).to.equal(200);
 
-            // # Login as user-1 and visit the test team
-            cy.apiLogin('user-1');
+            // # Login as test user and visit the test team
+            cy.apiLogin(testUser.username, testUser.password);
             cy.visit(`/${testTeam.name}/channels/town-square`);
 
             // # Type "~"

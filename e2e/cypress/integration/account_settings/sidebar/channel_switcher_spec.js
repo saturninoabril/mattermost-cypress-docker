@@ -12,12 +12,15 @@
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 
 describe('Account Settings > Sidebar > Channel Switcher', () => {
+    let testUser;
     let testChannel;
     let testTeam;
 
     before(() => {
-        // # Login as user-1
-        cy.apiLogin('user-1');
+        // # Login as test user
+        cy.apiCreateAndLoginAsNewUser().then((user) => {
+            testUser = user;
+        });
 
         // # Create a test team and channels
         cy.apiCreateTeam('test-team', 'Test Team').then((teamRes) => {
@@ -107,7 +110,7 @@ describe('Account Settings > Sidebar > Channel Switcher', () => {
 
     it('Cmd/Ctrl+Shift+M closes Channel Switch modal and sets focus to mentions', () => {
         // # patch user info
-        cy.apiPatchMe({notify_props: {first_name: 'false', mention_keys: 'user-1'}});
+        cy.apiPatchMe({notify_props: {first_name: 'false', mention_keys: testUser.username}});
 
         // # Go to a known team and channel
         cy.visit(`/${testTeam.name}/channels/town-square`);
@@ -126,7 +129,7 @@ describe('Account Settings > Sidebar > Channel Switcher', () => {
         cy.get('#suggestionList').should('not.be.visible');
 
         // * searchbox should appear
-        cy.get('#searchBox').should('have.attr', 'value', 'user-1 @user-1 ');
+        cy.get('#searchBox').should('have.attr', 'value', `${testUser.username} @${testUser.username} `);
         cy.get('.sidebar--right__title').should('contain', 'Recent Mentions');
     });
 });

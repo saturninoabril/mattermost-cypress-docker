@@ -576,6 +576,24 @@ Cypress.Commands.add('apiSavePreviewCollapsedPreference', (collapse = 'true') =>
     });
 });
 
+/**
+ * Saves tutorial step of a user
+ * This API assume that the user is logged in and has cookie to access
+ * @param {string} value - value of tutorial step, e.g. '999' (default, completed tutorial)
+ */
+Cypress.Commands.add('apiSaveTutorialStep', (userId, value = '999') => {
+    return cy.getCookie('MMUSERID').then((cookie) => {
+        const preference = {
+            user_id: userId,
+            category: 'tutorial_step',
+            name: userId,
+            value: '999',
+        };
+
+        return cy.apiSaveUserPreference([preference], userId);
+    });
+});
+
 // *****************************************************************************
 // Users
 // https://api.mattermost.com/#tag/users
@@ -666,17 +684,8 @@ Cypress.Commands.add('apiCreateNewUser', (user = {}, teamIds = [], bypassTutoria
         } else {
             // Get teams, select the first three, and add new user to that team
             cy.request('GET', '/api/v4/teams').then((teamsResponse) => {
-                // Verify we have at least 2 teams in the response to add the user to
-                expect(teamsResponse).to.have.property('body').to.have.length.greaterThan(1);
-
-                // Pull out only the first 2 teams
-                teamsResponse.body.
-                    filter((t) => t.delete_at === 0).
-                    slice(0, 2).
-                    map((t) => t.id).
-                    forEach((teamId) => {
-                        cy.apiAddUserToTeam(teamId, userId);
-                    });
+                // Verify we have at least 1 team in the response to add the user to
+                expect(teamsResponse).to.have.property('body').to.have.length.greaterThan(0);
 
                 // Also add the user to the default team ad-1
                 teamsResponse.body.
@@ -702,6 +711,56 @@ Cypress.Commands.add('apiCreateNewUser', (user = {}, teamIds = [], bypassTutoria
 
         // Wrap our user object so it gets returned from our cypress command
         cy.wrap({email, username, password, id: userId, firstName, lastName, nickname});
+    });
+});
+
+function generateRandomUser() {
+    const randomId = getRandomId ();
+
+    return {
+        email: `user${randomId}@sample.mattermost.com`,
+        username: `user${randomId}`,
+        password: 'passwd',
+        first_name: `First${randomId}`,
+        last_name: `Last${randomId}`,
+        nickname: `Nickname${randomId}`,
+    };
+}
+
+Cypress.Commands.add('apiCreateUserAndAddToDefaultTeam', (bypassTutorial = true) => {
+    const randomUser = generateRandomUser();
+
+    const createUserOption = {
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        method: 'POST',
+        url: '/api/v4/users',
+        body: randomUser,
+    };
+
+    return cy.request(createUserOption).then((userRes) => {
+        expect(userRes.status).to.equal(201);
+
+        const user = userRes.body;
+
+        if (bypassTutorial) {
+            cy.apiSaveTutorialStep(user.id, '999');
+        }
+
+        
+        return cy.apiGetTeamByName('ad-1').then((teamRes) => {
+            const team = teamRes.body;
+            return cy.apiAddUserToTeam(team.id, user.id).then((res) => {
+                cy.wrap({
+                    team,
+                    user: {
+                        ...user,
+                        password: randomUser.password,
+                        firstName: randomUser.first_name,
+                        lastName: randomUser.last_name,
+                    },
+                });
+            });
+        });
     });
 });
 

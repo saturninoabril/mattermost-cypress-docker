@@ -22,7 +22,8 @@ describe('Leave an archived channel', () => {
     });
 
     before(() => {
-        cy.apiLogin('user-1');
+        // # Login as test user
+        cy.apiCreateAndLoginAsNewUser();
         cy.visit('/');
     });
 

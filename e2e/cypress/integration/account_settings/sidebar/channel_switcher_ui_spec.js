@@ -12,7 +12,7 @@
 
 describe('Account Settings > Sidebar > Channel Switcher', () => {
     before(() => {
-        // # Login as user-1 and visit town-square channel
+        // # Login as sysadmin and visit town-square channel
         cy.apiLogin('sysadmin');
         cy.apiUpdateConfig({
             ServiceSettings: {

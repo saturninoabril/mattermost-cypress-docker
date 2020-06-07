@@ -35,9 +35,11 @@ describe('Account Settings > General', () => {
         cy.get('#sidebarDropdownMenu').find('.dropdown-menu').should('be.visible');
 
         // # Post a message as other user and wait for it to reach
-        cy.postMessageAs({sender: users['user-1'], message: 'abc', channelId: townsquareChannelId}).wait(TIMEOUTS.SMALL);
+        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => {
+            cy.postMessageAs({sender: user, message: 'abc', channelId: townsquareChannelId}).wait(TIMEOUTS.SMALL);
 
-        // * Menu should still be visible
-        cy.get('#sidebarDropdownMenu').find('.dropdown-menu').should('be.visible');
+            // * Menu should still be visible
+            cy.get('#sidebarDropdownMenu').find('.dropdown-menu').should('be.visible');
+        });
     });
 });
