@@ -8,6 +8,8 @@
     "integrationFolder": "..",
     "testFiles": "**/*_spec.js",
     "env": {
+        "adminUsername": "sysadmin",
+        "adminPassword": "Sys@dmin-sample1",
         "dbClient": "mysql",
         "dbConnection": "mysql://mmuser:mostest@localhost:3306/mattermost_test?charset=utf8mb4&readTimeout=30s&writeTimeout=30s",
         "ldapServer": "localhost",

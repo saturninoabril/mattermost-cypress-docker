@@ -26,7 +26,7 @@ describe('Close direct messages', () => {
     let otherUser;
 
     before(() => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => otherUser = user);
         cy.apiCreateAndLoginAsNewUser().then((user) => {
             testUser = user;
@@ -75,7 +75,7 @@ describe('Close group messages', () => {
     let otherUser2;
 
     before(() => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => otherUser1 = user);
         cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => otherUser2 = user);
         cy.apiCreateAndLoginAsNewUser().then((user) => {

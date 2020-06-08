@@ -114,7 +114,7 @@ describe('Guest Account - Guest User Invitation Flow', () => {
         testTeam = null;
 
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // * Check if server has license for Guest Accounts
         cy.requireLicenseForFeature('GuestAccounts');
@@ -137,7 +137,7 @@ describe('Guest Account - Guest User Invitation Flow', () => {
     });
 
     afterEach(() => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         if (testTeam && testTeam.id) {
             cy.apiDeleteTeam(testTeam.id);
         }

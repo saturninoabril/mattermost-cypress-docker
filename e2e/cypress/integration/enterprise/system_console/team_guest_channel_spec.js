@@ -52,7 +52,7 @@ describe('Team Scheme Guest Permissions Test', () => {
     before(() => {
         // * Check if server has license
         cy.requireLicense();
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
     });
 
     it('MM- - Enable and Disable all guest permission', () => {

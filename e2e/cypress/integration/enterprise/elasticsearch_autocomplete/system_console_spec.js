@@ -15,7 +15,7 @@ import * as TIMEOUTS from '../../../fixtures/timeouts';
 describe('Elasticsearch system console', () => {
     before(() => {
         // # Login as admin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // * Check if server has license for Elasticsearch
         cy.requireLicenseForFeature('Elasticsearch');

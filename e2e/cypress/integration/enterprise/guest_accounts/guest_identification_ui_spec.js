@@ -22,7 +22,7 @@ let guestTeamId;
 describe('MM-18045 Verify Guest User Identification in different screens', () => {
     before(() => {
         // * Check if server has license for Guest Accounts
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.requireLicenseForFeature('GuestAccounts');
 
         // # Enable Guest Account Settings
@@ -42,7 +42,7 @@ describe('MM-18045 Verify Guest User Identification in different screens', () =>
             guestTeamId = team.id;
 
             // # Login as Sysadmin and add a regular member to Guest Team
-            cy.apiLogin('sysadmin');
+            cy.apiAdminLogin();
             cy.apiGetUserByEmail(user1.email).then((res) => {
                 cy.apiAddUserToTeam(guestTeamId, res.body.id);
             });
@@ -56,7 +56,7 @@ describe('MM-18045 Verify Guest User Identification in different screens', () =>
     after(() => {
         // # Delete the new team as sysadmin
         if (guestTeamId) {
-            cy.apiLogin('sysadmin');
+            cy.apiAdminLogin();
             cy.apiDeleteTeam(guestTeamId);
         }
     });

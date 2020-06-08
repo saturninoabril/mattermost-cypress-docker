@@ -38,7 +38,7 @@ describe('Verify Accessibility Support in Modals & Dialogs', () => {
     let testUser;
 
     before(() => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // * Check if server has license for Guest Accounts
         cy.requireLicenseForFeature('GuestAccounts');
@@ -65,7 +65,7 @@ describe('Verify Accessibility Support in Modals & Dialogs', () => {
 
     beforeEach(() => {
         // # Login as sysadmin and visit the Town Square channel
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.visit('/ad-1/channels/town-square');
     });
 

@@ -15,7 +15,7 @@ let testTeam;
 describe('Message Draft', () => {
     before(() => {
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // # Login as new user
         cy.apiCreateAndLoginAsNewUser().then(() => {

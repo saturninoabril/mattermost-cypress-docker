@@ -16,7 +16,7 @@ describe('Account Settings > Sidebar > General', () => {
     // # number to identify particular user
     const randomId = getRandomId();
     before(() => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiGetTeamByName('ad-1').then((res) => {
             const team = res.body;
             cy.apiCreateAndLoginAsNewUser({}, [team.id]).as('newuser');
@@ -40,7 +40,7 @@ describe('Account Settings > Sidebar > General', () => {
     });
 
     it('M17459 - Filtering by first name with Korean characters', () => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.get('@newuser').then((user) => {
             cy.visit('/ad-1/channels/town-square');
 

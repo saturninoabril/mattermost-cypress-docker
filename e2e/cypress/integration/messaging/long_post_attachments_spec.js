@@ -46,7 +46,7 @@ describe('M14322 Long post with multiple attachments', () => {
         testTeam = null;
 
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // # Create new team and new user and visit Town Square channel
         cy.apiCreateTeam('test-team', 'Test Team').then((response) => {
@@ -57,7 +57,7 @@ describe('M14322 Long post with multiple attachments', () => {
     });
 
     afterEach(() => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         if (testTeam && testTeam.id) {
             cy.apiDeleteTeam(testTeam.id);
         }

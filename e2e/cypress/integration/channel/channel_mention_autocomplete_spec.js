@@ -30,7 +30,7 @@ describe('Channel', () => {
                 const user = eRes.body;
                 cy.apiAddUserToTeam(testTeam.id, user.id);
 
-                cy.apiLogin('sysadmin');
+                cy.apiAdminLogin();
                 cy.apiCreateChannel(testTeam.id, 'test-channel', 'Test Channel').then((cRes) => {
                     testChannel = cRes.body;
 

@@ -57,7 +57,7 @@ describe('Autocomplete without Elasticsearch - Renaming', () => {
 
     before(() => {
         // # Login as admin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiSaveTeammateNameDisplayPreference('username');
 
         // # Disable elastic search via API

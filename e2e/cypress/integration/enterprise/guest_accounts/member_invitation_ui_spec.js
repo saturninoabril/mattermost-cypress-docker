@@ -90,7 +90,7 @@ function loginAsNewUser() {
 describe('Guest Account - Member Invitation Flow', () => {
     beforeEach(() => {
         // * Check if server has license for Guest Accounts
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.requireLicenseForFeature('GuestAccounts');
 
         // # Enable Guest Account Settings
@@ -114,7 +114,7 @@ describe('Guest Account - Member Invitation Flow', () => {
     afterEach(() => {
         // # Delete the new team as sysadmin
         if (testTeam && testTeam.id) {
-            cy.apiLogin('sysadmin');
+            cy.apiAdminLogin();
             cy.apiDeleteTeam(testTeam.id);
         }
     });

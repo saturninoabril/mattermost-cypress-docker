@@ -16,7 +16,7 @@ import * as TIMEOUTS from '../../fixtures/timeouts';
 
 function removeTeamMember(teamURL, username) {
     cy.apiLogout();
-    cy.apiLogin('sysadmin');
+    cy.apiAdminLogin();
     cy.visit(`/${teamURL}`);
     cy.get('#sidebarHeaderDropdownButton').should('be.visible').click();
     cy.get('#manageMembers').click();
@@ -61,7 +61,7 @@ describe('Teams Suite', () => {
 
     it('TS13548 Team or System Admin searches and adds new team member', () => {
         // # Login as sysadmin and update config
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiUpdateConfig({
             GuestAccountsSettings: {
                 Enable: false,

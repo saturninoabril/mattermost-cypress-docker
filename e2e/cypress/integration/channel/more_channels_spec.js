@@ -44,7 +44,7 @@ describe('Channels', () => {
 
     it.only('MM-19337 Enable users to view archived channels', () => {
         // # Login as new user and go to "/"
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiUpdateConfig({
             TeamSettings: {
                 ExperimentalViewArchivedChannels: true,
@@ -63,7 +63,6 @@ describe('Channels', () => {
             // * Dropdown should be visible, defaulting to "Public Channels"
             cy.get('#channelsMoreDropdown').should('be.visible').and('contain', 'Show: Public Channels');
 
-            console.log(testChannel.display_name)
             cy.wait(5000);
             cy.get('#searchChannelsTextbox').should('be.visible').type(testChannel.display_name).wait(TIMEOUTS.TINY);
             cy.get('#moreChannelsList').children().should('have.length', 1).within(() => {
@@ -143,7 +142,7 @@ describe('Channels', () => {
 
 function verifyMoreChannelsModalWithArchivedSelection(isEnabled, testUser) {
     // # Login as sysadmin and Update config to enable/disable viewing of archived channels
-    cy.apiLogin('sysadmin');
+    cy.apiAdminLogin();
     cy.apiUpdateConfig({
         TeamSettings: {
             ExperimentalViewArchivedChannels: isEnabled,

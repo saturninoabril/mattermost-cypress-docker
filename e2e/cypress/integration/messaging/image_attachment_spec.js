@@ -25,7 +25,7 @@ function verifyImageInPostFooter(verifyExistence = true) {
 describe('Image attachment', () => {
     before(() => {
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // # Login as new user
         cy.apiCreateAndLoginAsNewUser().then(() => {

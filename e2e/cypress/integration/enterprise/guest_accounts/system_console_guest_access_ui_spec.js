@@ -19,7 +19,7 @@ let guest;
 describe('Guest Account - Verify Guest Access UI', () => {
     before(() => {
         // * Check if server has license for Guest Accounts
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.requireLicenseForFeature('GuestAccounts');
 
         // # Enable Guest Account Settings

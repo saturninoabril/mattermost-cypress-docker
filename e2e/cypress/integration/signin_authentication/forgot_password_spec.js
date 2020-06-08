@@ -22,7 +22,7 @@ describe('Signin/Authentication', () => {
         cy.apiEmailTest();
 
         // # Login as sysadmin and get config
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiGetConfig().then((response) => {
             config = response.body;
         });

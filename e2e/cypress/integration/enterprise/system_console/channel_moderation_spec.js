@@ -129,7 +129,7 @@ const enableDisableAllChannelModeratedPermissionsViaAPI = (channelId, enable = t
 };
 
 const deleteExistingTeamOverrideSchemes = () => {
-    cy.apiLogin('sysadmin');
+    cy.apiAdminLogin();
     cy.apiGetSchemes('team').then((res) => {
         res.body.forEach((scheme) => {
             cy.apiDeleteScheme(scheme.id);
@@ -157,7 +157,7 @@ const enableChannelModeratedPermission = (permission) => {
 
 // # This goes to the system scheme and clicks the reset permissions to default and then saves the setting
 const resetSystemSchemePermissionsToDefault = () => {
-    cy.apiLogin('sysadmin');
+    cy.apiAdminLogin();
     cy.visit('/admin_console/user_management/permissions/system_scheme');
     cy.findByTestId('resetPermissionsToDefault').click();
     cy.get('#confirmModalButton').click();
@@ -166,7 +166,7 @@ const resetSystemSchemePermissionsToDefault = () => {
 
 // # Goes to the permissions page and clicks edit or delete for a team override scheme
 const deleteOrEditTeamScheme = (schemeDisplayName, editOrDelete) => {
-    cy.apiLogin('sysadmin');
+    cy.apiAdminLogin();
     cy.visit('/admin_console/user_management/permissions');
     cy.findByTestId(`${schemeDisplayName}-${editOrDelete}`).click();
     if (editOrDelete === 'delete') {
@@ -187,13 +187,13 @@ const visitAutemChannel = (loginAs) => {
 
 // # Goes to the System Scheme page as System Admin
 const goToSystemScheme = () => {
-    cy.apiLogin('sysadmin');
+    cy.apiAdminLogin();
     cy.visit('/admin_console/user_management/permissions/system_scheme');
 };
 
 // # Goes to the permissions page and creates a new team override scheme with schemeName
 const goToPermissionsAndCreateTeamOverrideScheme = (schemeName) => {
-    cy.apiLogin('sysadmin');
+    cy.apiAdminLogin();
     cy.visit('/admin_console/user_management/permissions');
     cy.findByTestId('team-override-schemes-link').click();
     cy.get('#scheme-name').type(schemeName);
@@ -207,7 +207,7 @@ const goToPermissionsAndCreateTeamOverrideScheme = (schemeName) => {
 
 // # Visits the channel configuration for a channel with channelName
 const visitChannelConfigPage = (channelName) => {
-    cy.apiLogin('sysadmin');
+    cy.apiAdminLogin();
     cy.visit('/admin_console/user_management/channels');
     cy.findByTestId('search-input').type(`${channelName}{enter}`);
     cy.findByTestId(`${channelName}edit`).click();
@@ -1109,7 +1109,7 @@ describe('Channel Moderation Test', () => {
         const channelName = 'autem';
 
         // # Go to system admin page and to channel configuration page of channel "autem"
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.visit('/admin_console/user_management/channels');
 
         // # Search for the channel.

@@ -9,6 +9,7 @@ import users from '../fixtures/users.json';
 import partialDefaultConfig from '../fixtures/partial_default_config.json';
 
 import theme from '../fixtures/theme.json';
+import { getAdminAccount } from './env';
 
 // *****************************************************************************
 // Read more:
@@ -31,6 +32,12 @@ Cypress.Commands.add('apiLogin', (username = 'user-1', password = null) => {
         expect(response.status).to.equal(200);
         return cy.wrap(response);
     });
+});
+
+Cypress.Commands.add('apiAdminLogin', () => {
+    const admin = getAdminAccount();
+
+    return cy.apiLogin(admin.username, admin.password)
 });
 
 Cypress.Commands.add('apiLogout', () => {
@@ -243,17 +250,16 @@ Cypress.Commands.add('apiEmailTest', () => {
  * @param {String} name - Unique handler for a team, will be present in the team URL
  * @param {String} displayName - Non-unique UI name for the team
  * @param {String} type - 'O' for open (default), 'I' for invite only
+ * @param {Boolean} unique - if true (default), it will create with unique/random team namae.
  * All parameters required
  */
-Cypress.Commands.add('apiCreateTeam', (name, displayName, type = 'O') => {
-    const uniqueName = `${name}-${getRandomId()}`;
-
+Cypress.Commands.add('apiCreateTeam', (name, displayName, type = 'O', unique = true) => {
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: '/api/v4/teams',
         method: 'POST',
         body: {
-            name: uniqueName,
+            name: unique ? `${name}-${getRandomId()}` : name,
             display_name: displayName,
             type,
         },
@@ -714,6 +720,32 @@ Cypress.Commands.add('apiCreateNewUser', (user = {}, teamIds = [], bypassTutoria
     });
 });
 
+Cypress.Commands.add('apiCreateAdmin', () => {
+    const {username, password} = getAdminAccount();
+
+    const sysadminUser = {
+        username,
+        password,
+        first_name: 'Kenneth',
+        last_name: 'Moreno',
+        email: 'sysadmin@sample.mattermost.com',
+    };
+
+    const options = {
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        method: 'POST',
+        url: '/api/v4/users',
+        body: sysadminUser,
+    };
+
+    // # Create a new user
+    return cy.request(options).then((res) => {
+        expect(res.status).to.equal(201);
+
+        cy.wrap(res);
+    });
+});
+
 function generateRandomUser() {
     const randomId = getRandomId ();
 
@@ -912,7 +944,7 @@ Cypress.Commands.add('apiGetConfig', () => {
  * Get some analytics data about the system.
  */
 Cypress.Commands.add('apiGetAnalytics', () => {
-    cy.apiLogin('sysadmin');
+    cy.apiAdminLogin();
 
     return cy.request('/api/v4/analytics/old').then((response) => {
         expect(response.status).to.equal(200);

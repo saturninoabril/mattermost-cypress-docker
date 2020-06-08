@@ -142,7 +142,7 @@ const resetPermissionsToDefault = () => {
 describe('Team Scheme Channel Mentions Permissions Test', () => {
     before(() => {
         // # Login as sysadmin and navigate to system scheme page
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // * Check if server has license
         cy.requireLicense();
@@ -159,7 +159,7 @@ describe('Team Scheme Channel Mentions Permissions Test', () => {
 
     after(() => {
         // # Login as sysadmin and navigate to system scheme page
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         resetPermissionsToDefault();
         deleteExistingTeamOverrideSchemes();
     });
@@ -217,7 +217,7 @@ const checkChannelPermission = (permissionName, hasChannelPermissionCheckFunc, n
     hasChannelPermissionCheckFunc();
 
     // # Login as sysadmin again
-    cy.apiLogin('sysadmin');
+    cy.apiAdminLogin();
 
     // # Get team scheme URL
     cy.apiGetSchemes('team').then((res) => {
@@ -281,7 +281,7 @@ const checkChannelPermission = (permissionName, hasChannelPermissionCheckFunc, n
         hasChannelPermissionCheckFunc();
 
         // # Navigate back to team scheme as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.visit(url);
 
         // # Remove permission from channel admins and save
@@ -303,7 +303,7 @@ const checkChannelPermission = (permissionName, hasChannelPermissionCheckFunc, n
         hasChannelPermissionCheckFunc();
 
         // # Navigate back to system scheme as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.visit(url);
 
         // # Remove permission from team admins and save

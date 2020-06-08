@@ -43,7 +43,7 @@ describe('channel name tooltips', () => {
 
     before(() => {
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // # Create new test team
         cy.apiCreateTeam('test-team', 'Test Team').then((response) => {

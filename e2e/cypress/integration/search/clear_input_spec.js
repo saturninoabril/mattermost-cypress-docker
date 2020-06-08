@@ -15,7 +15,7 @@ import * as TIMEOUTS from '../../fixtures/timeouts';
 describe('Search', () => {
     before(() => {
         // # Login as the sysadmin.
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.visit('/ad-1/channels/town-square');
     });
 

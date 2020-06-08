@@ -20,7 +20,7 @@ let guest;
 describe('Guest Account - Guest User Experience', () => {
     before(() => {
         // * Check if server has license for Guest Accounts
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.requireLicenseForFeature('GuestAccounts');
 
         // # Enable Guest Account Settings

@@ -26,7 +26,7 @@ describe('Autocomplete without Elasticsearch - Channel', () => {
 
     before(() => {
         // # Execute the before hook based on current config
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // # Disable elastic search via API
         cy.apiUpdateConfig({
@@ -146,7 +146,7 @@ describe('Autocomplete without Elasticsearch - Channel', () => {
             cy.apiLogout();
 
             // # Login as admin
-            cy.apiLogin('sysadmin');
+            cy.apiAdminLogin();
             cy.visit(`/${team.name}`);
 
             const name = 'hellothere';

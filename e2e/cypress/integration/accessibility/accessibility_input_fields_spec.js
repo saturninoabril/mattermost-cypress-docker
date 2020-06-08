@@ -57,7 +57,7 @@ describe('Verify Accessibility Support in different input fields', () => {
         testChannel = null;
 
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // * Check if server has license for Guest Accounts
         cy.requireLicenseForFeature('GuestAccounts');
@@ -79,7 +79,7 @@ describe('Verify Accessibility Support in different input fields', () => {
     });
 
     afterEach(() => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         if (testChannel && testChannel.id) {
             cy.apiDeleteChannel(testChannel.id);
         }

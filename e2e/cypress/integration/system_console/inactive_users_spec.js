@@ -21,7 +21,7 @@ const perPage = 50;
 describe('System Console', () => {
     it('SC18512 List pages of inactive users', () => {
         // # Login as sysadmin and go to users management page
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.visit('/admin_console/user_management/users');
 
         // # Select inactive users

@@ -18,14 +18,14 @@ describe('MM-T2575 Extend Session - Email Login', () => {
 
     before(() => {
         // # Login as sysadmin and check if with license and has matching database
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.requireLicense();
         cy.requireServerDBToMatch();
     });
 
     beforeEach(() => {
         // # Login as sysadmin and revoke sessions of the test user
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.dbGetUser({username: testUser}).then(({user}) => {
             cy.apiRevokeUserSessions(user.id);
         });

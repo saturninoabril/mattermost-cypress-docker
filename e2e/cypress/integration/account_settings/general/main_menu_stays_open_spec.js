@@ -18,7 +18,7 @@ let townsquareChannelId;
 describe('Account Settings > General', () => {
     before(() => {
         // # Login and go to town square
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.visit('/ad-1/channels/town-square');
 
         // # Store channel id for further use

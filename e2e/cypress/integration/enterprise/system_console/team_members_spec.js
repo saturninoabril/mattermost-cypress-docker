@@ -26,14 +26,14 @@ const saveConfig = () => {
 describe('Team members test', () => {
     before(() => {
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // * Check if server has license
         cy.requireLicense();
 
         // # Reset data before running tests
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // # Create a new team that is not group constrained
         cy.apiCreateTeam('test-team', 'Test Team').then((teamRes) => {
@@ -61,7 +61,7 @@ describe('Team members test', () => {
 
     after(() => {
         // # Reset data after running tests
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         if (team?.id) {
             cy.apiDeleteTeam(team.id, true);

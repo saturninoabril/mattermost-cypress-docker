@@ -21,7 +21,7 @@ describe('Messaging', () => {
     let yesterdaysDate;
     before(() => {
         // # Login as sysadmin and set ServiceSettings to expected values
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         const newSettings = {
             ServiceSettings: {
                 EnableBotAccountCreation: true,

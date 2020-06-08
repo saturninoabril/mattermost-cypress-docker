@@ -13,7 +13,7 @@
 describe('Markdown', () => {
     before(() => {
         // # Login as sysadmin and update config
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiUpdateConfig({
             ImageProxySettings: {
                 Enable: true,

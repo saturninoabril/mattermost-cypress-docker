@@ -23,7 +23,7 @@ describe('Draw plugin : Post message', () => {
 
     before(() => {
         // # Login as sysadmin and update config
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiUpdateConfig({
             PluginSettings: {
                 Enable: true,
@@ -44,7 +44,7 @@ describe('Draw plugin : Post message', () => {
 
     after(() => {
         // # UnInstall Draw plugin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiRemovePluginById(pluginId);
     });
 

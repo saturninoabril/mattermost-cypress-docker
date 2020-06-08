@@ -16,7 +16,7 @@ describe('Test Tutorial Navigation', () => {
     let team;
 
     before(() => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiUpdateConfig({
             NativeAppSettings: {
                 AppDownloadLink: appDownloadLink,
@@ -94,7 +94,7 @@ describe('Test Tutorial Navigation', () => {
         cy.apiLogout();
 
         // # Create another new user with the tutorial bypass flag set to false.
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiCreateAndLoginAsNewUser({}, [team.id], false);
         cy.visit(`/${team.name}/channels/town-square`);
 

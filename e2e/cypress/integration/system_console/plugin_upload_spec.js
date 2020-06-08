@@ -24,7 +24,7 @@ describe('Draw Plugin - Upload', () => {
     const pluginId = 'com.mattermost.draw-plugin';
     before(() => {
         // # Login as sysadmin and update config
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiUpdateConfig({
             PluginSettings: {
                 Enable: true,

@@ -33,7 +33,7 @@ function verifyMenuItems(menuEl, labels) {
 
 describe('Verify Accessibility Support in Dropdown Menus', () => {
     before(() => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // # Ensure an open team is available to join
         cy.getCurrentUserId().then((userId) => {

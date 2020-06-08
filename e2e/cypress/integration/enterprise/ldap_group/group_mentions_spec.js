@@ -18,7 +18,7 @@ let boardUser;
 // Goes to the groups page for the group specified by id as sysadmin
 const navigateToGroup = (id) => {
     // # Login as sysadmin and visit board group page, and wait until board user is visible
-    cy.apiLogin('sysadmin');
+    cy.apiAdminLogin();
     cy.visit(`/admin_console/user_management/groups/${id}`);
 
     // # Scroll users list into view and then make sure it has loaded before scrolling back to the top
@@ -126,7 +126,7 @@ const saveConfig = () => {
 describe('System Console', () => {
     before(() => {
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // * Check if server has license for LDAP Groups
         cy.requireLicenseForFeature('LDAPGroups');
@@ -163,7 +163,7 @@ describe('System Console', () => {
         cy.apiLogin(boardUser.username, boardUser.password);
 
         // # Login as sysadmin and add board-one to ad-1 team
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // # Add board user to ad-1 to ensure that he exists in the team and set his preferences to skip tutorial step
         cy.apiGetUserByEmail(boardUser.email).then((eRes) => {
@@ -226,7 +226,7 @@ describe('System Console', () => {
         const groupName = `board_test_case_${Date.now()}`;
 
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // # Set group as allow reference = true with name groupName
         cy.apiPatchGroup(groupID, {allow_reference: true, name: groupName});
@@ -246,7 +246,7 @@ describe('System Console', () => {
         assertGroupMentionEnabled(groupName);
 
         // # Login as sysadmin and navigate to system scheme
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.visit('/admin_console/user_management/permissions/system_scheme');
 
         // # Disable group mentions for users if enabled and save
@@ -266,7 +266,7 @@ describe('System Console', () => {
 
     after(() => {
         // # Login as sysadmin and navigate to system scheme page
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.visit('/admin_console/user_management/permissions/system_scheme');
 
         // # Click reset to defaults confirm and save

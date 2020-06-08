@@ -23,7 +23,7 @@ describe('Messaging', () => {
         cy.apiSavePreviewCollapsedPreference('false');
 
         // # Login as sysadmin and set the configuration on Link Previews
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiUpdateConfig({
             ServiceSettings: {
                 EnableLinkPreviews: true,
@@ -91,7 +91,7 @@ describe('Messaging', () => {
             cy.get(`#post_${postId}`).should('not.exist');
 
             // # Log in as the other user and go to town square
-            cy.apiLogin('sysadmin');
+            cy.apiAdminLogin();
             cy.visit('/ad-1/channels/town-square');
 
             // * The post should not exist
@@ -146,7 +146,7 @@ describe('Messaging', () => {
             cy.get(`#rhsPost_${postId}`).find('.attachment__image').should('not.exist');
 
             // # Log in as the other user and go to town square
-            cy.apiLogin('sysadmin');
+            cy.apiAdminLogin();
             cy.visit('/ad-1/channels/town-square');
 
             // * The post should not exist

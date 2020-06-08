@@ -34,7 +34,7 @@ describe('Interactive Menu', () => {
         cy.requireWebhookServer();
 
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // # Update teammate name display setting is set to default 'username'
         cy.apiSaveTeammateNameDisplayPreference('username');

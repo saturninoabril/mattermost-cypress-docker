@@ -28,7 +28,7 @@ describe('Header', () => {
     });
 
     afterEach(() => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         if (testTeam && testTeam.id) {
             cy.apiDeleteTeam(testTeam.id);
         }

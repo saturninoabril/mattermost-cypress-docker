@@ -21,7 +21,7 @@ describe('Messaging', () => {
         cy.mockWebsockets();
 
         // # Login and go to /
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.visit('/ad-1/channels/town-square');
 
         // # Get ChannelID to use later

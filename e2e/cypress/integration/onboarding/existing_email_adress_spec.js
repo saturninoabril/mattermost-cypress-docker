@@ -37,7 +37,7 @@ function signupWithEmail(name, pw) {
 describe('Email Address', () => {
     before(() => {
         // # Login as sysadmin and set EnableOpenServer to true and disable other auth options
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         const newSettings = {
             TeamSettings: {EnableOpenServer: true},
             Office365Settings: {Enable: false},

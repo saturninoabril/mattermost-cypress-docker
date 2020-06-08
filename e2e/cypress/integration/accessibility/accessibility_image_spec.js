@@ -16,7 +16,7 @@ describe('Verify Accessibility Support in Different Images', () => {
     let otherUser;
 
     before(() => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // Visit the Off Topic channel
         cy.visit('/ad-1/channels/off-topic');

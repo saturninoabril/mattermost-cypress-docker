@@ -30,7 +30,7 @@ function verifySections(sections) {
 
 describe('Verify Accessibility Support in different sections in Account Settings Dialog', () => {
     before(() => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // # Update Configs
         cy.apiUpdateConfig({

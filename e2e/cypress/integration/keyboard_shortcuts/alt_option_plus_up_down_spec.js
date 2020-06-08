@@ -16,7 +16,7 @@ describe('Keyboard Shortcuts', () => {
 
     before(() => {
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // # Create and login as new user
         cy.apiCreateAndLoginAsNewUser();

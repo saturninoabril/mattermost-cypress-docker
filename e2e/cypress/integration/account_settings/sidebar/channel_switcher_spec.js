@@ -40,7 +40,7 @@ describe('Account Settings > Sidebar > Channel Switcher', () => {
     after(() => {
         // # Delete the test team as sysadmin
         if (testTeam && testTeam.id) {
-            cy.apiLogin('sysadmin');
+            cy.apiAdminLogin();
             cy.apiDeleteTeam(testTeam.id, true);
         }
     });

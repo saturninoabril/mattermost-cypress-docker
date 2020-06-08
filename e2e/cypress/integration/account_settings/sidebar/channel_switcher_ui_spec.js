@@ -13,7 +13,7 @@
 describe('Account Settings > Sidebar > Channel Switcher', () => {
     before(() => {
         // # Login as sysadmin and visit town-square channel
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiUpdateConfig({
             ServiceSettings: {
                 ExperimentalChannelSidebarOrganization: 'disabled',

@@ -49,7 +49,7 @@ function markNewChannelAsUnread(channelName) {
 
 describe('Verify Accessibility Support in Channel Sidebar Navigation', () => {
     before(() => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiSaveSidebarSettingPreference();
 
         // # Update Configs

@@ -47,7 +47,7 @@ describe('Guest Account - Guest User Removal Experience', () => {
         cy.requireLicenseForFeature('GuestAccounts');
 
         // # Enable Guest Account Settings
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiUpdateConfig({
             GuestAccountsSettings: {
                 Enable: true,
@@ -94,7 +94,7 @@ describe('Guest Account - Guest User Removal Experience', () => {
         cy.get('.signup__content').should('be.visible').and('have.text', 'Your guest account has no channels assigned. Please contact an administrator.');
 
         // Login as sysadmin and verify test team 2
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.reload().visit(`/${team2.name}/channels/town-square`);
 
         // * Verify if status is displayed indicating guest user is removed from the channel

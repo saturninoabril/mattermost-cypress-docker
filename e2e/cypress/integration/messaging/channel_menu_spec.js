@@ -26,7 +26,7 @@ function promoteGuestToUser(user) {
 
 describe('Channel header menu', () => {
     before(() => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiUpdateConfig({
             GuestAccountsSettings: {
                 Enable: true,

@@ -18,7 +18,7 @@ describe('Messaging', () => {
         testChannel = null;
 
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // # Reset Sidebar Setting Preference
         cy.apiSaveSidebarSettingPreference();
@@ -31,7 +31,7 @@ describe('Messaging', () => {
     });
 
     afterEach(() => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         if (testChannel && testChannel.id) {
             cy.apiDeleteChannel(testChannel.id);
         }
@@ -86,7 +86,7 @@ describe('Messaging', () => {
                 // # Change user
                 cy.visit('/ad-1/town-square');
                 cy.apiLogout();
-                cy.apiLogin('sysadmin');
+                cy.apiAdminLogin();
                 cy.visit('/ad-1/town-square');
 
                 // # Check Message is in Unread List

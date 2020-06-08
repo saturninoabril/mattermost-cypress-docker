@@ -24,6 +24,9 @@ import './storybook_commands';
 import './task_commands';
 import './ui_commands';
 
+import {getAdminAccount, getDBConfig} from './env';
+import {dbGetUser} from './../plugins/db_request';
+
 const percentEncoding = {
     ':': '%3A',
     '/': '%2F',
@@ -108,11 +111,40 @@ Cypress.on('test:after:run', (test, runnable) => {
     }
 });
 
-// Reset config
 before(() => {
-    cy.apiLogin('sysadmin');
-    cy.apiUpdateConfig();
-    cy.apiInvalidateCache();
+    const sysadmin = getAdminAccount();
+    const dbConfig = getDBConfig();
+    cy.task('dbGetUser', {dbConfig, params: {username: sysadmin.username}}).then(({user, errorMessage}) => {
+        expect(errorMessage).to.be.undefined;
+
+        if (!user.id) {
+            // # Create and login a newly created user as sysadmin
+            cy.apiCreateAdmin().then((res) => {
+                const admin = res.body;
+                cy.apiAdminLogin().then(() => {
+                    cy.apiSaveTutorialStep(admin.id, '999');
+                });
+            });
+        } else {
+            // # Login existing sysadmin
+            cy.apiAdminLogin();
+        }
+
+        // # Reset config and invalidate cache
+        cy.apiUpdateConfig();
+        cy.apiInvalidateCache();
+
+        // # Check if default "ad-1" team is present, and
+        // # create if not found.
+        cy.apiGetTeams().then((response) => {
+            const teams = response.body;
+            const found = teams && teams.length > 0 && teams.find((team) => team.name === 'ad-1');
+
+            if (!found) {
+                cy.apiCreateTeam('ad-1', 'eligendi', 'O', false);
+            }
+        });
+    });
 });
 
 // Add login cookies to whitelist to preserve it

@@ -15,7 +15,7 @@ const groupMembers = ['aaron.peterson', 'aaron.ward', 'samuel.tucker'];
 describe('Search', () => {
     before(() => {
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // # Create and login as a new user
         cy.apiCreateAndLoginAsNewUser().then(() => {

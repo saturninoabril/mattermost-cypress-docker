@@ -30,7 +30,7 @@ const testCases = [
 describe('Markdown message', () => {
     before(() => {
         // # Login as sysadmin and enable local image proxy so our expected URLs match
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         const newSettings = {
             ImageProxySettings: {
                 Enable: true,

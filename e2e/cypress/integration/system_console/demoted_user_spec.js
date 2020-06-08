@@ -20,7 +20,7 @@ describe('System Console', () => {
         const baseUrl = Cypress.config('baseUrl');
 
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // # Login as new user
         cy.apiCreateAndLoginAsNewUser().as('newuser');

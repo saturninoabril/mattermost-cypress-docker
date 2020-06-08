@@ -65,7 +65,7 @@ const saveConfig = () => {
 };
 
 const deleteExistingTeamOverrideSchemes = () => {
-    cy.apiLogin('sysadmin');
+    cy.apiAdminLogin();
     cy.apiGetSchemes('team').then((res) => {
         res.body.forEach((scheme) => {
             cy.apiDeleteScheme(scheme.id);
@@ -136,7 +136,7 @@ const createPostPermissionCheck = (enabled) => {
 
 const resetPermissionsToDefault = () => {
     // # Login as sysadmin and navigate to system scheme page
-    cy.apiLogin('sysadmin');
+    cy.apiAdminLogin();
     cy.visit('/admin_console/user_management/permissions/system_scheme');
 
     // # Click reset to defaults and confirm
@@ -193,7 +193,7 @@ const checkChannelPermission = (permissionName, hasChannelPermisisonCheckFunc, n
     hasChannelPermisisonCheckFunc();
 
     // # Go to system permissions scheme page as sysadmin
-    cy.apiLogin('sysadmin');
+    cy.apiAdminLogin();
     cy.visit('/admin_console/user_management/permissions/system_scheme');
 
     // * Ensure permission is enabled at each scope by default
@@ -248,7 +248,7 @@ const checkChannelPermission = (permissionName, hasChannelPermisisonCheckFunc, n
     hasChannelPermisisonCheckFunc();
 
     // # Navigate back to system scheme as sysadmin and remove permission from channel admins
-    cy.apiLogin('sysadmin');
+    cy.apiAdminLogin();
     cy.visit('/admin_console/user_management/permissions/system_scheme');
     removePermission(channelTestId);
     saveConfig();
@@ -267,7 +267,7 @@ const checkChannelPermission = (permissionName, hasChannelPermisisonCheckFunc, n
     hasChannelPermisisonCheckFunc();
 
     // # Navigate back to system scheme as sysadmin and remove permission from team admins
-    cy.apiLogin('sysadmin');
+    cy.apiAdminLogin();
     cy.visit('/admin_console/user_management/permissions/system_scheme');
     removePermission(teamTestId);
     saveConfig();

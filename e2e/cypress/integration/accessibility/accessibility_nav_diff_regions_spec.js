@@ -40,7 +40,7 @@ function verifyNavSupport(element, label, tabOrder) {
 
 describe('Verify Quick Navigation support across different regions in the app', () => {
     before(() => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // Visit the Town Square channel
         cy.visit('/ad-1/channels/town-square');

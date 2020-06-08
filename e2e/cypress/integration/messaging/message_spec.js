@@ -101,7 +101,7 @@ describe('Message', () => {
         cy.apiPatchMe({notify_props: {channel: 'true'}});
 
         // # Login as sysadmin the create/login as new user
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.apiCreateAndLoginAsNewUser().then(() => {
             // # Create new team and visit its URL
             cy.apiCreateTeam('test-team', 'Test Team').then((response) => {

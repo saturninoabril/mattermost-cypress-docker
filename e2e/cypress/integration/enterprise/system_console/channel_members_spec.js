@@ -27,7 +27,7 @@ const saveConfig = () => {
 describe('Channel members test', () => {
     before(() => {
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // * Check if server has license
         cy.requireLicense();
@@ -67,7 +67,7 @@ describe('Channel members test', () => {
 
     after(() => {
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // # Reset data after running tests
         if (channel?.id) {

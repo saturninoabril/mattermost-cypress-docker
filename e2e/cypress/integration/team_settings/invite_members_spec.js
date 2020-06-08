@@ -92,7 +92,7 @@ describe('Invite Members', () => {
         testTeam = null;
 
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // # Enable API Team Deletion
         // # Disable Require Email Verification
@@ -116,7 +116,7 @@ describe('Invite Members', () => {
     });
 
     afterEach(() => {
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         if (testTeam && testTeam.id) {
             cy.apiDeleteTeam(testTeam.id);
         }
@@ -147,7 +147,7 @@ describe('Invite Members', () => {
     // By default, sysadmin can Invite Guests, should go to "InvitePeople" modal
     it('Invite Members to Team as SysAdmin', () => {
         // # login and visit
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
         cy.visit(`/${testTeam.name}`);
 
         // # function to open and select invite menu item

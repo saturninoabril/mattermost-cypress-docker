@@ -17,7 +17,7 @@ describe('Customization', () => {
 
     before(() => {
         // # Login as sysadmin
-        cy.apiLogin('sysadmin');
+        cy.apiAdminLogin();
 
         // Get config
         cy.apiGetConfig().then((response) => {
