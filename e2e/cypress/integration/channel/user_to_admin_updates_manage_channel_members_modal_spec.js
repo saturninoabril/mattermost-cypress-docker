@@ -14,17 +14,16 @@ import users from '../../fixtures/users.json';
 
 describe('View Members modal', () => {
     it('MM-20164 - Going from a Member to an Admin should update the modal', () => {
-        cy.apiLogin('user-1');
-        cy.apiGetMe().then((res) => {
-            // # Promote user-1 as a system admin
+        cy.apiCreateAndLoginAsNewUser().then((user) => {
+            // # Promote user as a system admin
             // # Visit default channel and verify members modal
-            promoteToSysAdmin(res.body);
+            promoteToSysAdmin(user);
             cy.visit('/ad-1/channels/town-square');
             verifyMemberDropdownAction(true);
 
             // # Make user a regular member
             // # Reload and verify members modal
-            demoteToMember(res.body);
+            demoteToMember(user);
             cy.reload();
             verifyMemberDropdownAction(false);
         });

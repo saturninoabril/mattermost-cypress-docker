@@ -14,8 +14,9 @@ import users from '../../fixtures/users';
 import {testWithConfig} from '../../support/hooks';
 
 import {getRandomId} from '../../utils';
+import {getAdminAccount} from '../../support/env';
 
-const sysadmin = users.sysadmin;
+const sysadmin = getAdminAccount();
 
 describe('Channel switching', () => {
     testWithConfig({
@@ -25,7 +26,7 @@ describe('Channel switching', () => {
     });
 
     before(() => {
-        cy.apiLogin('user-1');
+        cy.apiCreateAndLoginAsNewUser();
 
         cy.visit('/');
     });

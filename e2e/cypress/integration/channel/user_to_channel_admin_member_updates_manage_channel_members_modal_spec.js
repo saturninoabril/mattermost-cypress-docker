@@ -45,9 +45,8 @@ let userInfo;
 describe('Change Roles', () => {
     beforeEach(() => {
         // # Get user information
-        cy.apiLogin('user-1');
-        cy.apiGetMe().then((res) => {
-            userInfo = res.body;
+        cy.apiCreateAndLoginAsNewUser().then((user) => {
+            userInfo = user;
 
             // # Visit Town square and go to view members modal
             cy.visit('/ad-1/channels/town-square');
@@ -66,6 +65,7 @@ describe('Change Roles', () => {
             });
         });
     });
+
     it('MM-10858 - Going from a Channel Member to Channel Admin update view member modal without refresh', () => {
         // # Go to member modal
         cy.get('#member_popover').click();

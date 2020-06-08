@@ -21,7 +21,7 @@ describe('Channel sidebar', () => {
     });
 
     before(() => {
-        cy.apiLogin('user-1');
+        cy.apiCreateAndLoginAsNewUser();
 
         cy.visit('/');
     });

@@ -18,6 +18,7 @@ import {getEmailUrl, getEmailMessageSeparator, reUrl} from '../../utils';
 let config;
 
 describe('Email notification', () => {
+    let testUser;
     let mentionedUser;
 
     before(() => {
@@ -30,19 +31,15 @@ describe('Email notification', () => {
             config = response.body;
         });
 
-        cy.apiGetTeamByName('ad-1').then((res) => {
-            cy.apiCreateNewUser({}, [res.body.id]).then((user) => {
-                mentionedUser = user;
-            });
+        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => mentionedUser = user);
+
+        cy.apiCreateAndLoginAsNewUser().then((user) => {
+            testUser = user;
+            cy.visit('/ad-1/channels/town-square');
         });
     });
 
     it('post a message that mentions a user', () => {
-        // # Login as user-1 and visit town-square channel
-        cy.apiLogin('user-1');
-        cy.apiSaveTeammateNameDisplayPreference('username');
-        cy.visit('/ad-1/channels/town-square');
-
         // # Post a message mentioning the new user
         const text = `Hello @${mentionedUser.username}`;
         cy.postMessage(text);
@@ -55,8 +52,7 @@ describe('Email notification', () => {
 
         cy.task('getRecentEmail', {username: mentionedUser.username, mailUrl}).then((response) => {
             const messageSeparator = getEmailMessageSeparator(baseUrl);
-            const user1 = users['user-1'];
-            verifyEmailNotification(response, config.TeamSettings.SiteName, 'eligendi', 'Town Square', mentionedUser, user1, text, config.EmailSettings.FeedbackEmail, config.SupportSettings.SupportEmail, messageSeparator);
+            verifyEmailNotification(response, config.TeamSettings.SiteName, 'eligendi', 'Town Square', mentionedUser, testUser, text, config.EmailSettings.FeedbackEmail, config.SupportSettings.SupportEmail, messageSeparator);
 
             const bodyText = response.data.body.text.split('\n');
 

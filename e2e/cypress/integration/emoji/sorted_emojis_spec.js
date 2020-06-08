@@ -12,7 +12,7 @@
 
 describe('M16739 - Filtered emojis are sorted', () => {
     before(() => {
-        cy.apiLogin('user-1');
+        cy.apiCreateAndLoginAsNewUser();
         cy.visit('/ad-1/channels/town-square');
         cy.clearLocalStorage(/recent_emojis/);
     });

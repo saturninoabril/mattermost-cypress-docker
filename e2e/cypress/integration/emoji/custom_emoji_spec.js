@@ -12,7 +12,7 @@
 
 describe('Custom emojis', () => {
     before(() => {
-        cy.apiLogin('user-1');
+        cy.apiCreateAndLoginAsNewUser();
         cy.visit('/ad-1/channels/town-square');
     });
 
