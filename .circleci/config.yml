@@ -116,7 +116,7 @@ jobs:
             export CYPRESS_dbClient=postgres
             export CYPRESS_dbConnection="postgres://mmuser:mostest@localhost:5432/mattermost_test?sslmode=disable&connect_timeout=10"
 
-            cd e2e && node run_tests.js --group='@elasticsearch'
+            cd e2e && node run_tests.js --stage='@prod'
 
       - run:
           name: Save and publish reports
