@@ -13,11 +13,11 @@
  * Note: This test requires Enterprise license to be uploaded
  */
 import {getRandomId} from '../../../utils';
-import users from '../../../fixtures/users.json';
+import {getAdminAccount} from '../../../support/env';
 
 let testTeam;
-const user1 = users['user-1'];
-const sysadmin = users.sysadmin;
+let testUser;
+const sysadmin = getAdminAccount;
 
 function invitePeople(typeText, resultsCount, verifyText) {
     // # Open Invite People
@@ -103,6 +103,9 @@ describe('Guest Account - Member Invitation Flow', () => {
                 IdleTimeout: 300,
             },
         });
+
+        // # Create test user
+        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => testUser = user);
 
         // # Create new team and visit its URL
         cy.apiCreateTeam('test-team', 'Test Team').then((response) => {
@@ -205,10 +208,10 @@ describe('Guest Account - Member Invitation Flow', () => {
         verifyInvitationError(sysadmin.username, 'This person is already a team member.');
 
         // # Search and add an existing member by email who is not part of the team
-        invitePeople(user1.email, 1, user1.username);
+        invitePeople(testUser.email, 1, testUser.username);
 
         // * Verify the content and message in next screen
-        verifyInvitationSuccess(user1.username, 'This member has been added to the team.');
+        verifyInvitationSuccess(testUser.username, 'This member has been added to the team.');
 
         // # Search and add a new member by email who is not part of the team
         const email = `temp-${getRandomId()}@mattermost.com`;

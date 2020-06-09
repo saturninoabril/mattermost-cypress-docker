@@ -13,9 +13,8 @@
  * Note: This test requires Enterprise license to be uploaded
  */
 import * as TIMEOUTS from '../../../fixtures/timeouts';
-import users from '../../../fixtures/users.json';
 
-const user1 = users['user-1'];
+let regularUser;
 let guest;
 let guestTeamId;
 
@@ -24,6 +23,9 @@ describe('MM-18045 Verify Guest User Identification in different screens', () =>
         // * Check if server has license for Guest Accounts
         cy.apiAdminLogin();
         cy.requireLicenseForFeature('GuestAccounts');
+
+        // # Create a regular user
+        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => regularUser = user);
 
         // # Enable Guest Account Settings
         cy.apiUpdateConfig({
@@ -43,13 +45,11 @@ describe('MM-18045 Verify Guest User Identification in different screens', () =>
 
             // # Login as Sysadmin and add a regular member to Guest Team
             cy.apiAdminLogin();
-            cy.apiGetUserByEmail(user1.email).then((res) => {
-                cy.apiAddUserToTeam(guestTeamId, res.body.id);
+            cy.apiAddUserToTeam(guestTeamId, regularUser.id).then(() => {
+                // # Login as regular user
+                cy.apiLogin(regularUser.username, regularUser.password);
+                cy.visit(`/${team.name}/channels/town-square`);
             });
-
-            // # Login as user1
-            cy.apiLogin('user-1');
-            cy.visit(`/${team.name}/channels/town-square`);
         });
     });
 

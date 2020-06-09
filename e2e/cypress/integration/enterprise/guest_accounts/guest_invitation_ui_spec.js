@@ -15,11 +15,10 @@
  */
 import {getRandomId} from '../../../utils';
 import * as TIMEOUTS from '../../../fixtures/timeouts';
-import users from '../../../fixtures/users.json';
 
 let testTeam;
 let newUser;
-const user1 = users['user-1'];
+let regularUser;
 
 function changeGuestFeatureSettings(featureFlag = true, emailInvitation = true, whitelistedDomains = '') {
     // # Update Guest Accounts, Email Invitations, and Whitelisted Domains
@@ -110,14 +109,19 @@ function verifyInvitationSuccess(user, successText, verifyGuestBadge = false) {
 }
 
 describe('Guest Account - Guest User Invitation Flow', () => {
+    before(() => {
+        // * Check if server has license for Guest Accounts
+        cy.requireLicenseForFeature('GuestAccounts');
+
+        // # Create a regular user
+        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => regularUser = user);
+    });
+
     beforeEach(() => {
         testTeam = null;
 
         // # Login as sysadmin
         cy.apiAdminLogin();
-
-        // * Check if server has license for Guest Accounts
-        cy.requireLicenseForFeature('GuestAccounts');
 
         // # Reset Guest Feature settings
         changeGuestFeatureSettings();
@@ -243,10 +247,10 @@ describe('Guest Account - Guest User Invitation Flow', () => {
         verifyInvitationError(newUser.username, 'This person is already a member.');
 
         // # Search and add an existing member by email who is not part of the team
-        invitePeople(user1.email, 1, user1.username);
+        invitePeople(regularUser.email, 1, regularUser.username);
 
         // * Verify the content and message in next screen
-        verifyInvitationError(user1.username, 'This person is already a member.');
+        verifyInvitationError(regularUser.username, 'This person is already a member.');
 
         // # Demote the user from member to guest
         cy.demoteUser(newUser.id);

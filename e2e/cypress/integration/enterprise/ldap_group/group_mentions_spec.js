@@ -14,6 +14,7 @@ import users from '../../../fixtures/ldap_users.json';
 
 let groupID;
 let boardUser;
+let regularUser;
 
 // Goes to the groups page for the group specified by id as sysadmin
 const navigateToGroup = (id) => {
@@ -134,6 +135,9 @@ describe('System Console', () => {
         // # Enable LDAP
         cy.apiUpdateConfig({LdapSettings: {Enable: true}});
 
+        // # Create a regular user
+        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => regularUser = user);
+
         // # Link board group
         cy.visit('/admin_console/user_management/groups');
         cy.get('#board_group').then((el) => {
@@ -240,7 +244,7 @@ describe('System Console', () => {
         saveConfig();
 
         // # Login as a normal user
-        cy.apiLogin('user-1');
+        cy.apiLogin(regularUser.username, regularUser.password);
 
         // * Assert that the group mention works as expected since the group is enabled and user has permission to mention
         assertGroupMentionEnabled(groupName);
@@ -258,7 +262,7 @@ describe('System Console', () => {
         saveConfig();
 
         // # Login as a regular member
-        cy.apiLogin('user-1');
+        cy.apiLogin(regularUser.username, regularUser.password);
 
         // * Assert that the group mention does not do anything since the user does not have the permission to mention the group
         assertGroupMentionDisabled(groupName);
