@@ -85,8 +85,6 @@ describe('Channel routing', () => {
         cy.apiCreateDirectChannel([testUser.id, otherUser1.id]).then((response) => {
             const dmChannel = response.body;
 
-            console.log('dmChannel', dmChannel);
-
             // # Visit the channel using the channel name
             cy.visit(`/ad-1/channels/${testUser.id}__${otherUser1.id}`);
 

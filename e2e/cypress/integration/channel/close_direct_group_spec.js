@@ -111,10 +111,9 @@ describe('Close group messages', () => {
 
             // # Visit the new channel
             cy.visit(`/ad-1/channels/${channel.name}`);
-            console.log('channel.display_name', channel.display_name);
+
             // * Verify channel's display name
             const displayName = channel.display_name.split(', ').filter((username => username !== currentUser.username)).join(', ');
-            console.log('displayNem', displayName);
             cy.get('#channelHeaderTitle').should('contain', displayName);
 
             return cy.wrap(channel);
