@@ -183,6 +183,16 @@ Cypress.Commands.add('apiGetChannel', (channelId) => {
     });
 });
 
+Cypress.Commands.add('apiGetAllChannels', () => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: '/api/v4/channels',
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap(response);
+    });
+});
+
 Cypress.Commands.add('apiAddUserToChannel', (channelId, userId) => {
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -793,6 +803,33 @@ Cypress.Commands.add('apiCreateUserAndAddToDefaultTeam', (bypassTutorial = true)
                 });
             });
         });
+    });
+});
+
+Cypress.Commands.add('apiCreateGuestUser', (bypassTutorial = true) => {
+    const randomUser = generateRandomUser();
+    randomUser.username = `guest${getRandomId()}`
+    randomUser.password = 'SampleGu@st1';
+
+    const createUserOption = {
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        method: 'POST',
+        url: '/api/v4/users',
+        body: randomUser,
+    };
+
+    return cy.request(createUserOption).then((userRes) => {
+        expect(userRes.status).to.equal(201);
+
+        const user = userRes.body;
+
+        if (bypassTutorial) {
+            cy.apiSaveTutorialStep(user.id, '999');
+        }
+
+        cy.demoteUser(user.id);
+
+        return cy.wrap({...user, password: randomUser.password});
     });
 });
 

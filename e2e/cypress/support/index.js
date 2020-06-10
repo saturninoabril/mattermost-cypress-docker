@@ -136,12 +136,36 @@ before(() => {
 
         // # Check if default "ad-1" team is present, and
         // # create if not found.
-        cy.apiGetTeams().then((response) => {
-            const teams = response.body;
-            const found = teams && teams.length > 0 && teams.find((team) => team.name === 'ad-1');
+        const defaultTeamName = 'ad-1';
+        cy.apiGetTeams().then((teamsRes) => {
+            const teams = teamsRes.body;
+            let defaultTeam = teams && teams.length > 0 && teams.find((team) => team.name === defaultTeamName);
 
-            if (!found) {
-                cy.apiCreateTeam('ad-1', 'eligendi', 'O', false);
+            if (!defaultTeam) {
+                cy.apiCreateTeam(defaultTeamName, 'eligendi', 'O', false).then((teamRes) => {
+                    defaultTeam = teamRes.body;
+                });
+            }
+
+            if (Boolean(Cypress.env('resetBeforeTest'))) {
+                teams.forEach((team) => {
+                    if (team.name !== defaultTeamName) {
+                        cy.apiDeleteTeam(team.id);
+                    }
+                });
+    
+                cy.apiGetAllChannels().then((channelsRes) => {
+                    const channels = channelsRes.body;
+    
+                    channels.forEach((channel) => {
+                        if (
+                            (channel.team_id === defaultTeam.id || channel.team_name === defaultTeam.name) &&
+                            (channel.name !== 'town-square' && channel.name !== 'off-topic')
+                        ) {
+                            cy.apiDeleteChannel(channel.id);
+                        }
+                    });
+                });
             }
         });
     });
