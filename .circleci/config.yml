@@ -36,7 +36,7 @@ jobs:
           http.cors.allow-credentials: "true"
           transport.host: "127.0.0.1"
           ES_JAVA_OPTS: "-Xms512m -Xmx512m"
-      - image: mattermost/mattermost-enterprise-edition:master
+      - image: mattermost/mattermost-enterprise-edition:73466be
         environment:
           DB_HOST: localhost
           DB_PORT_NUMBER: 5432
@@ -104,7 +104,7 @@ jobs:
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
             # -- Change as needed --
-            export BRANCH=master
+            export BRANCH=webapp-pr-5399
             # --
 
             export BUILD_ID=$CIRCLE_BUILD_NUM
@@ -126,11 +126,11 @@ jobs:
             export DIAGNOSTIC_TEAM_ID=`psql -d $TEST_DATABASE_URL -t -c "SELECT id FROM teams WHERE name='ad-1';"`
 
             # -- Change as needed
-            # export TYPE=MASTER
-            export BRANCH=master
+            export TYPE=PR
+            export BRANCH=webapp-pr-5399
             # Temporarily set tag
-            export BUILD_TAG=master
-            export DASHBOARD_ENABLE=false
+            export BUILD_TAG=73466be
+            export DASHBOARD_ENABLE=true
             export FULL_REPORT=false
             # --
 
@@ -139,7 +139,7 @@ jobs:
             # This is how it should be on main org repo
             # export PULL_REQUEST=$CIRCLE_PULL_REQUESTS
             # Temporarily set PR
-            # export PULL_REQUEST=
+            export PULL_REQUEST=https://github.com/mattermost/mattermost-webapp/pull/5399
 
             # This is how it should be on main org repo
             # Should match the tag in mattermost/mattermost-enterprise-edition image
