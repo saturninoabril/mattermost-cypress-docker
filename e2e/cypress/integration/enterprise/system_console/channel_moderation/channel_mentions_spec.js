@@ -10,7 +10,6 @@
 // Group: @enterprise @system_console @channel_moderation
 
 import {getRandomId} from '../../../../utils';
-import {getAdminAccount} from '../../../../support/env';
 
 import {
     checkboxesTitleToIdMap,
@@ -29,7 +28,6 @@ describe('MM-23102 - Channel Moderation - Channel Mentions', () => {
     let guestUser;
     let testTeam;
     let testChannel;
-    let admin = getAdminAccount();
 
     before(() => {
         // * Check if server has license
@@ -48,7 +46,7 @@ describe('MM-23102 - Channel Moderation - Channel Mentions', () => {
                 cy.apiCreateGuestUser().then((user) => {
                     guestUser = user;
 
-                    cy.apiAddUserToTeam(team.id, guestUser.id).then(() => {
+                    cy.apiAddUserToTeam(testTeam.id, guestUser.id).then(() => {
                         cy.apiAddUserToChannel(testChannel.id, guestUser.id);
                     });
 

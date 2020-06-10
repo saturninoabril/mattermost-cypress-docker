@@ -296,3 +296,25 @@ export const promoteToChannelOrTeamAdmin = (userId, id, channelsOrTeams = 'chann
         },
     });
 };
+
+// # Disable (uncheck) all the permissions in the channel moderation widget
+export const disableAllChannelModeratedPermissions = () => {
+    checkBoxes.forEach((buttonId) => {
+        cy.findByTestId(buttonId).then((btn) => {
+            if (btn.hasClass('checked')) {
+                btn.click();
+            }
+        });
+    });
+};
+
+// # Enable (check) all the permissions in the channel moderation widget
+export const enableAllChannelModeratedPermissions = () => {
+    checkBoxes.forEach((buttonId) => {
+        cy.findByTestId(buttonId).then((btn) => {
+            if (!btn.hasClass('checked')) {
+                btn.click();
+            }
+        });
+    });
+};

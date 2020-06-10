@@ -54,7 +54,7 @@ describe('MM-23102 - Channel Moderation - Higher Scoped Scheme', () => {
                 cy.apiCreateGuestUser().then((user) => {
                     guestUser = user;
 
-                    cy.apiAddUserToTeam(team.id, guestUser.id).then(() => {
+                    cy.apiAddUserToTeam(testTeam.id, guestUser.id).then(() => {
                         cy.apiAddUserToChannel(testChannel.id, guestUser.id);
                     });
 
@@ -130,9 +130,6 @@ describe('MM-23102 - Channel Moderation - Higher Scoped Scheme', () => {
 
     it('Effect of changing Team Override Schemes on a Channel for which Channel Moderation Settings was never modified', () => {
         // # Reset system scheme to default and create a new channel to ensure that this channels moderation settings have never been modified
-        // const randomChannelName = 'NeverModified' + getRandomId();
-        // createNewChannel(randomChannelName, admin);
-
         cy.apiAdminLogin();
         cy.apiCreateChannel(testTeam.id, 'never-modified', `Never Modified ${getRandomId()}`).then((response) => {
             const randomChannel = response.body;
@@ -298,7 +295,7 @@ describe('MM-23102 - Channel Moderation - Higher Scoped Scheme', () => {
     it('Channel Moderation Settings should not be applied for Channel Admins', () => {
         enableDisableAllChannelModeratedPermissionsViaAPI(testChannel, false);
         visitChannel(regularUser, testChannel, testTeam);
-        demoteToChannelOrTeamMember(regularUser.id, testChannel.id);
+        promoteToChannelOrTeamAdmin(regularUser.id, testChannel.id);
 
         // * Assert user can post message and user channel mentions
         postChannelMentionsAndVerifySystemMessageNotExist(testChannel);
@@ -322,7 +319,7 @@ describe('MM-23102 - Channel Moderation - Higher Scoped Scheme', () => {
     it('Channel Moderation Settings should not be applied for Team Admins', () => {
         enableDisableAllChannelModeratedPermissionsViaAPI(testChannel, false);
         visitChannel(regularUser, testChannel, testTeam);
-        promoteToChannelOrTeamAdmin(regularUser.id, team.id, 'teams');
+        promoteToChannelOrTeamAdmin(regularUser.id, testTeam.id, 'teams');
 
         // * Assert user can post message and user channel mentions
         postChannelMentionsAndVerifySystemMessageNotExist(testChannel);
@@ -339,5 +336,7 @@ describe('MM-23102 - Channel Moderation - Higher Scoped Scheme', () => {
 
         // * Add Members button does not exist
         cy.get('#showInviteModal').should('exist');
+
+        demoteToChannelOrTeamMember(regularUser.id, testTeam.id, 'teams');
     });
 });

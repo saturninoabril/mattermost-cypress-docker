@@ -45,7 +45,7 @@ describe('MM-23102 - Channel Moderation - Create Posts', () => {
                 cy.apiCreateGuestUser().then((user) => {
                     guestUser = user;
 
-                    cy.apiAddUserToTeam(team.id, guestUser.id).then(() => {
+                    cy.apiAddUserToTeam(testTeam.id, guestUser.id).then(() => {
                         cy.apiAddUserToChannel(testChannel.id, guestUser.id);
                     });
 
