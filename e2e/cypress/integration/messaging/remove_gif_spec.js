@@ -20,11 +20,6 @@ describe('Messaging', () => {
     let testTeam;
 
     before(() => {
-        // // # Login and setup link preferences
-        // cy.apiLogin('user-1');
-        // cy.apiSaveShowPreviewPreference();
-        // cy.apiSavePreviewCollapsedPreference('false');
-
         // # Set the configuration on Link Previews
         cy.apiUpdateConfig({
             ServiceSettings: {
@@ -39,9 +34,6 @@ describe('Messaging', () => {
 
             cy.visit(`/${testTeam.name}/channels/town-square`);
         });
-
-        // // # Go to town-square channel
-        // cy.visit('/ad-1/channels/town-square');
     });
 
     it('M18692-Delete a GIF from RHS reply thread, other user viewing in center and RHS sees GIF preview disappear from both', () => {
@@ -102,7 +94,7 @@ describe('Messaging', () => {
 
             // # Log in as the other user and go to town square
             cy.apiAdminLogin();
-            cy.visit('/ad-1/channels/town-square');
+            cy.visit(`/${testTeam.name}/channels/town-square`);
 
             // * The post should not exist
             cy.get(`#post_${postId}`).should('not.exist');
@@ -159,7 +151,7 @@ describe('Messaging', () => {
 
             // # Log in as the other user and go to town square
             cy.apiAdminLogin();
-            cy.visit('/ad-1/channels/town-square');
+            cy.visit(`/${testTeam.name}/channels/town-square`);
 
             // * The post should not exist
             cy.get(`#post_${postId}`).should('not.exist');
