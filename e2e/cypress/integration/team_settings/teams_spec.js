@@ -68,7 +68,7 @@ describe('Teams Suite', () => {
         cy.url().should('include', `/${testTeam.name}/channels/town-square`);
     });
 
-    it.only('TS13548 Team or System Admin searches and adds new team member', () => {
+    it('TS13548 Team or System Admin searches and adds new team member', () => {
         // # Update config
         cy.apiUpdateConfig({
             GuestAccountsSettings: {

@@ -114,7 +114,7 @@ jobs:
 
             export CYPRESS_chromeWebSecurity=true
             export CYPRESS_runLDAPSync=false
-            # export CYPRESS_resetBeforeTest=true
+            export CYPRESS_resetBeforeTest=true
             export CYPRESS_dbClient=postgres
             export CYPRESS_dbConnection="postgres://mmuser:mostest@localhost:5432/mattermost_test?sslmode=disable&connect_timeout=10"
 

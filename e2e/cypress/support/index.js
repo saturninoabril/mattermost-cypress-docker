@@ -131,6 +131,9 @@ before(() => {
         cy.apiUpdateConfig();
         cy.apiInvalidateCache();
 
+        // # Reset admin preference
+        cy.apiSaveTeammateNameDisplayPreference('username');
+
         // # Reset roles
         cy.apiGetClientLicense().then((res) => {
             if (res.body.IsLicensed === 'true') {
