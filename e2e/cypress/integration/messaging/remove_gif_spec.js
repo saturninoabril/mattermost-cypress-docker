@@ -16,11 +16,14 @@ import users from '../../fixtures/users.json';
 const sysadmin = users.sysadmin;
 
 describe('Messaging', () => {
+    let testUser;
+    let testTeam;
+
     before(() => {
-        // # Login and setup link preferences
-        cy.apiLogin('user-1');
-        cy.apiSaveShowPreviewPreference();
-        cy.apiSavePreviewCollapsedPreference('false');
+        // // # Login and setup link preferences
+        // cy.apiLogin('user-1');
+        // cy.apiSaveShowPreviewPreference();
+        // cy.apiSavePreviewCollapsedPreference('false');
 
         // # Set the configuration on Link Previews
         cy.apiUpdateConfig({
@@ -29,8 +32,16 @@ describe('Messaging', () => {
             },
         });
 
-        // # Go to town-square channel
-        cy.visit('/ad-1/channels/town-square');
+        // # Login as test user and go to town-square
+        cy.apiInitSetup().then(({team, user}) => {
+            testUser = user;
+            testTeam = team;
+
+            cy.visit(`/${testTeam.name}/channels/town-square`);
+        });
+
+        // // # Go to town-square channel
+        // cy.visit('/ad-1/channels/town-square');
     });
 
     it('M18692-Delete a GIF from RHS reply thread, other user viewing in center and RHS sees GIF preview disappear from both', () => {
@@ -44,8 +55,8 @@ describe('Messaging', () => {
         cy.postMessageReplyInRHS('https://media1.giphy.com/media/l41lM6sJvwmZNruLe/giphy.gif');
 
         // # Change user and go to Town Square
-        cy.apiLogin('user-1');
-        cy.visit('/ad-1/channels/town-square');
+        cy.apiLogin(testUser.username, testUser.password);
+        cy.visit(`/${testTeam.name}/channels/town-square`);
 
         // # Wait for the page to be loaded
         cy.wait(TIMEOUTS.SMALL);
@@ -99,6 +110,8 @@ describe('Messaging', () => {
     });
 
     it('M18692-Delete a GIF from RHS reply thread, other user viewing in center and RHS sees GIF preview disappear from both (mobile view)', () => {
+        cy.apiAdminLogin();
+
         // # Type message to use
         cy.postMessage('123');
 
@@ -109,8 +122,8 @@ describe('Messaging', () => {
         cy.postMessageReplyInRHS('https://media1.giphy.com/media/l41lM6sJvwmZNruLe/giphy.gif');
 
         // # Change user and go to Town Square
-        cy.apiLogin('user-1');
-        cy.visit('/ad-1/channels/town-square');
+        cy.apiLogin(testUser.username, testUser.password);
+        cy.visit(`/${testTeam.name}/channels/town-square`);
 
         // # Change viewport so it has mobile view
         cy.viewport('iphone-6');

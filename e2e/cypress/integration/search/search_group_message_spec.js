@@ -23,17 +23,17 @@ describe('Search', () => {
             testUser = user;
             testTeam = team;
 
-            cy.apiCreateUser({bypassTutorial: false}).then(({user: user1}) => {
+            cy.apiCreateUser({prefix: 'aaa'}).then(({user: user1}) => {
                 userOne = user1;
                 cy.apiAddUserToTeam(testTeam.id, userOne.id);
             });
 
-            cy.apiCreateUser({bypassTutorial: false}).then(({user: user2}) => {
+            cy.apiCreateUser({prefix: 'bbb'}).then(({user: user2}) => {
                 userTwo = user2;
                 cy.apiAddUserToTeam(testTeam.id, userTwo.id);
             });
 
-            cy.apiCreateUser({bypassTutorial: false}).then(({user: user3}) => {
+            cy.apiCreateUser({prefix: 'ccc'}).then(({user: user3}) => {
                 userThree = user3;
                 cy.apiAddUserToTeam(testTeam.id, userThree.id);
             });
@@ -57,7 +57,7 @@ describe('Search', () => {
 
             const sortedUsernames = groupMembers.
                 map((member) => member.username).
-                sort((a, b) => a.localeCompare(b));
+                sort((a, b) => a.localeCompare(b, 'en', {numeric: true}));
 
             //# Search group members in the menu
             cy.get('#search-autocomplete__popover').should('be.visible').within(() => {

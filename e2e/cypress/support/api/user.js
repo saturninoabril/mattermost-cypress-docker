@@ -168,13 +168,14 @@ function generateRandomUser(prefix = 'user') {
 Cypress.Commands.add('apiCreateUser', (options = {}) => {
     const prefix = options.prefix || 'user';
     const bypassTutorial = options.hasOwnProperty('bypassTutorial') ? options.bypassTutorial : true;
-    const randomUser = generateRandomUser(prefix);
+
+    const user = options.user || generateRandomUser(prefix);
 
     const createUserOption = {
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         method: 'POST',
         url: '/api/v4/users',
-        body: randomUser,
+        body: user,
     };
 
     return cy.request(createUserOption).then((userRes) => {
@@ -186,7 +187,7 @@ Cypress.Commands.add('apiCreateUser', (options = {}) => {
             cy.apiSaveTutorialStep(createdUser.id, '999');
         }
 
-        return cy.wrap({user: {...createdUser, password: randomUser.password}});
+        return cy.wrap({user: {...createdUser, password: user.password}});
     });
 });
 
