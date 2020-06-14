@@ -23,15 +23,12 @@ describe('Interactive Menu', () => {
     before(() => {
         cy.requireWebhookServer();
 
-        // # Login as sysadmin
-        cy.apiAdminLogin();
-
         // # Update teammate name display setting is set to default 'username'
         cy.apiSaveTeammateNameDisplayPreference('username');
         cy.apiSaveMessageDisplayPreference('clean');
 
         // # Create and visit new channel and create incoming webhook
-        cy.createAndVisitNewChannel().then((data) => {
+        cy.uiCreateAndVisitNewChannel().then((data) => {
             channel = data;
 
             const newIncomingHook = {

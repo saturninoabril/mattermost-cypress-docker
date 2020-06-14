@@ -97,8 +97,7 @@ describe('System Console - Enterprise', () => {
     ];
 
     before(() => {
-        // * Login as sysadmin and check if server has license
-        cy.apiAdminLogin();
+        // * Check if server has license
         cy.requireLicense();
 
         const newSettings = {

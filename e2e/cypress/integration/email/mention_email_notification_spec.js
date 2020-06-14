@@ -10,7 +10,6 @@
 // Stage: @prod
 // Group: @notification
 
-import users from '../../fixtures/users.json';
 import * as TIMEOUTS from '../../fixtures/timeouts';
 
 import {getEmailUrl, getEmailMessageSeparator, reUrl} from '../../utils';
@@ -20,22 +19,29 @@ let config;
 describe('Email notification', () => {
     let testUser;
     let mentionedUser;
+    let testTeam;
 
     before(() => {
         // # Do email test if setup properly
         cy.apiEmailTest();
 
-        // # Login as sysadmin and get config
-        cy.apiAdminLogin();
+        // # Get config
         cy.apiGetConfig().then((response) => {
             config = response.body;
         });
 
-        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => mentionedUser = user);
-
-        cy.apiCreateAndLoginAsNewUser().then((user) => {
+        cy.apiInitSetup().then(({team, user}) => {
             testUser = user;
-            cy.visit('/ad-1/channels/town-square');
+            testTeam = team;
+
+            cy.apiCreateUser().then(({user: newUser}) => {
+                mentionedUser = newUser;
+                cy.apiAddUserToTeam(team.id, newUser.id);
+            });
+
+            // # Login as test user and go to town square
+            cy.apiLogin(testUser.username, testUser.password);
+            cy.visit(`/${team.name}/channels/town-square`);
         });
     });
 
@@ -52,7 +58,7 @@ describe('Email notification', () => {
 
         cy.task('getRecentEmail', {username: mentionedUser.username, mailUrl}).then((response) => {
             const messageSeparator = getEmailMessageSeparator(baseUrl);
-            verifyEmailNotification(response, config.TeamSettings.SiteName, 'eligendi', 'Town Square', mentionedUser, testUser, text, config.EmailSettings.FeedbackEmail, config.SupportSettings.SupportEmail, messageSeparator);
+            verifyEmailNotification(response, config.TeamSettings.SiteName, testTeam.display_name, 'Town Square', mentionedUser, testUser, text, config.EmailSettings.FeedbackEmail, config.SupportSettings.SupportEmail, messageSeparator);
 
             const bodyText = response.data.body.text.split('\n');
 

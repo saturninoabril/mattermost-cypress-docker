@@ -38,35 +38,26 @@ describe('Verify Accessibility Support in Modals & Dialogs', () => {
     let testUser;
 
     before(() => {
-        cy.apiAdminLogin();
-
         // * Check if server has license for Guest Accounts
         cy.requireLicenseForFeature('GuestAccounts');
 
-        // # Enable Guest Account Settings
-        cy.apiUpdateConfig({
-            GuestAccountsSettings: {
-                Enable: true,
-            },
-        });
-
-        // # Adding at least two other users to default team
-        cy.apiCreateUserAndAddToDefaultTeam();
-        cy.apiCreateUserAndAddToDefaultTeam().then(({user, team}) => {
+        cy.apiInitSetup().then(({team, channel, user}) => {
             testTeam = team;
+            testChannel = channel;
             testUser = user;
 
-            // # Add new channel
-            cy.apiCreateChannel(testTeam.id, 'accessibility', 'accessibility').then((response) => {
-                testChannel = response.body;
+            cy.apiCreateUser().then(({user: newUser}) => {
+                cy.apiAddUserToTeam(testTeam.id, newUser.id).then(() => {
+                    cy.apiAddUserToChannel(testChannel.id, newUser.id);
+                });
             });
         });
     });
 
     beforeEach(() => {
-        // # Login as sysadmin and visit the Town Square channel
+        // # Visit the Town Square channel
         cy.apiAdminLogin();
-        cy.visit('/ad-1/channels/town-square');
+        cy.visit(`/${testTeam.name}/channels/town-square`);
     });
 
     it('MM-22623 Accessibility Support in Different Modals and Dialog screen', () => {
@@ -80,9 +71,9 @@ describe('Verify Accessibility Support in Modals & Dialogs', () => {
         verifyMainMenuModal('Team Settings', 'teamSettingsModal', 'teamSettingsModalLabel', 'Team Settings');
 
         // * Verify the accessibility support in Manage Members Dialog
-        verifyMainMenuModal('Manage Members', 'teamMembersModal', 'teamMemberModalLabel', 'eligendi Members');
+        verifyMainMenuModal('Manage Members', 'teamMembersModal', 'teamMemberModalLabel', `${testTeam.display_name} Members`);
 
-        cy.visit('/ad-1/channels/off-topic');
+        cy.visit(`/${testTeam.name}/channels/off-topic`);
 
         // * Verify the accessibility support in Channel Edit Header Dialog
         verifyChannelMenuModal('Edit Channel Header', 'Edit Header for Off-Topic', 'editChannelHeaderModalLabel');
@@ -134,8 +125,12 @@ describe('Verify Accessibility Support in Modals & Dialogs', () => {
     });
 
     it('MM-22623 Accessibility Support in More Channels Dialog screen', () => {
-        cy.apiLogin(testUser.username, testUser.password).then(() => {
-            cy.apiCreateChannel(testTeam.id, 'accessibility', 'accessibility').then(() => {
+        // # Create atleast 2 channels
+        cy.apiCreateChannel(testTeam.id, 'accessibility', 'accessibility');
+        cy.apiCreateChannel(testTeam.id, 'accessibility', 'accessibility').then(() => {
+            cy.apiLogin(testUser.username, testUser.password).then(() => {
+                cy.reload();
+
                 // * Verify the aria-label in more public channels button
                 cy.get('#sidebarPublicChannelsMore').should('have.attr', 'aria-label', 'See more public channels').click();
 
@@ -175,14 +170,20 @@ describe('Verify Accessibility Support in Modals & Dialogs', () => {
                         get('.more-modal__details button').
                         should('have.class', 'a11y--active a11y--focused');
                 });
-                
             });
         });
     });
 
     it('MM-22623 Accessibility Support in Add New Members to Channel Dialog screen', () => {
+        // # Add atleast 5 users
+        for (let i = 0; i < 5; i++) {
+            cy.apiCreateUser().then(({user}) => { // eslint-disable-line
+                cy.apiAddUserToTeam(testTeam.id, user.id);
+            });
+        }
+
         // # Visit the test channel
-        cy.visit(`/ad-1/channels/${testChannel.name}`);
+        cy.visit(`/${testTeam.name}/channels/${testChannel.name}`);
 
         // # Open Add Members Dialog
         cy.get('#channelHeaderDropdownIcon').click();
@@ -225,7 +226,7 @@ describe('Verify Accessibility Support in Modals & Dialogs', () => {
 
     it('MM-22623 Accessibility Support in Manage Channel Members Dialog screen', () => {
         // # Visit test team and channel
-        cy.visit('/ad-1/channels/off-topic');
+        cy.visit(`/${testTeam.name}/channels/off-topic`);
 
         // # Open Channel Members Dialog
         cy.get('#channelHeaderDropdownIcon').click();

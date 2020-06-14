@@ -12,8 +12,9 @@
 import * as TIMEOUTS from '../../../../fixtures/timeouts';
 import {getRandomId} from '../../../../utils';
 
+import {checkboxesTitleToIdMap} from './constants';
+
 import {
-    checkboxesTitleToIdMap,
     deleteOrEditTeamScheme,
     disableChannelModeratedPermission,
     enableChannelModeratedPermission,
@@ -35,36 +36,25 @@ describe('MM-23102 - Channel Moderation - Manage Members', () => {
     before(() => {
         // * Check if server has license
         cy.requireLicense();
-
-        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => {
-            regularUser = user;
-        });
-
-        cy.apiCreateGuestUser().then((user) => {
-            guestUser = user;
-
-            // # Make the guest user as Active
-            cy.apiActivateUser(guestUser.id, true);
-        });
     });
 
     beforeEach(() => {
         cy.apiAdminLogin();
-        cy.apiCreateTeam('moderation-team', `Moderation ${getRandomId()}`).then((response) => {
-            testTeam = response.body;
-            cy.apiAddUserToTeam(testTeam.id, regularUser.id);
+        cy.apiResetRoles();
+        cy.apiInitSetup().then(({team, channel, user}) => {
+            regularUser = user;
+            testTeam = team;
+            testChannel = channel;
 
-            // # Add new channel
-            cy.apiCreateChannel(testTeam.id, 'moderation', `moderation${getRandomId()}`).then((response) => {
-                testChannel = response.body;
-
-                cy.apiAddUserToTeam(testTeam.id, regularUser.id).then(() => {
-                    cy.apiAddUserToChannel(testChannel.id, regularUser.id);
-                });
+            cy.apiCreateGuestUser().then(({guest}) => {
+                guestUser = guest;
 
                 cy.apiAddUserToTeam(testTeam.id, guestUser.id).then(() => {
                     cy.apiAddUserToChannel(testChannel.id, guestUser.id);
                 });
+
+                // # Activate guest user
+                cy.apiActivateUser(guestUser.id, true);
             });
         });
     });
@@ -109,12 +99,13 @@ describe('MM-23102 - Channel Moderation - Manage Members', () => {
     });
 
     it('Manage Members option removed for Members in System Scheme', () => {
-        // Edit the System Scheme and remove the Manage Members option for Members & Save.
+        // Edit the System Scheme and disable the Manage Members option for Members & Save.
         goToSystemScheme();
-        cy.get('#all_users-public_channel-manage_public_channel_members').click();
+        cy.get('#all_users-public_channel-manage_public_channel_members').scrollIntoView().should('be.visible').click();
+        cy.findByTestId('all_users-public_channel-manage_public_channel_members-checkbox').should('not.have.class', 'checked');
         saveConfigForScheme();
 
-        // # Visit test channel page and turn off the Manage members for Members and then save
+        // # Visit test channel page
         visitChannelConfigPage(testChannel);
 
         // * Assert that Manage Members option should be disabled for a Members.
@@ -130,6 +121,26 @@ describe('MM-23102 - Channel Moderation - Manage Members', () => {
 
         // * Add Members button does not exist
         cy.get('#showInviteModal').should('not.exist');
+
+        // Edit the System Scheme and enable the Manage Members option for Members & Save.
+        goToSystemScheme();
+        cy.get('#all_users-public_channel-manage_public_channel_members').scrollIntoView().should('be.visible').click();
+        cy.findByTestId('all_users-public_channel-manage_public_channel_members-checkbox').should('have.class', 'checked');
+        saveConfigForScheme();
+
+        // # Visit test channel page
+        visitChannelConfigPage(testChannel);
+
+        // * Assert that Manage Members option should be enabled for a Members.
+        // * A message Manage members for members are enabled in the System Scheme should be displayed.
+        cy.findByTestId('admin-channel_settings-channel_moderation-manageMembers-disabledMember').
+            should('not.exist');
+
+        visitChannel(regularUser, testChannel, testTeam);
+        viewManageChannelMembersModal('Manage');
+
+        // * Add Members button does not exist
+        cy.get('#showInviteModal').should('exist');
     });
 
     it('Manage Members option removed for Members in Team Override Scheme', () => {
@@ -137,8 +148,11 @@ describe('MM-23102 - Channel Moderation - Manage Members', () => {
 
         // # Create a new team override scheme and remove manage members option for members
         goToPermissionsAndCreateTeamOverrideScheme(teamOverrideSchemeName, testTeam);
+
+        // # Disable mange channel members
         deleteOrEditTeamScheme(teamOverrideSchemeName, 'edit');
-        cy.get('#all_users-public_channel-manage_public_channel_members').click();
+        cy.get('#all_users-public_channel-manage_public_channel_members').scrollIntoView().should('be.visible').click();
+        cy.findByTestId('all_users-public_channel-manage_public_channel_members-checkbox').should('not.have.class', 'checked');
         saveConfigForScheme(false);
         cy.wait(TIMEOUTS.SMALL);
 
@@ -146,7 +160,7 @@ describe('MM-23102 - Channel Moderation - Manage Members', () => {
         visitChannelConfigPage(testChannel);
         cy.findByTestId('admin-channel_settings-channel_moderation-manageMembers-disabledMember').
             should('exist').
-            and('have.text', 'Manage members for members are disabled in manage_members Team Scheme.');
+            and('have.text', `Manage members for members are disabled in ${teamOverrideSchemeName} Team Scheme.`);
         cy.findByTestId(checkboxesTitleToIdMap.MANAGE_MEMBERS_MEMBERS).should('be.disabled');
         cy.findByTestId(checkboxesTitleToIdMap.MANAGE_MEMBERS_GUESTS).should('not.exist');
 
@@ -155,5 +169,24 @@ describe('MM-23102 - Channel Moderation - Manage Members', () => {
 
         // * Add Members button does not exist in manage channel members modal
         cy.get('#showInviteModal').should('not.exist');
+
+        // # Enable manage channel members
+        deleteOrEditTeamScheme(teamOverrideSchemeName, 'edit');
+        cy.get('#all_users-public_channel-manage_public_channel_members').scrollIntoView().should('be.visible').click();
+        cy.findByTestId('all_users-public_channel-manage_public_channel_members-checkbox').should('have.class', 'checked');
+        saveConfigForScheme(false);
+        cy.wait(TIMEOUTS.SMALL);
+
+        visitChannelConfigPage(testChannel);
+        cy.findByTestId('admin-channel_settings-channel_moderation-manageMembers-disabledMember').
+            should('not.exist');
+        cy.findByTestId(checkboxesTitleToIdMap.MANAGE_MEMBERS_MEMBERS).should('have.class', 'checkbox checked');
+        cy.findByTestId(checkboxesTitleToIdMap.MANAGE_MEMBERS_GUESTS).should('not.exist');
+
+        visitChannel(regularUser, testChannel, testTeam);
+        viewManageChannelMembersModal('Manage');
+
+        // * Add Members button does exist in manage channel members modal
+        cy.get('#showInviteModal').should('exist');
     });
 });

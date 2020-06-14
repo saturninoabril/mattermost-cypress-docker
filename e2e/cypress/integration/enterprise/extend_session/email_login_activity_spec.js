@@ -12,18 +12,20 @@ import {getAdminAccount} from '../../../support/env';
 // Group: @enterprise @extend_session
 
 describe('MM-T2575 Extend Session - Email Login', () => {
-    const townSquarePage = '/ad-1/channels/town-square';
+    let townSquarePage;
     const oneDay = 24 * 60 * 60 * 1000;
     const admin = getAdminAccount();
     let testUser;
 
     before(() => {
-        // # Login as sysadmin and check if with license and has matching database
-        cy.apiAdminLogin();
+        // # Check if with license and has matching database
         cy.requireLicense();
         cy.requireServerDBToMatch();
 
-        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => testUser = user);
+        cy.apiInitSetup().then(({team, user}) => {
+            testUser = user;
+            townSquarePage = `/${team.name}/channels/town-square`;
+        });
     });
 
     beforeEach(() => {

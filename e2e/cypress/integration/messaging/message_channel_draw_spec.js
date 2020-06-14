@@ -22,8 +22,7 @@ describe('Draw plugin : Post message', () => {
     const pluginId = 'com.mattermost.draw-plugin';
 
     before(() => {
-        // # Login as sysadmin and update config
-        cy.apiAdminLogin();
+        // # Update config
         cy.apiUpdateConfig({
             PluginSettings: {
                 Enable: true,

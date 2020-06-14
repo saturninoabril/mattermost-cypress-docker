@@ -12,9 +12,10 @@
 
 describe('AS14318 Theme Colors - Settings View', () => {
     before(() => {
-        // # Login and visit town-square channel
-        cy.apiCreateAndLoginAsNewUser();
-        cy.visit('/ad-1/channels/town-square');
+        // # Login as new user and visit town-square
+        cy.apiInitSetup({loginAfter: true}).then(({team}) => {
+            cy.visit(`/${team.name}/channels/town-square`);
+        });
     });
 
     it('Theme Display should render in min setting view', () => {

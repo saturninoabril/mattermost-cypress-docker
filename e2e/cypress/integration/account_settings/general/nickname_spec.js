@@ -13,11 +13,10 @@ describe('Account Settings > Sidebar > General', () => {
     let testUser;
 
     before(() => {
-        // # Login and visit town-square channel
-        cy.apiCreateAndLoginAsNewUser().then((user) => {
+        // # Login as new user and visit town-square
+        cy.apiInitSetup({loginAfter: true}).then(({team, user}) => {
             testUser = user;
-
-            cy.visit('/ad-1/channels/town-square');
+            cy.visit(`/${team.name}/channels/town-square`);
         });
     });
 
@@ -70,9 +69,9 @@ describe('Account Settings > Sidebar > General', () => {
 
         // # Search for username and check that no nickname is present
         cy.get('.modal-title').should('be.visible');
-        cy.get('#searchUsersInput').should('be.visible').type(testUser.firstName);
+        cy.get('#searchUsersInput').should('be.visible').type(testUser.first_name);
         cy.get('.more-modal__details > .more-modal__name').should('be.visible').then((el) => {
-            expect(getInnerText(el)).equal(`@${testUser.username} - ${testUser.firstName} ${testUser.lastName}`);
+            expect(getInnerText(el)).equal(`@${testUser.username} - ${testUser.first_name} ${testUser.last_name}`);
         });
 
         // # Close Team Members modal
@@ -100,9 +99,9 @@ describe('Account Settings > Sidebar > General', () => {
 
         // # Search for username and check that expected nickname is present
         cy.get('.modal-title').should('be.visible');
-        cy.get('#searchUsersInput').should('be.visible').type(testUser.firstName);
+        cy.get('#searchUsersInput').should('be.visible').type(testUser.first_name);
         cy.get('.more-modal__details > .more-modal__name').should('be.visible').then((el) => {
-            expect(getInnerText(el)).equal(`@${testUser.username} - ${testUser.firstName} ${testUser.lastName} (victor_nick)`);
+            expect(getInnerText(el)).equal(`@${testUser.username} - ${testUser.first_name} ${testUser.last_name} (victor_nick)`);
         });
 
         // # Close Channel Members modal

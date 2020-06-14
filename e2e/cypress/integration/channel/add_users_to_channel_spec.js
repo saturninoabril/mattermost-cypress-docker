@@ -53,15 +53,30 @@ function addNumberOfUsersToChannel(num = 1) {
 }
 
 describe('CS15445 Join/leave messages', () => {
+    let testTeam;
+    let testUser;
+
     before(() => {
-        // # Login as test user
-        cy.apiCreateAndLoginAsNewUser();
-        cy.visit('/ad-1/channels/town-square');
+        // # Login as new user and visit town-square
+        cy.apiInitSetup().then(({team, user}) => {
+            testTeam = team;
+            testUser = user;
+
+            // # Add atleast 4 users
+            for (let i = 0; i < 4; i++) {
+                cy.apiCreateUser().then(({user: newUser}) => { // eslint-disable-line
+                    cy.apiAddUserToTeam(testTeam.id, newUser.id);
+                });
+            }
+
+            cy.apiLogin(testUser.username, testUser.password);
+            cy.visit(`/${team.name}/channels/town-square`);
+        });
     });
 
     it('Single User: Usernames are links, open profile popovers', () => {
         // # Create and visit new channel
-        cy.createAndVisitNewChannel().then(() => {
+        cy.uiCreateAndVisitNewChannel(testTeam).then(() => {
             // # Add users to channel
             addNumberOfUsersToChannel(1);
 
@@ -77,7 +92,7 @@ describe('CS15445 Join/leave messages', () => {
 
     it('Combined Users: Usernames are links, open profile popovers', () => {
         // # Create and visit new channel
-        cy.createAndVisitNewChannel().then(() => {
+        cy.uiCreateAndVisitNewChannel(testTeam).then(() => {
             addNumberOfUsersToChannel(3);
 
             cy.getLastPostId().then((id) => {

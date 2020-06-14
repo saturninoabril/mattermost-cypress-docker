@@ -24,9 +24,6 @@ describe('Keyboard shortcut for adding reactions to last message in channel or t
         testChannel = null;
         isArchived = false;
 
-        // # Login as sysadmin
-        cy.apiAdminLogin();
-
         // # Enable Experimental View Archived Channels
         cy.apiUpdateConfig({
             TeamSettings: {

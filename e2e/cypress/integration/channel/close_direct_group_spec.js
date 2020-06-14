@@ -24,14 +24,21 @@ function verifyChannelWasProperlyClosed(channelName) {
 describe('Close direct messages', () => {
     let testUser;
     let otherUser;
+    let testTeam;
 
     before(() => {
-        cy.apiAdminLogin();
-        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => otherUser = user);
-        cy.apiCreateAndLoginAsNewUser().then((user) => {
+        cy.apiInitSetup().then(({team, user}) => {
             testUser = user;
+            testTeam = team;
 
-            cy.visit('/ad-1/channels/town-square');
+            cy.apiCreateUser().then(({user: newUser}) => {
+                otherUser = newUser;
+                cy.apiAddUserToTeam(team.id, newUser.id);
+            });
+
+            // # Login as test user and go to town square
+            cy.apiLogin(testUser.username, testUser.password);
+            cy.visit(`/${testTeam.name}/channels/town-square`);
         });
     });
 
@@ -59,7 +66,7 @@ describe('Close direct messages', () => {
             const channel = res.body;
 
             // # Visit the new channel
-            cy.visit(`/ad-1/channels/${channel.name}`);
+            cy.visit(`/${testTeam.name}/channels/${channel.name}`);
 
             // * Verify channel's display name
             cy.get('#channelHeaderTitle').should('contain', channel.display_name);
@@ -73,15 +80,26 @@ describe('Close group messages', () => {
     let testUser;
     let otherUser1;
     let otherUser2;
+    let testTeam;
 
     before(() => {
         cy.apiAdminLogin();
-        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => otherUser1 = user);
-        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => otherUser2 = user);
-        cy.apiCreateAndLoginAsNewUser().then((user) => {
+        cy.apiInitSetup().then(({team, user}) => {
             testUser = user;
+            testTeam = team;
 
-            cy.visit('/ad-1/channels/town-square');
+            cy.apiCreateUser().then(({user: newUser}) => {
+                otherUser1 = newUser;
+                cy.apiAddUserToTeam(team.id, newUser.id);
+            });
+            cy.apiCreateUser().then(({user: newUser}) => {
+                otherUser2 = newUser;
+                cy.apiAddUserToTeam(team.id, newUser.id);
+            });
+
+            // # Login as test user and go to town square
+            cy.apiLogin(testUser.username, testUser.password);
+            cy.visit(`/${team.name}/channels/town-square`);
         });
     });
 
@@ -110,10 +128,10 @@ describe('Close group messages', () => {
             const channel = res.body;
 
             // # Visit the new channel
-            cy.visit(`/ad-1/channels/${channel.name}`);
+            cy.visit(`/${testTeam.name}/channels/${channel.name}`);
 
             // * Verify channel's display name
-            const displayName = channel.display_name.split(', ').filter((username => username !== currentUser.username)).join(', ');
+            const displayName = channel.display_name.split(', ').filter(((username) => username !== currentUser.username)).join(', ');
             cy.get('#channelHeaderTitle').should('contain', displayName);
 
             return cy.wrap(channel);

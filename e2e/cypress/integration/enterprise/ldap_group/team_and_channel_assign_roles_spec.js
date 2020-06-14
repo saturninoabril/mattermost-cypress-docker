@@ -29,9 +29,6 @@ describe('System Console', () => {
     let team;
 
     before(() => {
-        // # Login as sysadmin
-        cy.apiAdminLogin();
-
         // * Check if server has license for LDAP Groups
         cy.requireLicenseForFeature('LDAPGroups');
 

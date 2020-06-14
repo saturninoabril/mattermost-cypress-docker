@@ -18,8 +18,6 @@ describe('Autocomplete without Elasticsearch - Users', () => {
     let team;
 
     before(() => {
-        // # Login as admin
-        cy.apiAdminLogin();
         cy.apiSaveTeammateNameDisplayPreference('username');
 
         // * Check if server has license for Elasticsearch

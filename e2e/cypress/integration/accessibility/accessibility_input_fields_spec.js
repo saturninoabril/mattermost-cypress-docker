@@ -51,38 +51,23 @@ function verifyMessageAutocomplete(index, type = 'user') {
 }
 
 describe('Verify Accessibility Support in different input fields', () => {
+    let testTeam;
     let testChannel;
 
-    beforeEach(() => {
-        testChannel = null;
-
-        // # Login as sysadmin
-        cy.apiAdminLogin();
-
+    before(() => {
         // * Check if server has license for Guest Accounts
         cy.requireLicenseForFeature('GuestAccounts');
 
-        // # Enable Guest Accounts
-        cy.apiUpdateConfig({
-            GuestAccountsSettings: {
-                Enable: true,
-            },
-        });
-
-        // # Visit the test channel
-        cy.apiGetTeamByName('ad-1').then((res) => {
-            cy.apiCreateChannel(res.body.id, 'accessibility', 'accessibility').then((response) => {
-                testChannel = response.body;
-                cy.visit(`/ad-1/channels/${testChannel.name}`);
-            });
+        cy.apiInitSetup().then(({team}) => {
+            testTeam = team;
         });
     });
 
-    afterEach(() => {
-        cy.apiAdminLogin();
-        if (testChannel && testChannel.id) {
-            cy.apiDeleteChannel(testChannel.id);
-        }
+    beforeEach(() => {
+        cy.apiCreateChannel(testTeam.id, 'accessibility', 'accessibility').then((response) => {
+            testChannel = response.body;
+            cy.visit(`/${testTeam.name}/channels/${testChannel.name}`);
+        });
     });
 
     it('MM-22625 Verify Accessibility Support in Input fields in Invite People Flow', () => {
@@ -126,14 +111,13 @@ describe('Verify Accessibility Support in different input fields', () => {
 
     it('MM-22625 Verify Accessibility Support in Search Autocomplete', () => {
         // # Adding at least five other users in the channel
-        const channelId = testChannel.id;
-        cy.apiGetTeamByName('ad-1').then((res) => {
-            for (let i = 0; i < 5; i++) {
-                cy.apiCreateNewUser({}, [res.body.id]).then((user) => {
-                    cy.apiAddUserToChannel(channelId, user.id);
+        for (let i = 0; i < 5; i++) {
+            cy.apiCreateUser().then(({user}) => { // eslint-disable-line
+                cy.apiAddUserToTeam(testTeam.id, user.id).then(() => {
+                    cy.apiAddUserToChannel(testChannel.id, user.id);
                 });
-            }
-        });
+            });
+        }
 
         // * Verify Accessibility support in search input
         cy.get('#searchBox').should('have.attr', 'aria-describedby', 'searchbar-help-popup').and('have.attr', 'aria-label', 'Search').focus();
@@ -170,11 +154,11 @@ describe('Verify Accessibility Support in different input fields', () => {
         verifySearchAutocomplete(0, 'channel');
     });
 
-    it.only('MM-22625 Verify Accessibility Support in Message Autocomplete', () => {
+    it('MM-22625 Verify Accessibility Support in Message Autocomplete', () => {
         // # Adding at least one other user in the channel
-        cy.getCurrentChannelId().then((channelId) => {
-            cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => {
-                cy.apiAddUserToChannel(channelId, user.id).then(() => {
+        cy.apiCreateUser().then(({user}) => {
+            cy.apiAddUserToTeam(testTeam.id, user.id).then(() => {
+                cy.apiAddUserToChannel(testChannel.id, user.id).then(() => {
                     // * Verify Accessibility support in post input field
                     cy.get('#post_textbox').should('have.attr', 'aria-label', `write to ${testChannel.display_name}`).clear().focus();
 
@@ -213,7 +197,7 @@ describe('Verify Accessibility Support in different input fields', () => {
                     cy.focused().type('{downarrow}{uparrow}{uparrow}');
 
                     // * Verify Accessibility Support in message autocomplete
-                    verifyMessageAutocomplete(0, 'channel');
+                    verifyMessageAutocomplete(1, 'channel');
                 });
             });
         });

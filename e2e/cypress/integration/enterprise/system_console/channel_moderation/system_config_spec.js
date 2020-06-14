@@ -9,18 +9,17 @@
 
 // Group: @enterprise @system_console @channel_moderation
 
-import {getRandomId} from '../../../../utils';
 import * as TIMEOUTS from '../../../../fixtures/timeouts';
 
+import {checkBoxes} from './constants';
+
 import {
-    checkBoxes,
     disableAllChannelModeratedPermissions,
     enableAllChannelModeratedPermissions,
     saveConfigForChannel,
 } from './helpers';
 
 describe('Channel Moderation', () => {
-    let regularUser;
     let guestUser;
     let testTeam;
     let testChannel;
@@ -29,26 +28,19 @@ describe('Channel Moderation', () => {
         // * Check if server has license
         cy.requireLicense();
 
-        cy.apiCreateUserAndAddToDefaultTeam().then(({user, team}) => {
-            regularUser = user;
+        cy.apiInitSetup().then(({team, channel}) => {
             testTeam = team;
+            testChannel = channel;
 
-            // # Add new channel
-            cy.apiCreateChannel(testTeam.id, 'moderation', `moderation${getRandomId()}`).then((response) => {
-                testChannel = response.body;
+            cy.apiCreateGuestUser().then(({guest}) => {
+                guestUser = guest;
 
-                cy.apiAddUserToChannel(testChannel.id, regularUser.id);
-
-                cy.apiCreateGuestUser().then((user) => {
-                    guestUser = user;
-
-                    cy.apiAddUserToTeam(team.id, guestUser.id).then(() => {
-                        cy.apiAddUserToChannel(testChannel.id, guestUser.id);
-                    });
-
-                    // # Make the guest user as Active
-                    cy.apiActivateUser(guestUser.id, true);
+                cy.apiAddUserToTeam(testTeam.id, guestUser.id).then(() => {
+                    cy.apiAddUserToChannel(testChannel.id, guestUser.id);
                 });
+
+                // # Activate guest user
+                cy.apiActivateUser(guestUser.id, true);
             });
         });
     });

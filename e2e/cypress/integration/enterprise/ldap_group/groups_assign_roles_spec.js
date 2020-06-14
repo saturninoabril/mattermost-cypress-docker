@@ -47,9 +47,6 @@ const getChannelsAssociatedToGroupAndUnlink = (groupId) => {
 
 describe('System Console', () => {
     before(() => {
-        // # Login as sysadmin
-        cy.apiAdminLogin();
-
         // * Check if server has license for LDAP Groups
         cy.requireLicenseForFeature('LDAPGroups');
 

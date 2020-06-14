@@ -36,8 +36,6 @@ context('ldap', () => {
             // * Check if server has license for LDAP
             cy.requireLicenseForFeature('LDAP');
 
-            cy.apiAdminLogin();
-
             cy.apiGetConfig().then((response) => {
                 testSettings = setLDAPTestSettings(response.body);
             });

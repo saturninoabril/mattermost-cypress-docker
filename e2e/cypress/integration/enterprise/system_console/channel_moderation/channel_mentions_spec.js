@@ -9,10 +9,9 @@
 
 // Group: @enterprise @system_console @channel_moderation
 
-import {getRandomId} from '../../../../utils';
+import {checkboxesTitleToIdMap} from './constants';
 
 import {
-    checkboxesTitleToIdMap,
     disableChannelModeratedPermission,
     enableChannelModeratedPermission,
     postChannelMentionsAndVerifySystemMessageExist,
@@ -33,26 +32,20 @@ describe('MM-23102 - Channel Moderation - Channel Mentions', () => {
         // * Check if server has license
         cy.requireLicense();
 
-        cy.apiCreateUserAndAddToDefaultTeam().then(({user, team}) => {
+        cy.apiInitSetup().then(({team, channel, user}) => {
             regularUser = user;
             testTeam = team;
+            testChannel = channel;
 
-            // # Add new channel
-            cy.apiCreateChannel(testTeam.id, 'moderation', `moderation${getRandomId()}`).then((response) => {
-                testChannel = response.body;
+            cy.apiCreateGuestUser().then(({guest}) => {
+                guestUser = guest;
 
-                cy.apiAddUserToChannel(testChannel.id, regularUser.id);
-
-                cy.apiCreateGuestUser().then((user) => {
-                    guestUser = user;
-
-                    cy.apiAddUserToTeam(testTeam.id, guestUser.id).then(() => {
-                        cy.apiAddUserToChannel(testChannel.id, guestUser.id);
-                    });
-
-                    // # Make the guest user as Active
-                    cy.apiActivateUser(guestUser.id, true);
+                cy.apiAddUserToTeam(testTeam.id, guestUser.id).then(() => {
+                    cy.apiAddUserToChannel(testChannel.id, guestUser.id);
                 });
+
+                // # Activate guest user
+                cy.apiActivateUser(guestUser.id, true);
             });
         });
     });
@@ -174,15 +167,15 @@ describe('MM-23102 - Channel Moderation - Channel Mentions', () => {
         visitChannel(regularUser, testChannel, testTeam);
 
         // * Type at all and enter that no confirmation dialogue shows up
-        cy.findByTestId('post_textbox').clear().type('@all{enter}');
+        cy.postMessage('@all');
         cy.get('#confirmModalLabel').should('not.exist');
 
         // * Type at channel and enter that no confirmation dialogue shows up
-        cy.findByTestId('post_textbox').clear().type('@channel{enter}');
+        cy.postMessage('@channel');
         cy.get('#confirmModalLabel').should('not.exist');
 
         // * Type at here and enter that no confirmation dialogue shows up
-        cy.findByTestId('post_textbox').clear().type('@here{enter}');
+        cy.postMessage('@here');
         cy.get('#confirmModalLabel').should('not.exist');
     });
 });

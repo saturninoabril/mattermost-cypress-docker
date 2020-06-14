@@ -16,12 +16,12 @@ describe('Verify Accessibility Support in Different Images', () => {
     let otherUser;
 
     before(() => {
-        cy.apiAdminLogin();
+        cy.apiInitSetup().then(({team, user}) => {
+            otherUser = user;
 
-        // Visit the Off Topic channel
-        cy.visit('/ad-1/channels/off-topic');
-
-        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => otherUser = user);
+            // Visit the Off Topic channel
+            cy.visit(`/${team.name}/channels/off-topic`);
+        });
     });
 
     it('MM-24075 Accessibility support in different images', () => {

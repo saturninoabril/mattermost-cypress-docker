@@ -15,8 +15,7 @@ const sysadmin = users.sysadmin;
 
 describe('Messaging', () => {
     before(() => {
-        // # Login sysadmin and enable Timezone
-        cy.apiAdminLogin();
+        // # Enable Timezone
         cy.apiUpdateConfig({
             DisplaySettings: {
                 ExperimentalTimezone: true,
@@ -27,7 +26,7 @@ describe('Messaging', () => {
         cy.apiLogin('user-1');
 
         // # Create and visit new channel
-        cy.createAndVisitNewChannel().then((channel) => {
+        cy.uiCreateAndVisitNewChannel().then((channel) => {
             // # Post messages from the past
             [
                 Date.UTC(2020, 0, 5, 4, 30), // Jan 5, 2020 04:30

@@ -12,8 +12,7 @@
 
 describe('System Console', () => {
     before(() => {
-        // * Login as sysadmin and check if server has license for ID Loaded Push Notifications
-        cy.apiAdminLogin();
+        // * Check if server has license for ID Loaded Push Notifications
         cy.requireLicenseForFeature('IDLoadedPushNotifications');
 
         // # Update to default config

@@ -24,15 +24,9 @@ function verifyImageInPostFooter(verifyExistence = true) {
 
 describe('Image attachment', () => {
     before(() => {
-        // # Login as sysadmin
-        cy.apiAdminLogin();
-
         // # Login as new user
-        cy.apiCreateAndLoginAsNewUser().then(() => {
-            // # Create new team and visit its URL
-            cy.apiCreateTeam('test-team', 'Test Team').then((response) => {
-                cy.visit(`/${response.body.name}`);
-            });
+        cy.apiInitSetup({loginAfter: true}).then(({team}) => {
+            cy.visit(`/${team.name}/channels/town-square`);
         });
     });
 

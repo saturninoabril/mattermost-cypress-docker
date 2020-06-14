@@ -22,8 +22,7 @@ describe('Messaging', () => {
         cy.apiSaveShowPreviewPreference();
         cy.apiSavePreviewCollapsedPreference('false');
 
-        // # Login as sysadmin and set the configuration on Link Previews
-        cy.apiAdminLogin();
+        // # Set the configuration on Link Previews
         cy.apiUpdateConfig({
             ServiceSettings: {
                 EnableLinkPreviews: true,

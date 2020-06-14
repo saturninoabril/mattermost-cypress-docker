@@ -71,8 +71,6 @@ function verifyPostLabel(elementId, username, labelSuffix) {
 
 describe('Verify Accessibility Support in Post', () => {
     before(() => {
-        cy.apiAdminLogin();
-
         // # Update Configs
         cy.apiUpdateConfig({
             ServiceSettings: {

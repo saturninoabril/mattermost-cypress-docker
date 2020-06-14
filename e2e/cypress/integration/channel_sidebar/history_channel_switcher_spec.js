@@ -21,9 +21,10 @@ describe('Channel sidebar', () => {
     });
 
     before(() => {
-        cy.apiCreateAndLoginAsNewUser();
-
-        cy.visit('/');
+        // # Login as test user and visit town-square
+        cy.apiInitSetup({loginAfter: true}).then(({team}) => {
+            cy.visit(`/${team.name}/channels/town-square`);
+        });
     });
 
     it('should not show history arrows on the regular webapp', () => {

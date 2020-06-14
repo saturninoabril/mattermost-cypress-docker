@@ -10,48 +10,57 @@
 // Stage: @prod
 // Group: @account_setting
 
+import {getRandomId} from '../../../utils';
+
 describe('Account Settings > Display > Message Display', () => {
     before(() => {
-        // # Change message display setting to compact
-        cy.apiCreateAndLoginAsNewUser();
-        cy.visit('/ad-1/channels/town-square');
-        cy.changeMessageDisplaySetting('COMPACT');
+        // # Login as new user and visit town-square
+        cy.apiInitSetup({loginAfter: true}).then(({team}) => {
+            cy.visit(`/${team.name}/channels/town-square`);
+        });
     });
 
-    it('M14283 Compact view: Line breaks remain intact after editing', () => {
-        // # Enter in text
-        cy.get('#post_textbox').
-            clear().
-            type('First line').
-            type('{shift}{enter}{enter}').
-            type('Text after{enter}');
+    ['COMPACT', 'STANDARD'].forEach((display) => {
+        it(`M14283 ${display} view: Line breaks remain intact after editing`, () => {
+            cy.uiChangeMessageDisplaySetting(display);
 
-        // # Get last postId
-        cy.getLastPostId().then((postId) => {
-            const postMessageTextId = `#postMessageText_${postId}`;
+            const firstLine = `First line ${getRandomId()}`;
+            const secondLine = `Text after ${getRandomId()}`;
 
-            // * Verify HTML still includes new line
-            cy.get(postMessageTextId).should('have.html', '<p>First line</p>\n<p>Text after</p>');
+            // # Enter in text
+            cy.get('#post_textbox').
+                clear().
+                type(firstLine).
+                type('{shift}{enter}{enter}').
+                type(`${secondLine}{enter}`);
 
-            // # click dot menu button
-            cy.clickPostDotMenu(postId);
+            // # Get last postId
+            cy.getLastPostId().then((postId) => {
+                const postMessageTextId = `#postMessageText_${postId}`;
 
-            // # click edit post
-            cy.get(`#edit_post_${postId}`).should('be.visible').click();
+                // * Verify HTML still includes new line
+                cy.get(postMessageTextId).should('have.html', `<p>${firstLine}</p>\n<p>${secondLine}</p>`);
 
-            // # Add ",edited" to the text
-            cy.get('#edit_textbox').type(',edited');
+                // # click dot menu button
+                cy.clickPostDotMenu(postId);
 
-            // # Save
-            cy.get('#editButton').click();
+                // # click edit post
+                cy.get(`#edit_post_${postId}`).should('be.visible').click();
 
-            // * Verify HTML includes newline and the edit
-            cy.get(postMessageTextId).should('have.html', '<p>First line</p>\n<p>Text after,edited</p>');
+                // # Add ",edited" to the text
+                cy.get('#edit_textbox').type(',edited');
 
-            // * Post should have (edited)
-            cy.get(`#postEdited_${postId}`).
-                should('be.visible').
-                should('contain', '(edited)');
+                // # Save
+                cy.get('#editButton').click();
+
+                // * Verify HTML includes newline and the edit
+                cy.get(postMessageTextId).should('have.html', `<p>${firstLine}</p>\n<p>${secondLine},edited</p>`);
+
+                // * Post should have (edited)
+                cy.get(`#postEdited_${postId}`).
+                    should('be.visible').
+                    should('contain', '(edited)');
+            });
         });
     });
 });

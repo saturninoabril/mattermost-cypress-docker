@@ -25,9 +25,6 @@ describe('Autocomplete with Elasticsearch - Channel', () => {
     let user;
 
     before(() => {
-        // # Execute the before hook based on current config
-        cy.apiAdminLogin();
-
         // * Check if server has license for Elasticsearch
         cy.requireLicenseForFeature('Elasticsearch');
 

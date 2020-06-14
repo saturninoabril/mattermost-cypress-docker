@@ -15,7 +15,6 @@ let config;
 describe('Signup Email page', () => {
     before(() => {
         // Disable other auth options
-        cy.apiAdminLogin();
         const newSettings = {
             Office365Settings: {Enable: false},
             LdapSettings: {Enable: false},

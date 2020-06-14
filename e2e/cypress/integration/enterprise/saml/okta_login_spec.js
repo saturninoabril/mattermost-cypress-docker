@@ -72,7 +72,6 @@ context('Okta', () => {
     describe('SAML Login flow', () => {
         before(() => {
             // * Check if server has license for SAML
-            cy.apiAdminLogin();
             cy.requireLicenseForFeature('SAML');
 
             // # Get certificates status and upload as necessary

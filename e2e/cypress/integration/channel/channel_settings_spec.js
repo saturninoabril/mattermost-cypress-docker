@@ -13,16 +13,15 @@
 
 describe('Channel Settings', () => {
     before(() => {
-        // # Login as test user and visit town-square
-        cy.apiCreateAndLoginAsNewUser().then(() => {
-            // # Create private channel
-            cy.apiGetTeamByName('ad-1').then((res) => {
-                cy.apiCreateChannel(res.body.id, 'channel', 'Private Channel', 'P').then(() => {
-
-                    // # Visit town-square channel
-                    cy.visit('/ad-1/channels/town-square');
-                });
+        cy.apiInitSetup().then(({team, user}) => {
+            cy.apiCreateChannel(team.id, 'channel', 'Private Channel', 'P').then((res) => {
+                cy.apiAddUserToChannel(res.body.id, user.id);
             });
+
+            cy.apiLogin(user.username, user.password);
+
+            // # Visit town-square channel
+            cy.visit(`/${team.name}/channels/town-square`);
         });
     });
 

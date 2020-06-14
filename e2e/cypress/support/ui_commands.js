@@ -57,7 +57,7 @@ Cypress.Commands.add('toAccountSettingsModal', () => {
  * Change the message display setting
  * @param {String} setting - as 'STANDARD' or 'COMPACT'
  */
-Cypress.Commands.add('changeMessageDisplaySetting', (setting = 'STANDARD') => {
+Cypress.Commands.add('uiChangeMessageDisplaySetting', (setting = 'STANDARD') => {
     const SETTINGS = {STANDARD: '#message_displayFormatA', COMPACT: '#message_displayFormatB'};
 
     cy.toAccountSettingsModal();
@@ -408,23 +408,19 @@ Cypress.Commands.add('updateChannelHeader', (text) => {
 });
 
 /**
- * On default "ad-1" team, create and visit a new channel
+ * On a given team, create and visit a new channel
  */
-Cypress.Commands.add('createAndVisitNewChannel', (channelName = 'channel-test') => {
-    cy.visit('/ad-1/channels/town-square');
+Cypress.Commands.add('uiCreateAndVisitNewChannel', (team) => {
+    return cy.apiCreateChannel(team.id, 'channel-test', 'Channel Test').then((res) => {
+        const channel = res.body;
 
-    cy.getCurrentTeamId().then((teamId) => {
-        cy.apiCreateChannel(teamId, channelName, 'Channel Test').then((res) => {
-            const channel = res.body;
+        // # Visit the new channel
+        cy.visit(`/${team.name}/channels/${channel.name}`);
 
-            // # Visit the new channel
-            cy.visit(`/ad-1/channels/${channel.name}`);
+        // * Verify channel's display name
+        cy.get('#channelHeaderTitle').should('contain', channel.display_name);
 
-            // * Verify channel's display name
-            cy.get('#channelHeaderTitle').should('contain', channel.display_name);
-
-            cy.wrap(channel);
-        });
+        return cy.wrap(channel);
     });
 });
 

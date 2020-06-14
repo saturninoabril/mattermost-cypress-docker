@@ -25,7 +25,7 @@ describe('Messaging', () => {
         });
 
         // # Create and visit new channel
-        cy.createAndVisitNewChannel().then((channel) => {
+        cy.uiCreateAndVisitNewChannel().then((channel) => {
             newChannel = channel;
         });
     });

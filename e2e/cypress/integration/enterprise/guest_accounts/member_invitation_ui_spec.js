@@ -17,7 +17,7 @@ import {getAdminAccount} from '../../../support/env';
 
 let testTeam;
 let testUser;
-const sysadmin = getAdminAccount;
+const sysadmin = getAdminAccount();
 
 function invitePeople(typeText, resultsCount, verifyText) {
     // # Open Invite People
@@ -90,7 +90,6 @@ function loginAsNewUser() {
 describe('Guest Account - Member Invitation Flow', () => {
     beforeEach(() => {
         // * Check if server has license for Guest Accounts
-        cy.apiAdminLogin();
         cy.requireLicenseForFeature('GuestAccounts');
 
         // # Enable Guest Account Settings
@@ -104,22 +103,13 @@ describe('Guest Account - Member Invitation Flow', () => {
             },
         });
 
-        // # Create test user
-        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => testUser = user);
+        cy.apiInitSetup().then(({team, user}) => {
+            testUser = user;
+            testTeam = team;
 
-        // # Create new team and visit its URL
-        cy.apiCreateTeam('test-team', 'Test Team').then((response) => {
-            testTeam = response.body;
-            cy.visit(`/${testTeam.name}`);
+            // # Go to town square
+            cy.visit(`/${team.name}/channels/town-square`);
         });
-    });
-
-    afterEach(() => {
-        // # Delete the new team as sysadmin
-        if (testTeam && testTeam.id) {
-            cy.apiAdminLogin();
-            cy.apiDeleteTeam(testTeam.id);
-        }
     });
 
     it('MM-18039 Verify UI Elements of Members Invitation Flow', () => {
@@ -141,7 +131,7 @@ describe('Guest Account - Member Invitation Flow', () => {
 
         // * Verify the header has changed in the modal
         cy.findByTestId('invitationModal').within(($el) => {
-            cy.wrap($el).find('h1').should('have.text', 'Invite Members to Test Team');
+            cy.wrap($el).find('h1').should('have.text', `Invite Members to ${testTeam.display_name}`);
         });
 
         // * Verify Share Link Header and helper text

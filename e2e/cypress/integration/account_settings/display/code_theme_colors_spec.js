@@ -41,12 +41,11 @@ function navigateToThemeSettings() {
 
 describe('AS14319 Theme Colors - Code', () => {
     before(() => {
-        // # Login and navigate to the app
-        cy.apiCreateAndLoginAsNewUser();
-        cy.visit('/ad-1/channels/town-square');
-
-        // # Enter in code block for message
-        cy.get('#post_textbox').clear().type('```\ncode\n```{enter}');
+        // # Login as new user, visit town-square and post a message
+        cy.apiInitSetup({loginAfter: true}).then(({team}) => {
+            cy.visit(`/${team.name}/channels/town-square`);
+            cy.get('#post_textbox').clear().type('```\ncode\n```{enter}');
+        });
     });
 
     THEMES.forEach((THEME) => {

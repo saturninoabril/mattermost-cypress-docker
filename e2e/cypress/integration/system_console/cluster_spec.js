@@ -10,9 +10,6 @@
 
 describe('Cluster', () => {
     before(() => {
-        // # Login as sysadmin
-        cy.apiAdminLogin();
-
         // # Visit customization system console page
         cy.visit('/admin_console/environment/high_availability');
     });

@@ -14,18 +14,15 @@
  */
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 
-let regularUser;
-let guest;
-let guestTeamId;
-
 describe('MM-18045 Verify Guest User Identification in different screens', () => {
+    let regularUser;
+    let guest;
+    let testTeam;
+    let testChannel;
+
     before(() => {
         // * Check if server has license for Guest Accounts
-        cy.apiAdminLogin();
         cy.requireLicenseForFeature('GuestAccounts');
-
-        // # Create a regular user
-        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => regularUser = user);
 
         // # Enable Guest Account Settings
         cy.apiUpdateConfig({
@@ -38,27 +35,22 @@ describe('MM-18045 Verify Guest User Identification in different screens', () =>
             },
         });
 
-        // # Create a Guest Team and login as Guest User
-        cy.loginAsNewGuestUser().then(({user, team}) => {
-            guest = user;
-            guestTeamId = team.id;
+        cy.apiInitSetup().then(({team, channel, user}) => {
+            regularUser = user;
+            testTeam = team;
+            testChannel = channel;
 
-            // # Login as Sysadmin and add a regular member to Guest Team
-            cy.apiAdminLogin();
-            cy.apiAddUserToTeam(guestTeamId, regularUser.id).then(() => {
-                // # Login as regular user
-                cy.apiLogin(regularUser.username, regularUser.password);
-                cy.visit(`/${team.name}/channels/town-square`);
+            cy.apiCreateGuestUser().then(({guest: guestUser}) => {
+                guest = guestUser;
+                cy.apiAddUserToTeam(testTeam.id, guest.id).then(() => {
+                    cy.apiAddUserToChannel(testChannel.id, guest.id);
+                });
             });
-        });
-    });
 
-    after(() => {
-        // # Delete the new team as sysadmin
-        if (guestTeamId) {
-            cy.apiAdminLogin();
-            cy.apiDeleteTeam(guestTeamId);
-        }
+            // # Login as regular user and go to town square
+            cy.apiLogin(regularUser.username, regularUser.password);
+            cy.visit(`/${team.name}/channels/${testChannel.name}`);
+        });
     });
 
     it('Verify Guest Badge in Channel Members dropdown and dialog', () => {
@@ -114,45 +106,44 @@ describe('MM-18045 Verify Guest User Identification in different screens', () =>
     });
 
     it('Verify Guest Badge in Posts in Center Channel, RHS and User Profile Popovers', () => {
-        // # Submit a post as a Guest User
-        cy.getCurrentChannelId().then((channelId) => {
-            // # Get yesterdays date in UTC
-            const yesterdaysDate = Cypress.moment().subtract(1, 'days').valueOf();
+        cy.visit(`/${testTeam.name}/channels/${testChannel.name}`);
 
-            // # Post a day old message
-            cy.postMessageAs({sender: guest, message: 'Hello from yesterday', channelId, createAt: yesterdaysDate}).
-                its('id').
-                should('exist').
-                as('yesterdaysPost');
+        // # Get yesterdays date in UTC
+        const yesterdaysDate = Cypress.moment().subtract(1, 'days').valueOf();
 
-            // * Verify Guest Badge when guest user posts a message in Center Channel
-            cy.get('@yesterdaysPost').then((postId) => {
-                cy.get(`#post_${postId}`).within(($el) => {
-                    cy.wrap($el).find('.post__header .Badge').should('be.visible');
-                    cy.wrap($el).find('.post__header .user-popover').should('be.visible').click().wait(TIMEOUTS.TINY);
-                });
+        // # Post a day old message
+        cy.postMessageAs({sender: guest, message: 'Hello from yesterday', channelId: testChannel.id, createAt: yesterdaysDate}).
+            its('id').
+            should('exist').
+            as('yesterdaysPost');
+
+        // * Verify Guest Badge when guest user posts a message in Center Channel
+        cy.get('@yesterdaysPost').then((postId) => {
+            cy.get(`#post_${postId}`).within(($el) => {
+                cy.wrap($el).find('.post__header .Badge').should('be.visible');
+                cy.wrap($el).find('.post__header .user-popover').should('be.visible').click().wait(TIMEOUTS.TINY);
+            });
+        });
+
+        // * Verify Guest Badge in Guest User's Profile Popover
+        cy.get('#user-profile-popover').should('be.visible').within(($el) => {
+            cy.wrap($el).find('.user-popover__role').should('be.visible').and('have.text', 'GUEST');
+        });
+
+        // # Close the profile popover
+        cy.get('#channel-header').click();
+
+        // # Open RHS comment menu
+        cy.get('@yesterdaysPost').then((postId) => {
+            cy.clickPostCommentIcon(postId);
+
+            // * Verify Guest Badge in RHS
+            cy.get(`#rhsPost_${postId}`).within(($el) => {
+                cy.wrap($el).find('.post__header .Badge').should('be.visible');
             });
 
-            // * Verify Guest Badge in Guest User's Profile Popover
-            cy.get('#user-profile-popover').should('be.visible').within(($el) => {
-                cy.wrap($el).find('.user-popover__role').should('be.visible').and('have.text', 'GUEST');
-            });
-
-            // # Close the profile popover
-            cy.get('#channel-header').click();
-
-            // # Open RHS comment menu
-            cy.get('@yesterdaysPost').then((postId) => {
-                cy.clickPostCommentIcon(postId);
-
-                // * Verify Guest Badge in RHS
-                cy.get(`#rhsPost_${postId}`).within(($el) => {
-                    cy.wrap($el).find('.post__header .Badge').should('be.visible');
-                });
-
-                // # Close RHS
-                cy.closeRHS();
-            });
+            // # Close RHS
+            cy.closeRHS();
         });
     });
 
@@ -226,7 +217,7 @@ describe('MM-18045 Verify Guest User Identification in different screens', () =>
 
     it('Verify Guest Badge not displayed in Search Autocomplete', () => {
         // # Search for the Guest User
-        cy.get('#searchBox').type('from:user');
+        cy.get('#searchBox').type('from:');
 
         // * Verify Guest Badge is not displayed at Search auto-complete
         cy.get('#search-autocomplete__popover').should('be.visible');

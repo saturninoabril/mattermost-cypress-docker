@@ -101,7 +101,6 @@ describe('at-mention', () => {
 
     before(() => {
         // # Update Configs
-        cy.apiAdminLogin();
         cy.apiUpdateConfig({
             ServiceSettings: {
                 ExperimentalChannelOrganization: true,

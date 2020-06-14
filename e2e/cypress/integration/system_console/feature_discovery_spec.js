@@ -9,7 +9,6 @@
 
 describe('Feature discovery', () => {
     before(() => {
-        cy.apiAdminLogin();
         cy.visit('/admin_console');
     });
 

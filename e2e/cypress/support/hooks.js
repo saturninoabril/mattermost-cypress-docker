@@ -6,7 +6,6 @@
 export function testWithConfig(config) {
     before(() => {
         let originalConfig;
-        cy.apiAdminLogin();
         cy.apiGetConfig().then((resp) => {
             originalConfig = resp.body;
         });

@@ -12,9 +12,10 @@
 
 describe('M16739 - Filtered emojis are sorted', () => {
     before(() => {
-        cy.apiCreateAndLoginAsNewUser();
-        cy.visit('/ad-1/channels/town-square');
-        cy.clearLocalStorage(/recent_emojis/);
+        // # Login as test user and visit town-square
+        cy.apiInitSetup({loginAfter: true}).then(({team}) => {
+            cy.visit(`/${team.name}/channels/town-square`);
+        });
     });
 
     it('By recency', () => {

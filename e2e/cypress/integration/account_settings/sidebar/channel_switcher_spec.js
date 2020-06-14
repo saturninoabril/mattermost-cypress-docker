@@ -18,31 +18,20 @@ describe('Account Settings > Sidebar > Channel Switcher', () => {
 
     before(() => {
         // # Login as test user
-        cy.apiCreateAndLoginAsNewUser().then((user) => {
+        cy.apiInitSetup({loginAfter: true}).then(({team, channel, user}) => {
             testUser = user;
-        });
+            testChannel = channel;
+            testTeam = team;
 
-        // # Create a test team and channels
-        cy.apiCreateTeam('test-team', 'Test Team').then((teamRes) => {
-            testTeam = teamRes.body;
-
+            // # Create more test channels
             const numberOfChannels = 14;
             Cypress._.forEach(Array(numberOfChannels), (_, index) => {
-                cy.apiCreateChannel(testTeam.id, 'channel-switcher', `Channel Switcher ${index.toString()}`).then((response) => {
-                    if (index === 0) {
-                        testChannel = response.body;
-                    }
-                });
+                cy.apiCreateChannel(testTeam.id, 'channel-switcher', `Channel Switcher ${index.toString()}`);
             });
-        });
-    });
 
-    after(() => {
-        // # Delete the test team as sysadmin
-        if (testTeam && testTeam.id) {
-            cy.apiAdminLogin();
-            cy.apiDeleteTeam(testTeam.id, true);
-        }
+            // # Visit town-square
+            cy.visit(`/${team.name}/channels/town-square`);
+        });
     });
 
     it('set channel switcher setting to On and test on click of sidebar switcher button', () => {

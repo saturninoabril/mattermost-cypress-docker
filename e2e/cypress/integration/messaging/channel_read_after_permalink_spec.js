@@ -17,9 +17,6 @@ describe('Messaging', () => {
     beforeEach(() => {
         testChannel = null;
 
-        // # Login as sysadmin
-        cy.apiAdminLogin();
-
         // # Reset Sidebar Setting Preference
         cy.apiSaveSidebarSettingPreference();
 

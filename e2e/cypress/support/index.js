@@ -13,6 +13,7 @@ import 'cypress-wait-until';
 import 'cypress-plugin-tab';
 import addContext from 'mochawesome/addContext';
 
+import './api';
 import './api_commands';
 import './common_login_commands';
 import './db_commands';
@@ -24,8 +25,7 @@ import './storybook_commands';
 import './task_commands';
 import './ui_commands';
 
-import {getAdminAccount, getDBConfig} from './env';
-import {dbGetUser} from './../plugins/db_request';
+import {getAdminAccount} from './env';
 
 const percentEncoding = {
     ':': '%3A',
@@ -112,51 +112,51 @@ Cypress.on('test:after:run', (test, runnable) => {
 });
 
 before(() => {
-    const sysadmin = getAdminAccount();
-    const dbConfig = getDBConfig();
-    cy.task('dbGetUser', {dbConfig, params: {username: sysadmin.username}}).then(({user, errorMessage}) => {
-        expect(errorMessage).to.be.undefined;
+    const admin = getAdminAccount();
 
-        if (!user.id) {
-            // # Create and login a newly created user as sysadmin
-            cy.apiCreateAdmin().then((res) => {
-                const admin = res.body;
-                cy.apiAdminLogin().then(() => {
-                    cy.apiSaveTutorialStep(admin.id, '999');
-                });
-            });
-        } else {
+    cy.dbGetUser({username: admin.username}).then(({user}) => {
+        if (user.id) {
             // # Login existing sysadmin
             cy.apiAdminLogin();
+        } else {
+            // # Create and login a newly created user as sysadmin
+            cy.apiCreateAdmin().then(({sysadmin}) => {
+                cy.apiAdminLogin().then(() => {
+                    cy.apiSaveTutorialStep(sysadmin.id, '999');
+                });
+            });
         }
 
         // # Reset config and invalidate cache
         cy.apiUpdateConfig();
         cy.apiInvalidateCache();
 
+        // # Reset roles
+        cy.apiGetClientLicense().then((res) => {
+            if (res.body.IsLicensed === 'true') {
+                cy.apiResetRoles();
+            }
+        });
+
         // # Check if default "ad-1" team is present, and
         // # create if not found.
         const defaultTeamName = 'ad-1';
         cy.apiGetTeams().then((teamsRes) => {
             const teams = teamsRes.body;
-            let defaultTeam = teams && teams.length > 0 && teams.find((team) => team.name === defaultTeamName);
+            const defaultTeam = teams && teams.length > 0 && teams.find((team) => team.name === defaultTeamName);
 
             if (!defaultTeam) {
-                cy.apiCreateTeam(defaultTeamName, 'eligendi', 'O', false).then((teamRes) => {
-                    defaultTeam = teamRes.body;
-                });
-            }
-
-            if (Boolean(Cypress.env('resetBeforeTest'))) {
+                cy.apiCreateTeam(defaultTeamName, 'eligendi', 'O', false);
+            } else if (defaultTeam && Cypress.env('resetBeforeTest')) {
                 teams.forEach((team) => {
                     if (team.name !== defaultTeamName) {
                         cy.apiDeleteTeam(team.id);
                     }
                 });
-    
-                cy.apiGetAllChannels().then((channelsRes) => {
+
+                cy.apiGetChannelsForUser('me', defaultTeam.id).then((channelsRes) => {
                     const channels = channelsRes.body;
-    
+
                     channels.forEach((channel) => {
                         if (
                             (channel.team_id === defaultTeam.id || channel.team_name === defaultTeam.name) &&

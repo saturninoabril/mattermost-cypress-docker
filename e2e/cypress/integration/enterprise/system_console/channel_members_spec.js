@@ -9,12 +9,6 @@
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 
-let team;
-let channel;
-let user1;
-let user2;
-let sysadmin;
-
 const saveConfig = () => {
     // # Click save
     cy.get('#saveSetting').click();
@@ -24,7 +18,17 @@ const saveConfig = () => {
 };
 
 describe('Channel members test', () => {
+    let testChannel;
+    let user1;
+    let user2;
+    let sysadmin;
+
     before(() => {
+        // # Login as sysadmin
+        cy.apiAdminLogin().then((res) => {
+            sysadmin = res.body;
+        });
+
         // # Login as sysadmin
         cy.apiAdminLogin().then((res) => {
             sysadmin = res.body;
@@ -33,24 +37,15 @@ describe('Channel members test', () => {
         // * Check if server has license
         cy.requireLicense();
 
-        // # Create test users
-        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => user1 = user);
-        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => user2 = user);
+        cy.apiInitSetup().then(({team, channel, user}) => {
+            user1 = user;
+            testChannel = channel;
 
-        // # Create a new team and channel that are not group constrained
-        cy.apiCreateTeam('test-team', 'Test Team').then((teamRes) => {
-            team = teamRes.body;
-            cy.apiCreateChannel(team.id, 'channel-members-test-channel', 'Channel members test channel').then((channelRes) => {
-                channel = channelRes.body;
+            cy.apiCreateUser().then(({user: newUser}) => {
+                user2 = newUser;
 
-                // # Make sure user1 is in the team and channel initially
-                cy.apiAddUserToTeam(team.id, user1.id).then(() => {
-                    cy.apiAddUserToChannel(channel.id, user1.id);
-                });
-
-                // # Make sure user2 is in the team and channel initially
                 cy.apiAddUserToTeam(team.id, user2.id).then(() => {
-                    cy.apiAddUserToChannel(channel.id, user2.id);
+                    cy.apiAddUserToChannel(testChannel.id, user2.id);
                 });
             });
         });
@@ -58,7 +53,7 @@ describe('Channel members test', () => {
 
     it('MM-23938 - Channel members block is only visible when channel is not group synced', () => {
         // # Visit the channel page
-        cy.visit(`/admin_console/user_management/channels/${channel.id}`);
+        cy.visit(`/admin_console/user_management/channels/${testChannel.id}`);
 
         // * Assert that the members block is visible on non group synced channel
         cy.get('#channelMembers').scrollIntoView().should('be.visible');
@@ -72,7 +67,7 @@ describe('Channel members test', () => {
 
     it('MM-23938 - Channel Members block can search for users, remove users, add users and modify their roles', () => {
         // # Visit the channel page
-        cy.visit(`/admin_console/user_management/channels/${channel.id}`);
+        cy.visit(`/admin_console/user_management/channels/${testChannel.id}`);
 
         // * Assert that the members block is visible on non group synced team
         cy.get('#channelMembers').scrollIntoView().should('be.visible');
@@ -115,7 +110,7 @@ describe('Channel members test', () => {
         cy.get('#channelMembers').should('not.be.visible');
 
         // # Visit the channel page
-        cy.visit(`/admin_console/user_management/channels/${channel.id}`);
+        cy.visit(`/admin_console/user_management/channels/${testChannel.id}`);
 
         // # Search for user1 that we know is no longer in the team
         cy.get('#channelMembers .DataGrid_search input').scrollIntoView().clear().type(user1.email);
@@ -175,7 +170,7 @@ describe('Channel members test', () => {
         saveConfig();
 
         // # Visit the channel page
-        cy.visit(`/admin_console/user_management/channels/${channel.id}`);
+        cy.visit(`/admin_console/user_management/channels/${testChannel.id}`);
 
         // # Search user1 that we know is now in the team again
         cy.get('#channelMembers .DataGrid_search input').scrollIntoView().clear().type(user1.email);

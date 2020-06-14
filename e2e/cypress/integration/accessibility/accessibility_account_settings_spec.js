@@ -30,8 +30,6 @@ function verifySections(sections) {
 
 describe('Verify Accessibility Support in different sections in Account Settings Dialog', () => {
     before(() => {
-        cy.apiAdminLogin();
-
         // # Update Configs
         cy.apiUpdateConfig({
             ServiceSettings: {

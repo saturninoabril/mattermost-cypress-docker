@@ -20,8 +20,7 @@ describe('Messaging', () => {
         // # Wrap websocket to be able to connect and close connections on demand
         cy.mockWebsockets();
 
-        // # Login and go to /
-        cy.apiAdminLogin();
+        // # Go to /
         cy.visit('/ad-1/channels/town-square');
 
         // # Get ChannelID to use later

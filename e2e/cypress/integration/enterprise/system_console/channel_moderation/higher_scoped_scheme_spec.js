@@ -11,9 +11,9 @@
 
 import {getRandomId} from '../../../../utils';
 
+import {checkboxesTitleToIdMap} from './constants';
+
 import {
-    checkboxesTitleToIdMap,
-    deleteExistingTeamOverrideSchemes,
     deleteOrEditTeamScheme,
     demoteToChannelOrTeamMember,
     disableChannelModeratedPermission,
@@ -23,7 +23,6 @@ import {
     goToSystemScheme,
     postChannelMentionsAndVerifySystemMessageNotExist,
     promoteToChannelOrTeamAdmin,
-    resetSystemSchemePermissionsToDefault,
     saveConfigForChannel,
     saveConfigForScheme,
     viewManageChannelMembersModal,
@@ -40,40 +39,27 @@ describe('MM-23102 - Channel Moderation - Higher Scoped Scheme', () => {
     before(() => {
         // * Check if server has license
         cy.requireLicense();
-
-        cy.apiCreateUserAndAddToDefaultTeam().then(({user, team}) => {
-            regularUser = user;
-            testTeam = team;
-
-            // # Add new channel
-            cy.apiCreateChannel(testTeam.id, 'moderation', `moderation${getRandomId()}`).then((response) => {
-                testChannel = response.body;
-
-                cy.apiAddUserToChannel(testChannel.id, regularUser.id);
-
-                cy.apiCreateGuestUser().then((user) => {
-                    guestUser = user;
-
-                    cy.apiAddUserToTeam(testTeam.id, guestUser.id).then(() => {
-                        cy.apiAddUserToChannel(testChannel.id, guestUser.id);
-                    });
-
-                    // # Make the guest user as Active
-                    cy.apiActivateUser(guestUser.id, true);
-                });
-            });
-        });
     });
 
     beforeEach(() => {
-        // Reset permissions in system scheme to defaults.
-        resetSystemSchemePermissionsToDefault();
+        cy.apiAdminLogin();
+        cy.apiResetRoles();
+        cy.apiInitSetup().then(({team, channel, user}) => {
+            regularUser = user;
+            testTeam = team;
+            testChannel = channel;
 
-        // # Delete all Team Override Schemes
-        deleteExistingTeamOverrideSchemes();
+            cy.apiCreateGuestUser().then(({guest}) => {
+                guestUser = guest;
 
-        // # Reset test channel Moderation settings to default (everything on)
-        enableDisableAllChannelModeratedPermissionsViaAPI(testChannel);
+                cy.apiAddUserToTeam(testTeam.id, guestUser.id).then(() => {
+                    cy.apiAddUserToChannel(testChannel.id, guestUser.id);
+                });
+
+                // # Activate guest user
+                cy.apiActivateUser(guestUser.id, true);
+            });
+        });
     });
 
     it('Effect of changing System Schemes on a Channel for which Channel Moderation Settings was modified', () => {
@@ -87,10 +73,11 @@ describe('MM-23102 - Channel Moderation - Higher Scoped Scheme', () => {
         saveConfigForChannel();
 
         goToSystemScheme();
-        cy.get('#all_users-public_channel-manage_public_channel_members').click();
+        cy.get('#all_users-public_channel-manage_public_channel_members').scrollIntoView().should('be.visible').click();
+        cy.findByTestId('all_users-public_channel-manage_public_channel_members-checkbox').should('not.have.class', 'checked');
         saveConfigForScheme();
 
-        // * Ensure manange members for members is disabled
+        // * Ensure manage members for members is disabled
         visitChannelConfigPage(testChannel);
         cy.findByTestId(checkboxesTitleToIdMap.MANAGE_MEMBERS_MEMBERS).should('be.disabled');
 
@@ -114,7 +101,7 @@ describe('MM-23102 - Channel Moderation - Higher Scoped Scheme', () => {
             saveConfigForScheme();
 
             // # Visit Channel page and Search for the channel.
-            // * ensure manange members for members is disabled
+            // * ensure manage members for members is disabled
             visitChannelConfigPage(randomChannel);
             cy.findByTestId(checkboxesTitleToIdMap.MANAGE_MEMBERS_MEMBERS).should('be.disabled');
 
@@ -268,7 +255,7 @@ describe('MM-23102 - Channel Moderation - Higher Scoped Scheme', () => {
 
     it('Check if user is allowed to Edit or Delete their own posts on a Read-Only channel', () => {
         visitChannel(regularUser, testChannel, testTeam);
-        cy.findByTestId('post_textbox').clear().type('testMessage123123{enter}');
+        cy.postMessage(`test message ${Date.now()}`);
         cy.findByTestId('post_textbox_placeholder').should('not.have.text', 'This channel is read-only. Only members with permission can post here.');
         cy.findByTestId('post_textbox').should('not.be.disabled');
 

@@ -42,9 +42,6 @@ describe('Negative search filters will omit results', () => {
     }
 
     before(() => {
-        // # Login as the sysadmin.
-        cy.apiAdminLogin();
-
         // # Create a new team
         cy.apiCreateTeam('filter-test', 'filter-test').its('body').as('team');
 

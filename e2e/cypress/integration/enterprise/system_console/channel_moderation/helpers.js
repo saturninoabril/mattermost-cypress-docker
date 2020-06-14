@@ -1,28 +1,10 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
+
 import * as TIMEOUTS from '../../../../fixtures/timeouts';
 import {getAdminAccount} from '../../../../support/env';
 
-export const checkboxesTitleToIdMap = {
-    CREATE_POSTS_GUESTS: 'create_post-guests',
-    CREATE_POSTS_MEMBERS: 'create_post-members',
-    POST_REACTIONS_GUESTS: 'create_reactions-guests',
-    POST_REACTIONS_MEMBERS: 'create_reactions-members',
-    MANAGE_MEMBERS_GUESTS: 'manage_members-guests',
-    MANAGE_MEMBERS_MEMBERS: 'manage_members-members',
-    CHANNEL_MENTIONS_MEMBERS: 'use_channel_mentions-members',
-    CHANNEL_MENTIONS_GUESTS: 'use_channel_mentions-guests',
-};
-
-export const checkBoxes = [
-    checkboxesTitleToIdMap.CREATE_POSTS_GUESTS,
-    checkboxesTitleToIdMap.CREATE_POSTS_MEMBERS,
-    checkboxesTitleToIdMap.POST_REACTIONS_GUESTS,
-    checkboxesTitleToIdMap.POST_REACTIONS_MEMBERS,
-    checkboxesTitleToIdMap.MANAGE_MEMBERS_MEMBERS,
-    checkboxesTitleToIdMap.CHANNEL_MENTIONS_GUESTS,
-    checkboxesTitleToIdMap.CHANNEL_MENTIONS_MEMBERS,
-];
+import {checkBoxes} from './constants';
 
 // # Visits the channel configuration for a channel with channelName
 export const visitChannelConfigPage = (channel) => {
@@ -35,7 +17,7 @@ export const visitChannelConfigPage = (channel) => {
 
 // # Disable a specific channel moderated permission in the channel moderation widget
 export const disableChannelModeratedPermission = (permission) => {
-    cy.findByTestId(permission).then((btn) => {
+    cy.findByTestId(permission).scrollIntoView().should('be.visible').then((btn) => {
         if (btn.hasClass('checked')) {
             btn.click();
         }
@@ -71,10 +53,6 @@ export const visitChannel = (user, channel, team) => {
     cy.get('#postListContent', {timeout: TIMEOUTS.HUGE}).should('be.visible');
 };
 
-// export const visitTestChannel = (user, channel, team) => {
-//     visitChannel(user, channel, team);
-// };
-
 // # Checks to see if we got a system message warning after using @all/@here/@channel
 export const postChannelMentionsAndVerifySystemMessageExist = (channelName) => {
     function getSystemMessage(text) {
@@ -82,7 +60,7 @@ export const postChannelMentionsAndVerifySystemMessageExist = (channelName) => {
     }
 
     // # Type @all and post it to the channel
-    cy.findByTestId('post_textbox').clear().type('@all{enter}');
+    cy.postMessage('@all');
 
     // # Get last post message text
     cy.getLastPostId().then((postId) => {
@@ -91,7 +69,7 @@ export const postChannelMentionsAndVerifySystemMessageExist = (channelName) => {
     });
 
     // # Type @here and post it to the channel
-    cy.findByTestId('post_textbox').clear().type('@here{enter}');
+    cy.postMessage('@here');
 
     // # Get last post message text
     cy.getLastPostId().then((postId) => {
@@ -99,7 +77,7 @@ export const postChannelMentionsAndVerifySystemMessageExist = (channelName) => {
         cy.get(`#postMessageText_${postId}`).should('include.text', getSystemMessage('@here'));
     });
 
-    cy.findByTestId('post_textbox').clear().type('@channel{enter}');
+    cy.postMessage('@channel');
 
     // # Type last post message text
     cy.getLastPostId().then((postId) => {
@@ -110,7 +88,7 @@ export const postChannelMentionsAndVerifySystemMessageExist = (channelName) => {
 
 // # Enable a specific channel moderated permission in the channel moderation widget
 export const enableChannelModeratedPermission = (permission) => {
-    cy.findByTestId(permission).then((btn) => {
+    cy.findByTestId(permission).scrollIntoView().should('be.visible').then((btn) => {
         if (!btn.hasClass('checked')) {
             btn.click();
         }
@@ -123,7 +101,7 @@ export const postChannelMentionsAndVerifySystemMessageNotExist = (channel) => {
         return `Channel notifications are disabled in ${channel.name}. The ${text} did not trigger any notifications.`;
     }
 
-    cy.findByTestId('post_textbox').clear().type('@all{enter}{enter}{enter}');
+    cy.postMessage('@all');
 
     // # Get last post message text
     cy.getLastPostId().then((postId) => {
@@ -131,7 +109,7 @@ export const postChannelMentionsAndVerifySystemMessageNotExist = (channel) => {
         cy.get(`#postMessageText_${postId}`).should('not.have.text', getSystemMessage('@all'));
     });
 
-    cy.findByTestId('post_textbox').clear().type('@here{enter}{enter}{enter}');
+    cy.postMessage('@here');
 
     // # Get last post message text
     cy.getLastPostId().then((postId) => {
@@ -139,7 +117,7 @@ export const postChannelMentionsAndVerifySystemMessageNotExist = (channel) => {
         cy.get(`#postMessageText_${postId}`).should('not.have.text', getSystemMessage('@here'));
     });
 
-    cy.findByTestId('post_textbox').clear().type('@channel{enter}{enter}{enter}');
+    cy.postMessage('@channel');
 
     // # Get last post message text
     cy.getLastPostId().then((postId) => {
@@ -262,15 +240,6 @@ export const resetSystemSchemePermissionsToDefault = () => {
     cy.findByTestId('resetPermissionsToDefault').click();
     cy.get('#confirmModalButton').click();
     saveConfigForScheme();
-};
-
-export const deleteExistingTeamOverrideSchemes = () => {
-    cy.apiAdminLogin();
-    cy.apiGetSchemes('team').then((res) => {
-        res.body.forEach((scheme) => {
-            cy.apiDeleteScheme(scheme.id);
-        });
-    });
 };
 
 export const demoteToChannelOrTeamMember = (userId, id, channelsOrTeams = 'channels') => {

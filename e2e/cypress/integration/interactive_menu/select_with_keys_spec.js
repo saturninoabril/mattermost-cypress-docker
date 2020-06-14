@@ -31,13 +31,12 @@ describe('Interactive Menu', () => {
     before(() => {
         cy.requireWebhookServer();
 
-        // # Login as sysadmin and ensure that teammate name display setting is set to default 'username'
-        cy.apiAdminLogin();
+        // # Ensure that teammate name display setting is set to default 'username'
         cy.apiSaveTeammateNameDisplayPreference('username');
         cy.apiSaveMessageDisplayPreference('clean');
 
         // # Create and visit new channel and create incoming webhook
-        cy.createAndVisitNewChannel().then((channel) => {
+        cy.uiCreateAndVisitNewChannel().then((channel) => {
             channelId = channel.id;
 
             const newIncomingHook = {

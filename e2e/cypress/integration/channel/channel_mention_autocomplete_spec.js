@@ -10,34 +10,27 @@
 // Stage: @prod
 // Group: @channel
 
-import users from '../../fixtures/users.json';
 import * as TIMEOUTS from '../../fixtures/timeouts';
 
 describe('Channel', () => {
     let testTeam;
-    let testChannel;
+    let ownChannel;
+    let otherChannel;
     let testUser;
 
     before(() => {
-        // # Build data to test and login as new user
-        cy.apiCreateAndLoginAsNewUser().then((user) => {
+        // # Login as new user and visit town-square
+        cy.apiInitSetup().then(({team, channel, user}) => {
+            testTeam = team;
+            ownChannel = channel;
             testUser = user;
-        });
-        cy.apiCreateTeam('test-team', 'Test Team').then((response) => {
-            testTeam = response.body;
 
-            cy.apiGetUserByEmail(users.sysadmin.email).then((eRes) => {
-                const user = eRes.body;
-                cy.apiAddUserToTeam(testTeam.id, user.id);
-
-                cy.apiAdminLogin();
-                cy.apiCreateChannel(testTeam.id, 'test-channel', 'Test Channel').then((cRes) => {
-                    testChannel = cRes.body;
-
-                    cy.apiLogin(testUser.username, testUser.password);
-                    cy.visit(`/${testTeam.name}/channels/town-square`);
-                });
+            cy.apiCreateChannel(testTeam.id, 'delta-test', 'Delta Channel').then((res) => {
+                otherChannel = res.body;
             });
+
+            cy.apiLogin(testUser.username, testUser.password);
+            cy.visit(`/${team.name}/channels/town-square`);
         });
     });
 
@@ -50,19 +43,20 @@ describe('Channel', () => {
         // * Should match each channel item and group label
         cy.get('#suggestionList').should('be.visible').children().within((el) => {
             cy.wrap(el).eq(0).should('contain', 'My Channels');
-            cy.wrap(el).eq(1).should('contain', 'Off-Topic');
-            cy.wrap(el).eq(2).should('contain', 'Town Square');
-            cy.wrap(el).eq(3).should('contain', 'Other Channels');
-            cy.wrap(el).eq(4).should('contain', testChannel.display_name);
+            cy.wrap(el).eq(1).should('contain', ownChannel.display_name);
+            cy.wrap(el).eq(2).should('contain', 'Off-Topic');
+            cy.wrap(el).eq(3).should('contain', 'Town Square');
+            cy.wrap(el).eq(4).should('contain', 'Other Channels');
+            cy.wrap(el).eq(5).should('contain', otherChannel.display_name);
         });
     });
 
     it('Joining a channel should alter channel mention autocomplete lists accordingly', () => {
         // # Join a channel by /join slash command
-        cy.get('#post_textbox').should('be.visible').clear().wait(TIMEOUTS.TINY).type(`/join ~${testChannel.name}`).type('{enter}').wait(TIMEOUTS.TINY);
+        cy.get('#post_textbox').should('be.visible').clear().wait(TIMEOUTS.TINY).type(`/join ~${otherChannel.name}`).type('{enter}').wait(TIMEOUTS.TINY);
 
         // * Verify that it redirects into the channel
-        cy.url().should('include', `/${testTeam.name}/channels/${testChannel.name}`);
+        cy.url().should('include', `/${testTeam.name}/channels/${otherChannel.name}`);
 
         // # Type "~"
         cy.get('#post_textbox').should('be.visible').type('~').wait(TIMEOUTS.TINY);
@@ -72,15 +66,17 @@ describe('Channel', () => {
         // * Should match each channel item and group label
         cy.get('#suggestionList').should('be.visible').children().within((el) => {
             cy.wrap(el).eq(0).should('contain', 'My Channels');
-            cy.wrap(el).eq(1).should('contain', 'Off-Topic');
-            cy.wrap(el).eq(2).should('contain', testChannel.display_name);
-            cy.wrap(el).eq(3).should('contain', 'Town Square');
+            cy.wrap(el).eq(1).should('contain', ownChannel.display_name);
+            cy.wrap(el).eq(2).should('contain', otherChannel.display_name);
+            cy.wrap(el).eq(3).should('contain', 'Off-Topic');
+            cy.wrap(el).eq(4).should('contain', 'Town Square');
         });
     });
 
     it('Getting removed from a channel should alter channel mention autocomplete lists accordingly', () => {
         // # Remove test user from the test channel
-        cy.removeUserFromChannel(testChannel.id, testUser.id).then((res) => {
+        cy.apiAdminLogin();
+        cy.removeUserFromChannel(otherChannel.id, testUser.id).then((res) => {
             expect(res).to.equal(200);
 
             // # Login as test user and visit the test team
@@ -95,10 +91,11 @@ describe('Channel', () => {
             // * Should match each channel item and group label
             cy.get('#suggestionList').should('be.visible').children().within((el) => {
                 cy.wrap(el).eq(0).should('contain', 'My Channels');
-                cy.wrap(el).eq(1).should('contain', 'Off-Topic');
-                cy.wrap(el).eq(2).should('contain', 'Town Square');
-                cy.wrap(el).eq(3).should('contain', 'Other Channels');
-                cy.wrap(el).eq(4).should('contain', testChannel.display_name);
+                cy.wrap(el).eq(1).should('contain', ownChannel.display_name);
+                cy.wrap(el).eq(2).should('contain', 'Off-Topic');
+                cy.wrap(el).eq(3).should('contain', 'Town Square');
+                cy.wrap(el).eq(4).should('contain', 'Other Channels');
+                cy.wrap(el).eq(5).should('contain', otherChannel.display_name);
             });
         });
     });

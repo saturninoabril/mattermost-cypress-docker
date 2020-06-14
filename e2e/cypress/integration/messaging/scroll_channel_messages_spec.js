@@ -24,7 +24,7 @@ describe('Scroll channel`s messages in mobile view', () => {
         cy.viewport('iphone-6');
 
         // # visit channel
-        cy.createAndVisitNewChannel().then((channel) => {
+        cy.uiCreateAndVisitNewChannel().then((channel) => {
             newChannel = channel;
         });
     });

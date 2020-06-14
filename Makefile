@@ -70,6 +70,9 @@ copy-webapp-e2e:
 	rm -rf e2e
 	cp -r ../mattermost-webapp/e2e .
 
+copy-to-webapp-e2e:
+	cp -r e2e ../mattermost-webapp
+
 copy-license:
 	cp -r ../mm-license.txt .
 

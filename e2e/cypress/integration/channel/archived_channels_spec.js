@@ -11,7 +11,6 @@
 // Group: @channel
 
 import {testWithConfig} from '../../support/hooks';
-
 import * as TIMEOUTS from '../../fixtures/timeouts';
 
 describe('Leave an archived channel', () => {
@@ -21,26 +20,29 @@ describe('Leave an archived channel', () => {
         },
     });
 
+    let testTeam;
+
     before(() => {
-        // # Login as test user
-        cy.apiCreateAndLoginAsNewUser();
-        cy.visit('/');
+        // # Login as test user and visit town-square
+        cy.apiInitSetup({loginAfter: true}).then(({team}) => {
+            testTeam = team;
+
+            cy.visit(`/${team.name}/channels/town-square`);
+        });
     });
 
     it('should leave recently archived channel', () => {
-        const channelName = 'archived-channels-spec-' + Date.now().toString();
-
-        cy.createAndVisitNewChannel(channelName).then((channel) => {
+        cy.uiCreateAndVisitNewChannel(testTeam).then((channel) => {
             // # Archive the channel
             cy.get('#channelHeaderDropdownIcon').click();
             cy.get('#channelArchiveChannel').click();
             cy.get('#deleteChannelModalDeleteButton').click();
 
             // # Switch to another channel
-            cy.visit('/ad-1/channels/town-square');
+            cy.visit(`/${testTeam.name}/channels/town-square`);
 
             // # Switch back to the archived channel
-            cy.visit(`/ad-1/channels/${channel.name}`);
+            cy.visit(`/${testTeam.name}/channels/${channel.name}`);
 
             // # Leave the channel
             cy.get('#channelHeaderDropdownIcon').click();

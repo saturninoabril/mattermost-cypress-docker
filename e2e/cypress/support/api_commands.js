@@ -1,6 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import xor from 'lodash.xor';
 import merge from 'merge-deep';
 
 import {getRandomId} from '../utils';
@@ -9,7 +10,8 @@ import users from '../fixtures/users.json';
 import partialDefaultConfig from '../fixtures/partial_default_config.json';
 
 import theme from '../fixtures/theme.json';
-import { getAdminAccount } from './env';
+
+import {getAdminAccount} from './env';
 
 // *****************************************************************************
 // Read more:
@@ -37,7 +39,7 @@ Cypress.Commands.add('apiLogin', (username = 'user-1', password = null) => {
 Cypress.Commands.add('apiAdminLogin', () => {
     const admin = getAdminAccount();
 
-    return cy.apiLogin(admin.username, admin.password)
+    return cy.apiLogin(admin.username, admin.password);
 });
 
 Cypress.Commands.add('apiLogout', () => {
@@ -80,8 +82,8 @@ Cypress.Commands.add('apiGetBots', () => {
 // https://api.mattermost.com/#tag/channels
 // *****************************************************************************
 
-Cypress.Commands.add('apiCreateChannel', (teamId, name, displayName, type = 'O', purpose = '', header = '') => {
-    const uniqueName = `${name}-${getRandomId()}`;
+Cypress.Commands.add('apiCreateChannel', (teamId, name, displayName, type = 'O', purpose = '', header = '', unique = true) => {
+    const randomSuffix = getRandomId();
 
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -89,8 +91,8 @@ Cypress.Commands.add('apiCreateChannel', (teamId, name, displayName, type = 'O',
         method: 'POST',
         body: {
             team_id: teamId,
-            name: uniqueName,
-            display_name: displayName,
+            name: unique ? `${name}-${randomSuffix}` : name,
+            display_name: unique ? `${displayName} ${randomSuffix}` : displayName,
             type,
             purpose,
             header,
@@ -207,6 +209,19 @@ Cypress.Commands.add('apiAddUserToChannel', (channelId, userId) => {
     });
 });
 
+/**
+ * https://api.mattermost.com/#tag/channels/paths/~1users~1{user_id}~1teams~1{team_id}~1channels/get
+ */
+Cypress.Commands.add('apiGetChannelsForUser', (userId, teamId) => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: `/api/v4/users/${userId}/teams/${teamId}/channels`,
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap(response);
+    });
+});
+
 // *****************************************************************************
 // Commands
 // https://api.mattermost.com/#tag/commands
@@ -264,13 +279,15 @@ Cypress.Commands.add('apiEmailTest', () => {
  * All parameters required
  */
 Cypress.Commands.add('apiCreateTeam', (name, displayName, type = 'O', unique = true) => {
+    const randomSuffix = getRandomId();
+
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: '/api/v4/teams',
         method: 'POST',
         body: {
-            name: unique ? `${name}-${getRandomId()}` : name,
-            display_name: displayName,
+            name: unique ? `${name}-${randomSuffix}` : name,
+            display_name: unique ? `${displayName} ${randomSuffix}` : displayName,
             type,
         },
     }).then((response) => {
@@ -598,290 +615,14 @@ Cypress.Commands.add('apiSavePreviewCollapsedPreference', (collapse = 'true') =>
  * @param {string} value - value of tutorial step, e.g. '999' (default, completed tutorial)
  */
 Cypress.Commands.add('apiSaveTutorialStep', (userId, value = '999') => {
-    return cy.getCookie('MMUSERID').then((cookie) => {
-        const preference = {
-            user_id: userId,
-            category: 'tutorial_step',
-            name: userId,
-            value: '999',
-        };
-
-        return cy.apiSaveUserPreference([preference], userId);
-    });
-});
-
-// *****************************************************************************
-// Users
-// https://api.mattermost.com/#tag/users
-// *****************************************************************************
-
-Cypress.Commands.add('apiGetUserByEmail', (email) => {
-    return cy.request({
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-        url: '/api/v4/users/email/' + email,
-    }).then((response) => {
-        expect(response.status).to.equal(200);
-        cy.wrap(response);
-    });
-});
-
-Cypress.Commands.add('apiGetUsers', (usernames = []) => {
-    return cy.request({
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-        url: '/api/v4/users/usernames',
-        method: 'POST',
-        body: usernames,
-    });
-});
-
-Cypress.Commands.add('apiPatchUser', (userId, userData) => {
-    return cy.request({
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-        method: 'PUT',
-        url: `/api/v4/users/${userId}/patch`,
-        body: userData,
-    }).then((response) => {
-        expect(response.status).to.equal(200);
-        cy.wrap(response);
-    });
-});
-
-Cypress.Commands.add('apiPatchMe', (data) => {
-    return cy.request({
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-        url: '/api/v4/users/me/patch',
-        method: 'PUT',
-        body: data,
-    }).then((response) => {
-        expect(response.status).to.equal(200);
-        cy.wrap(response);
-    });
-});
-
-/**
- * Creates a new user via the API, adds them to 3 teams, and sets preference to bypass tutorial.
- * Then logs in as the user
- * @param {Object} user - Object of user email, username, and password that you can optionally set.
- * @param {Array} teamIDs - list of teams to add the new user to
- * @param {Boolean} bypassTutorial - whether to set user preferences to bypass the tutorial on first login (true) or to show it (false)
- * Otherwise use default values
- @returns {Object} Returns object containing email, username, id and password if you need it further in the test
- */
-
-Cypress.Commands.add('apiCreateNewUser', (user = {}, teamIds = [], bypassTutorial = true) => {
-    const randomId = getRandomId();
-
-    const {
-        email = `user${randomId}@sample.mattermost.com`,
-        username = `user${randomId}`,
-        firstName = `First${randomId}`,
-        lastName = `Last${randomId}`,
-        nickname = `NewE2ENickname${randomId}`,
-        password = 'password123'} = user;
-
-    const createUserOption = {
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-        method: 'POST',
-        url: '/api/v4/users',
-        body: {email, username, first_name: firstName, last_name: lastName, password, nickname},
+    const preference = {
+        user_id: userId,
+        category: 'tutorial_step',
+        name: userId,
+        value,
     };
 
-    // # Create a new user
-    return cy.request(createUserOption).then((userResponse) => {
-        // Safety assertions to make sure we have a valid response
-        expect(userResponse).to.have.property('body').to.have.property('id');
-
-        const userId = userResponse.body.id;
-
-        if (teamIds && teamIds.length > 0) {
-            teamIds.forEach((teamId) => {
-                cy.apiAddUserToTeam(teamId, userId);
-            });
-        } else {
-            // Get teams, select the first three, and add new user to that team
-            cy.request('GET', '/api/v4/teams').then((teamsResponse) => {
-                // Verify we have at least 1 team in the response to add the user to
-                expect(teamsResponse).to.have.property('body').to.have.length.greaterThan(0);
-
-                // Also add the user to the default team ad-1
-                teamsResponse.body.
-                    filter((t) => t.name === 'ad-1').
-                    map((t) => t.id).
-                    forEach((teamId) => {
-                        cy.apiAddUserToTeam(teamId, userId);
-                    });
-            });
-        }
-
-        // # If the bypass flag is true, bypass tutorial
-        if (bypassTutorial === true) {
-            const preferences = [{
-                user_id: userId,
-                category: 'tutorial_step',
-                name: userId,
-                value: '999',
-            }];
-
-            cy.apiSaveUserPreference(preferences, userId);
-        }
-
-        // Wrap our user object so it gets returned from our cypress command
-        cy.wrap({email, username, password, id: userId, firstName, lastName, nickname});
-    });
-});
-
-Cypress.Commands.add('apiCreateAdmin', () => {
-    const {username, password} = getAdminAccount();
-
-    const sysadminUser = {
-        username,
-        password,
-        first_name: 'Kenneth',
-        last_name: 'Moreno',
-        email: 'sysadmin@sample.mattermost.com',
-    };
-
-    const options = {
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-        method: 'POST',
-        url: '/api/v4/users',
-        body: sysadminUser,
-    };
-
-    // # Create a new user
-    return cy.request(options).then((res) => {
-        expect(res.status).to.equal(201);
-
-        cy.wrap(res);
-    });
-});
-
-function generateRandomUser() {
-    const randomId = getRandomId ();
-
-    return {
-        email: `user${randomId}@sample.mattermost.com`,
-        username: `user${randomId}`,
-        password: 'passwd',
-        first_name: `First${randomId}`,
-        last_name: `Last${randomId}`,
-        nickname: `Nickname${randomId}`,
-    };
-}
-
-Cypress.Commands.add('apiCreateUserAndAddToDefaultTeam', (bypassTutorial = true) => {
-    const randomUser = generateRandomUser();
-
-    const createUserOption = {
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-        method: 'POST',
-        url: '/api/v4/users',
-        body: randomUser,
-    };
-
-    return cy.request(createUserOption).then((userRes) => {
-        expect(userRes.status).to.equal(201);
-
-        const user = userRes.body;
-
-        if (bypassTutorial) {
-            cy.apiSaveTutorialStep(user.id, '999');
-        }
-
-        
-        return cy.apiGetTeamByName('ad-1').then((teamRes) => {
-            const team = teamRes.body;
-            return cy.apiAddUserToTeam(team.id, user.id).then((res) => {
-                cy.wrap({
-                    team,
-                    user: {
-                        ...user,
-                        password: randomUser.password,
-                        firstName: randomUser.first_name,
-                        lastName: randomUser.last_name,
-                    },
-                });
-            });
-        });
-    });
-});
-
-Cypress.Commands.add('apiCreateGuestUser', (bypassTutorial = true) => {
-    const randomUser = generateRandomUser();
-    randomUser.username = `guest${getRandomId()}`
-    randomUser.password = 'SampleGu@st1';
-
-    const createUserOption = {
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-        method: 'POST',
-        url: '/api/v4/users',
-        body: randomUser,
-    };
-
-    return cy.request(createUserOption).then((userRes) => {
-        expect(userRes.status).to.equal(201);
-
-        const user = userRes.body;
-
-        if (bypassTutorial) {
-            cy.apiSaveTutorialStep(user.id, '999');
-        }
-
-        cy.demoteUser(user.id);
-
-        return cy.wrap({...user, password: randomUser.password});
-    });
-});
-
-/**
- * Creates a new user via the API , adds them to 3 teams, and sets preference to bypass tutorial.
- * Then logs in as the user
- * @param {Object} user - Object of user email, username, and password that you can optionally set.
- * @param {Boolean} bypassTutorial - Whether to set user preferences to bypass the tutorial (true) or to show it (false)
- * Otherwise use default values
- @returns {Object} Returns object containing email, username, id and password if you need it further in the test
- */
-Cypress.Commands.add('apiCreateAndLoginAsNewUser', (user = {}, teamIds = [], bypassTutorial = true) => {
-    return cy.apiCreateNewUser(user, teamIds, bypassTutorial).then((newUser) => {
-        return cy.apiLogin(newUser.username, newUser.password).then((response) => {
-            expect(response.status).to.equal(200);
-
-            return cy.wrap(newUser);
-        });
-    });
-});
-
-/**
- * Saves channel display mode preference of a user directly via API
- * This API assume that the user is logged in and has cookie to access
- * @param {String} status - "online" (default), "offline", "away" or "dnd"
- */
-Cypress.Commands.add('apiUpdateUserStatus', (status = 'online') => {
-    return cy.getCookie('MMUSERID').then((cookie) => {
-        const data = {user_id: cookie.value, status};
-
-        return cy.request({
-            headers: {'X-Requested-With': 'XMLHttpRequest'},
-            url: '/api/v4/users/me/status',
-            method: 'PUT',
-            body: data,
-        });
-    });
-});
-
-/**
- * Revoke all active sessions for a user
- * @param {String} userId - ID of user to revoke sessions
- */
-Cypress.Commands.add('apiRevokeUserSessions', (userId) => {
-    return cy.request({
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-        url: `/api/v4/users/${userId}/sessions/revoke/all`,
-        method: 'POST',
-    }).then((response) => {
-        expect(response.status).to.equal(200);
-        cy.wrap(response);
-    });
+    return cy.apiSaveUserPreference([preference], userId);
 });
 
 // *****************************************************************************
@@ -1041,34 +782,6 @@ Cypress.Commands.add('apiGetTeam', (teamId) => {
 });
 
 /**
- * Creates a new guest user via the API , adds them to 1 team with sysadmin user, and sets preference to bypass tutorial.
- * Then logs in as the user
- * @param {Object} user - Object of user email, username, and password that you can optionally set.
- * @param {Boolean} bypassTutorial - Whether to set user preferences to bypass the tutorial (true) or to show it (false)
- * Otherwise use default values
- @returns {Object} Returns object containing email, username, id and password if you need it further in the test
- */
-Cypress.Commands.add('loginAsNewGuestUser', (user = {}, bypassTutorial = true) => {
-    // # Create a New Team for Guest User
-    return cy.apiCreateTeam('guest-team', 'Guest Team').then((createResponse) => {
-        const team = createResponse.body;
-        cy.getCookie('MMUSERID').then((cookie) => {
-            // #Assign Sysadmin user to the newly created team
-            cy.apiAddUserToTeam(team.id, cookie.value);
-        });
-
-        // #Create New User
-        return cy.apiCreateNewUser(user, [team.id], bypassTutorial).then((newUser) => {
-            // # Demote Regular Member to Guest User
-            cy.demoteUser(newUser.id);
-            cy.apiLogin(newUser.username, newUser.password).then(() => {
-                return cy.wrap({user: newUser, team});
-            });
-        });
-    });
-});
-
-/**
  * Demote a Member to Guest directly via API
  * @param {String} userId - The user ID
  * All parameter required
@@ -1076,7 +789,9 @@ Cypress.Commands.add('loginAsNewGuestUser', (user = {}, bypassTutorial = true) =
 Cypress.Commands.add('demoteUser', (userId) => {
     //Demote Regular Member to Guest User
     const baseUrl = Cypress.config('baseUrl');
-    cy.externalRequest({user: users.sysadmin, method: 'post', baseUrl, path: `users/${userId}/demote`});
+    const admin = getAdminAccount();
+
+    cy.externalRequest({user: admin, method: 'post', baseUrl, path: `users/${userId}/demote`});
 });
 
 /**
@@ -1088,7 +803,9 @@ Cypress.Commands.add('demoteUser', (userId) => {
 Cypress.Commands.add('removeUserFromChannel', (channelId, userId) => {
     //Remove a User from a Channel
     const baseUrl = Cypress.config('baseUrl');
-    cy.externalRequest({user: users.sysadmin, method: 'delete', baseUrl, path: `channels/${channelId}/members/${userId}`});
+    const admin = getAdminAccount();
+
+    cy.externalRequest({user: admin, method: 'delete', baseUrl, path: `channels/${channelId}/members/${userId}`});
 });
 
 /**
@@ -1100,7 +817,9 @@ Cypress.Commands.add('removeUserFromChannel', (channelId, userId) => {
 Cypress.Commands.add('removeUserFromTeam', (teamId, userId) => {
     //Remove a User from a Channel
     const baseUrl = Cypress.config('baseUrl');
-    cy.externalRequest({user: users.sysadmin, method: 'delete', baseUrl, path: `teams/${teamId}/members/${userId}`});
+    const admin = getAdminAccount();
+
+    cy.externalRequest({user: admin, method: 'delete', baseUrl, path: `teams/${teamId}/members/${userId}`});
 });
 
 /**
@@ -1111,7 +830,9 @@ Cypress.Commands.add('removeUserFromTeam', (teamId, userId) => {
 Cypress.Commands.add('promoteUser', (userId) => {
     //Promote Regular Member to Guest User
     const baseUrl = Cypress.config('baseUrl');
-    cy.externalRequest({user: users.sysadmin, method: 'post', baseUrl, path: `users/${userId}/promote`});
+    const admin = getAdminAccount();
+
+    cy.externalRequest({user: admin, method: 'post', baseUrl, path: `users/${userId}/promote`});
 });
 
 // *****************************************************************************
@@ -1281,13 +1002,119 @@ Cypress.Commands.add('getRoleByName', (roleName) => {
     });
 });
 
+export const defaultRolesPermissions = {
+    team_admin: [
+        'edit_others_posts',
+        'remove_user_from_team',
+        'manage_team', 'import_team',
+        'manage_team_roles',
+        'manage_channel_roles',
+        'manage_slash_commands',
+        'manage_others_slash_commands',
+        'manage_incoming_webhooks',
+        'manage_outgoing_webhooks',
+        'delete_post',
+        'delete_others_posts',
+        'manage_others_outgoing_webhooks',
+        'add_reaction',
+        'manage_others_incoming_webhooks',
+        'use_channel_mentions',
+        'manage_public_channel_members',
+        'manage_private_channel_members',
+        'create_post',
+        'remove_reaction',
+        'use_group_mentions',
+    ],
+    channel_admin: [
+        'manage_channel_roles',
+        'create_post',
+        'add_reaction',
+        'remove_reaction',
+        'manage_public_channel_members',
+        'manage_private_channel_members',
+        'use_channel_mentions',
+        'use_group_mentions',
+    ],
+    system_user: [
+        'create_direct_channel',
+        'create_group_channel',
+        'permanent_delete_user',
+        'create_team',
+        'get_public_link',
+        'list_public_teams',
+        'join_public_teams',
+        'view_members',
+    ],
+    team_user: [
+        'list_team_channels',
+        'join_public_channels',
+        'read_public_channel',
+        'view_team',
+        'create_public_channel',
+        'create_private_channel',
+        'invite_user',
+        'add_user_to_team',
+    ],
+    channel_user: [
+        'manage_public_channel_properties',
+        'delete_public_channel',
+        'manage_private_channel_properties',
+        'delete_private_channel',
+        'read_channel',
+        'add_reaction',
+        'remove_reaction',
+        'manage_public_channel_members',
+        'upload_file',
+        'create_post',
+        'use_slash_commands',
+        'manage_private_channel_members',
+        'delete_post',
+        'edit_post',
+        'use_channel_mentions',
+        'use_group_mentions',
+    ],
+    system_guest: [
+        'create_direct_channel',
+        'create_group_channel',
+    ],
+    team_guest: [
+        'view_team',
+    ],
+    channel_guest: [
+        'edit_post',
+        'add_reaction',
+        'remove_reaction',
+        'use_channel_mentions',
+        'use_slash_commands',
+        'read_channel',
+        'upload_file',
+        'create_post',
+    ],
+};
+
+/**
+ * Get a list of roles from their names
+ * https://api.mattermost.com/#tag/roles/paths/~1roles~1names/post
+ */
+Cypress.Commands.add('apiGetRolesByNames', (names) => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: '/api/v4/roles/names',
+        method: 'POST',
+        body: names || Object.keys(defaultRolesPermissions),
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap(response);
+    });
+});
+
 /**
  * Patch a role.
  *
  * @param {String} roleID - ID of the role to patch
  * @param {String} force - Set to 'true' to overwrite a previously installed plugin with the same ID, if any
  */
-Cypress.Commands.add('patchRole', (roleID, patch) => {
+Cypress.Commands.add('apiPatchRole', (roleID, patch) => {
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: `/api/v4/roles/${roleID}/patch`,
@@ -1297,6 +1124,21 @@ Cypress.Commands.add('patchRole', (roleID, patch) => {
     }).then((response) => {
         expect(response.status).to.equal(200);
         return cy.wrap(response);
+    });
+});
+
+Cypress.Commands.add('apiResetRoles', () => {
+    cy.apiGetRolesByNames().then((res) => {
+        const rolePermissions = res.body;
+
+        rolePermissions.forEach((role) => {
+            const defaultPermissions = defaultRolesPermissions[role.name];
+            const diff = xor(role.permissions, defaultPermissions);
+
+            if (diff.length > 0) {
+                cy.apiPatchRole(role.id, {permissions: defaultPermissions});
+            }
+        });
     });
 });
 
@@ -1336,7 +1178,9 @@ Cypress.Commands.add('apiDeleteScheme', (schemeId) => {
  */
 Cypress.Commands.add('apiActivateUser', (userId, active = true) => {
     const baseUrl = Cypress.config('baseUrl');
-    cy.externalRequest({user: users.sysadmin, method: 'put', baseUrl, path: `users/${userId}/active`, data: {active}});
+    const admin = getAdminAccount();
+
+    cy.externalRequest({user: admin, method: 'put', baseUrl, path: `users/${userId}/active`, data: {active}});
 });
 
 // *****************************************************************************

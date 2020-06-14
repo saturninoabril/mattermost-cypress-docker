@@ -30,13 +30,14 @@ const testCases = [
 
 describe('AS14318 Theme Colors - Custom Sidebar Styles input change', () => {
     before(() => {
-        // # Login and visit town-square channel
-        cy.apiCreateAndLoginAsNewUser();
-        cy.visit('/ad-1/channels/town-square');
+        // # Login as new user and visit town-square
+        cy.apiInitSetup({loginAfter: true}).then(({team}) => {
+            cy.visit(`/${team.name}/channels/town-square`);
 
-        // # Go to Theme > Custom > Sidebar Styles
-        toThemeDisplaySettings();
-        openSidebarStyles();
+            // # Go to Theme > Custom > Sidebar Styles
+            toThemeDisplaySettings();
+            openSidebarStyles();
+        });
     });
 
     testCases.forEach((testCase) => {

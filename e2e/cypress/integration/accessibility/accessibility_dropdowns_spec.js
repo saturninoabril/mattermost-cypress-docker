@@ -32,21 +32,19 @@ function verifyMenuItems(menuEl, labels) {
 }
 
 describe('Verify Accessibility Support in Dropdown Menus', () => {
-    before(() => {
-        cy.apiAdminLogin();
+    let testTeam;
+    let testUser;
 
-        // # Ensure an open team is available to join
-        cy.getCurrentUserId().then((userId) => {
-            cy.apiCreateTeam('test-team', 'Test Team').then((response) => {
-                const teamId = response.body.id;
-                cy.removeUserFromTeam(teamId, userId);
-            });
+    before(() => {
+        cy.apiInitSetup().then(({team, user}) => {
+            testTeam = team;
+            testUser = user;
         });
     });
 
     beforeEach(() => {
         // Visit the Off Topic channel
-        cy.visit('/ad-1/channels/off-topic').wait(TIMEOUTS.SMALL);
+        cy.visit(`/${testTeam.name}/channels/off-topic`).wait(TIMEOUTS.SMALL);
     });
 
     it('MM-22627 Accessibility Support in Channel Menu Dropdown', () => {

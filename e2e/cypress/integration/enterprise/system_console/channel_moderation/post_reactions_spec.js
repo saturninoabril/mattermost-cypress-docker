@@ -13,8 +13,9 @@ import * as TIMEOUTS from '../../../../fixtures/timeouts';
 import {getRandomId} from '../../../../utils';
 import {getAdminAccount} from '../../../../support/env';
 
+import {checkboxesTitleToIdMap} from './constants';
+
 import {
-    checkboxesTitleToIdMap,
     deleteOrEditTeamScheme,
     disableChannelModeratedPermission,
     enableChannelModeratedPermission,
@@ -31,43 +32,32 @@ describe('MM-23102 - Channel Moderation - Post Reactions', () => {
     let guestUser;
     let testTeam;
     let testChannel;
-    let admin = getAdminAccount();
+    const admin = getAdminAccount();
 
     before(() => {
         // * Check if server has license
         cy.requireLicense();
 
-        cy.apiCreateUserAndAddToDefaultTeam().then(({user}) => {
+        cy.apiInitSetup().then(({team, channel, user}) => {
             regularUser = user;
+            testTeam = team;
+            testChannel = channel;
 
-            cy.apiCreateTeam('moderation-team', `Moderation ${getRandomId()}`).then((response) => {
-                testTeam = response.body;
+            cy.apiCreateGuestUser().then(({guest}) => {
+                guestUser = guest;
 
-                // # Add new channel
-                cy.apiCreateChannel(testTeam.id, 'moderation', `moderation${getRandomId()}`).then((response) => {
-                    testChannel = response.body;
-
-                    cy.apiAddUserToTeam(testTeam.id, regularUser.id).then(() => {
-                        cy.apiAddUserToChannel(testChannel.id, regularUser.id);
-                    });
-
-                    cy.apiCreateGuestUser().then((user) => {
-                        guestUser = user;
-
-                        cy.apiAddUserToTeam(testTeam.id, guestUser.id).then(() => {
-                            cy.apiAddUserToChannel(testChannel.id, guestUser.id);
-                        });
-
-                        // # Make the guest user as Active
-                        cy.apiActivateUser(guestUser.id, true);
-                    });
-
-                    // Post a few messages in the channel
-                    visitChannel(admin, testChannel, testTeam);
-                    cy.findByTestId('post_textbox').clear().type('test123{enter}');
-                    cy.findByTestId('post_textbox').clear().type('test123{enter}');
-                    cy.findByTestId('post_textbox').clear().type('test123{enter}');
+                cy.apiAddUserToTeam(testTeam.id, guestUser.id).then(() => {
+                    cy.apiAddUserToChannel(testChannel.id, guestUser.id);
                 });
+
+                // # Activate guest user
+                cy.apiActivateUser(guestUser.id, true);
+
+                // Post a few messages in the channel
+                visitChannel(admin, testChannel, testTeam);
+                for (let i = 0; i < 3; i++) {
+                    cy.postMessage(`test message ${Date.now()}`);
+                }
             });
         });
     });
@@ -193,34 +183,11 @@ describe('MM-23102 - Channel Moderation - Post Reactions', () => {
 
     // GUEST PERMISSIONS DON'T EXIST ON TEAM OVERRIDE SCHEMES SO GUEST PORTION NOT IMPLEMENTED!
     // ONLY THE MEMBERS PORTION OF THIS TEST IS IMPLEMENTED
-    it.only('Post Reactions option removed for Guests & Members in Team Override Scheme', () => {
+    it('Post Reactions option removed for Guests & Members in Team Override Scheme', () => {
         const teamOverrideSchemeName = `post_reactions_${getRandomId()}`;
 
         // # Create a new team override scheme
         goToPermissionsAndCreateTeamOverrideScheme(teamOverrideSchemeName, testTeam);
-
-        visitChannelConfigPage(testChannel);
-
-        // * Assert that post reaction is disabled for members
-        cy.findByTestId(checkboxesTitleToIdMap.POST_REACTIONS_MEMBERS).should('have.class', 'checkbox disabled');
-
-        // # Login as a Member user and visit the same channel
-        visitChannel(regularUser, testChannel, testTeam);
-
-        // # Check Member should not have the permission to react to any post on any channel in that team
-        // * User should not see the smiley face that allows a user to react to a post
-        cy.getLastPostId().then((postId) => {
-            cy.get(`#post_${postId}`).trigger('mouseover');
-            cy.findByTestId('post-reaction-emoji-icon').should('not.exist');
-        });
-
-        // # Go to system admin page and then go to the system scheme and remove post reaction option for all members and save
-        deleteOrEditTeamScheme(teamOverrideSchemeName, 'edit');
-        cy.get('#all_users-posts-reactions').click();
-        saveConfigForScheme(false);
-
-        // # Wait until the groups have been saved (since it redirects you)
-        cy.wait(TIMEOUTS.TINY * 2);
 
         visitChannelConfigPage(testChannel);
 
@@ -235,6 +202,29 @@ describe('MM-23102 - Channel Moderation - Post Reactions', () => {
         cy.getLastPostId().then((postId) => {
             cy.get(`#post_${postId}`).trigger('mouseover');
             cy.findByTestId('post-reaction-emoji-icon').should('exist');
+        });
+
+        // # Go to system admin page and then go to the system scheme and remove post reaction option for all members and save
+        deleteOrEditTeamScheme(teamOverrideSchemeName, 'edit');
+        cy.get('#all_users-posts-reactions').click();
+        saveConfigForScheme(false);
+
+        // # Wait until the groups have been saved (since it redirects you)
+        cy.wait(TIMEOUTS.TINY * 2);
+
+        visitChannelConfigPage(testChannel);
+
+        // * Assert that post reaction is disabled for members
+        cy.findByTestId(checkboxesTitleToIdMap.POST_REACTIONS_MEMBERS).should('have.class', 'checkbox disabled');
+
+        // # Login as a Member user and visit the same channel
+        visitChannel(regularUser, testChannel, testTeam);
+
+        // # Check Member should not have the permission to react to any post on any channel in that team
+        // * User should not see the smiley face that allows a user to react to a post
+        cy.getLastPostId().then((postId) => {
+            cy.get(`#post_${postId}`).trigger('mouseover');
+            cy.findByTestId('post-reaction-emoji-icon').should('not.exist');
         });
     });
 });
