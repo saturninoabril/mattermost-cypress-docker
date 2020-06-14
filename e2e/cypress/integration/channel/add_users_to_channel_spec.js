@@ -57,7 +57,7 @@ describe('CS15445 Join/leave messages', () => {
 
     before(() => {
         // # Login as new user and visit town-square
-        cy.apiInitSetup().then(({team, user, channel}) => {
+        cy.apiInitSetup().then(({team, user}) => {
             testTeam = team;
 
             // # Add atleast 4 users

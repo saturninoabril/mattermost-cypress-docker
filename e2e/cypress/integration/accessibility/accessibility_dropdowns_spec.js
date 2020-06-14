@@ -33,12 +33,10 @@ function verifyMenuItems(menuEl, labels) {
 
 describe('Verify Accessibility Support in Dropdown Menus', () => {
     let testTeam;
-    let testUser;
 
     before(() => {
-        cy.apiInitSetup().then(({team, user}) => {
+        cy.apiInitSetup().then(({team}) => {
             testTeam = team;
-            testUser = user;
         });
     });
 
