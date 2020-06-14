@@ -21,39 +21,39 @@ describe('Leave an archived channel', () => {
     });
 
     let testTeam;
+    let testChannel;
 
     before(() => {
         // # Login as test user and visit town-square
-        cy.apiInitSetup({loginAfter: true}).then(({team}) => {
+        cy.apiInitSetup({loginAfter: true}).then(({team, channel}) => {
             testTeam = team;
+            testChannel = channel;
 
-            cy.visit(`/${team.name}/channels/town-square`);
+            cy.visit(`/${team.name}/channels/${testChannel.name}`);
         });
     });
 
     it('should leave recently archived channel', () => {
-        cy.uiCreateAndVisitNewChannel(testTeam).then((channel) => {
-            // # Archive the channel
-            cy.get('#channelHeaderDropdownIcon').click();
-            cy.get('#channelArchiveChannel').click();
-            cy.get('#deleteChannelModalDeleteButton').click();
+        // # Archive the channel
+        cy.get('#channelHeaderDropdownIcon').click();
+        cy.get('#channelArchiveChannel').click();
+        cy.get('#deleteChannelModalDeleteButton').click();
 
-            // # Switch to another channel
-            cy.visit(`/${testTeam.name}/channels/town-square`);
+        // # Switch to another channel
+        cy.visit(`/${testTeam.name}/channels/town-square`);
 
-            // # Switch back to the archived channel
-            cy.visit(`/${testTeam.name}/channels/${channel.name}`);
+        // # Switch back to the archived channel
+        cy.visit(`/${testTeam.name}/channels/${testChannel.name}`);
 
-            // # Leave the channel
-            cy.get('#channelHeaderDropdownIcon').click();
-            cy.get('#channelLeaveChannel').click();
+        // # Leave the channel
+        cy.get('#channelHeaderDropdownIcon').click();
+        cy.get('#channelLeaveChannel').click();
 
-            // # Wait to make sure that the Loading page does not get back
-            cy.wait(TIMEOUTS.SMALL);
+        // # Wait to make sure that the Loading page does not get back
+        cy.wait(TIMEOUTS.SMALL);
 
-            // * Verify sure that we have switched channels
-            cy.get('#channelHeaderTitle').should('not.contain', channel.display_name);
-        });
+        // * Verify sure that we have switched channels
+        cy.get('#channelHeaderTitle').should('not.contain', testChannel.display_name);
     });
 });
 

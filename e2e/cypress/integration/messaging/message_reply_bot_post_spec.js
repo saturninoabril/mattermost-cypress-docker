@@ -10,9 +10,10 @@
 // Stage: @prod
 // Group: @messaging
 
-import users from '../../fixtures/users.json';
+import {getAdminAccount} from '../../support/env';
 
-const sysadmin = users.sysadmin;
+const sysadmin = getAdminAccount();
+
 describe('Messaging', () => {
     let newChannel;
     let botsUserId;
@@ -28,11 +29,10 @@ describe('Messaging', () => {
         };
         cy.apiUpdateConfig(newSettings);
 
-        cy.apiSaveTeammateNameDisplayPreference('username');
-
         // # Create and visit new channel
-        cy.uiCreateAndVisitNewChannel().then((channel) => {
+        cy.apiInitSetup().then(({team, channel}) => {
             newChannel = channel;
+            cy.visit(`/${team.name}/channels/${channel.name}`);
         });
     });
 

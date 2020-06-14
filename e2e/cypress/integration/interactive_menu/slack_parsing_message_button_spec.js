@@ -16,21 +16,14 @@
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
 
-let channel;
-let incomingWebhook;
-
 describe('Interactive Menu', () => {
+    let incomingWebhook;
+
     before(() => {
         cy.requireWebhookServer();
 
-        // # Update teammate name display setting is set to default 'username'
-        cy.apiSaveTeammateNameDisplayPreference('username');
-        cy.apiSaveMessageDisplayPreference('clean');
-
         // # Create and visit new channel and create incoming webhook
-        cy.uiCreateAndVisitNewChannel().then((data) => {
-            channel = data;
-
+        cy.apiInitSetup().then(({team, channel}) => {
             const newIncomingHook = {
                 channel_id: channel.id,
                 channel_locked: true,
@@ -41,6 +34,8 @@ describe('Interactive Menu', () => {
             cy.apiCreateWebhook(newIncomingHook).then((hook) => {
                 incomingWebhook = hook;
             });
+
+            cy.visit(`/${team.name}/channels/${channel.name}`);
         });
     });
 

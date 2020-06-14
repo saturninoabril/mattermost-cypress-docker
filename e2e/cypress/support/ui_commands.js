@@ -407,23 +407,6 @@ Cypress.Commands.add('updateChannelHeader', (text) => {
         wait(TIMEOUTS.TINY);
 });
 
-/**
- * On a given team, create and visit a new channel
- */
-Cypress.Commands.add('uiCreateAndVisitNewChannel', (team) => {
-    return cy.apiCreateChannel(team.id, 'channel-test', 'Channel Test').then((res) => {
-        const channel = res.body;
-
-        // # Visit the new channel
-        cy.visit(`/${team.name}/channels/${channel.name}`);
-
-        // * Verify channel's display name
-        cy.get('#channelHeaderTitle').should('contain', channel.display_name);
-
-        return cy.wrap(channel);
-    });
-});
-
 // ***********************************************************
 // File Upload
 // ************************************************************

@@ -54,13 +54,11 @@ function addNumberOfUsersToChannel(num = 1) {
 
 describe('CS15445 Join/leave messages', () => {
     let testTeam;
-    let testUser;
 
     before(() => {
         // # Login as new user and visit town-square
-        cy.apiInitSetup().then(({team, user}) => {
+        cy.apiInitSetup().then(({team, user, channel}) => {
             testTeam = team;
-            testUser = user;
 
             // # Add atleast 4 users
             for (let i = 0; i < 4; i++) {
@@ -69,14 +67,15 @@ describe('CS15445 Join/leave messages', () => {
                 });
             }
 
-            cy.apiLogin(testUser.username, testUser.password);
-            cy.visit(`/${team.name}/channels/town-square`);
+            cy.apiLogin(user.username, user.password);
         });
     });
 
     it('Single User: Usernames are links, open profile popovers', () => {
         // # Create and visit new channel
-        cy.uiCreateAndVisitNewChannel(testTeam).then(() => {
+        cy.apiCreateChannel(testTeam.id, 'channel-test', 'Channel').then((res) => {
+            cy.visit(`/${testTeam.name}/channels/${res.body.name}`);
+
             // # Add users to channel
             addNumberOfUsersToChannel(1);
 
@@ -92,7 +91,9 @@ describe('CS15445 Join/leave messages', () => {
 
     it('Combined Users: Usernames are links, open profile popovers', () => {
         // # Create and visit new channel
-        cy.uiCreateAndVisitNewChannel(testTeam).then(() => {
+        cy.apiCreateChannel(testTeam.id, 'channel-test', 'Channel').then((res) => {
+            cy.visit(`/${testTeam.name}/channels/${res.body.name}`);
+
             addNumberOfUsersToChannel(3);
 
             cy.getLastPostId().then((id) => {
