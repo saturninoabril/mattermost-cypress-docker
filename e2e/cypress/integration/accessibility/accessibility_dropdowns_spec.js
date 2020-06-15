@@ -72,7 +72,7 @@ describe('Verify Accessibility Support in Dropdown Menus', () => {
 
     it('MM-22627 Accessibility Support in Main Menu Dropdown', () => {
         // # Press tab from the Set Status button
-        cy.get('.status-wrapper button.status').focus().tab({shift: true}).tab().tab();
+        cy.get('.status-wrapper button.status').focus().tab({shift: true}).tab().tab().wait(1000);
 
         // * Verify the aria-label in main menu button
         cy.get('#headerInfo button').should('have.attr', 'aria-label', 'main menu').and('have.class', 'a11y--active a11y--focused').click();
@@ -104,7 +104,7 @@ describe('Verify Accessibility Support in Dropdown Menus', () => {
 
     it('MM-22627 Accessibility Support in Status Dropdown', () => {
         // # Press tab from Add Team button
-        cy.get('#select_teamTeamButton').focus().tab({shift: true}).tab().tab();
+        cy.get('#select_teamTeamButton').focus().tab({shift: true}).tab().tab().wait(1000);
 
         // * Verify the aria-label in status menu button
         cy.get('.status-wrapper button.status').should('have.attr', 'aria-label', 'set status').and('have.class', 'a11y--active a11y--focused').click();
