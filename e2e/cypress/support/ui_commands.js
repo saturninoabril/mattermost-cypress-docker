@@ -485,21 +485,6 @@ Cypress.Commands.add('createAndVisitNewGroupMessageWith', (usernames) => {
 // ************************************************************
 
 /**
- * Upload a file on target input given a filename and mime type
- * @param {String} targetInput - Target input to upload a file
- * @param {String} fileName - Filename to upload from the fixture
- * @param {String} mimeType - Mime type of a file
- */
-Cypress.Commands.add('fileUpload', (targetInput, fileName = 'mattermost-icon.png', mimeType = 'image/png') => {
-    cy.fixture(fileName).then((fileContent) => {
-        cy.get(targetInput).upload(
-            {fileContent, fileName, mimeType},
-            {subjectType: 'input', force: true},
-        );
-    });
-});
-
-/**
  * Upload a file on target input in binary format -
  * @param {String} targetInput - #LocatorID
  * @param {String} fileName - Filename to upload from the fixture Ex: drawPlugin-binary.tar
