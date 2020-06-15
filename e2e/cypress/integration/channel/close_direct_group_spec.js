@@ -88,11 +88,11 @@ describe('Close group messages', () => {
             testUser = user;
             testTeam = team;
 
-            cy.apiCreateUser().then(({user: newUser}) => {
+            cy.apiCreateUser({prefix: 'aaa'}).then(({user: newUser}) => {
                 otherUser1 = newUser;
                 cy.apiAddUserToTeam(team.id, newUser.id);
             });
-            cy.apiCreateUser().then(({user: newUser}) => {
+            cy.apiCreateUser({prefix: 'bbb'}).then(({user: newUser}) => {
                 otherUser2 = newUser;
                 cy.apiAddUserToTeam(team.id, newUser.id);
             });
@@ -104,7 +104,7 @@ describe('Close group messages', () => {
     });
 
     it('Through channel header dropdown menu', () => {
-        createAndVisitGMChannel([otherUser1, otherUser2], testUser).then((channel) => {
+        createAndVisitGMChannel([otherUser1, otherUser2]).then((channel) => {
             // # Open channel header dropdown menu and click on Close Direct Message
             cy.get('#channelHeaderDropdownIcon').click();
             cy.findByText('Close Group Message').click();
@@ -114,7 +114,7 @@ describe('Close group messages', () => {
     });
 
     it('Through x button on channel sidebar item', () => {
-        createAndVisitGMChannel([otherUser1, otherUser2], testUser).then((channel) => {
+        createAndVisitGMChannel([otherUser1, otherUser2]).then((channel) => {
             // # Click on the x button on the sidebar channel item
             cy.get('#sidebarItem_' + channel.name + '>span.btn-close').click({force: true});
 
@@ -122,7 +122,7 @@ describe('Close group messages', () => {
         });
     });
 
-    function createAndVisitGMChannel(users, currentUser) {
+    function createAndVisitGMChannel(users = []) {
         const userIds = users.map((user) => user.id);
         return cy.apiCreateGroupChannel(userIds).then((res) => {
             const channel = res.body;
@@ -131,7 +131,10 @@ describe('Close group messages', () => {
             cy.visit(`/${testTeam.name}/channels/${channel.name}`);
 
             // * Verify channel's display name
-            const displayName = channel.display_name.split(', ').filter(((username) => username !== currentUser.username)).join(', ');
+            const displayName = users.
+                map((member) => member.username).
+                sort((a, b) => a.localeCompare(b, 'en', {numeric: true})).
+                join(', ');
             cy.get('#channelHeaderTitle').should('contain', displayName);
 
             return cy.wrap(channel);
