@@ -43,11 +43,11 @@ describe('Channel users interactions', () => {
         cy.get('#sidebarItem_off-topic').click({force: true});
 
         // # Post a message in test channel by another user
-        const message = `I\'m messaging!${'\n2'.repeat(30)}`;
+        const message = `I\'m messaging!${'\n2'.repeat(30)}`; // eslint-disable-line no-useless-escape
         cy.postMessageAs({sender, message, channelId: testChannel.id});
 
         // # Post any message to off-topic channel
-        const hello = 'Hello'
+        const hello = 'Hello';
         cy.postMessage(hello);
         cy.uiWaitUntilMessagePostedIncludes(hello);
 

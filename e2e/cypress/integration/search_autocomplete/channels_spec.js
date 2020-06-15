@@ -21,7 +21,7 @@ const admin = getAdminAccount();
 
 describe('Autocomplete without Elasticsearch - Channel', () => {
     let testTeam;
-    let testUser
+    let testUser;
 
     before(() => {
         // # Disable elastic search via API

@@ -16,7 +16,7 @@ describe('Message', () => {
 
     before(() => {
         // # Login as test user and go to town-square
-        cy.apiInitSetup({loginAfter: true}).then(({team, channel, user}) => {
+        cy.apiInitSetup({loginAfter: true}).then(({team, channel}) => {
             testChannel = channel;
             testTeam = team;
 
