@@ -13,14 +13,14 @@
 describe('Status dropdown menu', () => {
     before(() => {
         // # Login as test user and visit town-square
-        cy.apiInitSetup({loginAfter: true}).then(({team}) => {
+        cy.apiInitSetup().then(({team}) => {
             cy.visit(`/${team.name}/channels/town-square`);
         });
     });
 
     afterEach(() => {
         // # Reset user status to online to prevent status modal
-        cy.apiUpdateUserStatus();
+        cy.apiUpdateUserStatus('online');
 
         cy.reload();
     });
