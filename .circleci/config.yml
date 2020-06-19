@@ -100,6 +100,7 @@ jobs:
             - ./e2e/node_modules
       - run:
           name: Run Cypress Test
+          no_output_timeout: 30m
           command: |
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
