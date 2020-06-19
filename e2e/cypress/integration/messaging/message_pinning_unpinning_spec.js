@@ -10,41 +10,28 @@
 // Stage: @prod
 // Group: @messaging
 
-const pinnedPosts = [];
-
 /**
-* Pin post by cliking on [...] then 'Pin to channel', and add the pinned post to pinnedPosts
+* Pin post by cliking on [...] then 'Pin to channel'
 * @param {String} postId - post ID of the post to pin
 */
 function pinPost(index) {
     cy.getNthPostId(index).then((postId) => {
         cy.clickPostDotMenu(postId);
         cy.get(`#pin_post_${postId}`).click();
-        pinnedPosts.push(postId);
     });
 }
 
 describe('Messaging', () => {
     before(() => {
-        // # Login as user-1
-        cy.apiLogin('user-1');
-
-        // # Create a new team and visit default town-square channel
-        cy.apiCreateTeam('test-team', 'Test Team').then((response) => {
-            cy.visit(`/${response.body.name}`);
-        });
-    });
-
-    // Unpin all posts at the end of the test
-    after(() => {
-        pinnedPosts.forEach((pinnedPost) => {
-            cy.apiUnpinPosts(pinnedPost);
+        // # Login as test user and visit town-square
+        cy.apiInitSetup({loginAfter: true}).then(({team}) => {
+            cy.visit(`/${team.name}/channels/town-square`);
         });
     });
 
     it('M15010 Pinning or un-pinning older post does not cause it to display at bottom of channel', () => {
-        // * Ensure that the channel view is loaded
-        cy.get('#post_textbox').should('be.visible');
+        // * Post a message
+        cy.postMessage('Hello');
 
         // # Post messages
         const olderPost = 7;
