@@ -18,6 +18,8 @@
  *      E.g. "--group='@channel,@messaging'" will select files with either @channel or @messaging.
  *   --invert
  *      Selected files are those not matching any of the specified stage or group.
+ * --visual
+ *      Enable visual testing given that the required API key is set in the environment.
  *
  * Environment:
  *   BROWSER=[browser]      : Chrome by default. Set to run test on other browser such as chrome, edge, electron and firefox.
@@ -67,7 +69,12 @@ async function runTests() {
         return;
     }
 
-    const {invert, group, stage} = argv;
+    const {
+        invert,
+        group,
+        stage,
+        visual,
+    } = argv;
 
     for (let i = 0; i < finalTestFiles.length; i++) {
         const testFile = finalTestFiles[i];
@@ -85,6 +92,10 @@ async function runTests() {
             config: {
                 screenshotsFolder: `${MOCHAWESOME_REPORT_DIR}/screenshots`,
                 trashAssetsBeforeRuns: false,
+            },
+            env: {
+                enableVisualTest: visual,
+                enableApplitools: Boolean(APPLITOOLS_API_KEY),
             },
             reporter: 'cypress-multi-reporters',
             reporterOptions:

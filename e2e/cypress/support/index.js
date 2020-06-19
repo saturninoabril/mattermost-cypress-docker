@@ -7,6 +7,7 @@
 
 /* eslint-disable no-loop-func, quote-props */
 
+import '@applitools/eyes-cypress/commands'
 import '@testing-library/cypress/add-commands';
 import 'cypress-file-upload';
 import 'cypress-wait-until';
