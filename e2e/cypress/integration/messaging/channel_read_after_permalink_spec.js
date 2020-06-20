@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @messaging @verify
+// Group: @messaging
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
 
@@ -61,7 +61,6 @@ describe('Messaging', () => {
 
                 // # Post the message on the channel
                 postMessageOnChannel(testChannel, otherUser, permalink);
-            
 
                 // # Change user
                 cy.apiLogout();
@@ -85,7 +84,7 @@ describe('Messaging', () => {
                 cy.url().should('include', `/${testTeam.name}/messages/@${testUser.username}/${postId}`);
 
                 // * Check if url redirects back to parent path eventually
-                cy.wait(TIMEOUTS.SMALL).url().should('include', `/${testTeam.name}/messages/@${testUser.username}`).and('not.include', `/${postId}`);
+                cy.wait(TIMEOUTS.FIVE_SEC).url().should('include', `/${testTeam.name}/messages/@${testUser.username}`).and('not.include', `/${postId}`);
 
                 // # Channel should still be visible
                 cy.get('#publicChannelList', {force: true}).scrollIntoView().should('be.visible').within(() => {
@@ -108,7 +107,7 @@ describe('Messaging', () => {
 function postMessageOnChannel(channel, user, linkText) {
     // # Click on test public channel
     cy.get('#sidebarItem_' + channel.name).click({force: true});
-    cy.wait(TIMEOUTS.TINY);
+    cy.wait(TIMEOUTS.HALF_SEC);
 
     // # Paste link on postlist area and mention the other user
     cy.postMessage(`@${user.username} ${linkText}`);
@@ -120,7 +119,7 @@ function postMessageOnChannel(channel, user, linkText) {
 function clickLink(channel) {
     // # Click on test public channel
     cy.get('#sidebarItem_' + channel.name).click({force: true});
-    cy.wait(TIMEOUTS.TINY);
+    cy.wait(TIMEOUTS.HALF_SEC);
 
     // # Since the last message is the system message telling us we joined the channel, we take the one previous
     cy.getNthPostId(1).then((postId) => {

@@ -42,8 +42,8 @@ describe('SC17020 - Revoke All Sessions from System Console', () => {
         cy.get('#confirmModalButton').click();
 
         // * Verify if Admin User's session is expired and is redirected to login page
-        cy.url({timeout: TIMEOUTS.LARGE}).should('include', '/login');
-        cy.get('#login_section', {timeout: TIMEOUTS.LARGE}).should('be.visible');
+        cy.url({timeout: TIMEOUTS.HALF_MIN}).should('include', '/login');
+        cy.get('#login_section', {timeout: TIMEOUTS.HALF_MIN}).should('be.visible');
     });
 
     it('Verify for Regular Member', () => {
@@ -62,8 +62,8 @@ describe('SC17020 - Revoke All Sessions from System Console', () => {
                 cy.visit(`/${team.name}/channels/town-square`);
 
                 // * Verify if the regular member is logged out and redirected to login page
-                cy.url({timeout: TIMEOUTS.LARGE}).should('include', '/login');
-                cy.get('#login_section', {timeout: TIMEOUTS.LARGE}).should('be.visible');
+                cy.url({timeout: TIMEOUTS.HALF_MIN}).should('include', '/login');
+                cy.get('#login_section', {timeout: TIMEOUTS.HALF_MIN}).should('be.visible');
             });
         });
     });

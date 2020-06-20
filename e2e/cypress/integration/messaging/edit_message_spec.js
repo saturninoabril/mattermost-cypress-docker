@@ -41,7 +41,7 @@ describe('Edit Message', () => {
         cy.get('#suggestionList').should('be.visible');
 
         // # Press the escape key
-        cy.get('#edit_textbox').wait(TIMEOUTS.TINY).focus().type('{esc}');
+        cy.get('#edit_textbox').wait(TIMEOUTS.HALF_SEC).focus().type('{esc}');
 
         // * Check if the textbox contains expected text
         cy.get('#edit_textbox').should('have.value', 'Hello World! @');
@@ -152,4 +152,3 @@ describe('Edit Message', () => {
         });
     });
 });
-

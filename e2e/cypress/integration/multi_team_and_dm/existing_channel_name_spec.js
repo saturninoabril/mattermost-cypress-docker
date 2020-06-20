@@ -75,7 +75,7 @@ function channelNameTest(channelTypeHeading, channel) {
  * Create new channel via API
  * @param {String} name Name of the channel. This will be used for both name and display_name
  * @param {Boolean} isPrivate Should the channel be private
- * @param {String} testTeamId team where to create a channel
+ * @param {String} testTeamId Team where to create a channel
  * @returns body of request
  */
 function createNewChannel(name, isPrivate = false, testTeamId) {

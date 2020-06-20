@@ -60,11 +60,11 @@ describe('Messaging', () => {
         }
 
         // # Visit a different channel and verify textbox
-        cy.get('#sidebarItem_off-topic').click({force: true}).wait(TIMEOUTS.TINY);
+        cy.get('#sidebarItem_off-topic').click({force: true}).wait(TIMEOUTS.HALF_SEC);
         verifyPostTextbox('@initialHeight', '');
 
         // # Return to the channel and verify textbox
-        cy.get('#sidebarItem_town-square').click({force: true}).wait(TIMEOUTS.TINY);
+        cy.get('#sidebarItem_town-square').click({force: true}).wait(TIMEOUTS.HALF_SEC);
         verifyPostTextbox('@previousHeight', lines.join('\n'));
 
         // # Clear the textbox
@@ -78,16 +78,16 @@ describe('Messaging', () => {
         }
 
         // # Wait some time to save draft into storage
-        cy.wait(TIMEOUTS.TINY);
+        cy.wait(TIMEOUTS.HALF_SEC);
 
         // # Visit a different channel by URL and verify textbox
-        cy.visit(`/${testTeam.name}/channels/off-topic`).wait(TIMEOUTS.TINY);
+        cy.visit(`/${testTeam.name}/channels/off-topic`).wait(TIMEOUTS.HALF_SEC);
         verifyPostTextbox('@initialHeight', '');
 
         // # Should have returned to the channel by URL. However, Cypress is clearing storage for some reason.
         // # Does not happened on actual user interaction.
         // * Verify textbox
-        cy.get('#sidebarItem_town-square').click({force: true}).wait(TIMEOUTS.TINY);
+        cy.get('#sidebarItem_town-square').click({force: true}).wait(TIMEOUTS.HALF_SEC);
         verifyPostTextbox('@previousHeight', lines.join('\n'));
     });
 });

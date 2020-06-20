@@ -14,12 +14,14 @@ import {getAdminAccount} from '../env';
  * This API assume that the user is logged
  * no params required because we are using /me to refer to current user
  */
-
 Cypress.Commands.add('apiGetMe', () => {
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: 'api/v4/users/me',
         method: 'GET',
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        cy.wrap({user: response.body});
     });
 });
 

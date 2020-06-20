@@ -274,7 +274,7 @@ function scrollUpAndPostAMessage(sender, channelId) {
     scrollUp();
 
     // # Without the wait the tests seem to fun flaky. Possibly because of ScrollTo having a race with post of message
-    cy.wait(20); // eslint-disable-line cypress/no-unnecessary-waiting
+    cy.wait(TIMEOUTS.HALF_SEC); // eslint-disable-line cypress/no-unnecessary-waiting
 
     // # Post a new message
     return cy.postMessageAs({sender, message: 'This is a new message', channelId});
@@ -282,5 +282,5 @@ function scrollUpAndPostAMessage(sender, channelId) {
 
 function scrollUp() {
     // # Scroll up so bottom is not visible
-    cy.get('div.post-list__dynamic').should('be.visible').scrollTo(0, '70%', {duration: 1000}).wait(1000);
+    cy.get('div.post-list__dynamic').should('be.visible').scrollTo(0, '70%', {duration: TIMEOUTS.ONE_SEC}).wait(TIMEOUTS.ONE_SEC);
 }

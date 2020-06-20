@@ -98,7 +98,7 @@ describe('Plugin Marketplace', () => {
             // # Visit the Town Square channel
             cy.visit(townsquareLink);
 
-            cy.wait(TIMEOUTS.TINY).get('#lhsHeader').should('be.visible').within(() => {
+            cy.wait(TIMEOUTS.HALF_SEC).get('#lhsHeader').should('be.visible').within(() => {
                 // # Click hamburger main menu
                 cy.get('#sidebarHeaderDropdownButton').click();
 
@@ -171,7 +171,7 @@ describe('Plugin Marketplace', () => {
             // # Visit the Town Square channel
             cy.visit(townsquareLink);
 
-            cy.wait(TIMEOUTS.TINY).get('#lhsHeader').should('be.visible').within(() => {
+            cy.wait(TIMEOUTS.HALF_SEC).get('#lhsHeader').should('be.visible').within(() => {
                 // # Click hamburger main menu
                 cy.get('#sidebarHeaderDropdownButton').click();
 
@@ -384,7 +384,7 @@ describe('Plugin Marketplace', () => {
             cy.visit(townsquareLink);
 
             // # Click hamburger main menu
-            cy.wait(TIMEOUTS.TINY).get('#sidebarHeaderDropdownButton').click();
+            cy.wait(TIMEOUTS.HALF_SEC).get('#sidebarHeaderDropdownButton').click();
 
             // # Open up marketplace modal
             cy.get('#marketplaceModal').click();

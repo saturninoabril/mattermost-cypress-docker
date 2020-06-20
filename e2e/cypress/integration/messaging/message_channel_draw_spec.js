@@ -60,7 +60,7 @@ describe('M17448 Does not post draft message', () => {
         cy.get('canvas').trigger('pointerdown').trigger('pointerup').click();
         cy.findByText('Upload').should('be.visible').click();
         cy.get('#post_textbox').
-            should('be.visible').wait(TIMEOUTS.TINY).
+            should('be.visible').wait(TIMEOUTS.HALF_SEC).
             should('have.text', draft);
     });
 
@@ -75,7 +75,7 @@ describe('M17448 Does not post draft message', () => {
         // * Cancel file upload process and verify drafted message still exist in textbox
         cy.findByText('Cancel').should('be.visible').click();
         cy.get('#post_textbox').
-            should('be.visible').wait(TIMEOUTS.TINY).
+            should('be.visible').wait(TIMEOUTS.HALF_SEC).
             should('have.text', draft);
     });
 
@@ -88,7 +88,7 @@ describe('M17448 Does not post draft message', () => {
         cy.get('#fileUploadOptions').findByText('Your computer').click();
 
         // * Verify drafted message still exist in textbox
-        cy.get('#post_textbox').should('be.visible').wait(TIMEOUTS.TINY).
+        cy.get('#post_textbox').should('be.visible').wait(TIMEOUTS.HALF_SEC).
             should('have.text', draft);
     });
 });

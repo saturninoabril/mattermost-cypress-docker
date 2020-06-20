@@ -7,7 +7,7 @@
 // Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @messaging @verify
+// Group: @messaging
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
 
@@ -17,7 +17,7 @@ describe('Permalink message edit', () => {
     let otherUser;
 
     before(() => {
-        cy.apiInitSetup().then(({team, channel, user}) => {
+        cy.apiInitSetup().then(({team, user}) => {
             testTeam = team;
             testUser = user;
 
@@ -83,7 +83,7 @@ describe('Permalink message edit', () => {
 
     function verifyEditedPermalink(permalinkId, text, team) {
         // * Check if url redirects back to parent path eventually
-        cy.wait(TIMEOUTS.SMALL).url().should('include', `/${team.name}/channels/town-square`).and('not.include', `/${permalinkId}`);
+        cy.wait(TIMEOUTS.FIVE_SEC).url().should('include', `/${team.name}/channels/town-square`).and('not.include', `/${permalinkId}`);
 
         // * Verify edited post
         cy.get(`#postMessageText_${permalinkId}`).should('have.text', text);
