@@ -56,6 +56,10 @@ async function runTests() {
         BROWSER,
         BUILD_ID,
         HEADLESS,
+        ENABLE_VISUAL_TEST,
+        APPLITOOLS_API_KEY,
+        APPLITOOLS_BASELINE_BRANCH_NAME,
+        APPLITOOLS_PARENT_BRANCH_NAME,
     } = process.env;
 
     const browser = BROWSER || 'chrome';
@@ -69,12 +73,7 @@ async function runTests() {
         return;
     }
 
-    const {
-        invert,
-        group,
-        stage,
-        visual,
-    } = argv;
+    const {invert, group, stage} = argv;
 
     for (let i = 0; i < finalTestFiles.length; i++) {
         const testFile = finalTestFiles[i];
@@ -94,8 +93,11 @@ async function runTests() {
                 trashAssetsBeforeRuns: false,
             },
             env: {
-                enableVisualTest: visual,
+                enableVisualTest: ENABLE_VISUAL_TEST,
                 enableApplitools: Boolean(APPLITOOLS_API_KEY),
+                branchName: BRANCH,
+                baselineBranchName: APPLITOOLS_BASELINE_BRANCH_NAME,
+                parentBranchName: APPLITOOLS_PARENT_BRANCH_NAME,
             },
             reporter: 'cypress-multi-reporters',
             reporterOptions:
