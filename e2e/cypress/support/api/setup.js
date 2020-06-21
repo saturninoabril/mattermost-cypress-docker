@@ -13,7 +13,7 @@ Cypress.Commands.add('apiInitSetup', ({loginAfter = false, userPrefix = 'user'} 
                 return cy.apiAddUserToTeam(team.id, user.id).then(() => {
                     return cy.apiAddUserToChannel(channel.id, user.id).then(() => {
                         if (loginAfter) {
-                            return cy.apiLogin(user.username, user.password).then(() => {
+                            return cy.apiLogin(user).then(() => {
                                 return cy.wrap({team, channel, user});
                             });
                         }

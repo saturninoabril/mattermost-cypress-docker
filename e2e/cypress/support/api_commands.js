@@ -24,12 +24,12 @@ import {getAdminAccount} from './env';
 // https://api.mattermost.com/#tag/authentication
 // *****************************************************************************
 
-Cypress.Commands.add('apiLogin', (username = 'user-1', password = null) => {
+Cypress.Commands.add('apiLogin', (user) => {
     cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         url: '/api/v4/users/login',
         method: 'POST',
-        body: {login_id: username, password: password || users[username].password},
+        body: {login_id: user.username, password: user.password},
     }).then((response) => {
         expect(response.status).to.equal(200);
         return cy.wrap(response);
@@ -39,7 +39,7 @@ Cypress.Commands.add('apiLogin', (username = 'user-1', password = null) => {
 Cypress.Commands.add('apiAdminLogin', () => {
     const admin = getAdminAccount();
 
-    return cy.apiLogin(admin.username, admin.password);
+    return cy.apiLogin(admin);
 });
 
 Cypress.Commands.add('apiLogout', () => {

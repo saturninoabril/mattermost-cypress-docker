@@ -47,7 +47,7 @@ describe('Messaging', () => {
         cy.postMessageReplyInRHS('https://media1.giphy.com/media/l41lM6sJvwmZNruLe/giphy.gif');
 
         // # Change user and go to Town Square
-        cy.apiLogin(testUser.username, testUser.password);
+        cy.apiLogin(testUser);
         cy.visit(`/${testTeam.name}/channels/town-square`);
 
         // # Wait for the page to be loaded
@@ -114,7 +114,7 @@ describe('Messaging', () => {
         cy.postMessageReplyInRHS('https://media1.giphy.com/media/l41lM6sJvwmZNruLe/giphy.gif');
 
         // # Change user and go to Town Square
-        cy.apiLogin(testUser.username, testUser.password);
+        cy.apiLogin(testUser);
         cy.visit(`/${testTeam.name}/channels/town-square`);
 
         // # Change viewport so it has mobile view
