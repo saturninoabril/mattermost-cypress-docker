@@ -14,7 +14,7 @@ import * as TIMEOUTS from '../../fixtures/timeouts';
 describe('Leave Channel Command', () => {
     before(() => {
         // # Login as test user and go to town-square
-        cy.apiInitSetup({loginAfter: true}).then(({team, user}) => {
+        cy.apiInitSetup({loginAfter: true}).then(({team}) => {
             cy.visit(`/${team.name}/channels/town-square`);
         });
     });

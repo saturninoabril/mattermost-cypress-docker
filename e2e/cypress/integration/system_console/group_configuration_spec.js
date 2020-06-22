@@ -254,7 +254,7 @@ describe('group configuration', () => {
             teamOrChannelIsPresent(testChannel.display_name);
 
             // # Click remove
-            cy.get(`button[data-testid='${channel.display_name}_groupsyncable_remove']`).click();
+            cy.get(`button[data-testid='${testChannel.display_name}_groupsyncable_remove']`).click();
             cy.get('#confirmModalButton').should('be.visible');
             cy.get('#confirmModalButton').click();
 

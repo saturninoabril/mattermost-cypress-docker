@@ -151,8 +151,8 @@ before(() => {
 
         // # Check if default team is present; create if not found.
         cy.apiGetTeams().then((teamsRes) => {
-            // Default team is meant for sysadmin's primary team, selected for 
-            // compatibility with existing local development when using `make sampledata`
+            // Default team is meant for sysadmin's primary team,
+            // selected for compatibility with existing local development.
             // It is not exported since it should not be used for testing.
             const DEFAULT_TEAM = {name: 'ad-1', display_name: 'eligendi', type: 'O'};
 

@@ -13,10 +13,8 @@
  * Note: This test requires Enterprise license to be uploaded
  */
 import * as TIMEOUTS from '../../../fixtures/timeouts';
-import {getAdminAccount} from '../../../support/env';
 
 describe('MM-18045 Verify Guest User Identification in different screens', () => {
-    const admin = getAdminAccount();
     let regularUser;
     let guest;
     let testTeam;

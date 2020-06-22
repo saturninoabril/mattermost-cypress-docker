@@ -575,7 +575,6 @@ describe('Keyboard shortcut for adding reactions to last message in channel or t
 
         // # Archive the channel after posting a message
         cy.apiDeleteChannel(emptyChannel.id);
-        // isArchived = true;
 
         // # Emulate react to last message shortcut
         pressShortcutReactToLastMessage();

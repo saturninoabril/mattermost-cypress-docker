@@ -108,9 +108,6 @@ function verifyChannelSwitch(teamName, toChannel, fromChannel, arrowKey) {
             label = channel.display_name.toLowerCase();
         }
 
-        console.log('channel', channel)
-        console.log('label', label)
-
         cy.findByLabelText(label).parent().should(assertion, 'active');
     }
 }

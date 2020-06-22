@@ -62,7 +62,6 @@ function verifyPostLabel(elementId, username, labelSuffix) {
 }
 
 describe('Verify Accessibility Support in Post', () => {
-    const count = 5;
     let testUser;
     let otherUser;
     let testTeam;

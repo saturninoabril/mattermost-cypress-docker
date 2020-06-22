@@ -30,13 +30,11 @@ function verifyNavSupport(element, label, tabOrder) {
 }
 
 describe('Verify Quick Navigation support across different regions in the app', () => {
-    let testUser;
     let otherUser;
     let testChannel;
 
     before(() => {
         cy.apiInitSetup().then(({team, channel, user}) => {
-            testUser = user;
             testChannel = channel;
 
             cy.apiCreateUser({prefix: 'other'}).then(({user: user1}) => {
