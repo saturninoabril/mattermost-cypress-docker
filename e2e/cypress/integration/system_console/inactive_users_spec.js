@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @system_console
+// Group: @system_console @verify
 
 /**
  * Note: This test requires hundreds of deactivated users

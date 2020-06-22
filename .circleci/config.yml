@@ -47,6 +47,7 @@ jobs:
           CI_INBUCKET_PORT: 10080
           CI_MINIO_HOST: minio
           IS_CI: true
+          MM_CLUSTERSETTINGS_READONLYCONFIG: false
           MM_EMAILSETTINGS_SMTPSERVER: localhost
           MM_EMAILSETTINGS_SMTPPORT: 10025
           MM_ELASTICSEARCHSETTINGS_CONNECTIONURL: http://localhost:9200
@@ -118,7 +119,7 @@ jobs:
             export CYPRESS_dbClient=postgres
             export CYPRESS_dbConnection="postgres://mmuser:mostest@localhost:5432/mattermost_test?sslmode=disable&connect_timeout=10"
 
-            cd e2e && node run_tests.js --stage='@prod'
+            cd e2e && node run_tests.js --group='@verify'
 
       - run:
           name: Save and publish reports
