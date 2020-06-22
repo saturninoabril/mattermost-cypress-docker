@@ -11,11 +11,10 @@
 // Group: @messaging
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
-import users from '../../fixtures/users.json';
-
-const sysadmin = users.sysadmin;
+import {getAdminAccount} from '../../support/env';
 
 describe('Messaging', () => {
+    const admin = getAdminAccount();
     let testUser;
     let testTeam;
 
@@ -65,7 +64,7 @@ describe('Messaging', () => {
             cy.get(`#rhsPost_${postId}`).find('.attachment__image').should('exist');
 
             // # Delete the message
-            cy.externalRequest({user: sysadmin, method: 'DELETE', path: `posts/${postId}`});
+            cy.externalRequest({user: admin, method: 'DELETE', path: `posts/${postId}`});
 
             // # Wait for the message to be deleted
             cy.wait(TIMEOUTS.HALF_SEC);
@@ -138,7 +137,7 @@ describe('Messaging', () => {
             cy.clickPostCommentIcon();
 
             // # Delete the message
-            cy.externalRequest({user: sysadmin, method: 'DELETE', path: `posts/${postId}`});
+            cy.externalRequest({user: admin, method: 'DELETE', path: `posts/${postId}`});
 
             // # Wait for the message to be deleted
             cy.wait(TIMEOUTS.HALF_SEC);

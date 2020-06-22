@@ -5,10 +5,7 @@ import xor from 'lodash.xor';
 import merge from 'merge-deep';
 
 import {getRandomId} from '../utils';
-
-import users from '../fixtures/users.json';
 import partialDefaultConfig from '../fixtures/partial_default_config.json';
-
 import theme from '../fixtures/theme.json';
 
 import {getAdminAccount} from './env';
