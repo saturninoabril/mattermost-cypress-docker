@@ -1,12 +1,17 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-Cypress.Commands.add('apiInitSetup', ({loginAfter = false, userPrefix = 'user'} = {}) => {
-    return cy.apiCreateTeam('team', 'Team').then((teamRes) => {
+Cypress.Commands.add('apiInitSetup', ({
+    loginAfter = false,
+    userPrefix = 'user',
+    teamPrefix = {name: 'team', displayName: 'Team'},
+    channelPrefix = {name: 'channel', displayName: 'Channel'},
+} = {}) => {
+    return cy.apiCreateTeam(teamPrefix.name, teamPrefix.displayName).then((teamRes) => {
         const team = teamRes.body;
 
         // # Add public channel
-        return cy.apiCreateChannel(team.id, 'channel', 'Channel').then((channelRes) => {
+        return cy.apiCreateChannel(team.id, channelPrefix.name, channelPrefix.displayName).then((channelRes) => {
             const channel = channelRes.body;
 
             return cy.apiCreateUser({prefix: userPrefix}).then(({user}) => {

@@ -42,7 +42,7 @@ describe('Team Scheme Channel Mentions Permissions Test', () => {
         // # Give the new team scheme a name
         cy.get('#scheme-name').type('Test Team Scheme');
 
-        // # Assign the new team scheme to the eligendi team using the add teams modal
+        // # Assign the new team scheme to the test team using the add teams modal
         cy.findByTestId('add-teams').click();
 
         cy.get('#selectItems').type(testTeam.display_name);

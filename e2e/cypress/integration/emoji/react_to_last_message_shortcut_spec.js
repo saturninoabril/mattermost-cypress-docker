@@ -539,7 +539,7 @@ describe('Keyboard shortcut for adding reactions to last message in channel or t
 
     it('Should not open emoji picker by shortcut if last post is a system message', () => {
         // # Visit the new empty channel
-        cy.visit(`/ad-1/channels/${emptyChannel.name}`);
+        cy.visit(`/${testTeam.name}/channels/${emptyChannel.name}`);
 
         // * Check that there are no posts except you joined message
         cy.findAllByTestId('postView').should('have.length', 1);
