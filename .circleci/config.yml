@@ -47,6 +47,7 @@ jobs:
           CI_INBUCKET_PORT: 10080
           CI_MINIO_HOST: minio
           IS_CI: true
+          MM_CLUSTERSETTINGS_READONLYCONFIG: false
           MM_EMAILSETTINGS_SMTPSERVER: localhost
           MM_EMAILSETTINGS_SMTPPORT: 10025
           MM_ELASTICSEARCHSETTINGS_CONNECTIONURL: http://localhost:9200
