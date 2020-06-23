@@ -19,7 +19,6 @@ module.exports = {
         // {deviceName: 'iPad Pro', screenOrientation: 'landscape', name: 'chrome'},
     ],
     concurrency: 4,
-    compareWithParentBranch: true,
     matchLevel: 'Strict',
     showLogs: false,
 };
