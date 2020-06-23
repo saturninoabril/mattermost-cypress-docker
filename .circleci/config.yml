@@ -118,6 +118,8 @@ jobs:
             export CYPRESS_dbClient=postgres
             export CYPRESS_dbConnection="postgres://mmuser:mostest@localhost:5432/mattermost_test?sslmode=disable&connect_timeout=10"
 
+            # For visual regression
+            export ENABLE_VISUAL_TEST=true
             export APPLITOOLS_BATCH_ID=$CIRCLE_BUILD_NUM
             export APPLITOOLS_BATCH_NAME="Webapp - $CIRCLE_BRANCH - Test $CIRCLE_BUILD_NUM"
             export APPLITOOLS_BRANCH_NAME=$CIRCLE_BRANCH
