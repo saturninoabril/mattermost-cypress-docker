@@ -121,10 +121,10 @@ jobs:
             # For visual regression
             export ENABLE_VISUAL_TEST=true
             export APPLITOOLS_BATCH_ID=$CIRCLE_BUILD_NUM
-            export APPLITOOLS_BATCH_NAME="Webapp - $CIRCLE_BRANCH - Test $CIRCLE_BUILD_NUM"
+            export APPLITOOLS_BATCH_NAME="Webapp - $CIRCLE_BRANCH (ci) - Test $CIRCLE_BUILD_NUM"
             export APPLITOOLS_BRANCH_NAME=$CIRCLE_BRANCH
-            export APPLITOOLS_BASELINE_BRANCH_NAME=master
-            export APPLITOOLS_PARENT_BRANCH_NAME=master
+            export APPLITOOLS_BASELINE_BRANCH_NAME=master-ci
+            export APPLITOOLS_PARENT_BRANCH_NAME=master-ci
             export APPLITOOLS_CONCURRENCY=4
 
             cd e2e && node run_tests.js --group='@visual_regression'

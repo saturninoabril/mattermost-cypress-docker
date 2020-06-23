@@ -6,10 +6,10 @@
 module.exports = {
     appName: 'Mattermost Webapp UI',
     accessibilityValidation: {level: 'AA', guidelinesVersion: 'WCAG_2_0'},
-    batchName: `Webapp - master`,
-    branchName: 'master',
-    baselineBranchName: 'master',
-    parentBranchName: 'master',
+    batchName: `Webapp - master (dev)`,
+    branchName: 'master-dev',
+    baselineBranchName: 'master-dev',
+    parentBranchName: 'master-dev',
     browser: [
         {width: 1024, height: 768, name: 'chrome'},
         // {width: 1024, height: 768, name: 'chrome-two-versions-back'},
