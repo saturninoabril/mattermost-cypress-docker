@@ -135,6 +135,8 @@ before(() => {
 
         // # Reset admin preference, online status and locale
         cy.apiSaveTeammateNameDisplayPreference('username');
+        cy.apiSaveLinkPreviewsPreference('true');
+        cy.apiSaveCollapsePreviewsPreference('false');
         cy.apiUpdateUserStatus('online');
         cy.apiPatchMe({
             locale: 'en',
