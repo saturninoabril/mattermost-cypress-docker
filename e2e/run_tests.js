@@ -59,6 +59,7 @@ async function runTests() {
         ENABLE_VISUAL_TEST,
         APPLITOOLS_API_KEY,
         APPLITOOLS_BASELINE_BRANCH_NAME,
+        APPLITOOLS_BATCH_NAME,
         APPLITOOLS_PARENT_BRANCH_NAME,
     } = process.env;
 
@@ -95,6 +96,7 @@ async function runTests() {
             env: {
                 enableVisualTest: ENABLE_VISUAL_TEST,
                 enableApplitools: Boolean(APPLITOOLS_API_KEY),
+                batchName: APPLITOOLS_BATCH_NAME,
                 branchName: BRANCH,
                 baselineBranchName: APPLITOOLS_BASELINE_BRANCH_NAME,
                 parentBranchName: APPLITOOLS_PARENT_BRANCH_NAME,

@@ -6,6 +6,10 @@
 module.exports = {
     appName: 'Mattermost Webapp UI',
     accessibilityValidation: {level: 'AA', guidelinesVersion: 'WCAG_2_0'},
+    batchName: `Webapp - master`,
+    branchName: 'master',
+    baselineBranchName: 'master',
+    parentBranchName: 'master',
     browser: [
         {width: 1024, height: 768, name: 'chrome'},
         // {width: 1024, height: 768, name: 'chrome-two-versions-back'},
@@ -14,8 +18,8 @@ module.exports = {
         // {deviceName: 'iPhone X', screenOrientation: 'portrait', name: 'chrome'},
         // {deviceName: 'iPad Pro', screenOrientation: 'landscape', name: 'chrome'},
     ],
-    concurrency: 1,
+    concurrency: 4,
     compareWithParentBranch: true,
     matchLevel: 'Strict',
-    showLogs: true,
+    showLogs: false,
 };
