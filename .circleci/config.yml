@@ -124,7 +124,7 @@ jobs:
             export APPLITOOLS_BATCH_NAME="Webapp (Prod) - $CIRCLE_BRANCH - Test $CIRCLE_BUILD_NUM"
             export APPLITOOLS_BRANCH=$CIRCLE_BRANCH
             export APPLITOOLS_BASELINE_BRANCH=master-prod
-            export APPLITOOLS_PARENT_BRANCH=master-prod
+            export APPLITOOLS_PARENT_BRANCH=master
             export APPLITOOLS_CONCURRENCY=4
             export APPLITOOLS_SHOW_LOGS=true
 
