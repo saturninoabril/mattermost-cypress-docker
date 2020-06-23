@@ -123,7 +123,7 @@ jobs:
             export APPLITOOLS_BATCH_ID=$CIRCLE_BUILD_NUM
             export APPLITOOLS_BATCH_NAME="Webapp CI - $CIRCLE_BRANCH - Test $CIRCLE_BUILD_NUM"
             export APPLITOOLS_BRANCH_NAME=$CIRCLE_BRANCH
-            export APPLITOOLS_BASELINE_BRANCH_NAME=master
+            export APPLITOOLS_BASELINE_BRANCH_NAME=master-ci
             export APPLITOOLS_PARENT_BRANCH_NAME=master
             export APPLITOOLS_CONCURRENCY=4
             export APPLITOOLS_SHOW_LOGS=true
