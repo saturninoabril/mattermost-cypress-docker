@@ -7,9 +7,11 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @enterprise @system_console @visual_regression
+// Group: @enterprise @system_console @visual_regression @verify
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
+
+import {getBatchName} from '../helpers';
 
 describe('System Console - User Management', () => {
     const testCases = [
@@ -57,8 +59,18 @@ describe('System Console - User Management', () => {
         });
     });
 
+    afterEach(() => {
+        cy.visualEyesClose();
+    });
+
     testCases.forEach((testCase) => {
         it(`${testCase.section} - ${testCase.header}`, () => {
+            const browser = [{width: 1024, height: 2200, name: 'chrome'}];
+            cy.visualEyesOpen({
+                batchName: getBatchName(`System Console - ${testCase.section}`),
+                browser,
+            });
+
             // # Click the link on the sidebar
             cy.get('.admin-sidebar').should('be.visible').within(() => {
                 cy.findByText(testCase.sidebar).scrollIntoView().should('be.visible').click();
@@ -67,7 +79,10 @@ describe('System Console - User Management', () => {
             // * Verify that it redirects to the URL and matches with the header
             cy.url().should('include', testCase.url);
             cy.get('.admin-console').should('be.visible').within(() => {
-                cy.get('.admin-console__header').should('be.visible').and(testCase.headerContains ? 'contain' : 'have.text', testCase.header);
+                cy.get('.admin-console__header').should('be.visible').and('have.text', testCase.header);
+
+                // # Save snapshot for visual testing
+                cy.visualSaveSnapshot({tag: testCase.sidebar, target: 'window', fully: true});
             });
         });
     });

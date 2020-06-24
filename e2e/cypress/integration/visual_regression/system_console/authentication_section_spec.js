@@ -105,7 +105,7 @@ describe('System Console - Authentication', () => {
             // * Verify that it redirects to the URL and matches with the header
             cy.url().should('include', testCase.url);
             cy.get('.admin-console').should('be.visible').within(() => {
-                cy.get('.admin-console__header').should('be.visible').and(testCase.headerContains ? 'contain' : 'have.text', testCase.header);
+                cy.get('.admin-console__header').should('be.visible').and('have.text', testCase.header);
 
                 // # Save snapshot for visual testing
                 cy.visualSaveSnapshot({tag: testCase.sidebar, target: 'window', fully: true});
