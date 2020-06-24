@@ -127,7 +127,6 @@ jobs:
             export APPLITOOLS_BASELINE_BRANCH=master-ci
             export APPLITOOLS_PARENT_BRANCH=master-ci
             export APPLITOOLS_CONCURRENCY=4
-            export APPLITOOLS_SHOW_LOGS=true
 
             cd e2e && node run_tests.js --group='@visual_regression'
 
