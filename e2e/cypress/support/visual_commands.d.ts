@@ -11,7 +11,7 @@
 // - Each parameter with `@params`
 // - Return value with `@returns`
 // - Example usage with `@example`
-// Custom command should follow naming convention of having `ui` prefix, e.g. `uiClickCopyLink`.
+// Custom command should follow naming convention of having `visual` prefix, e.g. `visualEyesOpen`.
 // ***************************************************************
 
 declare namespace Cypress {

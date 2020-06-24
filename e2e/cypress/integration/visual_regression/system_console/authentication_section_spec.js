@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @enterprise @system_console @visual_regression @verify
+// Group: @enterprise @system_console @visual_regression
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 
@@ -54,8 +54,8 @@ describe('System Console - Authentication', () => {
             sidebar: 'SAML 2.0',
             url: 'admin_console/authentication/saml',
             openOptions: {
-                browser: {width: 1024, height: 4100, name: 'chrome'}
-            }
+                browser: {width: 1024, height: 4100, name: 'chrome'},
+            },
         },
         {
             section: 'Authentication',
@@ -107,6 +107,8 @@ describe('System Console - Authentication', () => {
             cy.url().should('include', testCase.url);
             cy.get('.admin-console').should('be.visible').within(() => {
                 cy.get('.admin-console__header').should('be.visible').and(testCase.headerContains ? 'contain' : 'have.text', testCase.header);
+
+                // # Save snapshot for visual testing
                 cy.visualSaveSnapshot({tag: testCase.sidebar, target: 'window', fully: true});
             });
         });

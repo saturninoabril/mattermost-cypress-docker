@@ -54,6 +54,6 @@ module.exports = (on, config) => {
     return config;
 };
 
-if (process.env.ENABLE_VISUAL_TEST === 'true') {
-    require('@applitools/eyes-cypress')(module);
+if (process.env.ENABLE_VISUAL_TEST) {
+    require('@applitools/eyes-cypress')(module); // eslint-disable-line global-require
 }

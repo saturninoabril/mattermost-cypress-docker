@@ -18,8 +18,6 @@
  *      E.g. "--group='@channel,@messaging'" will select files with either @channel or @messaging.
  *   --invert
  *      Selected files are those not matching any of the specified stage or group.
- * --visual
- *      Enable visual testing given that the required API key is set in the environment.
  *
  * Environment:
  *   BROWSER=[browser]      : Chrome by default. Set to run test on other browser such as chrome, edge, electron and firefox.
@@ -58,9 +56,7 @@ async function runTests() {
         HEADLESS,
         ENABLE_VISUAL_TEST,
         APPLITOOLS_API_KEY,
-        APPLITOOLS_BASELINE_BRANCH_NAME,
         APPLITOOLS_BATCH_NAME,
-        APPLITOOLS_PARENT_BRANCH_NAME,
     } = process.env;
 
     const browser = BROWSER || 'chrome';
@@ -97,9 +93,6 @@ async function runTests() {
                 enableVisualTest: ENABLE_VISUAL_TEST,
                 enableApplitools: Boolean(APPLITOOLS_API_KEY),
                 batchName: APPLITOOLS_BATCH_NAME,
-                branchName: BRANCH,
-                baselineBranchName: APPLITOOLS_BASELINE_BRANCH_NAME,
-                parentBranchName: APPLITOOLS_PARENT_BRANCH_NAME,
             },
             reporter: 'cypress-multi-reporters',
             reporterOptions:

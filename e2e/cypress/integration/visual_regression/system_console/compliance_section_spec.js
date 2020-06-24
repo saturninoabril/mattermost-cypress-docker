@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @enterprise @system_console @visual_regression @verify
+// Group: @enterprise @system_console @visual_regression
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 
@@ -62,7 +62,7 @@ describe('System Console - Compliance', () => {
 
     testCases.forEach((testCase) => {
         it(`${testCase.section} - ${testCase.header}`, () => {
-            const browser = testCase.browser || {width: 1024, height: 2100, name: 'chrome'};
+            const browser = [{width: 1024, height: 2100, name: 'chrome'}];
 
             cy.visualEyesOpen({
                 batchName: getBatchName('System Console - Compliance'),
