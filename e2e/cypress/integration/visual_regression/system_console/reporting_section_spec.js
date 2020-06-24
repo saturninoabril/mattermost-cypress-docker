@@ -15,27 +15,27 @@ import {getBatchName} from '../helpers';
 
 describe('System Console - Reporting', () => {
     const testCases = [
-        // {
-        //     section: 'Reporting',
-        //     header: 'System Statistics',
-        //     sidebar: 'Site Statistics',
-        //     url: '/admin_console/reporting/system_analytics',
-        //     saveOptions: {
-        //         ignore: [{selector: '.row'}],
-        //     },
-        // },
-        // {
-        //     section: 'Reporting',
-        //     header: 'Team Statistics',
-        //     sidebar: 'Team Statistics',
-        //     url: '/admin_console/reporting/team_statistics',
-        //     headerContains: true,
-        //     saveOptions: {
-        //         layout: [{selector: '.admin-console__content'}],
-        //         content: [{selector: '.banner'}],
-        //         ignore: [{selector: '.row'}],
-        //     },
-        // },
+        {
+            section: 'Reporting',
+            header: 'System Statistics',
+            sidebar: 'Site Statistics',
+            url: '/admin_console/reporting/system_analytics',
+            saveOptions: {
+                ignore: [{selector: '.row'}],
+            },
+        },
+        {
+            section: 'Reporting',
+            header: 'Team Statistics',
+            sidebar: 'Team Statistics',
+            url: '/admin_console/reporting/team_statistics',
+            headerContains: true,
+            saveOptions: {
+                layout: [{selector: '.admin-console__content'}],
+                content: [{selector: '.banner'}],
+                ignore: [{selector: '.row'}],
+            },
+        },
         {
             section: 'Reporting',
             header: 'Server Logs',
