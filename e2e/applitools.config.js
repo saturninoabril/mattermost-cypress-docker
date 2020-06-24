@@ -13,7 +13,7 @@ module.exports = {
     browser: [
         {width: 1024, height: 768, name: 'chrome'},
     ],
-    concurrency: 1,
+    concurrency: 4,
     matchLevel: 'Strict',
     showLogs: false,
 };

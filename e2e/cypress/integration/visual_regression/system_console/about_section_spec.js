@@ -24,13 +24,13 @@ describe('System Console - About', () => {
     ];
 
     before(() => {
-        // * Check if server has license for feature
+        // * Check if server has E20 license by checking one of its feature
         cy.requireLicenseForFeature('Elasticsearch');
 
         // # Go to system admin then verify admin console URL and header
         cy.visit('/admin_console/about/license');
         cy.url().should('include', '/admin_console/about/license');
-        cy.get('.admin-console', {timeout: TIMEOUTS.HALF_MIN}).should('be.visible').within(() => {
+        cy.get('.admin-console', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible').within(() => {
             cy.get('.admin-console__header').should('be.visible').and('have.text', 'Edition and License');
         });
     });
@@ -39,7 +39,7 @@ describe('System Console - About', () => {
         cy.visualEyesOpen({
             batchName: getBatchName('System Console - About'),
             browser: [
-                {width: 1024, height: 2100, name: 'chrome'},
+                {width: 1024, height: 2200, name: 'chrome'},
             ],
         });
     });
