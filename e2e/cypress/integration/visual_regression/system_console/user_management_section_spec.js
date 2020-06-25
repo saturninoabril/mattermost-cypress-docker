@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @enterprise @system_console @visual_regression @verify
+// Group: @enterprise @system_console @visual_regression
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 
@@ -23,8 +23,8 @@ describe('System Console - User Management', () => {
         },
         {
             section: 'User Management',
-            header: 'Groups (Beta)',
-            sidebar: 'Groups (Beta)',
+            header: 'Groups',
+            sidebar: 'Groups',
             url: 'admin_console/user_management/groups',
         },
         {

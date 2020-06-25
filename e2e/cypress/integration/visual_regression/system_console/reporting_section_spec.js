@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @enterprise @system_console @visual_regression
+// Group: @enterprise @system_console @visual_regression @verify
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 
@@ -21,7 +21,7 @@ describe('System Console - Reporting', () => {
             sidebar: 'Site Statistics',
             url: '/admin_console/reporting/system_analytics',
             saveOptions: {
-                ignore: [{selector: '.row'}],
+                layout: [{selector: '.admin-console__content'}],
             },
         },
         {
@@ -32,8 +32,6 @@ describe('System Console - Reporting', () => {
             headerContains: true,
             saveOptions: {
                 layout: [{selector: '.admin-console__content'}],
-                content: [{selector: '.banner'}],
-                ignore: [{selector: '.row'}],
             },
         },
         {
