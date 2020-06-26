@@ -3,6 +3,8 @@
 
 /* eslint-disable no-console */
 
+let percyHealthCheck = require('@percy/cypress/task');
+
 const {
     dbGetActiveUserSessions,
     dbGetUser,
@@ -23,6 +25,8 @@ const log = (message) => {
 };
 
 module.exports = (on, config) => {
+    on("task", percyHealthCheck);
+
     on('task', {
         dbGetActiveUserSessions,
         dbGetUser,

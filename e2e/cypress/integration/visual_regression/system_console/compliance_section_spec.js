@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @enterprise @system_console @visual_regression
+// Group: @enterprise @system_console @visual_regression @verify
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 

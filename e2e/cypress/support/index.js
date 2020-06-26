@@ -8,6 +8,7 @@
 /* eslint-disable no-loop-func, quote-props */
 
 import '@testing-library/cypress/add-commands';
+import '@percy/cypress';
 import 'cypress-file-upload';
 import 'cypress-wait-until';
 import 'cypress-plugin-tab';

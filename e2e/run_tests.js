@@ -57,6 +57,7 @@ async function runTests() {
         ENABLE_VISUAL_TEST,
         APPLITOOLS_API_KEY,
         APPLITOOLS_BATCH_NAME,
+        PERCY_TOKEN,
     } = process.env;
 
     const browser = BROWSER || 'chrome';
@@ -92,6 +93,7 @@ async function runTests() {
             env: {
                 enableVisualTest: ENABLE_VISUAL_TEST,
                 enableApplitools: Boolean(APPLITOOLS_API_KEY),
+                enablePercy: Boolean(PERCY_TOKEN),
                 batchName: APPLITOOLS_BATCH_NAME,
             },
             reporter: 'cypress-multi-reporters',

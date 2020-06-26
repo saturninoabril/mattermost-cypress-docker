@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "@applitools/eyes-cypress": "3.12.0",
+    "@percy/cypress": "2.3.1",
     "@testing-library/cypress": "6.0.0",
     "async": "3.2.0",
     "aws-sdk": "2.696.0",
@@ -50,6 +51,7 @@
     "start:webhook": "node webhook_serve.js",
     "test": "start-test start:webhook 3000 test:ci",
     "test:ci": "node run_tests.js",
-    "uniq-meta": "grep -r \"^// $META:\" cypress | grep -ow '@\\w*' | sort | uniq"
+    "uniq-meta": "grep -r \"^// $META:\" cypress | grep -ow '@\\w*' | sort | uniq",
+    "visual-diff": "ENABLE_VISUAL_TEST=true CYPRESS_resetBeforeTest=true percy exec -- node run_tests.js --group='@visual_regression'"
   }
 }

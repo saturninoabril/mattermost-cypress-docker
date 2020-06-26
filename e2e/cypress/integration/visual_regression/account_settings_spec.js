@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @account_setting @visual_regression @verify
+// Group: @account_setting @visual_regression
 
 describe('Account Settings', () => {
     let testUser;
