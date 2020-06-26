@@ -122,7 +122,7 @@ jobs:
             # For visual regression
             export ENABLE_VISUAL_TEST=true
 
-            cd e2e && node run_tests.js --group='@visual_regression'
+            cd e2e && npm run visual-diff
 
       - run:
           name: Save and publish reports
