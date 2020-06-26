@@ -120,6 +120,8 @@ jobs:
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
 
+            docker images --no-trunc --quiet mattermost/mattermost-enterprise-edition:master
+
             cd e2e && node run_tests.js --stage='@prod'
 
       - run:
