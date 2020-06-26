@@ -121,6 +121,7 @@ jobs:
 
             # For visual regression
             export ENABLE_VISUAL_TEST=true
+            export PERCY_TARGET_BRANCH=master-ci
 
             cd e2e && npm run visual-diff
 
