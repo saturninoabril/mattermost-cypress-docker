@@ -91,6 +91,9 @@ jobs:
             echo $SAML_PRIVATE_KEY | base64 --decode > e2e/cypress/fixtures/saml-private.key
             echo $SAML_PUBLIC_CRT | base64 --decode > e2e/cypress/fixtures/saml-public.crt
 
+            docker images --digests
+            docker images --no-trunc --quiet mattermost/mattermost-enterprise-edition:master
+
             wget -O e2e/cypress/fixtures/com.mattermost.draw-plugin.tar.gz https://github.com/jespino/mattermost-plugin-draw/releases/download/v0.0.4/com.mattermost.draw-plugin-0.0.4.tar.gz
       - run:
           name: Install npm packages
@@ -119,8 +122,6 @@ jobs:
             export CYPRESS_dbConnection="postgres://mmuser:mostest@localhost:5432/mattermost_test?sslmode=disable&connect_timeout=10"
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
-
-            docker images --no-trunc --quiet mattermost/mattermost-enterprise-edition:master
 
             cd e2e && node run_tests.js --stage='@prod'
 
