@@ -36,7 +36,7 @@ jobs:
           http.cors.allow-credentials: "true"
           transport.host: "127.0.0.1"
           ES_JAVA_OPTS: "-Xms512m -Xmx512m"
-      - image: mattermost/mattermost-enterprise-edition:master
+      - image: mattermost/mattermost-enterprise-edition:8847b14
         environment:
           DB_HOST: localhost
           DB_PORT_NUMBER: 5432
@@ -106,7 +106,7 @@ jobs:
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
             # -- Change as needed --
-            export BRANCH=master
+            export BRANCH=server-pr-14804
             # --
 
             export BUILD_ID=$CIRCLE_BUILD_NUM
@@ -129,11 +129,11 @@ jobs:
             export DIAGNOSTIC_TEAM_ID=`psql -d $TEST_DATABASE_URL -t -c "SELECT id FROM teams WHERE name='ad-1';"`
 
             # -- Change as needed
-            # export TYPE=MASTER
-            export BRANCH=master
+            # export TYPE=PR
+            export BRANCH=server-pr-14804
             # Temporarily set tag
-            export BUILD_TAG=master
-            export DASHBOARD_ENABLE=false
+            export BUILD_TAG=8847b14
+            export DASHBOARD_ENABLE=true
             export FULL_REPORT=false
             # --
 
