@@ -60,7 +60,7 @@ jobs:
       TYPE:
       PULL_REQUEST:
       BROWSER: chrome
-      HEADLESS: true
+      HEADLESS: false
       DASHBOARD_ENABLE: false
       FULL_REPORT: false
     steps:
@@ -111,24 +111,11 @@ jobs:
           command: |
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
-            # Test env only
-            echo $MM_DOCKER_IMAGE_TAG
-            echo $TYPE
-            echo $PULL_REQUEST
-            echo $BRANCH
-            echo $BROWSER
-            echo $HEADLESS
-            echo $DASHBOARD_ENABLE
-            echo $FULL_REPORT
-
             export CYPRESS_chromeWebSecurity=true
             export CYPRESS_dbClient=postgres
             export CYPRESS_dbConnection="postgres://mmuser:mostest@localhost:5432/mattermost_test?sslmode=disable&connect_timeout=10"
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
-
-            echo $CYPRESS_dbClient
-            echo $CYPRESS_dbConnection
 
             cd e2e && node run_tests.js --stage='@prod'
 
