@@ -7,16 +7,6 @@ workflows:
     jobs:
       - build-and-test:
           context: cypress-circleci-env
-          environment:
-            - MM_DOCKER_IMAGE_TAG: master
-            - TYPE:
-            - PULL_REQUEST:
-            - BRANCH: $CIRCLE_BRANCH
-            - BUILD_ID: $CIRCLE_BUILD_NUM
-            - BROWSER: chrome
-            - HEADLESS: true
-            - DASHBOARD_ENABLE: false
-            - FULL_REPORT: false
 
 jobs:
   build-and-test:
@@ -66,7 +56,15 @@ jobs:
           MM_PLUGINSETTINGS_ENABLEUPLOADS: true
     working_directory: ~/mattermost-cypress-docker
     environment:
-      COMPOSE_PROJECT_NAME: "circleci"
+      MM_DOCKER_IMAGE_TAG: master
+      TYPE:
+      PULL_REQUEST:
+      BRANCH: $CIRCLE_BRANCH
+      BUILD_ID: $CIRCLE_BUILD_NUM
+      BROWSER: chrome
+      HEADLESS: true
+      DASHBOARD_ENABLE: false
+      FULL_REPORT: false
     steps:
       - setup_remote_docker
       - run:
@@ -125,10 +123,12 @@ jobs:
             echo $BUILD_ID
             echo $DASHBOARD_ENABLE
             echo $FULL_REPORT
+            echo $MM_SQLSETTINGS_DATASOURCE
+            echo $MM_SQLSETTINGS_DRIVERNAME
 
             export CYPRESS_chromeWebSecurity=true
-            export CYPRESS_dbClient=postgres
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@localhost:5432/mattermost_test?sslmode=disable&connect_timeout=10"
+            export CYPRESS_dbClient=$MM_SQLSETTINGS_DRIVERNAME
+            export CYPRESS_dbConnection=$MM_SQLSETTINGS_DATASOURCE
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
 
