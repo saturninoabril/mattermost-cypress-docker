@@ -59,8 +59,6 @@ jobs:
       MM_DOCKER_IMAGE_TAG: master
       TYPE:
       PULL_REQUEST:
-      BRANCH: ${CIRCLE_BRANCH}
-      BUILD_ID: ${CIRCLE_BUILD_NUM}
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
@@ -120,20 +118,17 @@ jobs:
             echo $BRANCH
             echo $BROWSER
             echo $HEADLESS
-            echo $BUILD_ID
             echo $DASHBOARD_ENABLE
             echo $FULL_REPORT
-            echo $MM_SQLSETTINGS_DATASOURCE
-            echo $MM_SQLSETTINGS_DRIVERNAME
 
             export CYPRESS_chromeWebSecurity=true
-            export CYPRESS_dbClient=${MM_SQLSETTINGS_DRIVERNAME}
-            export CYPRESS_dbConnection=${MM_SQLSETTINGS_DATASOURCE}
+            export CYPRESS_dbClient=postgres
+            export CYPRESS_dbConnection=postgres://mmuser:mostest@localhost:5432/mattermost_test?sslmode=disable&connect_timeout=10
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
 
-            echo CYPRESS_dbClient
-            echo CYPRESS_dbConnection
+            echo $CYPRESS_dbClient
+            echo $CYPRESS_dbConnection
 
             cd e2e && node run_tests.js --stage='@prod'
 
@@ -142,6 +137,9 @@ jobs:
           command: |
             export DIAGNOSTIC_USER_ID=`psql -d $TEST_DATABASE_URL -t -c "SELECT id FROM users WHERE username='sysadmin';"`
             export DIAGNOSTIC_TEAM_ID=`psql -d $TEST_DATABASE_URL -t -c "SELECT id FROM teams WHERE name='ad-1';"`
+
+            export BRANCH=$CIRCLE_BRANCH
+            export BUILD_ID=$CIRCLE_BUILD_NUM
 
             # This is how it should be on main org repo
             # export PULL_REQUEST=${CIRCLE_PULL_REQUESTS}
