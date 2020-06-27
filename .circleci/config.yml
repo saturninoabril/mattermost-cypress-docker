@@ -56,12 +56,12 @@ jobs:
           MM_PLUGINSETTINGS_ENABLEUPLOADS: true
     working_directory: ~/mattermost-cypress-docker
     environment:
-      MM_DOCKER_IMAGE_TAG: master
-      TYPE:
-      PULL_REQUEST:
+      MM_DOCKER_IMAGE_TAG: 94eeb4f
+      TYPE: PR
+      PULL_REQUEST: "https://github.com/mattermost/mattermost-server/pull/14923"
       BROWSER: chrome
       HEADLESS: true
-      DASHBOARD_ENABLE: false
+      DASHBOARD_ENABLE: true
       FULL_REPORT: false
     steps:
       - setup_remote_docker
