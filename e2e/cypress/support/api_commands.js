@@ -1226,7 +1226,7 @@ Cypress.Commands.add('apiGetSAMLCertificateStatus', () => {
         url: '/api/v4/saml/certificate/status',
         method: 'GET',
     }).then((response) => {
-        expect(response.status).to.equal(201);
+        expect(response.status).to.be.oneOf([200, 201]);
         return cy.wrap(response);
     });
 });
