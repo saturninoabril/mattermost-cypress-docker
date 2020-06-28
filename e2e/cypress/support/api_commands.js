@@ -1253,7 +1253,7 @@ Cypress.Commands.add('apiGetMetadataFromIdp', (samlMetadataUrl) => {
  * @param {String} filename
  */
 Cypress.Commands.add('apiUploadSAMLIDPCert', (filename) => {
-    cy.apiUploadFile('certificate', filename, {url: '/api/v4/saml/certificate/idp', method: 'POST', successStatus: 201});
+    cy.apiUploadFile('certificate', filename, {url: '/api/v4/saml/certificate/idp', method: 'POST', successStatus: 200});
 });
 
 /**
