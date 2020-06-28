@@ -77,6 +77,7 @@ const saveReport = async () => {
 
     // Send test report to "QA: UI Test Automation" channel via webhook
     if (TYPE && TYPE !== 'NONE' && WEBHOOK_URL) {
+        console.log('TYPE:', TYPE, typeof TYPE);
         const data = generateTestReport(summary, result && result.success, result && result.reportLink);
         await sendReport('summary report to Community channel', WEBHOOK_URL, data);
     }
