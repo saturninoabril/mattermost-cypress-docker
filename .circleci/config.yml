@@ -58,7 +58,7 @@ jobs:
     working_directory: ~/mattermost-cypress-docker
     environment:
       MM_DOCKER_IMAGE_TAG: master
-      TYPE: MASTER
+      TYPE: MASTER_UNSTABLE
       PULL_REQUEST:
       BROWSER: chrome
       HEADLESS: true
