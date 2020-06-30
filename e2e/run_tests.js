@@ -122,7 +122,6 @@ async function runTests() {
         });
 
         if (i === 0) {
-            console.log('result', result);
             const environment = {
                 cypressVersion: result.cypressVersion,
                 browserName: result.browserName,
