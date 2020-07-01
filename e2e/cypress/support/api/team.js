@@ -56,7 +56,7 @@ Cypress.Commands.add('apiGetTeamByName', (name) => {
         method: 'GET',
     }).then((response) => {
         expect(response.status).to.equal(200);
-        cy.wrap(response);
+        cy.wrap({team: response.body});
     });
 });
 
