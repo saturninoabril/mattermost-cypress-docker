@@ -121,6 +121,7 @@ async function runTests() {
                 },
         });
 
+        // Write test environment details once only
         if (i === 0) {
             const environment = {
                 cypressVersion: result.cypressVersion,
