@@ -308,7 +308,7 @@ describe('group configuration', () => {
         });
     });
 
-    describe.only('updating a team role', () => {
+    describe('updating a team role', () => {
         it('updates the role for a new team', () => {
             // # Add a new team
             addGroupSyncable('team', (teamName) => {
@@ -380,8 +380,7 @@ describe('group configuration', () => {
             teamOrChannelIsPresent(testTeam.display_name);
 
             // # Change the role
-            const newRole = 'Member';
-            changeRole(testTeam.display_name, newRole);
+            changeRole(testTeam.display_name, 'Team Member');
 
             // # Click away
             cy.get('.sidebar-section').first().click();
@@ -396,7 +395,7 @@ describe('group configuration', () => {
             cy.visit(`/admin_console/user_management/groups/${groupID}`);
 
             // * Ensure the new role is visible
-            cy.findByTestId(`${testTeam.display_name}_current_role`).findByText(newRole);
+            cy.findByTestId(`${testTeam.display_name}_current_role`).findByText('Member');
         });
 
         it('does not update the role of a removed team', () => {
@@ -410,7 +409,7 @@ describe('group configuration', () => {
             teamOrChannelIsPresent(testTeam.display_name);
 
             // # Change the role
-            changeRole(testTeam.display_name, 'Team Member');
+            changeRole(testTeam.display_name, 'Team Admin');
 
             removeAndConfirm(testTeam.display_name);
 
@@ -505,8 +504,7 @@ describe('group configuration', () => {
             teamOrChannelIsPresent(testChannel.display_name);
 
             // # Change the role
-            const newRole = 'Member';
-            changeRole(testChannel.display_name, newRole);
+            changeRole(testChannel.display_name, 'Channel Admin');
 
             // # Click away
             cy.get('.sidebar-section').first().click();
@@ -521,7 +519,7 @@ describe('group configuration', () => {
             cy.visit(`/admin_console/user_management/groups/${groupID}`);
 
             // * Ensure the new role is visible
-            cy.findByTestId(`${testChannel.display_name}_current_role`).findByText(newRole);
+            cy.findByTestId(`${testChannel.display_name}_current_role`).findByText('Member');
         });
 
         it('does not update the role of a removed channel', () => {
