@@ -308,7 +308,7 @@ describe('group configuration', () => {
         });
     });
 
-    describe.only('updating a team role', () => {
+    describe('updating a team role', () => {
         it('updates the role for a new team', () => {
             // # Add a new team
             addGroupSyncable('team', (teamName) => {
