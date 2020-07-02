@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @interactive_menu
+// Group: @interactive_menu @verify
 
 /**
 * Note: This test requires webhook server running. Initiate `npm run start:webhook` to start.
@@ -51,7 +51,7 @@ describe('Interactive Menu', () => {
         const searchOptionsPayload = getMessageMenusPayload({options: searchOptions});
 
         // # Post an incoming webhook for interactive menu with search options
-        cy.postIncomingWebhook({url: incomingWebhook.url, data: searchOptionsPayload});
+        cy.postIncomingWebhook({url: incomingWebhook.url, data: searchOptionsPayload, waitFor: 'attachment-pretext'});
 
         // # Get message attachment from the last post
         cy.getLastPostId().then((postId) => {
