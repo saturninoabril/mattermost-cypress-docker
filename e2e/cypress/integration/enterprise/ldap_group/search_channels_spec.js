@@ -95,9 +95,7 @@ describe('Search channels', () => {
     it('clears the results when the search term is deleted with backspace', function() {
         // # Create a channel.
         const displayName = getRandomId();
-        cy.apiCreateChannel(testTeamId, 'channel-search', displayName).then((cResponse) => {
-            this.createdChannelIDs.push(cResponse.body.id);
-        });
+        cy.apiCreateChannel(testTeamId, 'channel-search', displayName);
 
         // # Search for the channel.
         cy.findByPlaceholderText('Search').as('searchInput').type(displayName + '{enter}');
