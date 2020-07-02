@@ -380,7 +380,7 @@ describe('group configuration', () => {
             teamOrChannelIsPresent(testTeam.display_name);
 
             // # Change the role
-            changeRole(testTeam.display_name, 'Team Member');
+            changeRole(testTeam.display_name, 'Team Admin');
 
             // # Click away
             cy.get('.sidebar-section').first().click();
