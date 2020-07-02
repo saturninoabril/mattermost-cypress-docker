@@ -35,7 +35,7 @@ function addGroupSyncable(type, callback) {
 }
 
 function changeRole(name) {
-    cy.get(`div[data-testid=${name}_current_role]`).click();
+    cy.get(`div[data-testid='${name}_current_role']`).click();
     cy.get(`#${name}_change_role_options`).find('button').click();
 }
 
@@ -308,7 +308,7 @@ describe('group configuration', () => {
         });
     });
 
-    describe('updating a team role', () => {
+    describe.only('updating a team role', () => {
         it('updates the role for a new team', () => {
             // # Add a new team
             addGroupSyncable('team', (teamName) => {
@@ -331,7 +331,7 @@ describe('group configuration', () => {
                 cy.visit(`/admin_console/user_management/groups/${groupID}`);
 
                 // * Ensure the new role is visible
-                cy.get(`div[data-testid=${teamName}_current_role]`).findByText('Team Admin');
+                cy.get(`div[data-testid='${teamName}_current_role']`).findByText('Team Admin');
             });
         });
 
@@ -364,7 +364,7 @@ describe('group configuration', () => {
             cy.visit(`/admin_console/user_management/groups/${groupID}`);
 
             // * Ensure the new role is visible
-            cy.get(`div[data-testid=${testTeam.display_name}_current_role]`).findByText('Team Admin');
+            cy.get(`div[data-testid='${testTeam.display_name}_current_role']`).findByText('Team Admin');
         });
 
         it('does not update the role if not saved', () => {
@@ -393,7 +393,7 @@ describe('group configuration', () => {
             cy.visit(`/admin_console/user_management/groups/${groupID}`);
 
             // * Ensure the new role is visible
-            cy.get(`div[data-testid=${testTeam.display_name}_current_role]`).findByText('Member');
+            cy.get(`div[data-testid='${testTeam.display_name}_current_role']`).findByText('Member');
         });
 
         it('does not update the role of a removed team', () => {
@@ -453,7 +453,7 @@ describe('group configuration', () => {
                 cy.visit(`/admin_console/user_management/groups/${groupID}`);
 
                 // * Ensure the new role is visible
-                cy.get(`div[data-testid=${channelName}_current_role]`).findByText('Channel Admin');
+                cy.get(`div[data-testid='${channelName}_current_role']`).findByText('Channel Admin');
             });
         });
 
@@ -486,7 +486,7 @@ describe('group configuration', () => {
             cy.visit(`/admin_console/user_management/groups/${groupID}`);
 
             // * Ensure the new role is visible
-            cy.get(`div[data-testid=${testChannel.display_name}_current_role]`).findByText('Channel Admin');
+            cy.get(`div[data-testid='${testChannel.display_name}_current_role']`).findByText('Channel Admin');
         });
 
         it('does not update the role if not saved', () => {
@@ -515,7 +515,7 @@ describe('group configuration', () => {
             cy.visit(`/admin_console/user_management/groups/${groupID}`);
 
             // * Ensure the new role is visible
-            cy.get(`div[data-testid=${testChannel.display_name}_current_role]`).findByText('Member');
+            cy.get(`div[data-testid='${testChannel.display_name}_current_role']`).findByText('Member');
         });
 
         it('does not update the role of a removed channel', () => {

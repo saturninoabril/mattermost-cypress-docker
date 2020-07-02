@@ -187,13 +187,6 @@ Cypress.Commands.add('apiActivateUser', (userId, active = true) => {
     cy.externalRequest({user: admin, method: 'put', baseUrl, path: `users/${userId}/active`, data: {active}});
 });
 
-/**
- * List users that are not team members
- * @param {String} teamId - The team ID
- * @param {Integer} page - The desired page of the paginated list
- * @param {Integer} perPage - The number of users per page
- * All parameter required
- */
 Cypress.Commands.add('apiGetUsersNotInTeam', ({teamId, page = 0, perPage = 60} = {}) => {
     return cy.request({
         method: 'GET',
