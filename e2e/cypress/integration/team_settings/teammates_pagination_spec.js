@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @team_settings @verify
+// Group: @team_settings
 
 describe('Teams Suite', () => {
     before(() => {

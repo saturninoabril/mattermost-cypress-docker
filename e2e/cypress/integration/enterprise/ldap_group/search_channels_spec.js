@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @enterprise @ldap_group @verify
+// Group: @enterprise @ldap_group
 
 import {getRandomId} from '../../../utils';
 
@@ -92,7 +92,7 @@ describe('Search channels', () => {
         cy.findAllByTestId('channel-display-name').should('have.length', PAGE_SIZE);
     });
 
-    it('clears the results when the search term is deleted with backspace', function() {
+    it('clears the results when the search term is deleted with backspace', () => {
         // # Create a channel.
         const displayName = getRandomId();
         cy.apiCreateChannel(testTeamId, 'channel-search', displayName);

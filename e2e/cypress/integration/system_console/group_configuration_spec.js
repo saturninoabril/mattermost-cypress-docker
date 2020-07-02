@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @verify
+// Group: @system_console
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
 
