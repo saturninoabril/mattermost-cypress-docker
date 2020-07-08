@@ -40,13 +40,13 @@ describe('Channel sidebar', () => {
         cy.get('#headerTeamName').should('contain', teamName);
 
         // * Verify that the category doesn't appear collapsed currently
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
 
-        // # Click on PUBLIC CHANNELS
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS)').should('be.visible').click();
+        // # Click on CHANNELS
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS)').should('be.visible').click();
 
         // * Verify that the category now appears collapsed
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS) i').should('have.class', 'icon-rotate-minus-90');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('have.class', 'icon-rotate-minus-90');
     });
 
     it('should collapse channels that are not the currently viewed channel', () => {
@@ -62,8 +62,8 @@ describe('Channel sidebar', () => {
         cy.get('.SidebarChannel:contains(Off-Topic)').should('be.visible');
         cy.get('.SidebarChannel:contains(Town Square)').should('be.visible');
 
-        // # Click on PUBLIC CHANNELS
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS)').should('be.visible').click();
+        // # Click on CHANNELS
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS)').should('be.visible').click();
 
         // * Verify that Off-Topic is no longer visible but Town Square still is
         cy.get('.SidebarChannel:contains(Off-Topic)').should('not.be.visible');
@@ -91,8 +91,8 @@ describe('Channel sidebar', () => {
                 cy.get('.SidebarChannel:contains(Off-Topic)').should('be.visible');
                 cy.get('.SidebarChannel:contains(Channel Test)').should('be.visible').should('has.class', 'unread');
 
-                // # Click on PUBLIC CHANNELS
-                cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS)').should('be.visible').click();
+                // # Click on CHANNELS
+                cy.get('.SidebarChannelGroupHeader:contains(CHANNELS)').should('be.visible').click();
 
                 // * Verify that Off-Topic is no longer visible but Channel Test still is
                 cy.get('.SidebarChannel:contains(Off-Topic)').should('not.be.visible');
@@ -110,13 +110,13 @@ describe('Channel sidebar', () => {
         cy.get('#headerTeamName').should('contain', teamName);
 
         // * Verify that the category doesn't appear collapsed currently
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
 
-        // # Click on PUBLIC CHANNELS
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS)').should('be.visible').click();
+        // # Click on CHANNELS
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS)').should('be.visible').click();
 
         // * Verify that the category appears collapsed after refresh
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS) i').should('have.class', 'icon-rotate-minus-90');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('have.class', 'icon-rotate-minus-90');
 
         // Wait for state to settle
         // This is necessary since we have no observable way of finding out when the state actually settles so that it persists on reload
@@ -127,13 +127,13 @@ describe('Channel sidebar', () => {
         cy.reload();
 
         // * Verify that the category still appears collapsed after refresh
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS) i').should('have.class', 'icon-rotate-minus-90');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('have.class', 'icon-rotate-minus-90');
 
-        // # Click on PUBLIC CHANNELS
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS)').should('be.visible').click();
+        // # Click on CHANNELS
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS)').should('be.visible').click();
 
         // * Verify that the category appears not collapsed after refresh
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS) i').should('not.have.class', 'icon-rotate-minus-90');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('not.have.class', 'icon-rotate-minus-90');
 
         // Wait for state to settle
         // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -143,7 +143,7 @@ describe('Channel sidebar', () => {
         cy.reload();
 
         // * Verify that the category still appears not collapsed after refresh
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS) i').should('not.have.class', 'icon-rotate-minus-90');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('not.have.class', 'icon-rotate-minus-90');
     });
 
     it('should change the text state when the unread filter changes state', () => {
@@ -215,8 +215,8 @@ describe('Channel sidebar', () => {
         cy.url().should('include', `/${teamName}/channels/town-square`);
 
         // * Verify that all categories are visible
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS)').should('be.visible');
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS)').should('be.visible');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
         cy.get('.SidebarChannelGroupHeader:contains(Direct Messages)').should('be.visible');
         cy.get('.SidebarChannelGroupHeader:contains(Direct Messages) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
 
@@ -224,14 +224,14 @@ describe('Channel sidebar', () => {
         cy.get('.SidebarFilters_filterButton').should('be.visible').click();
 
         // * Verify that all categories are collapsed
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS) i').should('have.class', 'icon-rotate-minus-90');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('have.class', 'icon-rotate-minus-90');
         cy.get('.SidebarChannelGroupHeader:contains(Direct Messages) i').should('have.class', 'icon-rotate-minus-90');
 
         // # Disable the unread filter
         cy.get('.SidebarFilters_filterButton').should('be.visible').click();
 
         // * Verify that all categories are not collapsed
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS) i').should('not.have.class', 'icon-rotate-minus-90');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('not.have.class', 'icon-rotate-minus-90');
         cy.get('.SidebarChannelGroupHeader:contains(Direct Messages) i').should('not.have.class', 'icon-rotate-minus-90');
     });
 
@@ -245,29 +245,29 @@ describe('Channel sidebar', () => {
         cy.url().should('include', `/${teamName}/channels/town-square`);
 
         // * Verify that all categories are visible
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS)').should('be.visible');
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS)').should('be.visible');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
         cy.get('.SidebarChannelGroupHeader:contains(Direct Messages)').should('be.visible');
         cy.get('.SidebarChannelGroupHeader:contains(Direct Messages) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
 
-        // # Collapse PUBLIC CHANNELS
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS)').should('be.visible').click();
+        // # Collapse CHANNELS
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS)').should('be.visible').click();
 
-        // * Verify that PUBLIC CHANNELS is collapsed
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS) i').should('have.class', 'icon-rotate-minus-90');
+        // * Verify that CHANNELS is collapsed
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('have.class', 'icon-rotate-minus-90');
 
         // # Enable the unread filter
         cy.get('.SidebarFilters_filterButton').should('be.visible').click();
 
         // * Verify that all categories are collapsed
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS) i').should('have.class', 'icon-rotate-minus-90');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('have.class', 'icon-rotate-minus-90');
         cy.get('.SidebarChannelGroupHeader:contains(Direct Messages) i').should('have.class', 'icon-rotate-minus-90');
 
         // # Disable the unread filter
         cy.get('.SidebarFilters_filterButton').should('be.visible').click();
 
-        // * Verify that Direct Messages is not collapsed but PUBLIC CHANNELS still is
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS) i').should('be.visible').should('have.class', 'icon-rotate-minus-90');
+        // * Verify that Direct Messages is not collapsed but CHANNELS still is
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('be.visible').should('have.class', 'icon-rotate-minus-90');
         cy.get('.SidebarChannelGroupHeader:contains(Direct Messages) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
     });
 
@@ -281,8 +281,8 @@ describe('Channel sidebar', () => {
         cy.url().should('include', `/${teamName}/channels/town-square`);
 
         // * Verify that all categories are visible
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS)').should('be.visible');
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS)').should('be.visible');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
         cy.get('.SidebarChannelGroupHeader:contains(Direct Messages)').should('be.visible');
         cy.get('.SidebarChannelGroupHeader:contains(Direct Messages) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
 
@@ -290,14 +290,14 @@ describe('Channel sidebar', () => {
         cy.get('.SidebarFilters_filterButton').should('be.visible').click();
 
         // * Verify that all categories are collapsed
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS) i').should('have.class', 'icon-rotate-minus-90');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('have.class', 'icon-rotate-minus-90');
         cy.get('.SidebarChannelGroupHeader:contains(Direct Messages) i').should('have.class', 'icon-rotate-minus-90');
 
         // # Reload the page
         cy.reload();
 
         // * Verify that all categories are not collapsed
-        cy.get('.SidebarChannelGroupHeader:contains(PUBLIC CHANNELS) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
+        cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
         cy.get('.SidebarChannelGroupHeader:contains(Direct Messages) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
     });
 });

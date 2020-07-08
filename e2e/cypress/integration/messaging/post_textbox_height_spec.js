@@ -35,7 +35,7 @@ describe('Messaging', () => {
             getTextBox().type('test{shift}{enter}{enter}{enter}{enter}{enter}{enter}test');
 
             // # Check that input box is taller than before
-            getTextBox().should('have.css', 'height', '166px');
+            getTextBox().should('have.css', 'height', '168px');
 
             // # Get second latest post id
             const secondLatestPostIndex = -2;
@@ -50,7 +50,7 @@ describe('Messaging', () => {
                 cy.clickPostCommentIcon(latestPostId);
 
                 // # Check that input box is taller again
-                getTextBox().should('have.css', 'height', '166px');
+                getTextBox().should('have.css', 'height', '168px');
             });
         });
     });

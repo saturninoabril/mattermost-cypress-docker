@@ -12,7 +12,7 @@
 
 import {testWithConfig} from '../../support/hooks';
 
-import {getRandomInt} from '../../utils';
+import {getRandomId} from '../../utils';
 
 const SpaceKeyCode = 32;
 const DownArrowKeyCode = 40;
@@ -25,14 +25,15 @@ describe('Channel sidebar', () => {
     });
 
     before(() => {
-        cy.apiLogin('user-1');
-
-        cy.visit('/');
+        // # Login as test user and visit town-square
+        cy.apiInitSetup({loginAfter: true}).then(({team}) => {
+            cy.visit(`/${team.name}/channels/town-square`);
+        });
     });
 
     it('should move channel to correct place when dragging channel within category', () => {
         // # Start with a new team
-        const teamName = `team-${getRandomInt(999999)}`;
+        const teamName = `team-${getRandomId()}`;
         cy.createNewTeam(teamName, teamName);
 
         // * Verify that we've switched to the new team
@@ -52,7 +53,7 @@ describe('Channel sidebar', () => {
 
     it('should move category to correct place', () => {
         // # Start with a new team
-        const teamName = `team-${getRandomInt(999999)}`;
+        const teamName = `team-${getRandomId()}`;
         cy.createNewTeam(teamName, teamName);
 
         // * Verify that we've switched to the new team
@@ -60,15 +61,15 @@ describe('Channel sidebar', () => {
 
         // * Verify the order is correct to begin with
         // Wait for Public Channels to be visible since for some reason it shows up later...
-        cy.get('.SidebarChannelGroupHeader_groupButton > div[data-rbd-drag-handle-draggable-id]').should('contain', 'PUBLIC CHANNELS').should('be.visible');
-        cy.get('.SidebarChannelGroupHeader_groupButton > div[data-rbd-drag-handle-draggable-id]').should('be.visible').eq(0).should('contain', 'PUBLIC CHANNELS');
+        cy.get('.SidebarChannelGroupHeader_groupButton > div[data-rbd-drag-handle-draggable-id]').should('contain', 'CHANNELS').should('be.visible');
+        cy.get('.SidebarChannelGroupHeader_groupButton > div[data-rbd-drag-handle-draggable-id]').should('be.visible').eq(0).should('contain', 'CHANNELS');
         cy.get('.SidebarChannelGroupHeader_groupButton > div[data-rbd-drag-handle-draggable-id]').should('be.visible').eq(1).should('contain', 'Direct Messages');
 
         // # Perform drag using keyboard
-        cy.get('.SidebarChannelGroupHeader_groupButton > div[data-rbd-drag-handle-draggable-id]').should('be.visible').eq(0).should('contain', 'PUBLIC CHANNELS').trigger('keydown', {keyCode: SpaceKeyCode}).trigger('keydown', {keyCode: DownArrowKeyCode, force: true}).wait(3000).trigger('keydown', {keyCode: SpaceKeyCode, force: true}).wait(3000);
+        cy.get('.SidebarChannelGroupHeader_groupButton > div[data-rbd-drag-handle-draggable-id]').should('be.visible').eq(0).should('contain', 'CHANNELS').trigger('keydown', {keyCode: SpaceKeyCode}).trigger('keydown', {keyCode: DownArrowKeyCode, force: true}).wait(3000).trigger('keydown', {keyCode: SpaceKeyCode, force: true}).wait(3000);
 
         // * Verify that the elements have been re-ordered
-        cy.get('.SidebarChannelGroupHeader_groupButton > div[data-rbd-drag-handle-draggable-id]').should('be.visible').eq(1).should('contain', 'PUBLIC CHANNELS');
+        cy.get('.SidebarChannelGroupHeader_groupButton > div[data-rbd-drag-handle-draggable-id]').should('be.visible').eq(1).should('contain', 'CHANNELS');
         cy.get('.SidebarChannelGroupHeader_groupButton > div[data-rbd-drag-handle-draggable-id]').should('be.visible').eq(0).should('contain', 'Direct Messages');
     });
 });
