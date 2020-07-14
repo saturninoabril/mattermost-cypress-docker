@@ -122,7 +122,7 @@ function postMessageAndWait(textboxSelector, message) {
 }
 
 function waitUntilPermanentPost() {
-    cy.get('#postListContent').should('be.visible');
+    cy.get('#postListContent', {timeout: 60000}).should('be.visible');
     cy.waitUntil(() => cy.findAllByTestId('postView').last().then((el) => !(el[0].id.includes(':'))));
 }
 
@@ -144,6 +144,24 @@ Cypress.Commands.add('getLastPostIdRHS', () => {
 
     cy.get('#rhsPostList > div').last().should('have.attr', 'id').and('not.include', ':').
         invoke('replace', 'rhsPost_', '');
+});
+
+Cypress.Commands.add('uiWaitUntilMessagePostedIncludes', (message) => {
+    const checkFn = () => {
+        return cy.getLastPost().then((el) => {
+            const postedMessageEl = el.find('.post-message__text')[0];
+            return Boolean(postedMessageEl && postedMessageEl.textContent.includes(message));
+        });
+    };
+
+    // Wait for 5 seconds with 500ms check interval
+    const options = {
+        timeout: 5000,
+        interval: 500,
+        errorMsg: `Expected "${message}" to be in the last message posted but not found.`,
+    };
+
+    return cy.waitUntil(checkFn, options);
 });
 
 /**

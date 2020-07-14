@@ -39,15 +39,16 @@ describe('System message', () => {
         cy.postMessage('Test for no status of a system message');
 
         // # Update the header
+        const newHeader = ' Updating header'.repeat(Math.floor(Math.random() * 10));
         cy.getCurrentChannelId().then((channelId) => {
             cy.apiPatchChannel(
                 channelId,
-                {header: ' Updating header'.repeat(Math.floor(Math.random() * 10))},
+                {header: newHeader},
             );
         });
 
-        // # Added to wait for the system message to get posted
-        cy.wait(TIMEOUTS.TINY);
+        // # Wait until the system message gets posted.
+        cy.uiWaitUntilMessagePostedIncludes(newHeader);
     });
 
     const displayTypes = ['compact', 'clean'];
