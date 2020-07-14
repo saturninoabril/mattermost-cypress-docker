@@ -274,7 +274,7 @@ const viewManageChannelMembersModal = (viewOrManage) => {
 // # Checks to see if we got a system message warning after using @all/@here/@channel
 const postChannelMentionsAndVerifySystemMessageExist = () => {
     // # Type @all and post it to the channel
-    cy.findByTestId('post_textbox').clear().type('@all{enter}');
+    cy.postMessage('@all');
 
     // # Get last post message text
     cy.getLastPostId().then((postId) => {
@@ -283,7 +283,7 @@ const postChannelMentionsAndVerifySystemMessageExist = () => {
     });
 
     // # Type @here and post it to the channel
-    cy.findByTestId('post_textbox').clear().type('@here{enter}');
+    cy.postMessage('@here');
 
     // # Get last post message text
     cy.getLastPostId().then((postId) => {
@@ -291,7 +291,7 @@ const postChannelMentionsAndVerifySystemMessageExist = () => {
         cy.get(`#postMessageText_${postId}`).should('include.text', 'Channel notifications are disabled in aut-8. The @here did not trigger any notifications.');
     });
 
-    cy.findByTestId('post_textbox').clear().type('@channel{enter}');
+    cy.postMessage('@channel');
 
     // # Type last post message text
     cy.getLastPostId().then((postId) => {
