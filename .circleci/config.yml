@@ -57,13 +57,13 @@ jobs:
           MM_PLUGINSETTINGS_ENABLEUPLOADS: true
     working_directory: ~/mattermost-cypress-docker
     environment:
-      MM_DOCKER_IMAGE_TAG: master
-      TYPE: NONE
+      MM_DOCKER_IMAGE_TAG: release-5.26
+      TYPE: RELEASE
       PULL_REQUEST:
       BROWSER: chrome
       HEADLESS: true
-      DASHBOARD_ENABLE: false
-      FULL_REPORT: false
+      DASHBOARD_ENABLE: true
+      FULL_REPORT: true
     steps:
       - setup_remote_docker
       - run:
