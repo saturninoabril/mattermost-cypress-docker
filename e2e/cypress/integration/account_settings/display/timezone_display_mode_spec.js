@@ -253,9 +253,7 @@ function setTimezoneDisplayToManual(timezone) {
 function verifyLocalTimeIsTimezoneFormatted(localTime, timeFormat) {
     // * Verify that the local time of each post is in timezone format
     const formattedTime = localTime.dateInTimezone.format(timeFormat);
-    cy.findAllByTestId('postView', {timeout: TIMEOUTS.ONE_MIN}).
-        eq(localTime.postIndex).find('time', {timeout: TIMEOUTS.HALF_SEC}).
-        should('have.text', formattedTime);
+    cy.findAllByTestId('postView').eq(localTime.postIndex).find('time', {timeout: TIMEOUTS.HALF_SEC}).should('have.text', formattedTime);
 }
 
 function verifyLocalTimeIsTimezoneFormatted12Hour(localTime) {
