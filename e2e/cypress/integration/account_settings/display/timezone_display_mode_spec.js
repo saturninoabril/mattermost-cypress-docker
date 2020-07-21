@@ -53,8 +53,9 @@ describe('Account Settings > Display > Timezone Mode', () => {
             // # Post messages from now
             cy.postMessage('Hello from now');
 
-            // # Reload to re-arrange posts
+            // # Reload to re-arrange posts and check the channel has been loaded
             cy.reload();
+            cy.findAllByTestId('postView', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible');
         });
     });
 
