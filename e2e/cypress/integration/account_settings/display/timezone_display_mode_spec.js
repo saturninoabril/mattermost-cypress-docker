@@ -55,6 +55,7 @@ describe('Account Settings > Display > Timezone Mode', () => {
 
             // # Reload to re-arrange posts
             cy.reload();
+            cy.findAllByTestId('postView', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible');
         });
     });
 
