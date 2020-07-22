@@ -9,6 +9,14 @@
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 
+const saveConfig = () => {
+    // # Click save
+    cy.get('#saveSetting').click();
+
+    // # Check that the members block is no longer visible meaning that the save has succeeded and we were redirected out
+    cy.get('#channelMembers').should('not.be.visible');
+};
+
 describe('Channel members test', () => {
     let testChannel;
     let user1;
@@ -18,7 +26,7 @@ describe('Channel members test', () => {
     before(() => {
         // # Login as sysadmin
         cy.apiAdminLogin().then((res) => {
-            sysadmin = res.user;
+            sysadmin = res.body;
         });
 
         // * Check if server has license
@@ -60,7 +68,8 @@ describe('Channel members test', () => {
         cy.get('#channelMembers').scrollIntoView().should('be.visible');
 
         // # Search for user1 that we know is in the team
-        searchFor(user1.email);
+        cy.get('#channelMembers .DataGrid_search input').clear().type(user1.email);
+        cy.wait(TIMEOUTS.HALF_SEC); // Timeout required to wait for timeout that happens when search input changes
 
         // # Wait till loading complete and then remove the only visible user
         cy.get('#channelMembers .DataGrid_loading').should('not.be.visible');
@@ -76,7 +85,8 @@ describe('Channel members test', () => {
         cy.get('#cancelModalButton').click();
 
         // # Search for user2 that we know is in the team
-        searchFor(user2.email);
+        cy.get('#channelMembers .DataGrid_search input').clear().type(user2.email);
+        cy.wait(TIMEOUTS.HALF_SEC); // Timeout required to wait for timeout that happens when search input changes
 
         // # Wait till loading complete and then remove the only visible user
         cy.get('#channelMembers .DataGrid_loading').should('not.be.visible');
@@ -98,13 +108,15 @@ describe('Channel members test', () => {
         cy.visit(`/admin_console/user_management/channels/${testChannel.id}`);
 
         // # Search for user1 that we know is no longer in the team
-        searchFor(user1.email);
+        cy.get('#channelMembers .DataGrid_search input').scrollIntoView().clear().type(user1.email);
+        cy.wait(TIMEOUTS.HALF_SEC); // Timeout required to wait for timeout that happens when search input changes
 
         // * Assert that no matching users found
         cy.get('#channelMembers .DataGrid_rows').should('contain', 'No users found');
 
         // # Search for user2 that we know is no longer in the team
-        searchFor(user2.email);
+        cy.get('#channelMembers .DataGrid_search input').clear().type(user2.email);
+        cy.wait(TIMEOUTS.HALF_SEC); // Timeout required to wait for timeout that happens when search input changes
 
         // * Assert that no matching users found
         cy.get('#channelMembers .DataGrid_rows').should('contain', 'No users found');
@@ -119,7 +131,8 @@ describe('Channel members test', () => {
         cy.get('#addUsersToChannelModal #saveItems').click();
 
         // # Search for user1
-        searchFor(user1.email);
+        cy.get('#channelMembers .DataGrid_search input').clear().type(user1.email);
+        cy.wait(TIMEOUTS.HALF_SEC); // Timeout required to wait for timeout that happens when search input changes
 
         // * Assert that the user is now added to the members block and contains text denoting that they are New
         cy.get('#channelMembers .DataGrid_rows').children(0).should('contain', user1.email).and('contain', 'New');
@@ -135,13 +148,15 @@ describe('Channel members test', () => {
         });
 
         // # Search for user2
-        searchFor(user2.email);
+        cy.get('#channelMembers .DataGrid_search input').clear().type(user2.email);
+        cy.wait(TIMEOUTS.HALF_SEC); // Timeout required to wait for timeout that happens when search input changes
 
         // * Assert that the user is now added to the members block and contains text denoting that they are New
         cy.get('#channelMembers .DataGrid_rows').children(0).should('contain', user2.email).and('contain', 'New');
 
         // # Search for sysadmin
-        searchFor(sysadmin.email);
+        cy.get('#channelMembers .DataGrid_search input').clear().type(sysadmin.email);
+        cy.wait(TIMEOUTS.HALF_SEC); // Timeout required to wait for timeout that happens when search input changes
 
         // * Assert that searching for users after adding users returns only relevant search results
         cy.get('#channelMembers .DataGrid_rows').children(0).should('contain', sysadmin.email);
@@ -153,7 +168,8 @@ describe('Channel members test', () => {
         cy.visit(`/admin_console/user_management/channels/${testChannel.id}`);
 
         // # Search user1 that we know is now in the team again
-        searchFor(user1.email);
+        cy.get('#channelMembers .DataGrid_search input').scrollIntoView().clear().type(user1.email);
+        cy.wait(TIMEOUTS.HALF_SEC); // Timeout required to wait for timeout that happens when search input changes
         cy.get('#channelMembers .DataGrid_loading').should('not.be.visible');
 
         // * Assert that the user is now saved as an admin
@@ -172,7 +188,8 @@ describe('Channel members test', () => {
         cy.get('#channelMembers .DataGrid_rows').children(0).should('contain', user1.email).and('not.contain', 'New').and('contain', 'Channel Member');
 
         // # Search user2 that we know is now in the team again
-        searchFor(user2.email);
+        cy.get('#channelMembers .DataGrid_search input').scrollIntoView().clear().type(user2.email);
+        cy.wait(TIMEOUTS.HALF_SEC); // Timeout required to wait for timeout that happens when search input changes
         cy.get('#channelMembers .DataGrid_loading').should('not.be.visible');
 
         // * Assert user2 is now saved as a regular member
@@ -182,16 +199,3 @@ describe('Channel members test', () => {
         saveConfig();
     });
 });
-
-function saveConfig() {
-    // # Click save
-    cy.get('#saveSetting').click();
-
-    // # Check that the members block is no longer visible meaning that the save has succeeded and we were redirected out
-    cy.get('#channelMembers').should('not.be.visible');
-}
-
-function searchFor(searchTerm) {
-    cy.get('#channelMembers .DataGrid_search input[type="text"]').scrollIntoView().clear().type(searchTerm);
-    cy.wait(TIMEOUTS.HALF_SEC); // Timeout required to wait for timeout that happens when search input changes
-}

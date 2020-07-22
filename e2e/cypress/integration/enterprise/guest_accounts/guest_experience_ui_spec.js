@@ -17,7 +17,8 @@ import * as TIMEOUTS from '../../../fixtures/timeouts';
 function demoteGuestUser(guestUser) {
     // # Demote user as guest user before each test
     cy.apiAdminLogin();
-    cy.apiGetUserByEmail(guestUser.email).then(({user}) => {
+    cy.apiGetUserByEmail(guestUser.email).then((emailResponse) => {
+        const user = emailResponse.body;
         if (user.roles !== 'system_guest') {
             cy.demoteUser(guestUser.id);
         }
