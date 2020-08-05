@@ -118,7 +118,7 @@ jobs:
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
 
-            cd e2e && node run_tests.js --stage='@prod'
+            cd e2e && node run_tests.js --stage='@prod' --group='@verify'
 
       - run:
           name: Save and publish reports
@@ -136,5 +136,9 @@ jobs:
             # Should match the tag in mattermost/mattermost-enterprise-edition image
             # export BUILD_TAG="${CIRCLE_SHA1:0:7}"
             export BUILD_TAG=$MM_DOCKER_IMAGE_TAG
+
+            export TM4J_ENABLE=true
+            export JIRA_PROJECT_KEY=MM
+            export TM4J_FOLDER_ID=847997
 
             cd e2e && node save_report.js
