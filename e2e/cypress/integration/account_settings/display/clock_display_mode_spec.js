@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @account_setting @verify
+// Group: @account_setting
 
 import moment from 'moment-timezone';
 

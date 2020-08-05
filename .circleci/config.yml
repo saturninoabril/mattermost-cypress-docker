@@ -118,7 +118,7 @@ jobs:
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
 
-            cd e2e && node run_tests.js --stage='@prod' --group='@verify'
+            cd e2e && node run_tests.js --stage='@prod'
 
       - run:
           name: Save and publish reports
