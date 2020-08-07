@@ -97,14 +97,14 @@ const saveReport = async () => {
         await sendReport('test info for diagnostic analysis', DIAGNOSTIC_WEBHOOK_URL, data);
     }
 
-    // Save data to automation dashboard
-    if (DASHBOARD_ENABLE === 'true') {
-        await saveDashboard(jsonReport, BRANCH);
-    }
-
     // Save test cases to Test Management
     if (TM4J_ENABLE === 'true') {
         await saveTestCases(jsonReport);
+    }
+
+    // Save data to automation dashboard
+    if (DASHBOARD_ENABLE === 'true') {
+        await saveDashboard(jsonReport, BRANCH);
     }
 };
 
