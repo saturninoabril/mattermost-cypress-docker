@@ -2,6 +2,7 @@ FROM cypress/browsers:node10.16.3-chrome80-ff73
 
 ENV CYPRESS_baseUrl=$CYPRESS_baseUrl
 ENV CYPRESS_webhookBaseUrl=$CYPRESS_webhookBaseUrl
+ENV CYPRESS_licenseFilePath=$CYPRESS_licenseFilePath
 
 # # avoid too many progress messages
 # # https://github.com/cypress-io/cypress/issues/1243
