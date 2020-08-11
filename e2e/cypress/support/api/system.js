@@ -18,7 +18,7 @@ Cypress.Commands.add('apiGetClientLicense', () => {
 });
 
 Cypress.Commands.add('apiRequireLicenseForFeature', (key = '') => {
-    return cy.apiGetClientLicense().then(({license}) => {
+    return uploadLicenseIfNotExist().then(({license}) => {
         expect(license.IsLicensed, 'Server has no Enterprise license.').to.equal('true');
 
         let hasLicenseKey = false;
@@ -36,10 +36,25 @@ Cypress.Commands.add('apiRequireLicenseForFeature', (key = '') => {
 });
 
 Cypress.Commands.add('apiRequireLicense', () => {
-    return cy.apiGetClientLicense().then(({license}) => {
+    return uploadLicenseIfNotExist().then(({license}) => {
         expect(license.IsLicensed, 'Server has no Enterprise license.').to.equal('true');
 
         return cy.wrap({license});
+    });
+});
+
+Cypress.Commands.add('apiUploadLicense', (filePath) => {
+    cy.apiUploadFile('license', filePath, {url: '/api/v4/license', method: 'POST', successStatus: 200});
+});
+
+Cypress.Commands.add('apiDeleteLicense', () => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: '/api/v4/license',
+        method: 'DELETE',
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap({response});
     });
 });
 
@@ -92,9 +107,6 @@ Cypress.Commands.add('apiGetAnalytics', () => {
     });
 });
 
-/**
- * Invalidate all the caches
- */
 Cypress.Commands.add('apiInvalidateCache', () => {
     return cy.request({
         url: '/api/v4/caches/invalidate',
@@ -105,3 +117,22 @@ Cypress.Commands.add('apiInvalidateCache', () => {
         cy.wrap(response);
     });
 });
+
+function uploadLicenseIfNotExist() {
+    // # Upload a license if it does not exist.
+    return cy.apiGetClientLicense().then(({license}) => {
+        if (license.IsLicensed === 'true') {
+            return cy.wrap({license});
+        }
+
+        return cy.task('fileExist', 'mattermost-license.txt').then((exist) => {
+            if (!exist) {
+                return cy.wrap({license});
+            }
+
+            return cy.apiUploadLicense('mattermost-license.txt').then(() => {
+                return cy.apiGetClientLicense();
+            });
+        });
+    });
+}
