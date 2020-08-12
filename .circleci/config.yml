@@ -94,6 +94,7 @@ jobs:
       - run:
           name: Setup required files
           command: |
+            echo $EE_LICENSE > e2e/cypress/fixtures/mattermost-license.txt
             echo $SAML_IDP_CRT | base64 --decode > e2e/cypress/fixtures/saml-idp.crt
             echo $SAML_PRIVATE_KEY | base64 --decode > e2e/cypress/fixtures/saml-private.key
             echo $SAML_PUBLIC_CRT | base64 --decode > e2e/cypress/fixtures/saml-public.crt
