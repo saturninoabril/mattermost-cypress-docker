@@ -60,7 +60,7 @@ jobs:
       MM_DOCKER_IMAGE_TAG: master
       TYPE: NONE
       PULL_REQUEST:
-      BROWSER: chrome
+      BROWSER: firefox
       HEADLESS: true
       DASHBOARD_ENABLE: false
       FULL_REPORT: false
