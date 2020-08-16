@@ -58,6 +58,7 @@ async function runTests() {
         ENABLE_VISUAL_TEST,
         APPLITOOLS_API_KEY,
         APPLITOOLS_BATCH_NAME,
+        FAILURE_MESSAGE,
     } = process.env;
 
     const browser = BROWSER || 'chrome';
@@ -142,7 +143,7 @@ async function runTests() {
         }
     }
 
-    chai.expect(hasFailed, 'At least one test has failed.').to.be.false;
+    chai.expect(hasFailed, FAILURE_MESSAGE).to.be.false;
 }
 
 runTests();
