@@ -111,6 +111,7 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
+            set -e 
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
             export CYPRESS_chromeWebSecurity=true
