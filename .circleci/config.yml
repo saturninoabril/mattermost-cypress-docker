@@ -118,11 +118,13 @@ jobs:
             export CYPRESS_dbConnection="postgres://mmuser:mostest@localhost:5432/mattermost_test?sslmode=disable&connect_timeout=10"
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
+            export FAILURE_MESSAGE="At least one test has failed."
+            export RESULTS_OUTPUT="results-output.txt"
 
-            cd e2e && node run_tests.js --stage='@prod'
-
+            cd e2e && node run_tests.js --stage='@prod' |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - run:
           name: Save and publish reports
+          when: always
           command: |
             export DIAGNOSTIC_USER_ID=`psql -d $TEST_DATABASE_URL -t -c "SELECT id FROM users WHERE username='sysadmin';"`
             export DIAGNOSTIC_TEAM_ID=`psql -d $TEST_DATABASE_URL -t -c "SELECT id FROM teams WHERE name='ad-1';"`
