@@ -38,7 +38,7 @@
  */
 
 const os = require('os');
-const chai = require('chai');
+
 const chalk = require('chalk');
 const cypress = require('cypress');
 const argv = require('yargs').argv;
@@ -58,7 +58,6 @@ async function runTests() {
         ENABLE_VISUAL_TEST,
         APPLITOOLS_API_KEY,
         APPLITOOLS_BATCH_NAME,
-        FAILURE_MESSAGE,
     } = process.env;
 
     const browser = BROWSER || 'chrome';
@@ -74,7 +73,6 @@ async function runTests() {
 
     const {invert, group, stage} = argv;
 
-    let hasFailed = false;
     for (let i = 0; i < finalTestFiles.length; i++) {
         const testFile = finalTestFiles[i];
         const testStage = stage ? `Stage: "${stage}" ` : '';
@@ -137,13 +135,7 @@ async function runTests() {
 
             writeJsonToFile(environment, 'environment.json', RESULTS_DIR);
         }
-
-        if (!hasFailed && result.totalFailed > 0) {
-            hasFailed = true;
-        }
     }
-
-    chai.expect(hasFailed, FAILURE_MESSAGE).to.be.false;
 }
 
 runTests();
