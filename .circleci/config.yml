@@ -14,7 +14,7 @@ jobs:
       - image: circleci/node:12-buster-browsers-legacy
         environment:
           TEST_DATABASE_URL: postgres://mmuser:mostest@localhost:5432/mattermost_test
-      - image: circleci/postgres:9.6.5-alpine-ram
+      - image: circleci/postgres:10.11-alpine-ram
         environment:
           POSTGRES_USER: mmuser
           POSTGRES_PASSWORD: mostest
@@ -82,6 +82,7 @@ jobs:
           command: |
             whoami
             sudo apt-get update
+            sudo apt-get install libxss1
             sudo apt-get install postgresql-client
             psql -d $TEST_DATABASE_URL -c "CREATE DATABASE migrated;"
             psql -d $TEST_DATABASE_URL -c "CREATE DATABASE latest;"
