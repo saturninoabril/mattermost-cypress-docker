@@ -54,7 +54,7 @@ declare namespace Cypress {
          * @returns {Response} response: Cypress-chainable response which should have successful HTTP status of 200 OK to continue or pass.
          *
          * @example
-         *   cy.apiSaveCloudOnboardingPreference('hide');
+         *   cy.apiSaveCloudOnboardingPreference('hide', 'true');
          */
         apiSaveCloudOnboardingPreference(name: string, value: string): Chainable<Response>;
 
