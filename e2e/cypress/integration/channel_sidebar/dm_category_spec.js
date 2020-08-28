@@ -29,8 +29,9 @@ describe('MM-T3156 DM category', () => {
 
         // # Login as test user and visit town-square
         cy.apiInitSetup({loginAfter: true}).then(({team, user}) => {
-            cy.apiHideSidebarWhatsNewModalPreference('true');
             testUser = user;
+            cy.apiSaveCloudOnboardingPreference('hide', 'true');
+            cy.apiHideSidebarWhatsNewModalPreference('true');
             cy.visit(`/${team.name}/channels/town-square`);
 
             // # upgrade user to sys admin role
