@@ -49,13 +49,14 @@ declare namespace Cypress {
         /**
          * Save cloud onboarding preference.
          * See https://api.mattermost.com/#tag/preferences/paths/~1users~1{user_id}~1preferences/put
-         * @param {string} name - options are complete_profile, team_setup, invite_members and hide
+         * @param {string} name - options are complete_profile, team_setup, invite_members or hide
+         * @param {string} value - options are 'true' or 'false'
          * @returns {Response} response: Cypress-chainable response which should have successful HTTP status of 200 OK to continue or pass.
          *
          * @example
-         *   cy.apiSaveCloudOnboardingPreference('hide');
+         *   cy.apiSaveCloudOnboardingPreference('hide'. 'true);
          */
-        apiSaveCloudOnboardingPreference(name: string): Chainable<Response>;
+        apiSaveCloudOnboardingPreference(name: string, value: string): Chainable<Response>;
 
         /**
          * Save hiding of What's New modal.
