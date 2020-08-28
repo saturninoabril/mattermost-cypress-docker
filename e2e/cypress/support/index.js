@@ -116,7 +116,7 @@ before(() => {
         cy.apiSaveLinkPreviewsPreference('true');
         cy.apiSaveCollapsePreviewsPreference('false');
         cy.apiUpdateUserStatus('online');
-        cy.apiSaveCloudOnboardingPreference('hide');
+        cy.apiSaveCloudOnboardingPreference('hide', 'true');
         cy.apiHideSidebarWhatsNewModalPreference('true');
         cy.apiPatchMe({
             locale: 'en',
