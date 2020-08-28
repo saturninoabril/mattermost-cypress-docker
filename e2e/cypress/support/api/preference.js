@@ -212,13 +212,13 @@ Cypress.Commands.add('apiSaveTutorialStep', (userId, value = '999') => {
     return cy.apiSaveUserPreference([preference], userId);
 });
 
-Cypress.Commands.add('apiSaveCloudOnboardingPreference', (name) => {
+Cypress.Commands.add('apiSaveCloudOnboardingPreference', (name, value) => {
     return cy.getCookie('MMUSERID').then((cookie) => {
         const preference = {
             user_id: cookie.value,
             category: 'recommended_next_steps',
             name,
-            value: 'false',
+            value,
         };
 
         return cy.apiSaveUserPreference([preference]);
