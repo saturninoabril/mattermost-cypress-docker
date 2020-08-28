@@ -29,15 +29,13 @@ describe('MM-T3156 DM category', () => {
 
         // # Login as test user and visit town-square
         cy.apiInitSetup({loginAfter: true}).then(({team, user}) => {
+            cy.apiHideSidebarWhatsNewModalPreference('true');
             testUser = user;
             cy.visit(`/${team.name}/channels/town-square`);
 
             // # upgrade user to sys admin role
             cy.externalRequest({user: sysadmin, method: 'put', path: `users/${user.id}/roles`, data: {roles: 'system_user system_admin'}});
         });
-
-        // # Close "What's new" modal
-        cy.uiCloseWhatsNewModal();
     });
 
     it('MM-T3156_1 Should open DM modal on click of + in category header', () => {
