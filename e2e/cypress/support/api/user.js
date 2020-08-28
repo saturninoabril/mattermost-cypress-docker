@@ -175,11 +175,11 @@ Cypress.Commands.add('apiCreateUser', ({
         }
 
         if (hideCloudOnboarding) {
-            cy.apiSaveCloudOnboardingPreference(createdUser.id, 'hide', 'true').then(res => console.log(res));
+            cy.apiSaveCloudOnboardingPreference(createdUser.id, 'hide', 'true');
         }
 
         if (hideWhatsNewModal) {
-            cy.apiHideSidebarWhatsNewModalPreference(createdUser.id, 'true').then(res => console.log(res));
+            cy.apiHideSidebarWhatsNewModalPreference(createdUser.id, 'true');
         }
 
         return cy.wrap({user: {...createdUser, password: newUser.password}});
