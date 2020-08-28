@@ -26,7 +26,8 @@ describe('Channel sidebar', () => {
 
     before(() => {
         // # Login as test user and visit town-square
-        cy.apiInitSetup({loginAfter: true}).then(({team}) => {
+        cy.apiInitSetup({loginAfter: true}).then(({team, user}) => {
+            console.log('user', user)
             cy.visit(`/${team.name}/channels/town-square`);
         });
     });

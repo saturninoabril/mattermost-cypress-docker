@@ -95,15 +95,19 @@ before(() => {
     const admin = getAdminAccount();
 
     cy.dbGetUser({username: admin.username}).then(({user}) => {
+        let sysadminUserId;
+
         if (user.id) {
+            sysadminUserId = user.id;
+
             // # Login existing sysadmin
             cy.apiAdminLogin();
         } else {
             // # Create and login a newly created user as sysadmin
             cy.apiCreateAdmin().then(({sysadmin}) => {
-                cy.apiAdminLogin().then(() => {
-                    cy.apiSaveTutorialStep(sysadmin.id, '999');
-                });
+                sysadminUserId = sysadmin.id;
+
+                cy.apiAdminLogin();
             });
         }
 
@@ -115,9 +119,10 @@ before(() => {
         cy.apiSaveTeammateNameDisplayPreference('username');
         cy.apiSaveLinkPreviewsPreference('true');
         cy.apiSaveCollapsePreviewsPreference('false');
+        cy.apiSaveTutorialStep(sysadminUserId, '999');
+        cy.apiSaveCloudOnboardingPreference(sysadminUserId, 'hide', 'true');
+        cy.apiHideSidebarWhatsNewModalPreference(sysadminUserId, 'true');
         cy.apiUpdateUserStatus('online');
-        cy.apiSaveCloudOnboardingPreference('hide', 'true');
-        cy.apiHideSidebarWhatsNewModalPreference('true');
         cy.apiPatchMe({
             locale: 'en',
             timezone: {automaticTimezone: '', manualTimezone: 'UTC', useAutomaticTimezone: 'false'},
