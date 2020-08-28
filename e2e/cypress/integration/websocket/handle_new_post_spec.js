@@ -38,9 +38,8 @@ describe('Handle new post', () => {
             user1 = user;
 
             cy.apiLogin(user1);
+            cy.apiHideSidebarWhatsNewModalPreference('true');
             cy.visit(`/${team.name}/channels/town-square`);
-
-            cy.uiCloseWhatsNewModal();
         });
     });
 

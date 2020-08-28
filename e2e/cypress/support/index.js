@@ -116,6 +116,8 @@ before(() => {
         cy.apiSaveLinkPreviewsPreference('true');
         cy.apiSaveCollapsePreviewsPreference('false');
         cy.apiUpdateUserStatus('online');
+        cy.apiSaveCloudOnboardingPreference('hide');
+        cy.apiHideSidebarWhatsNewModalPreference('true');
         cy.apiPatchMe({
             locale: 'en',
             timezone: {automaticTimezone: '', manualTimezone: 'UTC', useAutomaticTimezone: 'false'},
