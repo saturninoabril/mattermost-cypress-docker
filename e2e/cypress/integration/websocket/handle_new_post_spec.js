@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @websocket
+// Group: @websocket @verify
 
 import {beRead, beUnread} from '../../support/assertions';
 import {getAdminAccount} from '../../support/env';

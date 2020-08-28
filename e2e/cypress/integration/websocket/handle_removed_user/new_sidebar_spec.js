@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @websocket
+// Group: @websocket @verify
 
 import {testWithConfig} from '../../../support/hooks';
 import {getRandomId} from '../../../utils';
