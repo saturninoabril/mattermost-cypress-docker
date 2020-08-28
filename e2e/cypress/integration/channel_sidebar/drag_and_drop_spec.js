@@ -26,8 +26,6 @@ describe('Channel sidebar', () => {
             },
         });
         cy.apiInitSetup({loginAfter: true});
-        cy.apiSaveCloudOnboardingPreference('hide', 'true');
-        cy.apiHideSidebarWhatsNewModalPreference('true');
     });
 
     beforeEach(() => {
