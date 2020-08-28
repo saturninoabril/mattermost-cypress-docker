@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @websocket
+// Group: @websocket @verify
 
 import {testWithConfig} from '../../../support/hooks';
 import {getRandomId} from '../../../utils';
@@ -31,11 +31,9 @@ describe('Handle removed user - new sidebar', () => {
 
     before(() => {
         cy.apiInitSetup({loginAfter: true}).then(({team, channel}) => {
+            cy.apiHideSidebarWhatsNewModalPreference('true');
             cy.visit(`/${team.name}/channels/${channel.name}`);
         });
-
-        // # Close "What's new" modal
-        cy.uiCloseWhatsNewModal();
     });
 
     it('should be redirected to last channel when a user is removed from their current channel', () => {

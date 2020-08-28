@@ -7,6 +7,8 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
+// Group: @notifications @verify
+
 import {testWithConfig} from '../../../support/hooks';
 
 const adminSteps = ['complete_profile', 'team_setup', 'invite_members', 'hide'];
@@ -284,7 +286,7 @@ describe('Cloud Onboarding - Sysadmin', () => {
         cy.findByTestId('TeamProfileStep__saveTeamButton').should('be.disabled');
     });
 
-    it('MM-T3331_1 Sysadmin - Set team name and team icon - upload file of wrong type', () => {
+    it('MM-T3331_3 Sysadmin - Set team name and team icon - upload file of wrong type', () => {
         // * Make sure channel view has loaded
         cy.url().should('include', townSquarePage);
 

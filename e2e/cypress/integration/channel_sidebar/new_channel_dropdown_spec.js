@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @channel_sidebar
+// Group: @channel_sidebar @verify
 
 import {testWithConfig} from '../../support/hooks';
 
@@ -24,11 +24,9 @@ describe('Channel sidebar', () => {
     before(() => {
         // # Login as test user and visit town-square
         cy.apiInitSetup({loginAfter: true}).then(({team}) => {
+            cy.apiHideSidebarWhatsNewModalPreference('true');
             cy.visit(`/${team.name}/channels/town-square`);
         });
-
-        // # Close "What's new" modal
-        cy.uiCloseWhatsNewModal();
     });
 
     it('should create a new channel when using the new channel dropdown', () => {
