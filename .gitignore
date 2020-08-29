@@ -24,3 +24,5 @@ mattermost-e2e/webhook/e2e
 
 # Local machine specific files
 .DS_Store
+
+*.tar.gz
