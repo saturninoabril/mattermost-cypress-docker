@@ -112,6 +112,14 @@ beforeEach(() => {
     Cypress.Cookies.preserveOnce('MMAUTHTOKEN', 'MMUSERID', 'MMCSRF');
 });
 
+after(() => {
+    cy.apiAdminLogin().then(() => {
+        cy.apiGetAnalytics().then(({analytics}) => {
+            cy.task('log', analytics)
+        });
+    });
+});
+
 function sysadminSetup(user) {
     if (!user.email_verified) {
         cy.apiVerifyUserEmailById(user.id);
