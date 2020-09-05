@@ -8,12 +8,6 @@ import xor from 'lodash.xor';
 // https://api.mattermost.com/#tag/roles
 // *****************************************************************************
 
-// Body: {"permissions":["read_public_channel_groups","read_channel","sysconsole_write_user_management_channels","manage_private_channel_properties","sysconsole_read_integrations","add_user_to_team","manage_private_channel_members","sysconsole_write_user_management_teams","convert_private_channel_to_public","manage_public_channel_members","remove_user_from_team","manage_team_roles","sysconsole_read_user_management_groups","manage_channel_roles","list_private_teams","sysconsole_read_authentication","manage_jobs","read_jobs","sysconsole_read_plugins","manage_public_channel_properties","list_public_teams","sysconsole_write_integrations","sysconsole_read_environment","sysconsole_write_user_management_groups","read_private_channel_groups","delete_public_channel","sysconsole_write_site","sysconsole_read_user_management_channels","sysconsole_read_user_management_teams","sysconsole_write_user_management_permissions","sysconsole_read_about","sysconsole_read_site","sysconsole_read_reporting","view_team","convert_public_channel_to_private","join_public_teams","read_public_channel","edit_brand","join_private_teams","sysconsole_read_user_management_permissions","manage_team","delete_private_channel","sysconsole_write_environment"]}
-
-// Body: {"permissions":["manage_private_channel_members","manage_team_roles","manage_public_channel_members","read_channel","read_public_channel_groups","sysconsole_read_user_management_teams","list_public_teams","manage_private_channel_properties","sysconsole_read_user_management_groups","manage_team","sysconsole_write_user_management_channels","read_private_channel_groups","list_private_teams","sysconsole_write_user_management_teams","remove_user_from_team","delete_public_channel","sysconsole_read_authentication","convert_public_channel_to_private","join_private_teams","add_user_to_team","sysconsole_read_user_management_permissions","join_public_teams","read_public_channel","manage_public_channel_properties","convert_private_channel_to_public","manage_channel_roles","read_jobs","sysconsole_read_user_management_channels","delete_private_channel","view_team","sysconsole_write_user_management_groups"]}
-
-
-
 export const defaultRolesPermissions = {
     channel_admin: [
         'create_post',
@@ -56,6 +50,7 @@ export const defaultRolesPermissions = {
         'upload_file',
         'add_reaction',
         'read_channel',
+        'get_public_link', // added
     ],
     sysadmin: [
         'read_user_access_token',
@@ -170,7 +165,6 @@ export const defaultRolesPermissions = {
         'create_direct_channel',
         'create_group_channel',
     ],
-    // Body: {"permissions":["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""]}
     system_manager: [
         'read_public_channel_groups',
         'read_channel',
@@ -180,7 +174,7 @@ export const defaultRolesPermissions = {
         'add_user_to_team',
         'manage_private_channel_members',
         'sysconsole_write_user_management_teams',
-        'convert_private_channel_to_public',
+        // 'convert_private_channel_to_public', // removed
         'manage_public_channel_members',
         'remove_user_from_team',
         'manage_team_roles',
@@ -206,7 +200,7 @@ export const defaultRolesPermissions = {
         'sysconsole_read_site',
         'sysconsole_read_reporting',
         'view_team',
-        'convert_public_channel_to_private',
+        // 'convert_public_channel_to_private', // removed
         'join_public_teams',
         'read_public_channel',
         'edit_brand',
@@ -258,13 +252,14 @@ export const defaultRolesPermissions = {
         'create_team',
         'get_public_link',
         'view_members',
+        'create_emojis', // added
+        'delete_emojis', // added
     ],
     system_user_access_token: [
         'revoke_user_access_token',
         'create_user_access_token',
         'read_user_access_token',
     ],
-    // Body: {"permissions":["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""]}
     system_user_manager: [
         'manage_private_channel_members',
         'manage_team_roles',
@@ -283,14 +278,14 @@ export const defaultRolesPermissions = {
         'remove_user_from_team',
         'delete_public_channel',
         'sysconsole_read_authentication',
-        'convert_public_channel_to_private',
+        // 'convert_public_channel_to_private', // removed
         'join_private_teams',
         'add_user_to_team',
         'sysconsole_read_user_management_permissions',
         'join_public_teams',
         'read_public_channel',
         'manage_public_channel_properties',
-        'convert_private_channel_to_public',
+        // 'convert_private_channel_to_public',  // removed
         'manage_channel_roles',
         'read_jobs',
         'sysconsole_read_user_management_channels',
@@ -302,7 +297,7 @@ export const defaultRolesPermissions = {
         'manage_private_channel_members',
         'delete_others_posts',
         'import_team',
-        'convert_private_channel_to_public',
+        // 'convert_private_channel_to_public', // removed
         'manage_incoming_webhooks',
         'delete_post',
         'create_post',
@@ -315,7 +310,7 @@ export const defaultRolesPermissions = {
         'remove_user_from_team',
         'manage_channel_roles',
         'use_channel_mentions',
-        'convert_public_channel_to_private',
+        // 'convert_public_channel_to_private', // removed
         'manage_team_roles',
         'use_group_mentions',
         'read_public_channel_groups',
