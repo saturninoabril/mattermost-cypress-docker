@@ -386,12 +386,12 @@ Cypress.Commands.add('apiPatchRole', (roleID, patch) => {
 
 Cypress.Commands.add('apiResetRoles', () => {
     cy.apiGetRolesByNames().then(({roles}) => {
-        console.log('apiGetRolesByNames roles', roles)
+        cy.task('log', `apiGetRolesByNames roles: ${roles}`)
         roles.forEach((role) => {
-            console.log('apiResetRoles role', role)
+            cy.task('log', `apiGetRolesByNames role: ${role}`)
             const defaultPermissions = defaultRolesPermissions[role.name];
             const diff = xor(role.permissions, defaultPermissions);
-            console.log('apiResetRoles diff', diff)
+            cy.task('log', `apiGetRolesByNames diff: ${diff}`)
 
             if (diff.length > 0) {
                 cy.apiPatchRole(role.id, {permissions: defaultPermissions});

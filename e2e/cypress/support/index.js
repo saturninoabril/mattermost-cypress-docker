@@ -138,7 +138,6 @@ function sysadminSetup(user) {
     cy.apiGetClientLicense().then(({license}) => {
         if (license.IsLicensed === 'true') {
             cy.apiResetRoles();
-            cy.getRoleByName('system_user');
         }
     });
 
