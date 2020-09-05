@@ -285,7 +285,7 @@ export const defaultRolesPermissions = {
         'join_public_teams',
         'read_public_channel',
         'manage_public_channel_properties',
-        // 'convert_private_channel_to_public',  // removed
+        // 'convert_private_channel_to_public', // removed
         'manage_channel_roles',
         'read_jobs',
         'sysconsole_read_user_management_channels',
@@ -381,14 +381,13 @@ Cypress.Commands.add('apiPatchRole', (roleID, patch) => {
 
 Cypress.Commands.add('apiResetRoles', () => {
     cy.apiGetRolesByNames().then(({roles}) => {
-        cy.task('log', `apiGetRolesByNames roles: ${JSON.stringify(roles)}`)
         roles.forEach((role) => {
-            cy.task('log', `apiGetRolesByNames role: ${JSON.stringify(role)}`)
             const defaultPermissions = defaultRolesPermissions[role.name];
             const diff = xor(role.permissions, defaultPermissions);
-            cy.task('log', `apiGetRolesByNames diff: ${diff}`)
 
             if (diff.length > 0) {
+                cy.task('log', `apiGetRolesByNames role: ${role}`)
+                cy.task('log', `apiGetRolesByNames diff: ${diff}`)
                 cy.apiPatchRole(role.id, {permissions: defaultPermissions});
             }
         });
