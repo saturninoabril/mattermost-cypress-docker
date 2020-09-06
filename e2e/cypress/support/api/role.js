@@ -250,7 +250,7 @@ export const defaultRolesPermissions = {
         'create_direct_channel',
         'create_group_channel',
         'create_team',
-        'get_public_link',
+        // 'get_public_link', // removed
         'view_members',
         'create_emojis', // added
         'delete_emojis', // added
@@ -331,8 +331,8 @@ export const defaultRolesPermissions = {
         'create_post_public',
     ],
     team_user: [
-        'create_emojis',
-        'delete_emojis',
+        // 'create_emojis', // removed
+        // 'delete_emojis', // removed
         'list_team_channels',
         'join_public_channels',
         'read_public_channel',
