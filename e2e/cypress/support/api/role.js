@@ -174,7 +174,7 @@ export const defaultRolesPermissions = {
         'add_user_to_team',
         'manage_private_channel_members',
         'sysconsole_write_user_management_teams',
-        // 'convert_private_channel_to_public', // removed
+        'convert_private_channel_to_public', // removed but reverted per comment
         'manage_public_channel_members',
         'remove_user_from_team',
         'manage_team_roles',
@@ -200,7 +200,7 @@ export const defaultRolesPermissions = {
         'sysconsole_read_site',
         'sysconsole_read_reporting',
         'view_team',
-        // 'convert_public_channel_to_private', // removed
+        'convert_public_channel_to_private', // removed but reverted per comment
         'join_public_teams',
         'read_public_channel',
         'edit_brand',
@@ -278,14 +278,14 @@ export const defaultRolesPermissions = {
         'remove_user_from_team',
         'delete_public_channel',
         'sysconsole_read_authentication',
-        // 'convert_public_channel_to_private', // removed
+        'convert_public_channel_to_private', // removed but reverted per comment
         'join_private_teams',
         'add_user_to_team',
         'sysconsole_read_user_management_permissions',
         'join_public_teams',
         'read_public_channel',
         'manage_public_channel_properties',
-        // 'convert_private_channel_to_public', // removed
+        'convert_private_channel_to_public', // removed but reverted per comment
         'manage_channel_roles',
         'read_jobs',
         'sysconsole_read_user_management_channels',
@@ -297,7 +297,7 @@ export const defaultRolesPermissions = {
         'manage_private_channel_members',
         'delete_others_posts',
         'import_team',
-        // 'convert_private_channel_to_public', // removed
+        'convert_private_channel_to_public', // removed but reverted per comment
         'manage_incoming_webhooks',
         'delete_post',
         'create_post',
@@ -310,7 +310,7 @@ export const defaultRolesPermissions = {
         'remove_user_from_team',
         'manage_channel_roles',
         'use_channel_mentions',
-        // 'convert_public_channel_to_private', // removed
+        'convert_public_channel_to_private', // removed but reverted per comment
         'manage_team_roles',
         'use_group_mentions',
         'read_public_channel_groups',
