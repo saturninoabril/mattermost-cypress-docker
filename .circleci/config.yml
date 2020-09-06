@@ -57,7 +57,7 @@ jobs:
           MM_PLUGINSETTINGS_ENABLEUPLOADS: true
     working_directory: ~/mattermost-cypress-docker
     environment:
-      MM_DOCKER_IMAGE_TAG: master
+      MM_DOCKER_IMAGE_TAG: latest
       TYPE: NONE
       PULL_REQUEST:
       BROWSER: chrome
