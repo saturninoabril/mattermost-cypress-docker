@@ -50,7 +50,7 @@ export const defaultRolesPermissions = {
         'upload_file',
         'add_reaction',
         'read_channel',
-        'get_public_link', // added
+        'get_public_link',
     ],
     sysadmin: [
         'read_user_access_token',
@@ -174,7 +174,7 @@ export const defaultRolesPermissions = {
         'add_user_to_team',
         'manage_private_channel_members',
         'sysconsole_write_user_management_teams',
-        // 'convert_private_channel_to_public', // removed
+        'convert_private_channel_to_public',
         'manage_public_channel_members',
         'remove_user_from_team',
         'manage_team_roles',
@@ -200,7 +200,7 @@ export const defaultRolesPermissions = {
         'sysconsole_read_site',
         'sysconsole_read_reporting',
         'view_team',
-        // 'convert_public_channel_to_private', // removed
+        'convert_public_channel_to_private',
         'join_public_teams',
         'read_public_channel',
         'edit_brand',
@@ -250,10 +250,9 @@ export const defaultRolesPermissions = {
         'create_direct_channel',
         'create_group_channel',
         'create_team',
-        'get_public_link',
         'view_members',
-        'create_emojis', // added
-        'delete_emojis', // added
+        'create_emojis',
+        'delete_emojis',
     ],
     system_user_access_token: [
         'revoke_user_access_token',
@@ -278,14 +277,14 @@ export const defaultRolesPermissions = {
         'remove_user_from_team',
         'delete_public_channel',
         'sysconsole_read_authentication',
-        // 'convert_public_channel_to_private', // removed
+        'convert_public_channel_to_private',
         'join_private_teams',
         'add_user_to_team',
         'sysconsole_read_user_management_permissions',
         'join_public_teams',
         'read_public_channel',
         'manage_public_channel_properties',
-        // 'convert_private_channel_to_public', // removed
+        'convert_private_channel_to_public',
         'manage_channel_roles',
         'read_jobs',
         'sysconsole_read_user_management_channels',
@@ -297,7 +296,7 @@ export const defaultRolesPermissions = {
         'manage_private_channel_members',
         'delete_others_posts',
         'import_team',
-        // 'convert_private_channel_to_public', // removed
+        'convert_private_channel_to_public',
         'manage_incoming_webhooks',
         'delete_post',
         'create_post',
@@ -310,7 +309,7 @@ export const defaultRolesPermissions = {
         'remove_user_from_team',
         'manage_channel_roles',
         'use_channel_mentions',
-        // 'convert_public_channel_to_private', // removed
+        'convert_public_channel_to_private',
         'manage_team_roles',
         'use_group_mentions',
         'read_public_channel_groups',
@@ -331,8 +330,6 @@ export const defaultRolesPermissions = {
         'create_post_public',
     ],
     team_user: [
-        'create_emojis',
-        'delete_emojis',
         'list_team_channels',
         'join_public_channels',
         'read_public_channel',
@@ -386,8 +383,6 @@ Cypress.Commands.add('apiResetRoles', () => {
             const diff = xor(role.permissions, defaultPermissions);
 
             if (diff.length > 0) {
-                cy.task('log', `apiGetRolesByNames role: ${role}`)
-                cy.task('log', `apiGetRolesByNames diff: ${diff}`)
                 cy.apiPatchRole(role.id, {permissions: defaultPermissions});
             }
         });
