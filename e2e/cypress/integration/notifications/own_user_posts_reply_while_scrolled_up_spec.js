@@ -7,7 +7,6 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: @prod
 // Group: @notifications
 
 import {getRandomId} from '../../utils';
@@ -35,29 +34,26 @@ describe('Notifications', () => {
         });
     });
 
-    it('MM-T562 New message bar - Message posted while scrolled up in same channel', () => {
+    it('MM-T564 New message bar - Own user posts a reply while scrolled up in a channel', () => {
         // # Post 30 random messages from the 'otherUser' account in Town Square
         Cypress._.times(numberOfPosts, (num) => {
             cy.postMessageAs({sender: otherUser, message: `${num} ${getRandomId()}`, channelId: townsquareChannelId});
         });
 
-        // # Scroll to the top of the channel so that the 'Jump to New Messages' button would be visible
+        // # Click on the post comment icon of the last message
+        cy.clickPostCommentIcon();
+
+        // # Scroll to the top of the channel so that the 'Jump to New Messages' button would be visible (if it existed)
         cy.get('.post-list__dynamic').scrollTo('top');
 
-        // # Post two new messages as 'otherUser'
-        cy.postMessageAs({sender: otherUser, message: 'Random Message', channelId: townsquareChannelId});
-        cy.postMessageAs({sender: otherUser, message: 'Last Message', channelId: townsquareChannelId});
+        // # Post a reply in RHS
+        const message = 'This is a test message';
+        cy.postMessageReplyInRHS(message);
 
-        // * Verify that the last message is currently not visible
-        cy.findByText('Last Message').should('not.be.visible');
-
-        // # Click on the 'Jump to New Messages' button
-        cy.get('.toast__visible').should('be.visible').click();
-
-        // * Verify that the last message is now visible
-        cy.findByText('Last Message').should('be.visible');
-
-        // * Verify that 'Jump to New Messages' is not visible
+        // * 'Jump to New Messages' is not visible
         cy.get('.toast__visible').should('not.be.visible');
+
+        // * Message gets posted in Town Square
+        cy.uiWaitUntilMessagePostedIncludes(message);
     });
 });
