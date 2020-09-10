@@ -26,10 +26,10 @@ module.exports = {
                 EnableSearching: true,
                 Sniff: false,
             },
+        }).then(() => {
+            cy.apiTestElasticsearchConfig();
+            cy.apiPurgeAllElasticsearchIndexes();
         });
-
-        cy.apiTestElasticsearchConfig();
-        cy.apiPurgeAllElasticsearchIndexes();
 
         // Navigate to the elastic search setting page
         cy.visit('/admin_console/environment/elasticsearch');

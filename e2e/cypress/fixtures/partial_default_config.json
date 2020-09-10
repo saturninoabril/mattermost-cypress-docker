@@ -416,9 +416,12 @@
         "MaxUsersForStatistics": 2500
     },
     "ElasticsearchSettings": {
-        "EnableIndexing": true,
-        "EnableSearching": true,
-        "EnableAutocomplete": true,
+        "ConnectionUrl": "https://99bbfa74a04d.ngrok.io",
+        "Username": "elastic",
+        "Password": "changeme",
+        "EnableIndexing": false,
+        "EnableSearching": false,
+        "EnableAutocomplete": false,
         "Sniff": true,
         "PostIndexReplicas": 1,
         "PostIndexShards": 1,
