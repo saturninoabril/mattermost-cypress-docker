@@ -416,9 +416,9 @@
         "MaxUsersForStatistics": 2500
     },
     "ElasticsearchSettings": {
-        "EnableIndexing": false,
-        "EnableSearching": false,
-        "EnableAutocomplete": false,
+        "EnableIndexing": true,
+        "EnableSearching": true,
+        "EnableAutocomplete": true,
         "Sniff": true,
         "PostIndexReplicas": 1,
         "PostIndexShards": 1,
