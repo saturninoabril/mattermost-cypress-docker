@@ -416,9 +416,6 @@
         "MaxUsersForStatistics": 2500
     },
     "ElasticsearchSettings": {
-        "ConnectionUrl": "http://localhost:9200",
-        "Username": "elastic",
-        "Password": "changeme",
         "EnableIndexing": false,
         "EnableSearching": false,
         "EnableAutocomplete": false,

@@ -2,6 +2,7 @@
 // See LICENSE.txt for license information.
 
 import './common';
+import './elasticsearch';
 import './ldap';
 import './preference';
 import './role';
