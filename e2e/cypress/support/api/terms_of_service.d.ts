@@ -19,17 +19,15 @@ declare namespace Cypress {
     interface Chainable<Subject = any> {
 
         /**
-         * Upload file directly via API.
-         * @param {String} name - name of form
-         * @param {String} filePath - path of the file to upload; can be relative or absolute
-         * @param {Object} options - request options
-         * @param {String} options.url - HTTP resource URL
-         * @param {String} options.method - HTTP request method
-         * @param {Number} options.successStatus - HTTP status code
+         * Create a new terms of service.
+         * See https://api.mattermost.com/#tag/terms-of-service/paths/~1terms_of_service/post
+         * @param {String} text - Terms of service text, displayed when a user logs in for the first time after a new one has been created.
          *
          * @example
-         *   cy.apiUploadFile('certificate', filePath, {url: '/api/v4/saml/certificate/public', method: 'POST', successStatus: 200});
+         *   cy.apiCreateTermsOfService('Accept me').then(({termsOfService}) => {
+         *       // do something
+         *   });
          */
-        apiUploadFile(name: string, filePath: string, options: Record<string, unknown>): Chainable<Response>;
+        apiCreateTermsOfService(text: string): Chainable<TermsOfService>;
     }
 }
