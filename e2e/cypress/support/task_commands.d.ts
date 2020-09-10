@@ -12,24 +12,22 @@
 // - Each parameter with `@params`
 // - Return value with `@returns`
 // - Example usage with `@example`
-// Custom command should follow naming convention of having `api` prefix, e.g. `apiLogin`.
 // ***************************************************************
 
 declare namespace Cypress {
     interface Chainable<Subject = any> {
 
         /**
-         * Upload file directly via API.
-         * @param {String} name - name of form
-         * @param {String} filePath - path of the file to upload; can be relative or absolute
-         * @param {Object} options - request options
-         * @param {String} options.url - HTTP resource URL
-         * @param {String} options.method - HTTP request method
-         * @param {Number} options.successStatus - HTTP status code
+         * Adds a given reaction to a specific post from a user
+         * @param {Object} reactToMessageObject - Information on person and post to which a reaction needs to be added
+         * @param {Object} reactToMessageObject.sender - a user object who will post a message
+         * @param {string} reactToMessageObject.postId  - post on which reaction is intended
+         * @param {string} reactToMessageObject.reaction - emoji text eg. smile
+         * @returns {Response} response: Cypress-chainable response
          *
          * @example
-         *   cy.apiUploadFile('certificate', filePath, {url: '/api/v4/saml/certificate/public', method: 'POST', successStatus: 200});
+         *    cy.reactToMessageAs({sender:user2, postId:"ABC123", reaction: 'smile'});
          */
-        apiUploadFile(name: string, filePath: string, options: Record<string, unknown>): Chainable<Response>;
+        reactToMessageAs({sender, postId, reaction}: {sender: Record<string, unknown>; postId: string; reaction: string}): Chainable<Response>;
     }
 }
