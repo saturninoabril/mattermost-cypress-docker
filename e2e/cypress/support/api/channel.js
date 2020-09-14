@@ -3,6 +3,11 @@
 
 import {getRandomId} from '../../utils';
 
+// *****************************************************************************
+// Channels
+// https://api.mattermost.com/#tag/channels
+// *****************************************************************************
+
 Cypress.Commands.add('apiCreateChannel', (teamId, name, displayName, type = 'O', purpose = '', header = '', unique = true) => {
     const randomSuffix = getRandomId();
 
@@ -18,6 +23,30 @@ Cypress.Commands.add('apiCreateChannel', (teamId, name, displayName, type = 'O',
             purpose,
             header,
         },
+    }).then((response) => {
+        expect(response.status).to.equal(201);
+        return cy.wrap({channel: response.body});
+    });
+});
+
+Cypress.Commands.add('apiCreateDirectChannel', (userIds = []) => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: '/api/v4/channels/direct',
+        method: 'POST',
+        body: userIds,
+    }).then((response) => {
+        expect(response.status).to.equal(201);
+        return cy.wrap({channel: response.body});
+    });
+});
+
+Cypress.Commands.add('apiCreateGroupChannel', (userIds = []) => {
+    return cy.request({
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        url: '/api/v4/channels/group',
+        method: 'POST',
+        body: userIds,
     }).then((response) => {
         expect(response.status).to.equal(201);
         return cy.wrap({channel: response.body});

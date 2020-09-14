@@ -30,30 +30,6 @@ Cypress.Commands.add('apiGetBots', () => {
 // https://api.mattermost.com/#tag/channels
 // *****************************************************************************
 
-Cypress.Commands.add('apiCreateDirectChannel', (userids) => {
-    return cy.request({
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-        url: '/api/v4/channels/direct',
-        method: 'POST',
-        body: userids,
-    }).then((response) => {
-        expect(response.status).to.equal(201);
-        return cy.wrap(response);
-    });
-});
-
-Cypress.Commands.add('apiCreateGroupChannel', (userIds = []) => {
-    return cy.request({
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-        url: '/api/v4/channels/group',
-        method: 'POST',
-        body: userIds,
-    }).then((response) => {
-        expect(response.status).to.equal(201);
-        return cy.wrap(response);
-    });
-});
-
 Cypress.Commands.add('apiDeleteChannel', (channelId) => {
     return cy.request({
         headers: {'X-Requested-With': 'XMLHttpRequest'},
