@@ -46,15 +46,15 @@ describe('Channel routing', () => {
 
     it('should go to private channel view', () => {
         // # Create a private channel
-        cy.apiCreateChannel(testTeam.id, 'private-channel', 'Private channel', 'P').then((response) => {
+        cy.apiCreateChannel(testTeam.id, 'private-channel', 'Private channel', 'P').then(({channel}) => {
             // # Go to the newly created channel
-            cy.visit(`/${testTeam.name}/channels/${response.body.name}`);
+            cy.visit(`/${testTeam.name}/channels/${channel.name}`);
 
             // * Check you can go to the channel without problem
             cy.get('#channelHeaderTitle').should('be.visible').should('contain', 'Private channel');
 
             // # Remove the created channel
-            cy.apiDeleteChannel(response.body.id);
+            cy.apiDeleteChannel(channel.id);
         });
     });
 

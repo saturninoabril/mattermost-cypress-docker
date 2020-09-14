@@ -19,6 +19,25 @@ declare namespace Cypress {
     interface Chainable<Subject = any> {
 
         /**
+         * Create a new channel.
+         * See https://api.mattermost.com/#tag/channels/paths/~1channels/post
+         * @param {String} teamId - Unique handler for a team, will be present in the team URL
+         * @param {String} name - Unique handler for a channel, will be present in the team URL
+         * @param {String} displayName - Non-unique UI name for the channel
+         * @param {String} type - 'O' for a public channel, 'P' for a private channel
+         * @param {String} purpose - A short description of the purpose of the channel
+         * @param {String} header - Markdown-formatted text to display in the header of the channel
+         * @param {Boolean} unique - if true (default), it will create with unique/random channel name.
+         * @returns {Channel} `out.channel` as `Channel`
+         *
+         * @example
+         *   cy.apiCreateChannel('team-id', 'test-channel', 'Test Channel').then(({channel}) => {
+         *       // do something with channel
+         *   });
+         */
+        apiCreateChannel(teamId: string, name: string, displayName: string, type?: string, unique?: boolean): Chainable<Channel>;
+
+        /**
          * Updates channel's privacy allowing changing a channel from Public to Private and back.
          * See https://api.mattermost.com/#tag/channels/paths/~1channels~1{channel_id}~1privacy/put
          * @param {string} channelId - The channel ID to be patched
@@ -30,6 +49,5 @@ declare namespace Cypress {
          *   cy.apiPatchChannelPrivacy('channel-id', 'P');
          */
         apiPatchChannelPrivacy(channelId: string, privacy: string): Chainable<Response>;
-
     }
 }
