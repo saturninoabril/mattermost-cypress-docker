@@ -12,6 +12,8 @@
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 
+import {loginAndVisitChannel} from './helper';
+
 describe('Integrations', () => {
     let testUser;
     let testTeam;
@@ -40,7 +42,7 @@ describe('Integrations', () => {
             testChannel = channel;
             cy.apiAddUserToChannel(channel.id, testUser.id);
         });
-    })
+    });
 
     it('MM-T658 /invite - current channel', () => {
         cy.apiCreateUser().then(({user}) => {
@@ -235,10 +237,3 @@ describe('Integrations', () => {
         });
     });
 });
-
-function loginAndVisitChannel(user, channelUrl) {
-    cy.apiLogin(user);
-    cy.visit(channelUrl);
-    cy.get('#postListContent', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible');
-    cy.get('#post_textbox', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible');
-}

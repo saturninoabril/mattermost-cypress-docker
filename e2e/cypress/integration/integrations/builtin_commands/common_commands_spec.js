@@ -12,6 +12,8 @@
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 
+import {loginAndVisitChannel} from './helper';
+
 describe('Integrations', () => {
     let user1;
     let user2;
@@ -144,10 +146,3 @@ describe('Integrations', () => {
         cy.get('#post_textbox').invoke('text').should('be.empty');
     });
 });
-
-function loginAndVisitChannel(user, channelUrl) {
-    cy.apiLogin(user);
-    cy.visit(channelUrl);
-    cy.get('#postListContent', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible');
-    cy.get('#post_textbox', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible');
-}
