@@ -118,8 +118,6 @@ jobs:
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
             export CYPRESS_chromeWebSecurity=true
-            export CYPRESS_dbClient=postgres
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@localhost:5432/mattermost_test?sslmode=disable&connect_timeout=10"
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
             export FAILURE_MESSAGE="At least one test has failed."
