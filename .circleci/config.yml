@@ -57,7 +57,7 @@ jobs:
           MM_PLUGINSETTINGS_ENABLEUPLOADS: true
     working_directory: ~/mattermost-cypress-docker
     environment:
-      MM_DOCKER_IMAGE_TAG: 0133e61
+      MM_DOCKER_IMAGE_TAG: "0133e61"
       TYPE: PR
       PULL_REQUEST: https://github.com/mattermost/mattermost-webapp/pull/6773
       BROWSER: chrome
