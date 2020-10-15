@@ -149,3 +149,4 @@ jobs:
             export TM4J_FOLDER_ID=930281
 
             cd e2e && node save_report.js
+
