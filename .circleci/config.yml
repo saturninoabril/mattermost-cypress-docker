@@ -50,7 +50,7 @@ jobs:
           MM_CLUSTERSETTINGS_READONLYCONFIG: false
           MM_EMAILSETTINGS_SMTPSERVER: localhost
           MM_EMAILSETTINGS_SMTPPORT: 10025
-          MM_ELASTICSEARCHSETTINGS_CONNECTIONURL: http://localhost:9200
+          MM_ELASTICSEARCHSETTINGS_CONNECTIONURL: $CYPRESS_elasticsearchConnectionUrl
           MM_EXPERIMENTALSETTINGS_USENEWSAMLLIBRARY: true
           MM_SQLSETTINGS_DATASOURCE: "postgres://mmuser:mostest@localhost:5432/mattermost_test?sslmode=disable&connect_timeout=10"
           MM_SQLSETTINGS_DRIVERNAME: postgres
@@ -73,7 +73,7 @@ jobs:
       - run:
           name: Wait for Elasticsearch
           command: |
-            until curl --max-time 5 --output - localhost:9200; do echo waiting for Elasticsearch; sleep 5; done;
+            until curl --max-time 5 --output - $CYPRESS_elasticsearchConnectionUrl; do echo waiting for Elasticsearch; sleep 5; done;
       - checkout
       - attach_workspace:
           at: ~/mattermost-cypress-docker
