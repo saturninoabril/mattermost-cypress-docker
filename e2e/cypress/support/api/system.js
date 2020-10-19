@@ -18,8 +18,18 @@ Cypress.Commands.add('apiGetClientLicense', () => {
 });
 
 Cypress.Commands.add('apiRequireLicenseForFeature', (key = '') => {
+    const log = Cypress.log({
+        name: 'EE License',
+        displayName: name,
+        message: [`Checking license for feature: __${key}__`],
+        autoEnd: false,
+    });
+    log.snapshot('before');
+
     return uploadLicenseIfNotExist().then(({license}) => {
-        expect(license.IsLicensed, 'Server has no Enterprise license.').to.equal('true');
+        if (license.IsLicensed !== 'true') {
+            expect(license.IsLicensed, 'Server has no Enterprise license.').to.equal('true');
+        }
 
         let hasLicenseKey = false;
         for (const [k, v] of Object.entries(license)) {
@@ -29,16 +39,32 @@ Cypress.Commands.add('apiRequireLicenseForFeature', (key = '') => {
             }
         }
 
-        expect(hasLicenseKey, `No license for feature: ${key}`).to.equal(true);
+        if (!hasLicenseKey) {
+            expect(hasLicenseKey, `No license for feature: ${key}`).to.equal(true);
+        }
 
+        log.snapshot('after');
+        log.end();
         return cy.wrap({license});
     });
 });
 
 Cypress.Commands.add('apiRequireLicense', () => {
-    return uploadLicenseIfNotExist().then(({license}) => {
-        expect(license.IsLicensed, 'Server has no Enterprise license.').to.equal('true');
+    const log = Cypress.log({
+        name: 'EE License',
+        displayName: name,
+        message: ['Checking license'],
+        autoEnd: false,
+    });
+    log.snapshot('before');
 
+    return uploadLicenseIfNotExist().then(({license}) => {
+        if (license.IsLicensed !== 'true') {
+            expect(license.IsLicensed, 'Server has no Enterprise license.').to.equal('true');
+        }
+
+        log.snapshot('after');
+        log.end();
         return cy.wrap({license});
     });
 });

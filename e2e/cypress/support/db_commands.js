@@ -1,16 +1,20 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+const dbClient = Cypress.env('dbClient');
+const dbConnection = Cypress.env('dbConnection');
 const dbConfig = {
-    client: Cypress.env('dbClient'),
-    connection: Cypress.env('dbConnection'),
+    client: dbClient,
+    connection: dbConnection,
 };
 
 const message = 'Compare "cypress.json" against "config.json" of mattermost-server. It should match database driver and connection string.';
 
 Cypress.Commands.add('apiRequireServerDBToMatch', () => {
     cy.apiGetConfig().then(({config}) => {
-        expect(config.SqlSettings.DriverName, message).to.equal(Cypress.env('dbClient'));
+        if (config.SqlSettings.DriverName !== dbClient) {
+            expect(config.SqlSettings.DriverName, message).to.equal(dbClient);
+        }
     });
 });
 
@@ -72,5 +76,7 @@ Cypress.Commands.add('dbUpdateUserSession', ({sessionId, userId, fieldsToUpdate}
 });
 
 function verifyError(error, errorMessage) {
-    expect(errorMessage, `${errorMessage}\n\n${message}\n\n${JSON.stringify(error)}`).to.be.undefined;
+    if (errorMessage) {
+        expect(errorMessage, `${errorMessage}\n\n${message}\n\n${JSON.stringify(error)}`).to.be.undefined;
+    }
 }

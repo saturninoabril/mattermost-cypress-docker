@@ -103,27 +103,68 @@ Cypress.Commands.add('postBotMessage', ({token, message, props, channelId, rootI
 /**
 * urlHealthCheck is a task wrapped as command that checks whether
 * a URL is healthy and reachable.
+* @param {String} name - name of service to check
 * @param {String} url - URL to check
+* @param {String} helperMessage - a message to display on error to help resolve the issue
 * @param {String} method - a request using a specific method
 * @param {String} httpStatus - expected HTTP status
 */
-Cypress.Commands.add('urlHealthCheck', ({url, method = 'get', httpStatus}) => {
-    cy.task('urlHealthCheck', {url, method}).then(({data, errorCode, status, success}) => {
-        expect(success, `Requires ${url} to be reachable: ${errorCode}`).to.equal(true);
-        expect(status, `Expect ${httpStatus} to match returned ${status} HTTP status`).to.equal(httpStatus);
+Cypress.Commands.add('urlHealthCheck', ({name, url, helperMessage, method, httpStatus}) => {
+    const log = Cypress.log({
+        name,
+        displayName: name,
+        message: [`URL health check at ${url}`],
+        autoEnd: false,
+    });
+    log.snapshot('before');
 
+    cy.task('urlHealthCheck', {url, method}).then(({data, errorCode, status, success}) => {
+        if (!success) {
+            expect(success, `${errorCode}: The test you're running requires "__${name}__" to be reachable at "${url}". \n${helperMessage}\n`).to.equal(true);
+        }
+
+        if (status !== httpStatus) {
+            expect(status, `Expect ${httpStatus} to match returned ${status} HTTP status`).to.equal(httpStatus);
+        }
+
+        log.snapshot('after');
+        log.end();
         cy.wrap({data, status});
     });
 });
 
 Cypress.Commands.add('requireWebhookServer', () => {
     const webhookBaseUrl = Cypress.env().webhookBaseUrl;
-    cy.urlHealthCheck({url: webhookBaseUrl, method: 'get', httpStatus: 200});
+    const helperMessage = `
+__Tips:__
+    1. In local development, you may run "__npm run start:webhook__" at "/e2e" folder.
+    2. If reachable from remote host, you may export it as env variable, like "__CYPRESS_webhookBaseUrl=[url] npm run cypress:open__".
+`;
+
+    cy.urlHealthCheck({
+        name: 'Webhook Server',
+        url: webhookBaseUrl,
+        helperMessage,
+        method: 'get',
+        httpStatus: 200,
+    });
 });
 
 Cypress.Commands.add('requireStorybookServer', () => {
     const storybookUrl = Cypress.env().storybookUrl;
-    cy.urlHealthCheck({url: storybookUrl, method: 'get', httpStatus: 200});
+    const helperMessage = `
+__Tips:__
+    1. In local development, you may run "__npm run storybook__" at root folder.
+    2. If reachable from remote host, you may export it as env variable, like "__CYPRESS_storybookUrl=[url] npm run cypress:open__".
+`;
+
+    cy.urlHealthCheck({
+        name: 'Storybook Server',
+        url: storybookUrl,
+        helperMessage,
+        method: 'get',
+        httpStatus: 200,
+    });
 });
 
 Cypress.Commands.overwrite('log', (subject, message) => cy.task('log', message));
