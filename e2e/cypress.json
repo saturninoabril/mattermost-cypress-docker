@@ -14,7 +14,7 @@
         "dbConnection": "postgres://mmuser:mostest@localhost/mattermost_test?sslmode=disable\u0026connect_timeout=10",
         "enableApplitools": false,
         "enableVisualTest": false,
-        "elasticsearchConnectionUrl": "http://localhost:9200",
+        "elasticsearchConnectionUrl": "http://cypress-e2e-external.dev.spinmint.com:9200",
         "ldapServer": "localhost",
         "ldapPort": 389,
         "runLDAPSync": true,
