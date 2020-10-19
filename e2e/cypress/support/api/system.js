@@ -60,6 +60,9 @@ Cypress.Commands.add('apiDeleteLicense', () => {
 
 const getDefaultConfig = () => {
     const fromCypressEnv = {
+        ElasticsearchSettings: {
+            ConnectionUrl: Cypress.env('elasticsearchConnectionUrl'),
+        },
         LdapSettings: {
             LdapServer: Cypress.env('ldapServer'),
             LdapPort: Cypress.env('ldapPort'),
