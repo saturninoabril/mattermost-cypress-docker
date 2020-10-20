@@ -438,7 +438,7 @@
         "BulkIndexingTimeWindowSeconds": 3600,
         "RequestTimeoutSeconds": 30,
         "SkipTLSVerification": false,
-        "Trace": ""
+        "Trace": "all"
     },
     "DataRetentionSettings": {
         "EnableMessageDeletion": false,
