@@ -19,13 +19,16 @@ module.exports = {
     createEmail,
     enableElasticSearch: () => {
         // Enable elastic search via the API
-        cy.apiUpdateConfig({
+        const esConfig = {
             ElasticsearchSettings: {
                 EnableAutocomplete: true,
                 EnableIndexing: true,
                 EnableSearching: true,
                 Sniff: false,
             },
+        };
+        cy.apiUpdateConfig(esConfig).then(({config}) => {
+            cy.apiElasticsearchTest(config);
         });
 
         // Navigate to the elastic search setting page
