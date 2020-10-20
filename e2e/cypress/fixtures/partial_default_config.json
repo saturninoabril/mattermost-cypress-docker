@@ -418,12 +418,12 @@
         "MaxUsersForStatistics": 2500
     },
     "ElasticsearchSettings": {
-        "ConnectionUrl": "http://localhost:9200",
+        "ConnectionUrl": "http://cypress-e2e-external.dev.spinmint.com:9200",
         "Username": "elastic",
         "Password": "changeme",
-        "EnableIndexing": false,
-        "EnableSearching": false,
-        "EnableAutocomplete": false,
+        "EnableIndexing": true,
+        "EnableSearching": true,
+        "EnableAutocomplete": true,
         "Sniff": false,
         "PostIndexReplicas": 1,
         "PostIndexShards": 1,
