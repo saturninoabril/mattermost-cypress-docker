@@ -120,6 +120,9 @@ function sysadminSetup(user) {
         cy.apiVerifyUserEmailById(user.id);
     }
 
+    // TODO
+    cy.apiRequireLicense();
+
     // # Reset config and invalidate cache
     cy.apiUpdateConfig();
     cy.apiInvalidateCache();
