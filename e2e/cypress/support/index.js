@@ -107,6 +107,11 @@ before(() => {
 
         // * Verify that the server database matches with the DB client and config at "cypress.json"
         cy.apiRequireServerDBToMatch();
+
+        if (Cypress.env('runWithEELicense')) {
+            // * Verify that the server is loaded with license when running tests for EE
+            cy.apiRequireLicense();
+        }
     });
 });
 
@@ -119,9 +124,6 @@ function sysadminSetup(user) {
     if (!user.email_verified) {
         cy.apiVerifyUserEmailById(user.id);
     }
-
-    // TODO
-    cy.apiRequireLicense();
 
     // # Reset config and invalidate cache
     cy.apiUpdateConfig();
