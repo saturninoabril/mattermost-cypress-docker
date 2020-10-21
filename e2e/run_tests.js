@@ -16,6 +16,9 @@
  *   --group=[group]
  *      Selects spec files with matching group. It can be of multiple values separated by comma.
  *      E.g. "--group='@channel,@messaging'" will select files with either @channel or @messaging.
+ *   --exclude-group=[group]
+ *      Exclude spec files with matching group. It can be of multiple values separated by comma.
+ *      E.g. "--exclude-group='@enterprise'" will select files with either @channel or @messaging.
  *   --invert
  *      Selected files are those not matching any of the specified stage or group.
  *
@@ -72,13 +75,14 @@ async function runTests() {
         return;
     }
 
-    const {invert, group, stage} = argv;
+    const {invert, excludeGroup, group, stage} = argv;
 
     let hasFailed = false;
     for (let i = 0; i < finalTestFiles.length; i++) {
         const testFile = finalTestFiles[i];
         const testStage = stage ? `Stage: "${stage}" ` : '';
-        const testGroup = group ? `Group: "${group}" ` : '';
+        const excludeGroupMessage = excludeGroup ? `except "${excludeGroup}" ` : '';
+        const testGroup = group ? `Group: "${group}" ${excludeGroupMessage} ` : '';
 
         // Log which files were being tested
         console.log(chalk.magenta.bold(`${invert ? 'All Except --> ' : ''}${testStage}${stage && group ? '| ' : ''}${testGroup}`));
