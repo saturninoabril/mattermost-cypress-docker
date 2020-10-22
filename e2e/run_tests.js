@@ -38,6 +38,12 @@
  *      - will run all non-production tests
  * 4. "BROWSER='chrome' HEADLESS='false' node run_tests.js --stage='@prod' --group='@channel,@messaging'"
  *      - will run spec files matching stage and group values in Chrome (headed)
+ * 5. "CYPRESS_runWithEELicense=true node run_tests.js --stage='@prod'"
+ *      - will run all production tests
+ *      - typical test run for Enterprise Edition, given license file can be found in `cypress/fixtures` folder
+ * 6. "node run_tests.js --stage='@prod' --exclude-group'@enterprise'"
+ *      - will run all production tests except test group for enterprise
+ *      - typical test run for Team Edition
  */
 
 const os = require('os');
@@ -146,9 +152,9 @@ function printMessage(testFiles, index) {
 
     const testFile = testFiles[index];
     const testStage = stage ? `Stage: "${stage}" ` : '';
-    const withGroup = group || excludeGroupMessage;
+    const withGroup = group || excludeGroup;
     const groupMessage = group ? `"${group}"` : 'All';
-    const excludeGroupMessage = excludeGroup ? `except "${excludeGroup}" ` : '';
+    const excludeGroupMessage = excludeGroup ? `except "${excludeGroup}"` : '';
     const testGroup = withGroup ? `Group: ${groupMessage} ${excludeGroupMessage}` : '';
 
     // Log which files were being tested
