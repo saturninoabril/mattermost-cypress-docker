@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @profile_popover
+// Group: @enterprise @profile_popover
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
 import {createPrivateChannel} from '../enterprise/elasticsearch_autocomplete/helpers';

@@ -81,8 +81,9 @@ async function runTests() {
     for (let i = 0; i < finalTestFiles.length; i++) {
         const testFile = finalTestFiles[i];
         const testStage = stage ? `Stage: "${stage}" ` : '';
+        const groupMessage = group ? `"${group}"` : '';
         const excludeGroupMessage = excludeGroup ? `except "${excludeGroup}" ` : '';
-        const testGroup = group ? `Group: "${group}" ${excludeGroupMessage} ` : '';
+        const testGroup = (group || excludeGroupMessage) ? `Group: ${groupMessage} ${excludeGroupMessage}` : '';
 
         // Log which files were being tested
         console.log(chalk.magenta.bold(`${invert ? 'All Except --> ' : ''}${testStage}${stage && group ? '| ' : ''}${testGroup}`));
