@@ -82,7 +82,7 @@ async function runTests() {
         const testFile = finalTestFiles[i];
         const testStage = stage ? `Stage: "${stage}" ` : '';
         const groupMessage = group ? `"${group}"` : '';
-        const excludeGroupMessage = excludeGroup ? `except "${excludeGroup}" ` : '';
+        const excludeGroupMessage = excludeGroup ? `except "${excludeGroup}" ` : 'All';
         const testGroup = (group || excludeGroupMessage) ? `Group: ${groupMessage} ${excludeGroupMessage}` : '';
 
         // Log which files were being tested
