@@ -85,6 +85,8 @@ async function runTests() {
     for (let i = 0; i < finalTestFiles.length; i++) {
         printMessage(finalTestFiles, i);
 
+        const testFile = testFiles[i];
+
         const result = await cypress.run({
             browser,
             headless,
