@@ -81,12 +81,13 @@ async function runTests() {
     for (let i = 0; i < finalTestFiles.length; i++) {
         const testFile = finalTestFiles[i];
         const testStage = stage ? `Stage: "${stage}" ` : '';
-        const groupMessage = group ? `"${group}"` : '';
-        const excludeGroupMessage = excludeGroup ? `except "${excludeGroup}" ` : 'All';
-        const testGroup = (group || excludeGroupMessage) ? `Group: ${groupMessage} ${excludeGroupMessage}` : '';
+        const withGroup = group || excludeGroupMessage;
+        const groupMessage = group ? `"${group}"` : 'All';
+        const excludeGroupMessage = excludeGroup ? `except "${excludeGroup}" ` : '';
+        const testGroup = withGroup ? `Group: ${groupMessage} ${excludeGroupMessage}` : '';
 
         // Log which files were being tested
-        console.log(chalk.magenta.bold(`${invert ? 'All Except --> ' : ''}${testStage}${stage && group ? '| ' : ''}${testGroup}`));
+        console.log(chalk.magenta.bold(`${invert ? 'All Except --> ' : ''}${testStage}${stage && withGroup ? '| ' : ''}${testGroup}`));
         console.log(chalk.magenta(`(Testing ${i + 1} of ${finalTestFiles.length})  - `, testFile));
 
         const result = await cypress.run({
