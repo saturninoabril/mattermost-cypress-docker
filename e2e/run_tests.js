@@ -75,20 +75,9 @@ async function runTests() {
         return;
     }
 
-    const {invert, excludeGroup, group, stage} = argv;
-
     let hasFailed = false;
     for (let i = 0; i < finalTestFiles.length; i++) {
-        const testFile = finalTestFiles[i];
-        const testStage = stage ? `Stage: "${stage}" ` : '';
-        const withGroup = group || excludeGroupMessage;
-        const groupMessage = group ? `"${group}"` : 'All';
-        const excludeGroupMessage = excludeGroup ? `except "${excludeGroup}" ` : '';
-        const testGroup = withGroup ? `Group: ${groupMessage} ${excludeGroupMessage}` : '';
-
-        // Log which files were being tested
-        console.log(chalk.magenta.bold(`${invert ? 'All Except --> ' : ''}${testStage}${stage && withGroup ? '| ' : ''}${testGroup}`));
-        console.log(chalk.magenta(`(Testing ${i + 1} of ${finalTestFiles.length})  - `, testFile));
+        printMessage(finalTestFiles, i);
 
         const result = await cypress.run({
             browser,
@@ -150,6 +139,21 @@ async function runTests() {
     }
 
     chai.expect(hasFailed, FAILURE_MESSAGE).to.be.false;
+}
+
+function printMessage(testFiles, index) {
+    const {invert, excludeGroup, group, stage} = argv;
+
+    const testFile = testFiles[index];
+    const testStage = stage ? `Stage: "${stage}" ` : '';
+    const withGroup = group || excludeGroupMessage;
+    const groupMessage = group ? `"${group}"` : 'All';
+    const excludeGroupMessage = excludeGroup ? `except "${excludeGroup}" ` : '';
+    const testGroup = withGroup ? `Group: ${groupMessage} ${excludeGroupMessage}` : '';
+
+    // Log which files were being tested
+    console.log(chalk.magenta.bold(`${invert ? 'All Except --> ' : ''}${testStage}${stage && withGroup ? '| ' : ''}${testGroup}`));
+    console.log(chalk.magenta(`(Testing ${index + 1} of ${testFiles.length})  - `, testFile));
 }
 
 runTests();
