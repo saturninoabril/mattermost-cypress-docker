@@ -9,9 +9,9 @@
 
 // Group: @enterprise @profile_popover
 
-import * as TIMEOUTS from '../../fixtures/timeouts';
-import {createPrivateChannel} from '../enterprise/elasticsearch_autocomplete/helpers';
-import {getAdminAccount} from '../../support/env';
+import * as TIMEOUTS from '../../../fixtures/timeouts';
+import {createPrivateChannel} from '../elasticsearch_autocomplete/helpers';
+import {getAdminAccount} from '../../../support/env';
 
 describe('Profile popover', () => {
     let testTeam;
