@@ -146,7 +146,7 @@ jobs:
 
             export TM4J_ENABLE=true
             export JIRA_PROJECT_KEY=MM
-            export TM4J_FOLDER_ID=930281
+            export TM4J_FOLDER_ID=1004131
 
             cd e2e && node save_report.js
 
