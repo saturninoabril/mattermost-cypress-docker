@@ -57,9 +57,9 @@ jobs:
           MM_PLUGINSETTINGS_ENABLEUPLOADS: true
     working_directory: ~/mattermost-cypress-docker
     environment:
-      MM_DOCKER_IMAGE_TAG: master
-      TYPE: NONE
-      PULL_REQUEST:
+      MM_DOCKER_IMAGE_TAG: 60e6f64
+      TYPE: PR
+      PULL_REQUEST: "https://github.com/mattermost/mattermost-webapp/pull/6754"
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
@@ -116,7 +116,7 @@ jobs:
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
-            cd e2e && node run_tests.js --stage='@prod' |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --group='@integrations,@interactive_dialog,@incoming_webhook,@outgoing_webhook' |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - run:
           name: Save and publish reports
           when: always
