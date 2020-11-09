@@ -82,7 +82,12 @@ async function runTests() {
     }
 
     let hasFailed = false;
-    for (let i = 0; i < finalTestFiles.length; i++) {
+    const {part, of} = argv;
+    const quotient = Math.round(finalTestFiles.length / of);
+    const start = (part - 1) * quotient;
+    const end = start + quotient;
+
+    for (let i = start; i < end && i < finalTestFiles.length; i++) {
         printMessage(finalTestFiles, i);
 
         const testFile = finalTestFiles[i];
@@ -162,6 +167,9 @@ function printMessage(testFiles, index) {
     // Log which files were being tested
     console.log(chalk.magenta.bold(`${invert ? 'All Except --> ' : ''}${testStage}${stage && withGroup ? '| ' : ''}${testGroup}`));
     console.log(chalk.magenta(`(Testing ${index + 1} of ${testFiles.length})  - `, testFile));
+    if (process.env.CYPRESS_baseUrl) {
+        console.log(chalk.magenta(`Test server at ${process.env.CYPRESS_baseUrl}`));
+    }
 }
 
 runTests();
