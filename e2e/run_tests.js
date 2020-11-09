@@ -91,12 +91,14 @@ async function runTests() {
 
             for (let j = 1; j < baseUrls.length; j++) {
                 printMessage(finalTestFiles, j, baseUrls[j]);
-                promises.push(run(finalTestFiles[j], baseUrls[j]));
+                const p = run(finalTestFiles[j], baseUrls[j]);
+                promises.push(p);
             }
         } else {
             baseUrls.forEach((baseUrl, index) => {
                 printMessage(finalTestFiles, i + index, baseUrl);
-                promises.push(run(finalTestFiles[i + index], baseUrl));
+                const p = run(finalTestFiles[i + index], baseUrl);
+                promises.push(p);
             });
 
             
@@ -142,7 +144,7 @@ function printMessage(testFiles, index, baseUrl) {
     console.log(chalk.magenta(`(Testing ${index + 1} of ${testFiles.length})  - ${testFile} \nServer: http://${baseUrl}:8065`));
 }
 
-function run(testFile, baseUrl) {
+async function run(testFile, baseUrl) {
     const {
         BRANCH,
         BUILD_ID,
@@ -157,7 +159,7 @@ function run(testFile, baseUrl) {
     const headless = typeof HEADLESS === 'undefined' ? true : HEADLESS === 'true';
     const platform = os.platform();
 
-    return cypress.run({
+    const promise = async () => await cypress.run({
         browser,
         headless,
         spec: testFile,
@@ -197,6 +199,18 @@ function run(testFile, baseUrl) {
                 },
             },
     });
+
+    const timeoutMs = 1000 * 60 * 10;
+    const failureMessage = `Timed out: ${testFile} at ${baseUrl}`;
+
+    let timeoutId; 
+    const timeoutPromise = new Promise((_, reject) => {
+        timeoutId = setTimeout(() => {
+            reject(new Error(failureMessage));
+        }, timeoutMs);
+    });
+
+    return await Promise.race([promise(), timeoutPromise]);
 }
 
 runTests();
