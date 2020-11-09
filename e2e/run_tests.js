@@ -60,15 +60,13 @@ require('dotenv').config();
 
 async function runTests() {
     const {
-        BRANCH,
         BROWSER,
-        BUILD_ID,
         HEADLESS,
-        ENABLE_VISUAL_TEST,
-        APPLITOOLS_API_KEY,
-        APPLITOOLS_BATCH_NAME,
         FAILURE_MESSAGE,
+        BASE_URLS,
     } = process.env;
+
+    console.log('BASE_URLS', BASE_URLS)
 
     const browser = BROWSER || 'chrome';
     const headless = typeof HEADLESS === 'undefined' ? true : HEADLESS === 'true';
@@ -81,67 +79,34 @@ async function runTests() {
         return;
     }
 
+    const baseUrls = BASE_URLS.split(',');
+
     let hasFailed = false;
-    for (let i = 0; i < finalTestFiles.length; i++) {
-        printMessage(finalTestFiles, i);
-
-        const testFile = finalTestFiles[i];
-
-        const result = await cypress.run({
-            browser,
-            headless,
-            spec: testFile,
-            config: {
-                screenshotsFolder: `${MOCHAWESOME_REPORT_DIR}/screenshots`,
-                trashAssetsBeforeRuns: false,
-            },
-            env: {
-                enableVisualTest: ENABLE_VISUAL_TEST,
-                enableApplitools: Boolean(APPLITOOLS_API_KEY),
-                batchName: APPLITOOLS_BATCH_NAME,
-            },
-            reporter: 'cypress-multi-reporters',
-            reporterOptions:
-                {
-                    reporterEnabled: 'mocha-junit-reporters, mochawesome',
-                    mochaJunitReportersReporterOptions: {
-                        mochaFile: 'results/junit/test_results[hash].xml',
-                        toConsole: false,
-                    },
-                    mochawesomeReporterOptions: {
-                        reportDir: MOCHAWESOME_REPORT_DIR,
-                        reportFilename: `json/${testFile}`,
-                        quiet: true,
-                        overwrite: false,
-                        html: false,
-                        json: true,
-                        testMeta: {
-                            platform,
-                            browser,
-                            headless,
-                            branch: BRANCH,
-                            buildId: BUILD_ID,
-                        },
-                    },
-                },
+    for (let i = 0; i < finalTestFiles.length; i += baseUrls.length) {
+        const promises = [];
+        baseUrls.forEach((baseUrl, index) => {
+            printMessage(finalTestFiles, i + index, baseUrl);
+            promises.push(run(finalTestFiles[index], baseUrl));
         });
+
+        const results = await Promise.all(promises);
 
         // Write test environment details once only
         if (i === 0) {
             const environment = {
-                cypressVersion: result.cypressVersion,
-                browserName: result.browserName,
-                browserVersion: result.browserVersion,
+                cypressVersion: results[0].cypressVersion,
+                browserName: results[0].browserName,
+                browserVersion: results[0].browserVersion,
                 headless,
-                osName: result.osName,
-                osVersion: result.osVersion,
+                osName: results[0].osName,
+                osVersion: results[0].osVersion,
                 nodeVersion: process.version,
             };
 
             writeJsonToFile(environment, 'environment.json', RESULTS_DIR);
         }
 
-        if (!hasFailed && result.totalFailed > 0) {
+        if (!hasFailed && results.reduce((acc, item) => (acc += item.totalFailed), 0).totalFailed > 0) {
             hasFailed = true;
         }
     }
@@ -149,7 +114,7 @@ async function runTests() {
     chai.expect(hasFailed, FAILURE_MESSAGE).to.be.false;
 }
 
-function printMessage(testFiles, index) {
+function printMessage(testFiles, index, baseUrl) {
     const {invert, excludeGroup, group, stage} = argv;
 
     const testFile = testFiles[index];
@@ -161,7 +126,64 @@ function printMessage(testFiles, index) {
 
     // Log which files were being tested
     console.log(chalk.magenta.bold(`${invert ? 'All Except --> ' : ''}${testStage}${stage && withGroup ? '| ' : ''}${testGroup}`));
-    console.log(chalk.magenta(`(Testing ${index + 1} of ${testFiles.length})  - `, testFile));
+    console.log(chalk.magenta(`(Testing ${index + 1} of ${testFiles.length})  - ${testFile} \nServer: http://${baseUrl}:8065`));
+}
+
+async function run(testFile, baseUrl) {
+    const {
+        BRANCH,
+        BUILD_ID,
+        ENABLE_VISUAL_TEST,
+        APPLITOOLS_API_KEY,
+        APPLITOOLS_BATCH_NAME,
+        BROWSER,
+        HEADLESS,
+    } = process.env;
+
+    const browser = BROWSER || 'chrome';
+    const headless = typeof HEADLESS === 'undefined' ? true : HEADLESS === 'true';
+    const platform = os.platform();
+
+    return await cypress.run({
+        browser,
+        headless,
+        spec: testFile,
+        config: {
+            baseUrl: `http://${baseUrl}:8065`,
+            screenshotsFolder: `${MOCHAWESOME_REPORT_DIR}/screenshots`,
+            trashAssetsBeforeRuns: false,
+        },
+        env: {
+            dbConnection: `postgres://mmuser:mostest@${baseUrl}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10`,
+            enableVisualTest: ENABLE_VISUAL_TEST,
+            enableApplitools: Boolean(APPLITOOLS_API_KEY),
+            batchName: APPLITOOLS_BATCH_NAME,
+        },
+        reporter: 'cypress-multi-reporters',
+        reporterOptions:
+            {
+                reporterEnabled: 'mocha-junit-reporters, mochawesome',
+                mochaJunitReportersReporterOptions: {
+                    mochaFile: 'results/junit/test_results[hash].xml',
+                    toConsole: false,
+                },
+                mochawesomeReporterOptions: {
+                    reportDir: MOCHAWESOME_REPORT_DIR,
+                    reportFilename: `json/${testFile}`,
+                    quiet: true,
+                    overwrite: false,
+                    html: false,
+                    json: true,
+                    testMeta: {
+                        platform,
+                        browser,
+                        headless,
+                        branch: BRANCH,
+                        buildId: BUILD_ID,
+                    },
+                },
+            },
+    });
 }
 
 runTests();

@@ -14,47 +14,6 @@ jobs:
       - image: circleci/node:14-stretch-browsers-legacy
         environment:
           TEST_DATABASE_URL: postgres://mmuser:mostest@localhost:5432/mattermost_test
-      - image: circleci/postgres:9.6.5-alpine-ram
-        environment:
-          POSTGRES_USER: mmuser
-          POSTGRES_PASSWORD: mostest
-          POSTGRES_DB: mattermost_test
-      - image: jhillyerd/inbucket:release-1.2.0
-      - image: minio/minio:RELEASE.2019-10-11T00-38-09Z
-        command: "server /data"
-        environment:
-          MINIO_ACCESS_KEY: minioaccesskey
-          MINIO_SECRET_KEY: miniosecretkey
-          MINIO_SSE_MASTER_KEY: "my-minio-key:6368616e676520746869732070617373776f726420746f206120736563726574"
-      - image: mattermost/mattermost-elasticsearch-docker:6.5.1
-        environment:
-          http.host: "0.0.0.0"
-          http.port: 9200
-          http.cors.enabled: "true"
-          http.cors.allow-origin: "http://localhost:1358,http://127.0.0.1:1358"
-          http.cors.allow-headers: "X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization"
-          http.cors.allow-credentials: "true"
-          transport.host: "127.0.0.1"
-          ES_JAVA_OPTS: "-Xms512m -Xmx512m"
-      - image: mattermost/mattermost-enterprise-edition:$MM_DOCKER_IMAGE_TAG
-        environment:
-          DB_HOST: localhost
-          DB_PORT_NUMBER: 5432
-          MM_DBNAME: mattermost_test
-          MM_USERNAME: mmuser
-          MM_PASSWORD: mostest
-          CI_INBUCKET_HOST: localhost
-          CI_INBUCKET_PORT: 10080
-          CI_MINIO_HOST: minio
-          IS_CI: true
-          MM_CLUSTERSETTINGS_READONLYCONFIG: false
-          MM_EMAILSETTINGS_SMTPSERVER: localhost
-          MM_EMAILSETTINGS_SMTPPORT: 10025
-          MM_ELASTICSEARCHSETTINGS_CONNECTIONURL: http://localhost:9200
-          MM_EXPERIMENTALSETTINGS_USENEWSAMLLIBRARY: true
-          MM_SQLSETTINGS_DATASOURCE: "postgres://mmuser:mostest@localhost:5432/mattermost_test?sslmode=disable&connect_timeout=10"
-          MM_SQLSETTINGS_DRIVERNAME: postgres
-          MM_PLUGINSETTINGS_ENABLEUPLOADS: true
     working_directory: ~/mattermost-cypress-docker
     environment:
       MM_DOCKER_IMAGE_TAG: master
@@ -66,24 +25,9 @@ jobs:
       FULL_REPORT: false
     steps:
       - setup_remote_docker
-      - run:
-          name: Wait for Inbucket
-          command: |
-            until curl --max-time 5 --output - localhost:10080; do echo waiting for Inbucket; sleep 5; done;
-      - run:
-          name: Wait for Elasticsearch
-          command: |
-            until curl --max-time 5 --output - localhost:9200; do echo waiting for Elasticsearch; sleep 5; done;
       - checkout
       - attach_workspace:
           at: ~/mattermost-cypress-docker
-      - run:
-          name: Setup PostgreSQL client
-          command: |
-            whoami
-            sudo apt-get update
-            sudo apt-get install libxss1
-            sudo apt-get install postgresql-client
       - run:
           name: Setup required files
           command: |
@@ -121,9 +65,6 @@ jobs:
           name: Save and publish reports
           when: always
           command: |
-            export DIAGNOSTIC_USER_ID=`psql -d $TEST_DATABASE_URL -t -c "SELECT id FROM users WHERE username='sysadmin';"`
-            export DIAGNOSTIC_TEAM_ID=`psql -d $TEST_DATABASE_URL -t -c "SELECT id FROM teams WHERE name='ad-1';"`
-
             export BRANCH=$CIRCLE_BRANCH
             export BUILD_ID=$CIRCLE_BUILD_NUM
 
