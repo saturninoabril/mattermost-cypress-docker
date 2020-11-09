@@ -29,6 +29,12 @@ jobs:
       - attach_workspace:
           at: ~/mattermost-cypress-docker
       - run:
+          name: Setup client
+          command: |
+            whoami
+            sudo apt-get update
+            sudo apt-get install libxss1
+      - run:
           name: Setup required files
           command: |
             echo $EE_LICENSE > e2e/cypress/fixtures/mattermost-license.txt
