@@ -13,14 +13,6 @@ workflows:
           context: cypress-circleci-env
       - test-4:
           context: cypress-circleci-env
-      - test-5:
-          context: cypress-circleci-env
-      - test-6:
-          context: cypress-circleci-env
-      - test-7:
-          context: cypress-circleci-env
-      - test-8:
-          context: cypress-circleci-env
 
 commands:
   setup-client:
