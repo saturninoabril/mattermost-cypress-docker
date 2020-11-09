@@ -57,6 +57,7 @@ jobs:
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
             export CYPRESS_runWithEELicense=true
+            export BASE_URLS="qa-e2e-1.dev.spinmint.com,qa-e2e-2.dev.spinmint.com,qa-e2e-3.dev.spinmint.com,qa-e2e-4.dev.spinmint.com,qa-e2e-5.dev.spinmint.com,qa-e2e-6.dev.spinmint.com,qa-e2e-7.dev.spinmint.com,qa-e2e-8.dev.spinmint.com"
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
