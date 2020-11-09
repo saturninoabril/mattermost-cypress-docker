@@ -104,7 +104,7 @@ jobs:
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
             export CYPRESS_baseUrl=$CYPRESS_baseUrl1
-            export CYPRESS_dbConnection="$CYPRESS_dbConnection1"
+            export CYPRESS_dbConnection=$CYPRESS_dbConnection1
 
             export CYPRESS_chromeWebSecurity=true
             export CYPRESS_resetBeforeTest=true
@@ -146,7 +146,7 @@ jobs:
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
             export CYPRESS_baseUrl=$CYPRESS_baseUrl2
-            export CYPRESS_dbConnection="$CYPRESS_dbConnection2"
+            export CYPRESS_dbConnection=$CYPRESS_dbConnection2
 
             export CYPRESS_chromeWebSecurity=true
             export CYPRESS_resetBeforeTest=true
