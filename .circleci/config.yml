@@ -407,5 +407,7 @@ jobs:
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
+            # none
+
             cd e2e && node run_tests.js --stage='@prod' --part=8 --of=8 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
