@@ -26,14 +26,14 @@ jobs:
       - run:
           name: Wait for test servers
           command: |
-            until curl --max-time 5 --output - http://qa-e2e-1.dev.spinmint:8065; do echo waiting for test server 1; sleep 5; done;
-            until curl --max-time 5 --output - http://qa-e2e-2.dev.spinmint:8065; do echo waiting for test server 2; sleep 5; done;
-            until curl --max-time 5 --output - http://qa-e2e-3.dev.spinmint:8065; do echo waiting for test server 3; sleep 5; done;
-            until curl --max-time 5 --output - http://qa-e2e-4.dev.spinmint:8065; do echo waiting for test server 4; sleep 5; done;
-            until curl --max-time 5 --output - http://qa-e2e-5.dev.spinmint:8065; do echo waiting for test server 5; sleep 5; done;
-            until curl --max-time 5 --output - http://qa-e2e-6.dev.spinmint:8065; do echo waiting for test server 6; sleep 5; done;
-            until curl --max-time 5 --output - http://qa-e2e-7.dev.spinmint:8065; do echo waiting for test server 7; sleep 5; done;
-            until curl --max-time 5 --output - http://qa-e2e-8.dev.spinmint:8065; do echo waiting for test server 8; sleep 5; done;
+            until curl --max-time 5 --output - http://qa-e2e-1.dev.spinmint.com:8065; do echo waiting for test server 1; sleep 5; done;
+            until curl --max-time 5 --output - http://qa-e2e-2.dev.spinmint.com:8065; do echo waiting for test server 2; sleep 5; done;
+            until curl --max-time 5 --output - http://qa-e2e-3.dev.spinmint.com:8065; do echo waiting for test server 3; sleep 5; done;
+            until curl --max-time 5 --output - http://qa-e2e-4.dev.spinmint.com:8065; do echo waiting for test server 4; sleep 5; done;
+            until curl --max-time 5 --output - http://qa-e2e-5.dev.spinmint.com:8065; do echo waiting for test server 5; sleep 5; done;
+            until curl --max-time 5 --output - http://qa-e2e-6.dev.spinmint.com:8065; do echo waiting for test server 6; sleep 5; done;
+            until curl --max-time 5 --output - http://qa-e2e-7.dev.spinmint.com:8065; do echo waiting for test server 7; sleep 5; done;
+            until curl --max-time 5 --output - http://qa-e2e-8.dev.spinmint.com:8065; do echo waiting for test server 8; sleep 5; done;
       - checkout
       - attach_workspace:
           at: ~/mattermost-cypress-docker
