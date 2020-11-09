@@ -142,7 +142,7 @@ function printMessage(testFiles, index, baseUrl) {
     console.log(chalk.magenta(`(Testing ${index + 1} of ${testFiles.length})  - ${testFile} \nServer: http://${baseUrl}:8065`));
 }
 
-async function run(testFile, baseUrl) {
+function run(testFile, baseUrl) {
     const {
         BRANCH,
         BUILD_ID,
@@ -157,7 +157,7 @@ async function run(testFile, baseUrl) {
     const headless = typeof HEADLESS === 'undefined' ? true : HEADLESS === 'true';
     const platform = os.platform();
 
-    return await cypress.run({
+    return cypress.run({
         browser,
         headless,
         spec: testFile,
