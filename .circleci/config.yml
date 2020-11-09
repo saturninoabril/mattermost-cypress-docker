@@ -113,7 +113,7 @@ jobs:
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
-            cd e2e && node run_tests.js --stage='@prod' --part=1 --of=8 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --stage='@prod' --part=1 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
 
   test-2:
@@ -155,7 +155,7 @@ jobs:
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
-            cd e2e && node run_tests.js --stage='@prod' --part=2 --of=8 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --stage='@prod' --part=2 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
 
   test-3:
@@ -197,7 +197,7 @@ jobs:
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
-            cd e2e && node run_tests.js --stage='@prod' --part=3 --of=8 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --stage='@prod' --part=3 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
 
   test-4:
@@ -239,175 +239,5 @@ jobs:
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
-            cd e2e && node run_tests.js --stage='@prod' --part=4 --of=8 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
-      - save-report
-
-  test-5:
-    docker:
-      - image: circleci/node:14-stretch-browsers-legacy
-    working_directory: ~/mattermost-cypress-docker
-    environment:
-      MM_DOCKER_IMAGE_TAG: master
-      TYPE: NONE
-      PULL_REQUEST:
-      BROWSER: chrome
-      HEADLESS: true
-      DASHBOARD_ENABLE: false
-      FULL_REPORT: false
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/mattermost-cypress-docker
-      - setup-client
-      - setup-required-files
-      - install-npm
-      - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
-          paths:
-            - ./e2e/node_modules
-      - run:
-          name: Run Cypress Test
-          no_output_timeout: 30m
-          command: |
-            cd e2e && nohup node webhook_serve.js > webhook_serve.log &
-
-            export CYPRESS_baseUrl=$CYPRESS_baseUrl5
-            export CYPRESS_dbConnection=$CYPRESS_dbConnection5
-
-            export CYPRESS_chromeWebSecurity=true
-            export CYPRESS_resetBeforeTest=true
-            export CYPRESS_runLDAPSync=false
-            export CYPRESS_runWithEELicense=true
-            export FAILURE_MESSAGE="At least one test has failed."
-            export RESULTS_OUTPUT="results-output.txt"
-
-            cd e2e && node run_tests.js --stage='@prod' --part=5 --of=8 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
-      - save-report
-
-  test-6:
-    docker:
-      - image: circleci/node:14-stretch-browsers-legacy
-    working_directory: ~/mattermost-cypress-docker
-    environment:
-      MM_DOCKER_IMAGE_TAG: master
-      TYPE: NONE
-      PULL_REQUEST:
-      BROWSER: chrome
-      HEADLESS: true
-      DASHBOARD_ENABLE: false
-      FULL_REPORT: false
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/mattermost-cypress-docker
-      - setup-client
-      - setup-required-files
-      - install-npm
-      - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
-          paths:
-            - ./e2e/node_modules
-      - run:
-          name: Run Cypress Test
-          no_output_timeout: 30m
-          command: |
-            cd e2e && nohup node webhook_serve.js > webhook_serve.log &
-
-            export CYPRESS_baseUrl=$CYPRESS_baseUrl6
-            export CYPRESS_dbConnection=$CYPRESS_dbConnection6
-
-            export CYPRESS_chromeWebSecurity=true
-            export CYPRESS_resetBeforeTest=true
-            export CYPRESS_runLDAPSync=false
-            export CYPRESS_runWithEELicense=true
-            export FAILURE_MESSAGE="At least one test has failed."
-            export RESULTS_OUTPUT="results-output.txt"
-
-            cd e2e && node run_tests.js --stage='@prod' --part=6 --of=8 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
-      - save-report
-
-  test-7:
-    docker:
-      - image: circleci/node:14-stretch-browsers-legacy
-    working_directory: ~/mattermost-cypress-docker
-    environment:
-      MM_DOCKER_IMAGE_TAG: master
-      TYPE: NONE
-      PULL_REQUEST:
-      BROWSER: chrome
-      HEADLESS: true
-      DASHBOARD_ENABLE: false
-      FULL_REPORT: false
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/mattermost-cypress-docker
-      - setup-client
-      - setup-required-files
-      - install-npm
-      - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
-          paths:
-            - ./e2e/node_modules
-      - run:
-          name: Run Cypress Test
-          no_output_timeout: 30m
-          command: |
-            cd e2e && nohup node webhook_serve.js > webhook_serve.log &
-
-            export CYPRESS_baseUrl=$CYPRESS_baseUrl7
-            export CYPRESS_dbConnection=$CYPRESS_dbConnection7
-
-            export CYPRESS_chromeWebSecurity=true
-            export CYPRESS_resetBeforeTest=true
-            export CYPRESS_runLDAPSync=false
-            export CYPRESS_runWithEELicense=true
-            export FAILURE_MESSAGE="At least one test has failed."
-            export RESULTS_OUTPUT="results-output.txt"
-
-            cd e2e && node run_tests.js --stage='@prod' --part=7 --of=8 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
-      - save-report
-
-  test-8:
-    docker:
-      - image: circleci/node:14-stretch-browsers-legacy
-    working_directory: ~/mattermost-cypress-docker
-    environment:
-      MM_DOCKER_IMAGE_TAG: master
-      TYPE: NONE
-      PULL_REQUEST:
-      BROWSER: chrome
-      HEADLESS: true
-      DASHBOARD_ENABLE: false
-      FULL_REPORT: false
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/mattermost-cypress-docker
-      - setup-client
-      - setup-required-files
-      - install-npm
-      - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
-          paths:
-            - ./e2e/node_modules
-      - run:
-          name: Run Cypress Test
-          no_output_timeout: 30m
-          command: |
-            cd e2e && nohup node webhook_serve.js > webhook_serve.log &
-
-            export CYPRESS_baseUrl=$CYPRESS_baseUrl8
-            export CYPRESS_dbConnection=$CYPRESS_dbConnection8
-
-            export CYPRESS_chromeWebSecurity=true
-            export CYPRESS_resetBeforeTest=true
-            export CYPRESS_runLDAPSync=false
-            export CYPRESS_runWithEELicense=true
-            export FAILURE_MESSAGE="At least one test has failed."
-            export RESULTS_OUTPUT="results-output.txt"
-
-            # none
-
-            cd e2e && node run_tests.js --stage='@prod' --part=8 --of=8 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --stage='@prod' --part=4 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
