@@ -12,8 +12,6 @@ jobs:
   build-and-test:
     docker:
       - image: circleci/node:14-stretch-browsers-legacy
-        environment:
-          TEST_DATABASE_URL: postgres://mmuser:mostest@localhost:5432/mattermost_test
     working_directory: ~/mattermost-cypress-docker
     environment:
       MM_DOCKER_IMAGE_TAG: master
@@ -25,6 +23,17 @@ jobs:
       FULL_REPORT: false
     steps:
       - setup_remote_docker
+      - run:
+          name: Wait for test servers
+          command: |
+            until curl --max-time 5 --output - http://qa-e2e-1.dev.spinmint:8065; do echo waiting for test server 1; sleep 5; done;
+            until curl --max-time 5 --output - http://qa-e2e-2.dev.spinmint:8065; do echo waiting for test server 2; sleep 5; done;
+            until curl --max-time 5 --output - http://qa-e2e-3.dev.spinmint:8065; do echo waiting for test server 3; sleep 5; done;
+            until curl --max-time 5 --output - http://qa-e2e-4.dev.spinmint:8065; do echo waiting for test server 4; sleep 5; done;
+            until curl --max-time 5 --output - http://qa-e2e-5.dev.spinmint:8065; do echo waiting for test server 5; sleep 5; done;
+            until curl --max-time 5 --output - http://qa-e2e-6.dev.spinmint:8065; do echo waiting for test server 6; sleep 5; done;
+            until curl --max-time 5 --output - http://qa-e2e-7.dev.spinmint:8065; do echo waiting for test server 7; sleep 5; done;
+            until curl --max-time 5 --output - http://qa-e2e-8.dev.spinmint:8065; do echo waiting for test server 8; sleep 5; done;
       - checkout
       - attach_workspace:
           at: ~/mattermost-cypress-docker
