@@ -85,13 +85,21 @@ async function runTests() {
     for (let i = 0; i < finalTestFiles.length; i += baseUrls.length) {
         const promises = [];
         if (i === 0) {
+            // Reinitialize Cypress of first test before running in parallel
             printMessage(finalTestFiles, i, baseUrls[0]);
-            promises.push(run(finalTestFiles[i], baseUrls[0]));
+            await run(finalTestFiles[i], baseUrls[0]);
+
+            for (let j = 1; j < baseUrls.length; j++) {
+                printMessage(finalTestFiles, j, baseUrls[j]);
+                promises.push(run(finalTestFiles[j], baseUrls[j]));
+            }
         } else {
             baseUrls.forEach((baseUrl, index) => {
                 printMessage(finalTestFiles, i + index, baseUrl);
                 promises.push(run(finalTestFiles[i + index], baseUrl));
             });
+
+            
         }
 
         const results = await Promise.all(promises);
