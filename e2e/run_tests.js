@@ -84,10 +84,15 @@ async function runTests() {
     let hasFailed = false;
     for (let i = 0; i < finalTestFiles.length; i += baseUrls.length) {
         const promises = [];
-        baseUrls.forEach((baseUrl, index) => {
-            printMessage(finalTestFiles, i + index, baseUrl);
-            promises.push(run(finalTestFiles[index], baseUrl));
-        });
+        if (i === 0) {
+            printMessage(finalTestFiles, i, baseUrls[0]);
+            promises.push(run(finalTestFiles[i], baseUrls[0]));
+        } else {
+            baseUrls.forEach((baseUrl, index) => {
+                printMessage(finalTestFiles, i + index, baseUrl);
+                promises.push(run(finalTestFiles[i + index], baseUrl));
+            });
+        }
 
         const results = await Promise.all(promises);
 
