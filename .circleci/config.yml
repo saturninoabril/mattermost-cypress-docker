@@ -95,6 +95,8 @@ jobs:
           command: |
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
+            until curl --max-time 5 --output - $CYPRESS_dbConnection1; do echo waiting for app; sleep 5; done;
+
             export BASE_URL_PREFIX=qa-e2e-1
             export CYPRESS_baseUrl=$CYPRESS_baseUrl1
             export CYPRESS_dbConnection=$CYPRESS_dbConnection1
@@ -137,6 +139,8 @@ jobs:
           no_output_timeout: 30m
           command: |
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
+
+            until curl --max-time 5 --output - $CYPRESS_dbConnection2; do echo waiting for app; sleep 5; done;
 
             export BASE_URL_PREFIX=qa-e2e-2
             export CYPRESS_baseUrl=$CYPRESS_baseUrl2
@@ -181,6 +185,8 @@ jobs:
           command: |
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
+            until curl --max-time 5 --output - $CYPRESS_dbConnection3; do echo waiting for app; sleep 5; done;
+
             export BASE_URL_PREFIX=qa-e2e-3
             export CYPRESS_baseUrl=$CYPRESS_baseUrl3
             export CYPRESS_dbConnection=$CYPRESS_dbConnection3
@@ -223,6 +229,8 @@ jobs:
           no_output_timeout: 30m
           command: |
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
+
+            until curl --max-time 5 --output - $CYPRESS_dbConnection4; do echo waiting for app; sleep 5; done;
 
             export BASE_URL_PREFIX=qa-e2e-4
             export CYPRESS_baseUrl=$CYPRESS_baseUrl4
