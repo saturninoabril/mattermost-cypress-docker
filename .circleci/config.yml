@@ -95,7 +95,7 @@ jobs:
           command: |
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
-            until curl --max-time 5 --output - $CYPRESS_baseUrl1; do echo waiting for app server 1; sleep 5; done;
+            until curl --max-time 5 --output - $CYPRESS_baseUrl1; do echo waiting for app server; sleep 5; done;
 
             export BASE_URL_PREFIX=qa-e2e-1
             export CYPRESS_baseUrl=$CYPRESS_baseUrl1
