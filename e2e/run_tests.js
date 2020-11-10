@@ -85,10 +85,13 @@ async function runTests() {
     const {part, of} = argv;
     const quotient = Math.round(finalTestFiles.length / of);
     const start = (part - 1) * quotient;
-    const end = start + quotient;
+    let end = start + quotient;
+    end = end < finalTestFiles.length ? end : finalTestFiles.length;
 
-    for (let i = start; i < end && i < finalTestFiles.length; i++) {
-        printMessage(finalTestFiles, i);
+    const lastIndex = end < finalTestFiles.length ? quotient : finalTestFiles.length - start;
+
+    for (let i = start; i < end; i++) {
+        printMessage(finalTestFiles, i, (i % quotient) + 1, lastIndex);
 
         const testFile = finalTestFiles[i];
 
@@ -154,10 +157,10 @@ async function runTests() {
     chai.expect(hasFailed, FAILURE_MESSAGE).to.be.false;
 }
 
-function printMessage(testFiles, index) {
+function printMessage(testFiles, overallIndex, currentIndex, lastIndex) {
     const {invert, excludeGroup, group, stage} = argv;
 
-    const testFile = testFiles[index];
+    const testFile = testFiles[overallIndex];
     const testStage = stage ? `Stage: "${stage}" ` : '';
     const withGroup = group || excludeGroup;
     const groupMessage = group ? `"${group}"` : 'All';
@@ -166,9 +169,9 @@ function printMessage(testFiles, index) {
 
     // Log which files were being tested
     console.log(chalk.magenta.bold(`${invert ? 'All Except --> ' : ''}${testStage}${stage && withGroup ? '| ' : ''}${testGroup}`));
-    console.log(chalk.magenta(`(Testing ${index + 1} of ${testFiles.length})  - `, testFile));
-    if (process.env.CYPRESS_baseUrl) {
-        console.log(chalk.magenta(`Test server at ${process.env.CYPRESS_baseUrl}`));
+    console.log(chalk.magenta(`(Testing ${overallIndex + 1} of ${testFiles.length})  - `, testFile));
+    if (process.env.BASE_URL_PREFIX) {
+        console.log(chalk.magenta(`Testing ${currentIndex}/${lastIndex} in "${process.env.BASE_URL_PREFIX}" server`));
     }
 }
 

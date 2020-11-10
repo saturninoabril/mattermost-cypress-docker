@@ -95,6 +95,7 @@ jobs:
           command: |
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
+            export BASE_URL_PREFIX=qa-e2e-1
             export CYPRESS_baseUrl=$CYPRESS_baseUrl1
             export CYPRESS_dbConnection=$CYPRESS_dbConnection1
 
@@ -137,6 +138,7 @@ jobs:
           command: |
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
+            export BASE_URL_PREFIX=qa-e2e-2
             export CYPRESS_baseUrl=$CYPRESS_baseUrl2
             export CYPRESS_dbConnection=$CYPRESS_dbConnection2
 
@@ -179,6 +181,7 @@ jobs:
           command: |
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
+            export BASE_URL_PREFIX=qa-e2e-3
             export CYPRESS_baseUrl=$CYPRESS_baseUrl3
             export CYPRESS_dbConnection=$CYPRESS_dbConnection3
 
@@ -221,6 +224,7 @@ jobs:
           command: |
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
+            export BASE_URL_PREFIX=qa-e2e-4
             export CYPRESS_baseUrl=$CYPRESS_baseUrl4
             export CYPRESS_dbConnection=$CYPRESS_dbConnection4
 
