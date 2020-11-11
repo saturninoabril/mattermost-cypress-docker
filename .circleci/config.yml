@@ -105,6 +105,7 @@ jobs:
             cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
             export CYPRESS_chromeWebSecurity=true
+            export CYPRESS_numberOfTrialUsers=10000
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
             export CYPRESS_runWithEELicense=true
