@@ -9,7 +9,7 @@
 // ***************************************************************
 
 // Group: @enterprise @onboarding
-// Skip:  @electron @firefox @firefox
+// Skip:  @electron @chrome @firefox
 
 import * as TIMEOUTS from '../../../../fixtures/timeouts';
 import {generateRandomUser} from '../../../../support/api/user';
