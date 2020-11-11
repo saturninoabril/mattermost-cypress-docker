@@ -8,6 +8,7 @@
 // ***************************************************************
 
 // Group: @enterprise @onboarding
+// Skip:  @electron @firefox @firefox
 
 const adminSteps = ['complete_profile', 'team_setup', 'invite_members', 'hide'];
 
