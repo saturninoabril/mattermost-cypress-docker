@@ -7,7 +7,6 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: @prod
 // Group: @enterprise @saml
 // Skip:  @headless @electron @firefox // run on Chrome (headed) only
 
