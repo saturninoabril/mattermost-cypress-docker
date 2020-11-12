@@ -96,6 +96,9 @@ jobs:
             export CYPRESS_baseUrl=$CYPRESS_baseUrl1
             export CYPRESS_dbConnection=$CYPRESS_dbConnection1
 
+            export CYPRESS_webhookBaseUrl=http://qa-e2e-master-1.dev.spinmint.com:3000
+            export CYPRESS_smtpUrl=http://qa-e2e-master-1.dev.spinmint.com:10080
+
             export CYPRESS_chromeWebSecurity=true
             export CYPRESS_numberOfTrialUsers=10000
             export CYPRESS_resetBeforeTest=true
@@ -142,6 +145,9 @@ jobs:
             export CYPRESS_baseUrl=$CYPRESS_baseUrl2
             export CYPRESS_dbConnection=$CYPRESS_dbConnection2
 
+            export CYPRESS_webhookBaseUrl=http://qa-e2e-master-2.dev.spinmint.com:3000
+            export CYPRESS_smtpUrl=http://qa-e2e-master-2.dev.spinmint.com:10080
+
             export CYPRESS_chromeWebSecurity=true
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
@@ -187,6 +193,9 @@ jobs:
             export CYPRESS_baseUrl=$CYPRESS_baseUrl3
             export CYPRESS_dbConnection=$CYPRESS_dbConnection3
 
+            export CYPRESS_webhookBaseUrl=http://qa-e2e-master-3.dev.spinmint.com:3000
+            export CYPRESS_smtpUrl=http://qa-e2e-master-3.dev.spinmint.com:10080
+
             export CYPRESS_chromeWebSecurity=true
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
@@ -231,6 +240,9 @@ jobs:
             export BASE_URL_PREFIX=qa-e2e-4
             export CYPRESS_baseUrl=$CYPRESS_baseUrl4
             export CYPRESS_dbConnection=$CYPRESS_dbConnection4
+
+            export CYPRESS_webhookBaseUrl=http://qa-e2e-master-4.dev.spinmint.com:3000
+            export CYPRESS_smtpUrl=http://qa-e2e-master-4.dev.spinmint.com:10080
 
             export CYPRESS_chromeWebSecurity=true
             export CYPRESS_resetBeforeTest=true
