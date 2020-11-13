@@ -27,7 +27,14 @@ server.post('/slack_compatible_message_response', postSlackCompatibleMessageResp
 server.post('/send_message_to_channel', postSendMessageToChannel);
 server.post('/post_outgoing_webhook', postOutgoingWebhook);
 
-server.listen(port, () => console.log(`Webhook test server listening on port ${port}!`)); // eslint-disable-line no-console
+server.listen(port, () => {
+    const baseUrl = process.env.CYPRESS_baseUrl || 'http://localhost:8065';
+    const webhookBaseUrl = process.env.CYPRESS_webhookBaseUrl || 'http://localhost:3000';
+
+    console.log(`Webhook test server listening on port ${port}!`); // eslint-disable-line no-console
+    console.log(`baseUrl: ${baseUrl}!`); // eslint-disable-line no-console
+    console.log(`webhookBaseUrl ${webhookBaseUrl}!`); // eslint-disable-line no-console
+});
 
 function postSlackCompatibleMessageResponse(req, res) {
     const {spoiler, skipSlackParsing} = req.body.context;
