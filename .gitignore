@@ -1,14 +1,5 @@
-
-# Elastic Beanstalk Files
-.elasticbeanstalk/*
-!.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml
-
 # Generated data
 volumes
-
-# MM License
-mm-license.txt
 
 config.json
 
@@ -21,6 +12,7 @@ mattermost-e2e/webhook/e2e
 .env*
 *.crt
 *.key
+*.license
 
 # Local machine specific files
 .DS_Store
