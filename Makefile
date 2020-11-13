@@ -26,10 +26,6 @@ run:
 	docker run --net mattermost-e2e_mm-test --rm appropriate/curl:latest sh -c "until curl --max-time 5 --output - http://app:8000; do echo waiting for mattermost-e2e_app; sleep 5; done;"
 	@echo --- app: confirmed running
 
-	# EE license should be at `mattermost-cypress-docker/mattermost-e2e/app/mm-license.txt` before docker image build
-	cd mattermost-e2e && docker-compose exec app mattermost license upload /mm-license.txt
-	@echo --- app: uploaded EE license
-
 	cd mattermost-e2e && docker-compose exec app mattermost sampledata -w 4 -u 60 --deactivated-users=200
 	@echo --- app: loaded test data
 
