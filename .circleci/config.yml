@@ -9,6 +9,10 @@ workflows:
           context: cypress-circleci-env
       - test-2:
           context: cypress-circleci-env
+      - test-3:
+          context: cypress-circleci-env
+      - test-4:
+          context: cypress-circleci-env
 
 commands:
   setup-client:
@@ -103,7 +107,7 @@ jobs:
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
-            cd e2e && node run_tests.js --stage='@prod' --group='@interactive_dialog,@notification' --part=1 --of=2 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --stage='@prod' --group='@interactive_dialog,@notification' --part=1 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
 
   test-2:
@@ -151,7 +155,7 @@ jobs:
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
-            cd e2e && node run_tests.js --stage='@prod' --group='@interactive_dialog,@notification,@email' --part=2 --of=2 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --stage='@prod' --group='@interactive_dialog,@notification,@email' --part=2 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
 
   test-3:
@@ -199,7 +203,7 @@ jobs:
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
-            cd e2e && node run_tests.js --stage='@prod' --group='@interactive_dialog,@notification' --part=3 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --stage='@prod' --group='@interactive_dialog,@notification,@email' --part=3 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
 
   test-4:
@@ -247,5 +251,5 @@ jobs:
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
-            cd e2e && node run_tests.js --stage='@prod' --group='@interactive_dialog,@notification' --part=4 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --stage='@prod' --group='@interactive_dialog,@notification,@email' --part=4 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
