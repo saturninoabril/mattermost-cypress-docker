@@ -24,14 +24,6 @@ export function getEmailUrl() {
     return `${smtpUrl}/api/v1/mailbox`;
 }
 
-export function getEmailMessageSeparator(baseUrl) {
-    if (baseUrl === 'http://localhost:8065') {
-        return '\r\n';
-    }
-
-    return '\n';
-}
-
 export function getMessageMenusPayload({dataSource, options, prefix = Date.now()} = {}) {
     let data;
     if (dataSource) {
