@@ -5,11 +5,6 @@ ENV SITE_URL=http//localhost:8065
 ENV SITE_ADMIN_USERNAME=sysadmin
 ENV SITE_ADMIN_PASSWORD=Sys@dmin-sample1
 
-RUN export CYPRESS_webhookBaseUrl=$WEBHOOK_URL
-RUN export CYPRESS_baseUrl=$SITE_URL
-RUN export CYPRESS_adminUsername=$SITE_ADMIN_USERNAME
-RUN export CYPRESS_adminPassword=$SITE_ADMIN_PASSWORD
-
 WORKDIR /usr/src
 
 RUN npm install axios express

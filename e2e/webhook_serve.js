@@ -10,13 +10,24 @@ const postMessageAs = require('./cypress/plugins/post_message_as');
 
 const port = 3000;
 
+const {
+    CYPRESS_baseUrl,
+    CYPRESS_webhookBaseUrl,
+    CYPRESS_adminUsername,
+    CYPRESS_adminPassword,
+    SITE_URL,
+    WEBHOOK_URL,
+    SITE_ADMIN_USERNAME,
+    SITE_ADMIN_PASSWORD,
+} = process.env;
+
 const server = express();
 server.use(express.json());
 server.use(express.urlencoded({extended: true}));
 
 process.title = process.argv[2];
 
-server.get('/', (req, res) => res.send('I\'m alive!\n'));
+server.get('/', ping);
 server.post('/message_menus', postMessageMenus);
 server.post('/dialog_request', onDialogRequest);
 server.post('/simple_dialog_request', onSimpleDialogRequest);
@@ -27,9 +38,20 @@ server.post('/slack_compatible_message_response', postSlackCompatibleMessageResp
 server.post('/send_message_to_channel', postSendMessageToChannel);
 server.post('/post_outgoing_webhook', postOutgoingWebhook);
 
+function ping(req, res) {
+    const baseUrl = CYPRESS_baseUrl || SITE_URL || 'http://localhost:8065';
+    const webhookBaseUrl = CYPRESS_webhookBaseUrl || WEBHOOK_URL || 'http://localhost:3000';
+
+    return res.json({
+        message: 'I\'m alive!',
+        baseUrl,
+        webhookBaseUrl,
+    });
+}
+
 server.listen(port, () => {
-    const baseUrl = process.env.CYPRESS_baseUrl || 'http://localhost:8065';
-    const webhookBaseUrl = process.env.CYPRESS_webhookBaseUrl || 'http://localhost:3000';
+    const baseUrl = CYPRESS_baseUrl || SITE_URL || 'http://localhost:8065';
+    const webhookBaseUrl = CYPRESS_webhookBaseUrl || WEBHOOK_URL || 'http://localhost:3000';
 
     console.log(`Webhook test server listening on port ${port}!`); // eslint-disable-line no-console
     console.log(`baseUrl: ${baseUrl}!`); // eslint-disable-line no-console
@@ -60,7 +82,7 @@ function postMessageMenus(req, res) {
 }
 
 async function openDialog(dialog) {
-    const baseUrl = process.env.CYPRESS_baseUrl || 'http://localhost:8065';
+    const baseUrl = process.env.CYPRESS_baseUrl || SITE_URL || 'http://localhost:8065';
     await axios({
         method: 'post',
         url: `${baseUrl}/api/v4/actions/dialogs/open`,
@@ -159,14 +181,14 @@ function postSendMessageToChannel(req, res) {
 }
 
 function getWebhookBaseUrl() {
-    return process.env.CYPRESS_webhookBaseUrl || 'http://localhost:3000';
+    return CYPRESS_webhookBaseUrl || WEBHOOK_URL || 'http://localhost:3000';
 }
 
 // Convenient way to send response in a channel by using sysadmin account
 function sendSysadminResponse(message, channelId) {
-    const username = process.env.CYPRESS_adminUsername || 'sysadmin';
-    const password = process.env.CYPRESS_adminPassword || 'Sys@dmin-sample1';
-    const baseUrl = process.env.CYPRESS_baseUrl || 'http://localhost:8065';
+    const username = CYPRESS_adminUsername || SITE_ADMIN_USERNAME || 'sysadmin';
+    const password = CYPRESS_adminPassword || SITE_ADMIN_PASSWORD || 'Sys@dmin-sample1';
+    const baseUrl = CYPRESS_baseUrl || SITE_URL || 'http://localhost:8065';
     postMessageAs({sender: {username, password}, message, channelId, baseUrl});
 }
 
