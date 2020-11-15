@@ -424,7 +424,7 @@
         "EnableIndexing": false,
         "EnableSearching": false,
         "EnableAutocomplete": false,
-        "Sniff": true,
+        "Sniff": false,
         "PostIndexReplicas": 1,
         "PostIndexShards": 1,
         "ChannelIndexReplicas": 1,
