@@ -327,7 +327,7 @@
         "LoginIdAttribute": "uid",
         "PictureAttribute": "",
         "SyncIntervalMinutes": 10000,
-        "SkipCertificateVerification": false,
+        "SkipCertificateVerification": true,
         "QueryTimeout": 60,
         "MaxPageSize": 500,
         "LoginFieldName": "",
