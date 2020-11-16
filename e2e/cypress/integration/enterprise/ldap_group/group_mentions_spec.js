@@ -235,7 +235,7 @@ describe('System Console', () => {
         cy.visit('/admin_console/user_management/permissions/system_scheme');
 
         // # Click reset to defaults, confirm and save
-        cy.findByTestId('resetPermissionsToDefault').click();
+        cy.findByTestId('resetPermissionsToDefault', {timeout: TIMEOUTS.ONE_MIN}).click();
         cy.get('#confirmModalButton').click();
         saveConfig();
 
@@ -270,7 +270,7 @@ describe('System Console', () => {
         cy.visit('/admin_console/user_management/permissions/system_scheme');
 
         // # Click reset to defaults confirm and save
-        cy.findByTestId('resetPermissionsToDefault').click();
+        cy.findByTestId('resetPermissionsToDefault', {timeout: TIMEOUTS.ONE_MIN}).click();
         cy.get('#confirmModalButton').click();
         saveConfig();
     });
