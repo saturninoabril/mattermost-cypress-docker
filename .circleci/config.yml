@@ -62,7 +62,7 @@ jobs:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost-cypress-docker
     environment:
-      BASE_URL: ec2-3-95-186-84.compute-1.amazonaws.com
+      CI_BASE_URL: ec2-3-95-186-84.compute-1.amazonaws.com
       TYPE: NONE
       PULL_REQUEST:
       BROWSER: chrome
@@ -84,11 +84,12 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            export CYPRESS_baseUrl="http://${BASE_URL}:8065"
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@${BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
+            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export CYPRESS_webhookBaseUrl="http://${BASE_URL}:3000"
-            export CYPRESS_smtpUrl="http://${BASE_URL}:10080"
+            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
+            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
+            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
 
             export CYPRESS_chromeWebSecurity=true
             export CYPRESS_numberOfTrialUsers=10000
@@ -98,7 +99,7 @@ jobs:
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
-            echo "$BASE_URL"
+            echo "$CI_BASE_URL"
             echo "$CYPRESS_baseUrl"
             echo "$CYPRESS_dbConnection"
             echo "$CYPRESS_webhookBaseUrl"
@@ -114,7 +115,7 @@ jobs:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost-cypress-docker
     environment:
-      BASE_URL: ec2-34-227-21-83.compute-1.amazonaws.com
+      CI_BASE_URL: ec2-34-227-21-83.compute-1.amazonaws.com
       TYPE: NONE
       PULL_REQUEST:
       BROWSER: chrome
@@ -136,11 +137,12 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            export CYPRESS_baseUrl="http://${BASE_URL}:8065"
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@${BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
+            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export CYPRESS_webhookBaseUrl="http://${BASE_URL}:3000"
-            export CYPRESS_smtpUrl="http://${BASE_URL}:10080"
+            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
+            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
+            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
 
             export CYPRESS_chromeWebSecurity=true
             export CYPRESS_numberOfTrialUsers=10000
@@ -150,7 +152,7 @@ jobs:
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
-            echo "$BASE_URL"
+            echo "$CI_BASE_URL"
             echo "$CYPRESS_baseUrl"
             echo "$CYPRESS_dbConnection"
             echo "$CYPRESS_webhookBaseUrl"
@@ -190,7 +192,7 @@ jobs:
           command: |
             # cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
-            export BASE_URL=qa-e2e-3
+            export CI_BASE_URL=qa-e2e-3
             export CYPRESS_baseUrl=$CYPRESS_baseUrl3
             export CYPRESS_dbConnection=$CYPRESS_dbConnection3
 
@@ -240,7 +242,7 @@ jobs:
 
             until curl --max-time 5 --output - $CYPRESS_baseUrl4; do echo waiting for app server; sleep 5; done;
 
-            export BASE_URL=qa-e2e-4
+            export CI_BASE_URL=qa-e2e-4
             export CYPRESS_baseUrl=$CYPRESS_baseUrl4
             export CYPRESS_dbConnection=$CYPRESS_dbConnection4
 

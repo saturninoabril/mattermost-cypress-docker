@@ -82,12 +82,18 @@ Cypress.Commands.add('apiDeleteLicense', () => {
 });
 
 const getDefaultConfig = () => {
+    const cypressEnv = Cypress.env();
+    console.log('cypressEnv', cypressEnv)
+
     const fromCypressEnv = {
         LdapSettings: {
-            LdapServer: Cypress.env('ldapServer'),
-            LdapPort: Cypress.env('ldapPort'),
+            LdapServer: cypressEnv.ldapServer,
+            LdapPort: cypressEnv.ldapPort,
         },
-        ServiceSettings: {SiteURL: Cypress.config('baseUrl')},
+        ServiceSettings: {
+            AllowedUntrustedInternalConnections: `localhost,${cypressEnv.ciBaseUrl}`,
+            SiteURL: Cypress.config('baseUrl'),
+        },
     };
 
     return merge(partialDefaultConfig, fromCypressEnv);
