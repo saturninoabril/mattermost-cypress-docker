@@ -102,13 +102,13 @@ jobs:
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
-            until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
+            until curl --max-time 5 --output - "$CYPRESS_baseUrl"; do echo waiting for app server; sleep 5; done;
 
-            echo ${SITE_URL}
-            echo ${CYPRESS_baseUrl}
-            echo ${CYPRESS_dbConnection}
-            echo ${CYPRESS_webhookBaseUrl}
-            echo ${CYPRESS_smtpUrl}
+            echo "$SITE_URL"
+            echo "$CYPRESS_baseUrl"
+            echo "$CYPRESS_dbConnection"
+            echo "$CYPRESS_webhookBaseUrl"
+            echo "$CYPRESS_smtpUrl"
 
             cd e2e && node run_tests.js --group='@elasticsearch,@ldap,@ldap_group' --part=1 --of=2 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
@@ -158,12 +158,12 @@ jobs:
             export RESULTS_OUTPUT="results-output.txt"
 
             echo ${SITE_URL}
-            echo ${CYPRESS_baseUrl}
+            echo "$CYPRESS_baseUrl"
             echo ${CYPRESS_dbConnection}
             echo ${CYPRESS_webhookBaseUrl}
             echo ${CYPRESS_smtpUrl}
 
-            until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
+            until curl --max-time 5 --output - "$CYPRESS_baseUrl"; do echo waiting for app server; sleep 5; done;
 
             cd e2e && node run_tests.js --group='@elasticsearch,@ldap,@ldap_group' --part=2 --of=2 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
