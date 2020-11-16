@@ -87,9 +87,9 @@ describe('System Console', () => {
         navigateToGroup(groupID, boardUser.email);
 
         // # Click the allow reference button
-        cy.findByTestId('allowReferenceSwitch').within((el) => {
-            el.find('button').click();
-        });
+        cy.wait(TIMEOUTS.ONE_SEC);
+        cy.findByTestId('allowReferenceSwitch-button').should('be.visible').click();
+        cy.findByTestId('allowReferenceSwitch-button').should('have.attr', 'aria-pressed', 'true');
 
         // # Give the group a custom name different from its DisplayName attribute
         cy.get('#groupMention').find('input').clear().type(groupName);
@@ -104,9 +104,9 @@ describe('System Console', () => {
         navigateToGroup(groupID, boardUser.email);
 
         // # Click the allow reference button
-        cy.findByTestId('allowReferenceSwitch').within((el) => {
-            el.find('button').click();
-        });
+        cy.wait(TIMEOUTS.ONE_SEC);
+        cy.findByTestId('allowReferenceSwitch-button').should('be.visible').click();
+        cy.findByTestId('allowReferenceSwitch-button').should('have.attr', 'aria-pressed', 'false');
 
         // # Click save button
         saveConfig();
@@ -176,9 +176,11 @@ const navigateToGroup = (id, boardOneUserEmail) => {
     cy.visit(`/admin_console/user_management/groups/${id}`);
 
     // # Scroll users list into view and then make sure it has loaded before scrolling back to the top
-    cy.get('#group_users').scrollIntoView();
-    cy.findByText(boardOneUserEmail).should('be.visible');
-    cy.get('#group_profile').scrollIntoView();
+    cy.get('#group_users').scrollIntoView().should('be.visible').within(() => {
+        cy.findByText(boardOneUserEmail).should('be.visible');
+    });
+    
+    cy.get('#group_profile').scrollIntoView().should('be.visible');
 };
 
 // Goes to the townsquare and attempts to display suggestions for the given group name
