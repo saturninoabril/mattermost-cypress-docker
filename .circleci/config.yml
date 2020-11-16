@@ -87,12 +87,12 @@ jobs:
             # cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
             export BASE_URL_PREFIX=qa-e2e-1
-            export SITE_URL=ec2-100-26-208-124.compute-1.amazonaws.com
-            export CYPRESS_baseUrl=https://$SITE_URL:8065
-            export CYPRESS_dbConnection=postgres://mmuser:mostest@$SITE_URL:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10
+            export SITE_URL="ec2-100-26-208-124.compute-1.amazonaws.com"
+            export CYPRESS_baseUrl="https://$SITE_URL:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@$SITE_URL:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export CYPRESS_webhookBaseUrl=https://$SITE_URL:3000
-            export CYPRESS_smtpUrl=https://$SITE_URL:10080
+            export CYPRESS_webhookBaseUrl="https://$SITE_URL:3000"
+            export CYPRESS_smtpUrl="https://$SITE_URL:10080"
 
             export CYPRESS_chromeWebSecurity=true
             export CYPRESS_numberOfTrialUsers=10000
@@ -103,6 +103,12 @@ jobs:
             export RESULTS_OUTPUT="results-output.txt"
 
             until curl --max-time 5 --output - $CYPRESS_webhookBaseUrl; do echo waiting for app server; sleep 5; done;
+
+            echo $SITE_URL
+            echo $CYPRESS_baseUrl
+            echo $CYPRESS_dbConnection
+            echo $CYPRESS_webhookBaseUrl
+            echo $CYPRESS_smtpUrl
 
             cd e2e && node run_tests.js --group='@elasticsearch,@ldap,@ldap_group' --part=1 --of=2 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
@@ -137,12 +143,12 @@ jobs:
             # cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
             export BASE_URL_PREFIX=qa-e2e-2
-            export SITE_URL=ec2-3-87-200-200.compute-1.amazonaws.com
-            export CYPRESS_baseUrl=https://$SITE_URL:8065
-            export CYPRESS_dbConnection=postgres://mmuser:mostest@$SITE_URL:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10
+            export SITE_URL="ec2-3-87-200-200.compute-1.amazonaws.com"
+            export CYPRESS_baseUrl="https://$SITE_URL:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@$SITE_URL:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export CYPRESS_webhookBaseUrl=https://$SITE_URL:3000
-            export CYPRESS_smtpUrl=https://$SITE_URL:10080
+            export CYPRESS_webhookBaseUrl="https://$SITE_URL:3000"
+            export CYPRESS_smtpUrl="https://$SITE_URL:10080"
 
             export CYPRESS_chromeWebSecurity=true
             export CYPRESS_resetBeforeTest=true
@@ -150,6 +156,12 @@ jobs:
             export CYPRESS_runWithEELicense=true
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
+
+            echo $SITE_URL
+            echo $CYPRESS_baseUrl
+            echo $CYPRESS_dbConnection
+            echo $CYPRESS_webhookBaseUrl
+            echo $CYPRESS_smtpUrl
 
             until curl --max-time 5 --output - $CYPRESS_webhookBaseUrl; do echo waiting for app server; sleep 5; done;
 
