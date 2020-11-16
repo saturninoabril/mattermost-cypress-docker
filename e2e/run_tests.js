@@ -170,8 +170,8 @@ function printMessage(testFiles, overallIndex, currentIndex, lastIndex) {
     // Log which files were being tested
     console.log(chalk.magenta.bold(`${invert ? 'All Except --> ' : ''}${testStage}${stage && withGroup ? '| ' : ''}${testGroup}`));
     console.log(chalk.magenta(`(Testing ${overallIndex + 1} of ${testFiles.length})  - `, testFile));
-    if (process.env.BASE_URL_PREFIX) {
-        console.log(chalk.magenta(`Testing ${currentIndex}/${lastIndex} in "${process.env.BASE_URL_PREFIX}" server`));
+    if (process.env.BASE_URL) {
+        console.log(chalk.magenta(`Testing ${currentIndex}/${lastIndex} in "${process.env.BASE_URL}" server`));
     }
 }
 

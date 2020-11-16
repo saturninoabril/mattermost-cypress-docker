@@ -60,8 +60,7 @@ jobs:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost-cypress-docker
     environment:
-      BASE_URL_PREFIX: ec2-3-95-186-84.compute-1.amazonaws.com
-      MM_DOCKER_IMAGE_TAG: master
+      BASE_URL: ec2-3-95-186-84.compute-1.amazonaws.com
       TYPE: NONE
       PULL_REQUEST:
       BROWSER: chrome
@@ -83,13 +82,11 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            # cd e2e && nohup node webhook_serve.js > webhook_serve.log &
+            export CYPRESS_baseUrl="http://${BASE_URL}:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@${BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export CYPRESS_baseUrl="http://${BASE_URL_PREFIX}:8065"
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@${BASE_URL_PREFIX}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
-
-            export CYPRESS_webhookBaseUrl="http://${BASE_URL_PREFIX}:3000"
-            export CYPRESS_smtpUrl="http://${BASE_URL_PREFIX}:10080"
+            export CYPRESS_webhookBaseUrl="http://${BASE_URL}:3000"
+            export CYPRESS_smtpUrl="http://${BASE_URL}:10080"
 
             export CYPRESS_chromeWebSecurity=true
             export CYPRESS_numberOfTrialUsers=10000
@@ -99,7 +96,7 @@ jobs:
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
-            echo "$BASE_URL_PREFIX"
+            echo "$BASE_URL"
             echo "$CYPRESS_baseUrl"
             echo "$CYPRESS_dbConnection"
             echo "$CYPRESS_webhookBaseUrl"
@@ -107,7 +104,7 @@ jobs:
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --group='@ldap,@ldap_group,@integrations,@outgoing_webhook,@interactive_dialog,@interactive_menu' --part=1 --of=1 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --group='@ldap,@ldap_group,@integrations,@outgoing_webhook,@interactive_dialog,@interactive_menu' --part=1 --of=2 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
 
   test-2:
@@ -115,7 +112,7 @@ jobs:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost-cypress-docker
     environment:
-      MM_DOCKER_IMAGE_TAG: master
+      BASE_URL: ec2-34-227-21-83.compute-1.amazonaws.com
       TYPE: NONE
       PULL_REQUEST:
       BROWSER: chrome
@@ -137,32 +134,29 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            # cd e2e && nohup node webhook_serve.js > webhook_serve.log &
+            export CYPRESS_baseUrl="http://${BASE_URL}:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@${BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export BASE_URL_PREFIX=qa-e2e-2
-            export SITE_URL="ec2-3-87-200-200.compute-1.amazonaws.com"
-            export CYPRESS_baseUrl="https://${SITE_URL}:8065"
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@${SITE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
-
-            export CYPRESS_webhookBaseUrl="https://${SITE_URL}:3000"
-            export CYPRESS_smtpUrl="https://${SITE_URL}:10080"
+            export CYPRESS_webhookBaseUrl="http://${BASE_URL}:3000"
+            export CYPRESS_smtpUrl="http://${BASE_URL}:10080"
 
             export CYPRESS_chromeWebSecurity=true
+            export CYPRESS_numberOfTrialUsers=10000
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
             export CYPRESS_runWithEELicense=true
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
-            echo ${SITE_URL}
+            echo "$BASE_URL"
             echo "$CYPRESS_baseUrl"
-            echo ${CYPRESS_dbConnection}
-            echo ${CYPRESS_webhookBaseUrl}
-            echo ${CYPRESS_smtpUrl}
+            echo "$CYPRESS_dbConnection"
+            echo "$CYPRESS_webhookBaseUrl"
+            echo "$CYPRESS_smtpUrl"
 
-            until curl --max-time 5 --output - "$CYPRESS_baseUrl"; do echo waiting for app server; sleep 5; done;
+            until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --group='@elasticsearch,@ldap,@ldap_group' --part=2 --of=2 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --group='@ldap,@ldap_group,@integrations,@outgoing_webhook,@interactive_dialog,@interactive_menu' --part=1 --of=2 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
 
   test-3:
@@ -194,7 +188,7 @@ jobs:
           command: |
             # cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
-            export BASE_URL_PREFIX=qa-e2e-3
+            export BASE_URL=qa-e2e-3
             export CYPRESS_baseUrl=$CYPRESS_baseUrl3
             export CYPRESS_dbConnection=$CYPRESS_dbConnection3
 
@@ -244,7 +238,7 @@ jobs:
 
             until curl --max-time 5 --output - $CYPRESS_baseUrl4; do echo waiting for app server; sleep 5; done;
 
-            export BASE_URL_PREFIX=qa-e2e-4
+            export BASE_URL=qa-e2e-4
             export CYPRESS_baseUrl=$CYPRESS_baseUrl4
             export CYPRESS_dbConnection=$CYPRESS_dbConnection4
 
