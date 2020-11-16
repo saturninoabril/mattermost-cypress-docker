@@ -139,8 +139,8 @@ context('ldap', () => {
             cy.apiAdminLogin().then(() => {
                 cy.apiUpdateConfig(ldapSetting).then(() => {
                     cy.doLDAPLogin(testSettings).then(() => {
-                        // # Do logout from sign up
-                        cy.doLogoutFromSignUp(testSettings);
+                        // # Check guest had successfully logged in but without channel assigned
+                        cy.checkGuestNoChannels();
                     });
                 });
             });
