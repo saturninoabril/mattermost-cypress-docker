@@ -7,8 +7,6 @@ workflows:
     jobs:
       - test-1:
           context: cypress-circleci-env
-      - test-2:
-          context: cypress-circleci-env
 
 commands:
   setup-client:
@@ -62,6 +60,7 @@ jobs:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost-cypress-docker
     environment:
+      SITE_URL: ec2-100-26-208-124.compute-1.amazonaws.com
       MM_DOCKER_IMAGE_TAG: master
       TYPE: NONE
       PULL_REQUEST:
@@ -86,23 +85,22 @@ jobs:
           command: |
             # cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
-            export BASE_URL_PREFIX=qa-e2e-1
-            export SITE_URL="ec2-100-26-208-124.compute-1.amazonaws.com"
-            export CYPRESS_baseUrl="https://${SITE_URL}:8065"
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@${SITE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
+            BASE_URL_PREFIX=qa-e2e-1
+            CYPRESS_baseUrl="https://${SITE_URL}:8065"
+            CYPRESS_dbConnection="postgres://mmuser:mostest@${SITE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export CYPRESS_webhookBaseUrl="https://${SITE_URL}:3000"
-            export CYPRESS_smtpUrl="https://${SITE_URL}:10080"
+            CYPRESS_webhookBaseUrl="https://${SITE_URL}:3000"
+            CYPRESS_smtpUrl="https://${SITE_URL}:10080"
 
-            export CYPRESS_chromeWebSecurity=true
-            export CYPRESS_numberOfTrialUsers=10000
-            export CYPRESS_resetBeforeTest=true
-            export CYPRESS_runLDAPSync=true
-            export CYPRESS_runWithEELicense=true
-            export FAILURE_MESSAGE="At least one test has failed."
-            export RESULTS_OUTPUT="results-output.txt"
+            CYPRESS_chromeWebSecurity=true
+            CYPRESS_numberOfTrialUsers=10000
+            CYPRESS_resetBeforeTest=true
+            CYPRESS_runLDAPSync=true
+            CYPRESS_runWithEELicense=true
+            FAILURE_MESSAGE="At least one test has failed."
+            RESULTS_OUTPUT="results-output.txt"
 
-            until curl --max-time 5 --output - "$CYPRESS_baseUrl"; do echo waiting for app server; sleep 5; done;
+            until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
             echo "$SITE_URL"
             echo "$CYPRESS_baseUrl"
