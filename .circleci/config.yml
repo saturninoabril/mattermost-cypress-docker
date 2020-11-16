@@ -5,9 +5,13 @@ orbs:
 workflows:
   build:
     jobs:
+      - test-1:
+          context: cypress-circleci-env
       - test-2:
           context: cypress-circleci-env
-      - test-1:
+      - test-3:
+          context: cypress-circleci-env
+      - test-4:
           context: cypress-circleci-env
 
 commands:
@@ -107,7 +111,7 @@ jobs:
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --group='@ldap,@ldap_group,@integrations,@outgoing_webhook,@interactive_dialog,@interactive_menu' --part=1 --of=2 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --stage='@prod' --part=1 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
 
   test-2:
@@ -160,7 +164,7 @@ jobs:
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --group='@ldap,@ldap_group,@integrations,@outgoing_webhook,@interactive_dialog,@interactive_menu' --part=2 --of=2 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --stage='@prod' --part=2 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
 
   test-3:
@@ -168,7 +172,7 @@ jobs:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost-cypress-docker
     environment:
-      MM_DOCKER_IMAGE_TAG: master
+      CI_BASE_URL: ec2-54-208-2-27.compute-1.amazonaws.com
       TYPE: NONE
       PULL_REQUEST:
       BROWSER: chrome
@@ -190,23 +194,28 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            # cd e2e && nohup node webhook_serve.js > webhook_serve.log &
+            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export CI_BASE_URL=qa-e2e-3
-            export CYPRESS_baseUrl=$CYPRESS_baseUrl3
-            export CYPRESS_dbConnection=$CYPRESS_dbConnection3
-
-            export CYPRESS_webhookBaseUrl=http://qa-e2e-master-3.dev.spinmint.com:3000
-            export CYPRESS_smtpUrl=http://qa-e2e-master-3.dev.spinmint.com:10080
+            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
+            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
+            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
 
             export CYPRESS_chromeWebSecurity=true
+            export CYPRESS_numberOfTrialUsers=10000
             export CYPRESS_resetBeforeTest=true
-            export CYPRESS_runLDAPSync=true
+            export CYPRESS_runLDAPSync=false
             export CYPRESS_runWithEELicense=true
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
-            until curl --max-time 5 --output - $CYPRESS_webhookBaseUrl; do echo waiting for app server; sleep 5; done;
+            echo "$CI_BASE_URL"
+            echo "$CYPRESS_baseUrl"
+            echo "$CYPRESS_dbConnection"
+            echo "$CYPRESS_webhookBaseUrl"
+            echo "$CYPRESS_smtpUrl"
+
+            until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
             cd e2e && node run_tests.js --stage='@prod' --part=3 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
@@ -216,7 +225,7 @@ jobs:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost-cypress-docker
     environment:
-      MM_DOCKER_IMAGE_TAG: master
+      CI_BASE_URL: ec2-3-87-68-49.compute-1.amazonaws.com
       TYPE: NONE
       PULL_REQUEST:
       BROWSER: chrome
@@ -238,23 +247,28 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            cd e2e && nohup node webhook_serve.js > webhook_serve.log &
+            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            until curl --max-time 5 --output - $CYPRESS_baseUrl4; do echo waiting for app server; sleep 5; done;
-
-            export CI_BASE_URL=qa-e2e-4
-            export CYPRESS_baseUrl=$CYPRESS_baseUrl4
-            export CYPRESS_dbConnection=$CYPRESS_dbConnection4
-
-            export CYPRESS_webhookBaseUrl=http://qa-e2e-master-4.dev.spinmint.com:3000
-            export CYPRESS_smtpUrl=http://qa-e2e-master-4.dev.spinmint.com:10080
+            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
+            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
+            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
 
             export CYPRESS_chromeWebSecurity=true
+            export CYPRESS_numberOfTrialUsers=10000
             export CYPRESS_resetBeforeTest=true
-            export CYPRESS_runLDAPSync=true
+            export CYPRESS_runLDAPSync=false
             export CYPRESS_runWithEELicense=true
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
+
+            echo "$CI_BASE_URL"
+            echo "$CYPRESS_baseUrl"
+            echo "$CYPRESS_dbConnection"
+            echo "$CYPRESS_webhookBaseUrl"
+            echo "$CYPRESS_smtpUrl"
+
+            until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
             cd e2e && node run_tests.js --stage='@prod' --part=4 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
