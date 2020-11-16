@@ -85,19 +85,19 @@ jobs:
           command: |
             # cd e2e && nohup node webhook_serve.js > webhook_serve.log &
 
-            CYPRESS_baseUrl="http://${BASE_URL_PREFIX}:8065"
-            CYPRESS_dbConnection="postgres://mmuser:mostest@${BASE_URL_PREFIX}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
+            export CYPRESS_baseUrl="http://${BASE_URL_PREFIX}:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@${BASE_URL_PREFIX}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            CYPRESS_webhookBaseUrl="http://${BASE_URL_PREFIX}:3000"
-            CYPRESS_smtpUrl="http://${BASE_URL_PREFIX}:10080"
+            export CYPRESS_webhookBaseUrl="http://${BASE_URL_PREFIX}:3000"
+            export CYPRESS_smtpUrl="http://${BASE_URL_PREFIX}:10080"
 
-            CYPRESS_chromeWebSecurity=true
-            CYPRESS_numberOfTrialUsers=10000
-            CYPRESS_resetBeforeTest=true
-            CYPRESS_runLDAPSync=true
-            CYPRESS_runWithEELicense=true
-            FAILURE_MESSAGE="At least one test has failed."
-            RESULTS_OUTPUT="results-output.txt"
+            export CYPRESS_chromeWebSecurity=true
+            export CYPRESS_numberOfTrialUsers=10000
+            export CYPRESS_resetBeforeTest=true
+            export CYPRESS_runLDAPSync=true
+            export CYPRESS_runWithEELicense=true
+            export FAILURE_MESSAGE="At least one test has failed."
+            export RESULTS_OUTPUT="results-output.txt"
 
             echo "$BASE_URL_PREFIX"
             echo "$CYPRESS_baseUrl"
