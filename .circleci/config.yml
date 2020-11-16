@@ -5,6 +5,8 @@ orbs:
 workflows:
   build:
     jobs:
+      - test-2:
+          context: cypress-circleci-env
       - test-1:
           context: cypress-circleci-env
 
