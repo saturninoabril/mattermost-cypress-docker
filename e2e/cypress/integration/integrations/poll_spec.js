@@ -41,6 +41,9 @@ describe('/poll', () => {
             },
         });
 
+        // # Try to remove the plugin, just in case
+        cy.apiRemovePluginById('com.github.matterpoll.matterpoll');
+
         // # Upload and enable "matterpoll" plugin
         cy.apiUploadPlugin('com.github.matterpoll.matterpoll.tar.gz').then(() => {
             cy.apiEnablePluginById('com.github.matterpoll.matterpoll');
