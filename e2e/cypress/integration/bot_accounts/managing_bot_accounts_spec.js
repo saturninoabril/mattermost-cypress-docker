@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @bot_accounts
+// Group: @bot_accounts @verify
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
 

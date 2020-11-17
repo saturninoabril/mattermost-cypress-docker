@@ -108,9 +108,9 @@ function resetPasswordAndLogin(user, team, config) {
 
     cy.task('getRecentEmail', {username: user.username, mailUrl}).then((response) => {
         // * Verify contents password reset email
-        verifyForgotPasswordEmail(response, user, config, separator);
+        verifyForgotPasswordEmail(response, user, config);
 
-        const bodyText = response.data.body.text.split(separator);
+        const bodyText = response.data.body.text.split('\n').map((d) => d.trim());
         const passwordResetLink = bodyText[7].match(reUrl)[0];
         const token = passwordResetLink.split('token=')[1];
 

@@ -81,7 +81,7 @@ describe('Team Settings', () => {
         cy.task('getRecentEmail', {username, mailUrl}).then((response) => {
             verifyEmailInvite(response, testTeam.name, testTeam.display_name, email);
 
-            const bodyText = response.data.body.text.split('\n');
+            const bodyText = response.data.body.text.split('\n').map((d) => d.trim());
             const permalink = bodyText[6].match(reUrl)[0];
 
             // # Visit permalink (e.g. click on email link)

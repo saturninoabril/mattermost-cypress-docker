@@ -82,7 +82,7 @@ describe('Onboarding', () => {
         cy.task('getRecentEmail', {username, mailUrl}).then((response) => {
             verifyEmailInvite(response, email);
 
-            const bodyText = response.data.body.text.split('\n');
+            const bodyText = response.data.body.text.split('\n').map((d) => d.trim());
             const permalink = bodyText[6].match(reUrl)[0];
 
             // * Check that URL in address bar does not have an `undefined` team name appended

@@ -59,7 +59,7 @@ describe('Email notification', () => {
         cy.task('getRecentEmail', {username: mentionedUser.username, mailUrl}).then((response) => {
             verifyEmailNotification(response, config.TeamSettings.SiteName, testTeam.display_name, 'Town Square', mentionedUser, testUser, text, config.EmailSettings.FeedbackEmail, config.SupportSettings.SupportEmail);
 
-            const bodyText = response.data.body.text.split('\n');
+            const bodyText = response.data.body.text.split('\n').map((d) => d.trim());
 
             const permalink = bodyText[9].match(reUrl)[0];
             const permalinkPostId = permalink.split('/')[6];

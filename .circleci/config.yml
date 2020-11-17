@@ -7,12 +7,6 @@ workflows:
     jobs:
       - test-1:
           context: cypress-circleci-env
-      - test-2:
-          context: cypress-circleci-env
-      - test-3:
-          context: cypress-circleci-env
-      - test-4:
-          context: cypress-circleci-env
 
 commands:
   setup-client:
@@ -66,7 +60,7 @@ jobs:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost-cypress-docker
     environment:
-      CI_BASE_URL: ec2-3-95-186-84.compute-1.amazonaws.com
+      CI_BASE_URL: ec2-3-86-99-240.compute-1.amazonaws.com
       TYPE: NONE
       PULL_REQUEST:
       BROWSER: chrome
@@ -111,7 +105,7 @@ jobs:
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --stage='@prod' --part=1 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --group='@verify' --part=1 --of=1 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - save-report
 
   test-2:

@@ -7,6 +7,8 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
+// Group: @verify
+
 /**
  * Note: This test requires "matterpoll" plugin tar file under fixtures folder.
  * Download from: https://github.com/matterpoll/matterpoll
