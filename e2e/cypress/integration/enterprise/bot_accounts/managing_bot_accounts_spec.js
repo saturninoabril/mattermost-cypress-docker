@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @enterprise @bot_accounts
+// Group: @enterprise @bot_accounts @verify
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 
@@ -18,7 +18,6 @@ describe('Managing bot accounts', () => {
         cy.apiRequireLicenseForFeature('LDAP');
 
         cy.apiAdminLogin();
-        botName = 'bot-' + Date.now();
 
         // # Set ServiceSettings to expected values
         const newSettings = {
@@ -34,7 +33,9 @@ describe('Managing bot accounts', () => {
         cy.apiUpdateConfig(newSettings);
 
         // # Create a test bot
-        cy.apiCreateBot(botName, 'Test Bot', 'test bot');
+        cy.apiCreateBot().then(({bot}) => {
+            botName = bot.username;
+        });
     });
 
     it('MM-T1855 Bot cannot login', () => {

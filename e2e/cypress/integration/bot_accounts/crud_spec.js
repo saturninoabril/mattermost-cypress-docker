@@ -7,14 +7,15 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @bot_accounts
+// Group: @bot_accounts @verify
 
+import * as TIMEOUTS from '../../fixtures/timeouts';
 import {getRandomId} from '../../utils';
 
 describe('Bot accounts - CRUD Testing', () => {
     let newTeam;
-    let botName;
-    let botDescription;
+    let testBot;
+
     before(() => {
         // # Set ServiceSettings to expected values
         const newSettings = {
@@ -37,11 +38,10 @@ describe('Bot accounts - CRUD Testing', () => {
     });
 
     beforeEach(() => {
-        botName = 'bot-' + Date.now();
-        botDescription = 'test-bot-' + Date.now();
-
         // # Create a test bot
-        cy.apiCreateBot(botName, 'Test Bot', botDescription);
+        cy.apiCreateBot().then(({bot}) => {
+            testBot = bot;
+        });
     });
 
     it('MM-T1841 Long description text', () => {
@@ -49,7 +49,7 @@ describe('Bot accounts - CRUD Testing', () => {
         cy.visit(`/${newTeam.name}/integrations/bots`);
 
         // * Check that the previously created bot is listed
-        cy.findByText(`Test Bot (@${botName})`).then((el) => {
+        cy.findByText(testBot.fullDisplayName).then((el) => {
             // # Make sure it's on the screen
             cy.wrap(el[0].parentElement.parentElement).scrollIntoView();
 
@@ -88,7 +88,7 @@ describe('Bot accounts - CRUD Testing', () => {
         cy.visit(`/${newTeam.name}/integrations/bots`);
 
         // * Check that the previously created bot is listed
-        cy.findByText(`Test Bot (@${botName})`).then((el) => {
+        cy.findByText(testBot.fullDisplayName).then((el) => {
             // # Make sure it's on the screen
             cy.wrap(el[0].parentElement.parentElement).scrollIntoView();
 
@@ -126,7 +126,7 @@ describe('Bot accounts - CRUD Testing', () => {
         cy.get('#saveBot').click();
 
         // * verify confirmation page
-        cy.url().
+        cy.url({timeout: TIMEOUTS.ONE_MIN}).
             should('include', `/${newTeam.name}/integrations/confirm`).
             should('match', /token=[a-zA-Z0-9]{26}/);
 
@@ -171,7 +171,7 @@ describe('Bot accounts - CRUD Testing', () => {
         cy.visit(`/${newTeam.name}/integrations/bots`);
 
         // * Check that the previously created bot is listed
-        cy.findByText(`Test Bot (@${botName})`).then((el) => {
+        cy.findByText(testBot.fullDisplayName).then((el) => {
             // # Make sure it's on the screen
             cy.wrap(el[0].parentElement.parentElement).scrollIntoView();
 
@@ -186,14 +186,14 @@ describe('Bot accounts - CRUD Testing', () => {
             cy.get('#clientError').should('be.visible');
 
             // # Add description
-            cy.wrap(el[0].parentElement.parentElement).find('input').click().type(botName + 'description!');
+            cy.wrap(el[0].parentElement.parentElement).find('input').click().type(testBot.username + 'description!');
 
             // # Save and check that no error is visible
             cy.get('[data-testid=saveSetting]').click();
 
             cy.get('#clientError').should('not.be.visible');
 
-            cy.findAllByText(botName + 'description!').should('exist');
+            cy.findAllByText(testBot.username + 'description!').should('exist');
         });
     });
 
@@ -202,7 +202,7 @@ describe('Bot accounts - CRUD Testing', () => {
         cy.visit(`/${newTeam.name}/integrations/bots`);
 
         // * Check that the previously created bot is listed
-        cy.findByText(`Test Bot (@${botName})`).then((el) => {
+        cy.findByText(testBot.fullDisplayName).then((el) => {
             // # Make sure it's on the screen
             cy.wrap(el[0].parentElement.parentElement).scrollIntoView();
 

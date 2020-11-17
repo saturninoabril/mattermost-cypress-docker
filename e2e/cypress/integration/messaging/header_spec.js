@@ -28,7 +28,7 @@ describe('Header', () => {
         });
     });
 
-    it('MM-T88 An elipsis indicates the channel header is too long - public or private channel Quote icon displays at beginning of channel header', () => {
+    it('MM-T88 An ellipsis indicates the channel header is too long - public or private channel Quote icon displays at beginning of channel header', () => {
         // * Verify with short channel header
         updateAndVerifyChannelHeader('>', 'newheader');
 
@@ -106,20 +106,18 @@ describe('Header', () => {
         });
 
         // # Create a bot
-        const botUsername = 'a-bot-to-dm' + Date.now();
-        const description = 'A bot to DM';
-        cy.apiCreateBot(botUsername, 'Bot To DM', description);
+        cy.apiCreateBot().then(({bot}) => {
+            // # Open a DM with the bot
+            cy.get('#addDirectChannel').click().wait(TIMEOUTS.HALF_SEC);
+            cy.focused().type(bot.username, {force: true}).type('{enter}', {force: true}).wait(TIMEOUTS.HALF_SEC);
+            cy.get('#saveItems').click().wait(TIMEOUTS.HALF_SEC);
 
-        // # Open a DM with the bot
-        cy.get('#addDirectChannel').click().wait(TIMEOUTS.HALF_SEC);
-        cy.focused().type(botUsername, {force: true}).type('{enter}', {force: true}).wait(TIMEOUTS.HALF_SEC);
-        cy.get('#saveItems').click().wait(TIMEOUTS.HALF_SEC);
+            // * Verify Channel Header is visible
+            cy.get('#channelHeaderInfo').should('be.visible');
 
-        // * Verify Channel Header is visible
-        cy.get('#channelHeaderInfo').should('be.visible');
-
-        // * Verify header content
-        cy.get('#channelHeaderDescription > .header-description__text').find('p').should('have.text', description);
+            // * Verify header content
+            cy.get('#channelHeaderDescription > .header-description__text').find('p').should('have.text', bot.description);
+        });
     });
 
     it('MM-T1837_2 - DM channel with bot from plugin displays a normal header', () => {

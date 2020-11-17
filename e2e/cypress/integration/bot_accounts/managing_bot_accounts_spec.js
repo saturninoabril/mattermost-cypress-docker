@@ -10,14 +10,14 @@
 // Group: @bot_accounts @verify
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
+import {getRandomId} from '../../utils';
 
 describe('Managing bot accounts', () => {
     let newTeam;
-    let botName;
+    let testBot;
 
     beforeEach(() => {
         cy.apiAdminLogin();
-        botName = 'bot-' + Date.now();
 
         // # Set ServiceSettings to expected values
         const newSettings = {
@@ -33,7 +33,9 @@ describe('Managing bot accounts', () => {
         cy.apiUpdateConfig(newSettings);
 
         // # Create a test bot
-        cy.apiCreateBot(botName, 'Test Bot', 'test bot');
+        cy.apiCreateBot({prefix: 'test-bot'}).then(({bot}) => {
+            testBot = bot;
+        });
 
         // # Create and visit new channel
         cy.apiInitSetup().then(({team}) => {
@@ -66,7 +68,7 @@ describe('Managing bot accounts', () => {
         cy.findByTestId('ServiceSettings.EnableBotAccountCreationfalse', {timeout: TIMEOUTS.ONE_MIN}).click();
 
         // # Save
-        cy.findByTestId('saveSetting').should('be.enabled').click();
+        cy.findByTestId('saveSetting').should('be.enabled').click().wait(TIMEOUTS.HALF_SEC);
 
         // * Validate that creating bot fails
 
@@ -76,11 +78,12 @@ describe('Managing bot accounts', () => {
             method: 'POST',
             failOnStatusCode: false,
             body: {
-                username: 'bot-' + Date.now(),
+                username: `bot-${getRandomId()}`,
                 display_name: 'test bot',
                 description: 'test bot',
             },
         }).then((response) => {
+            console.log('response', response)
             expect(response.status).to.equal(403);
             expect(response.body.message).to.equal('Bot creation has been disabled.');
             return cy.wrap(response);
@@ -131,16 +134,16 @@ describe('Managing bot accounts', () => {
         cy.visit(`/${newTeam.name}/integrations/bots`);
 
         // # Filter bot
-        cy.get('#searchInput', {timeout: TIMEOUTS.ONE_MIN}).type(`${botName}`);
+        cy.get('#searchInput', {timeout: TIMEOUTS.ONE_MIN}).type(testBot.username);
 
         // * Check that the previously created bot is listed
-        cy.findByText(`Test Bot (@${botName})`, {timeout: TIMEOUTS.ONE_MIN}).scrollIntoView().then((el) => {
+        cy.findByText(testBot.fullDisplayName, {timeout: TIMEOUTS.ONE_MIN}).scrollIntoView().then((el) => {
             // # Click the disable button
             cy.wrap(el[0].parentElement.parentElement).find('button:nth-child(3)').should('be.visible').click();
         });
 
         // * Check that the bot is in the 'disabled' section
-        cy.get('.bot-list__disabled').scrollIntoView().findByText(`Test Bot (@${botName})`).should('be.visible');
+        cy.get('.bot-list__disabled').scrollIntoView().findByText(testBot.fullDisplayName).should('be.visible');
     });
 
     it('MM-T1857 Enable Bot', () => {
@@ -148,49 +151,48 @@ describe('Managing bot accounts', () => {
         cy.visit(`/${newTeam.name}/integrations/bots`);
 
         // * Check that the previously created bot is listed
-        cy.findByText(`Test Bot (@${botName})`, {timeout: TIMEOUTS.ONE_MIN}).scrollIntoView().then((el) => {
+        cy.findByText(testBot.fullDisplayName, {timeout: TIMEOUTS.ONE_MIN}).scrollIntoView().then((el) => {
             // # Click the disable button
             cy.wrap(el[0].parentElement.parentElement).find('button:nth-child(3)').should('be.visible').click();
         });
 
         // # Filter bot
-        cy.get('#searchInput', {timeout: TIMEOUTS.ONE_MIN}).type(`${botName}`);
+        cy.get('#searchInput', {timeout: TIMEOUTS.ONE_MIN}).type(testBot.username);
 
         // # Re-enable the bot
-        cy.get('.bot-list__disabled').scrollIntoView().findByText(`Test Bot (@${botName})`, {timeout: TIMEOUTS.ONE_MIN}).scrollIntoView().then((el) => {
+        cy.get('.bot-list__disabled').scrollIntoView().findByText(testBot.fullDisplayName, {timeout: TIMEOUTS.ONE_MIN}).scrollIntoView().then((el) => {
             // # Click the enable button
             cy.wrap(el[0].parentElement.parentElement).find('button:nth-child(1)').should('be.visible').click();
         });
 
         // * Check that the bot is in the 'enabled' section
-        cy.findByText(`Test Bot (@${botName})`).scrollIntoView().should('be.visible');
+        cy.findByText(testBot.fullDisplayName).scrollIntoView().should('be.visible');
         cy.get('.bot-list__disabled').should('not.be.visible');
     });
 
     it('MM-T1858 Search active and disabled Bot accounts', () => {
-        const botName2 = 'hello-bot-' + Date.now();
-        cy.apiCreateBot(botName2, 'Hello Bot', 'hello bot');
+        cy.apiCreateBot({prefix: 'hello-bot'}).then(({bot}) => {
+            // # Visit the integrations
+            cy.visit(`/${newTeam.name}/integrations/bots`);
 
-        // # Visit the integrations
-        cy.visit(`/${newTeam.name}/integrations/bots`);
+            // * Check that the previously created bot is listed
+            cy.findByText(bot.fullDisplayName, {timeout: TIMEOUTS.ONE_MIN}).then((el) => {
+                // # Make sure it's on the screen
+                cy.wrap(el[0].parentElement.parentElement).scrollIntoView();
 
-        // * Check that the previously created bot is listed
-        cy.findByText(`Hello Bot (@${botName2})`, {timeout: TIMEOUTS.ONE_MIN}).then((el) => {
-            // # Make sure it's on the screen
-            cy.wrap(el[0].parentElement.parentElement).scrollIntoView();
+                // # Click the disable button
+                cy.wrap(el[0].parentElement.parentElement).find('button:nth-child(3)').should('be.visible').click();
+            });
 
-            // # Click the disable button
-            cy.wrap(el[0].parentElement.parentElement).find('button:nth-child(3)').should('be.visible').click();
+            // * Validate that disabled section appears
+            cy.get('.bot-list__disabled').scrollIntoView().should('be.visible');
+
+            // # Search for the other bot
+            cy.get('#searchInput').type(testBot.username);
+
+            // * Validate that disabled section disappears
+            cy.get('.bot-list__disabled').should('not.be.visible');
         });
-
-        // * Validate that disabled section appears
-        cy.get('.bot-list__disabled').scrollIntoView().should('be.visible');
-
-        // # Search for the other bot
-        cy.get('#searchInput').type('Test Bot');
-
-        // * Validate that disabled section disappears
-        cy.get('.bot-list__disabled').should('not.be.visible');
     });
 
     it('MM-T1859 Bot is kept active when owner is disabled', () => {
@@ -209,37 +211,36 @@ describe('Managing bot accounts', () => {
             cy.apiLogin(sysadmin);
 
             // # Create a new bot as the new admin
-            const botName3 = 'stay-enabled-bot-' + Date.now();
-            cy.apiCreateBot(botName3, 'Bot That Stays Enabled', 'hello bot');
+            cy.apiCreateBot({prefix: 'stay-enabled-bot'}).then(({bot}) => {
+                // # Login again as main admin
+                cy.apiAdminLogin();
 
-            // # Login again as main admin
-            cy.apiAdminLogin();
+                // # Deactivate the newly created admin
+                cy.apiDeactivateUser(sysadmin.id);
 
-            // # Deactivate the newly created admin
-            cy.apiDeactivateUser(sysadmin.id);
+                // # Get bot list
+                cy.visit(`/${newTeam.name}/integrations/bots`);
 
-            // # Get bot list
-            cy.visit(`/${newTeam.name}/integrations/bots`);
+                // # Search for the other bot
+                cy.get('#searchInput', {timeout: TIMEOUTS.ONE_MIN}).type(bot.display_name);
 
-            // # Search for the other bot
-            cy.get('#searchInput', {timeout: TIMEOUTS.ONE_MIN}).type('Bot That Stays Enabled');
+                // * Validate that the plugin is still active, even though its owner is disabled
+                cy.get('.bot-list__disabled').should('not.be.visible');
+                cy.findByText(bot.fullDisplayName).scrollIntoView().should('be.visible');
 
-            // * Validate that the plugin is still active, even though it's owner is disabled
-            cy.get('.bot-list__disabled').should('not.be.visible');
-            cy.findByText(`Bot That Stays Enabled (@${botName3})`).scrollIntoView().should('be.visible');
+                cy.visit(`/${newTeam.name}/messages/@sysadmin`);
 
-            cy.visit(`/${newTeam.name}/messages/@sysadmin`);
+                // # Get last post message text
+                cy.getLastPostId().then((postId) => {
+                    cy.get(`#postMessageText_${postId}`).as('postMessageText');
+                });
 
-            // # Get last post message text
-            cy.getLastPostId().then((postId) => {
-                cy.get(`#postMessageText_${postId}`).as('postMessageText');
+                // * Verify entire message
+                cy.get('@postMessageText').
+                    should('be.visible').
+                    and('contain.text', `${sysadmin.username} was deactivated. They managed the following bot accounts`).
+                    and('contain.text', bot.username);
             });
-
-            // * Verify entire message
-            cy.get('@postMessageText').
-                should('be.visible').
-                and('contain.text', `${sysadmin.username} was deactivated. They managed the following bot accounts`).
-                and('contain.text', botName3);
         });
     });
 
@@ -250,36 +251,35 @@ describe('Managing bot accounts', () => {
             cy.apiLogin(sysadmin);
 
             // # Create a new bot as the new admin
-            const botName3 = 'stay-enabled-bot-' + Date.now();
-            cy.apiCreateBot(botName3, 'Bot That Stays Enabled', 'hello bot');
+            cy.apiCreateBot({prefix: 'stay-enabled-bot'}).then(({bot}) => {
+                // # Login again as main admin
+                cy.apiAdminLogin();
 
-            // # Login again as main admin
-            cy.apiAdminLogin();
+                // # Deactivate the newly created admin
+                cy.apiDeactivateUser(sysadmin.id);
 
-            // # Deactivate the newly created admin
-            cy.apiDeactivateUser(sysadmin.id);
+                // # Get bot list
+                cy.visit(`/${newTeam.name}/integrations/bots`);
 
-            // # Get bot list
-            cy.visit(`/${newTeam.name}/integrations/bots`);
+                // # Search for the other bot
+                cy.get('#searchInput', {timeout: TIMEOUTS.ONE_MIN}).type(bot.display_name);
 
-            // # Search for the other bot
-            cy.get('#searchInput', {timeout: TIMEOUTS.ONE_MIN}).type('Bot That Stays Enabled');
+                // * Validate that the plugin is disabled since it's owner is deactivate
+                cy.get('.bot-list__disabled').scrollIntoView().findByText(bot.fullDisplayName).scrollIntoView().should('be.visible');
 
-            // * Validate that the plugin is disabled since it's owner is deactivate
-            cy.get('.bot-list__disabled').scrollIntoView().findByText(`Bot That Stays Enabled (@${botName3})`).scrollIntoView().should('be.visible');
+                cy.visit(`/${newTeam.name}/messages/@sysadmin`);
 
-            cy.visit(`/${newTeam.name}/messages/@sysadmin`);
+                // # Get last post message text
+                cy.getLastPostId().then((postId) => {
+                    cy.get(`#postMessageText_${postId}`).as('postMessageText');
+                });
 
-            // # Get last post message text
-            cy.getLastPostId().then((postId) => {
-                cy.get(`#postMessageText_${postId}`).as('postMessageText');
+                // * Verify entire message
+                cy.get('@postMessageText').
+                    should('be.visible').
+                    and('contain.text', `${sysadmin.username} was deactivated. They managed the following bot accounts`).
+                    and('contain.text', bot.username);
             });
-
-            // * Verify entire message
-            cy.get('@postMessageText').
-                should('be.visible').
-                and('contain.text', `${sysadmin.username} was deactivated. They managed the following bot accounts`).
-                and('contain.text', botName3);
         });
     });
 });
