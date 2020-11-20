@@ -7,7 +7,8 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @integrations @verify
+// Stage: @prod
+// Group: @integrations
 
 import {getRandomId} from '../../utils';
 

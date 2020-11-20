@@ -7,7 +7,8 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @system_console @plugin @verify
+// Stage: @prod
+// Group: @system_console @plugin
 
 /**
  * Note : This test requires draw plugin tar file under fixtures folder.

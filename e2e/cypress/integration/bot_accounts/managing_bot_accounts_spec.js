@@ -7,7 +7,8 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @bot_accounts @verify
+// Stage: @prod
+// Group: @bot_accounts
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
 import {getRandomId} from '../../utils';
