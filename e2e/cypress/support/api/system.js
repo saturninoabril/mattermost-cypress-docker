@@ -168,8 +168,16 @@ function uploadLicenseIfNotExist() {
             return cy.wrap({license});
         }
 
-        return cy.apiInstallTrialLicense().then(() => {
-            return cy.apiGetClientLicense();
+        const filename = 'users.txt';
+
+        return cy.task('fileExist', filename).then((exist) => {
+            if (!exist) {
+                return cy.wrap({license});
+            }
+
+            return cy.apiUploadLicense(filename).then(() => {
+                return cy.apiGetClientLicense();
+            });
         });
     });
 }

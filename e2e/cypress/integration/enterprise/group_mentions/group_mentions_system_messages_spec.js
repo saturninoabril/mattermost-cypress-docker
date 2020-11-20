@@ -7,7 +7,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @enterprise @system_console @group_mentions
+// Group: @enterprise @system_console @group_mentions @verify
 
 import ldapUsers from '../../../fixtures/ldap_users.json';
 import * as TIMEOUTS from '../../../fixtures/timeouts';

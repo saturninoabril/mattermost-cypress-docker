@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @enterprise @ldap_group
+// Group: @enterprise @ldap_group @verify
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 
