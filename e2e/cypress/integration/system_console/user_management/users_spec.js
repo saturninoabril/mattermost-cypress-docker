@@ -10,7 +10,6 @@
 // Group: @system_console
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
-import {getAdminAccount} from '../../../support/env';
 
 function apiLogin(username, password) {
     return cy.request({
@@ -76,151 +75,151 @@ describe('System Console > User Management > Users', () => {
     });
 
     it('MM-T933 Users - System admin changes own password - Cancel out of changes', () => {
-        const sysadmin = getAdminAccount();
+        cy.apiCreateCustomAdmin().then(({sysadmin}) => {
+            // # Search for the admin.
+            cy.get('#searchUsers').type(sysadmin.username).wait(TIMEOUTS.HALF_SEC);
 
-        // # Search for the admin.
-        cy.get('#searchUsers').type(sysadmin.username).wait(TIMEOUTS.HALF_SEC);
+            // # Open the actions menu.
+            cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .text-right a').
+                click().wait(TIMEOUTS.HALF_SEC);
 
-        // # Open the actions menu.
-        cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .text-right a').
-            click().wait(TIMEOUTS.HALF_SEC);
+            // # Click the Reset Password menu option.
+            cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .MenuWrapperAnimation-enter-done').
+                find('li').eq(2).click().wait(TIMEOUTS.HALF_SEC);
 
-        // # Click the Reset Password menu option.
-        cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .MenuWrapperAnimation-enter-done').
-            find('li').eq(2).click().wait(TIMEOUTS.HALF_SEC);
+            // # Type current password and a new password.
+            cy.get('input[type=password]').eq(0).type(sysadmin.password);
+            cy.get('input[type=password]').eq(1).type('new' + sysadmin.password);
 
-        // # Type current password and a new password.
-        cy.get('input[type=password]').eq(0).type(sysadmin.password);
-        cy.get('input[type=password]').eq(1).type('new' + sysadmin.password);
+            // # Click the 'Cancel' button.
+            cy.get('button[type=button].btn.btn-link').should('contain', 'Cancel').click().wait(TIMEOUTS.HALF_SEC);
 
-        // # Click the 'Cancel' button.
-        cy.get('button[type=button].btn.btn-link').should('contain', 'Cancel').click().wait(TIMEOUTS.HALF_SEC);
+            // # Log out.
+            cy.apiLogout();
 
-        // # Log out.
-        cy.apiLogout();
-
-        // * Verify that logging in with the old password works.
-        cy.apiAdminLogin();
+            // * Verify that logging in with the old password works.
+            cy.apiLogin(sysadmin);
+        });
     });
 
     it('MM-T934 Users - System admin changes own password - Incorrect old password', () => {
-        const sysadmin = getAdminAccount();
+        cy.apiCreateCustomAdmin().then(({sysadmin}) => {
+            // # Search for the admin.
+            cy.get('#searchUsers').type(sysadmin.username).wait(TIMEOUTS.HALF_SEC);
 
-        // # Search for the admin.
-        cy.get('#searchUsers').type(sysadmin.username).wait(TIMEOUTS.HALF_SEC);
+            // # Open the actions menu.
+            cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .text-right a').
+                click().wait(TIMEOUTS.HALF_SEC);
 
-        // # Open the actions menu.
-        cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .text-right a').
-            click().wait(TIMEOUTS.HALF_SEC);
+            // # Click the Reset Password menu option.
+            cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .MenuWrapperAnimation-enter-done').
+                find('li').eq(2).click().wait(TIMEOUTS.HALF_SEC);
 
-        // # Click the Reset Password menu option.
-        cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .MenuWrapperAnimation-enter-done').
-            find('li').eq(2).click().wait(TIMEOUTS.HALF_SEC);
+            // # Type wrong current password and a new password.
+            cy.get('input[type=password]').eq(0).type('wrong' + sysadmin.password);
+            cy.get('input[type=password]').eq(1).type('new' + sysadmin.password);
 
-        // # Type wrong current password and a new password.
-        cy.get('input[type=password]').eq(0).type('wrong' + sysadmin.password);
-        cy.get('input[type=password]').eq(1).type('new' + sysadmin.password);
+            // # Click the 'Reset' button.
+            cy.get('button[type=submit] span').should('contain', 'Reset').click().wait(TIMEOUTS.HALF_SEC);
 
-        // # Click the 'Reset' button.
-        cy.get('button[type=submit] span').should('contain', 'Reset').click().wait(TIMEOUTS.HALF_SEC);
-
-        // * Verify the appropriate error is returned.
-        cy.get('form.form-horizontal').find('.has-error p.error').should('be.visible').
-            and('contain', 'The "Current Password" you entered is incorrect. Please check that Caps Lock is off and try again.');
+            // * Verify the appropriate error is returned.
+            cy.get('form.form-horizontal').find('.has-error p.error').should('be.visible').
+                and('contain', 'The "Current Password" you entered is incorrect. Please check that Caps Lock is off and try again.');
+        });
     });
 
     it('MM-T935 Users - System admin changes own password - Invalid new password', () => {
-        const sysadmin = getAdminAccount();
+        cy.apiCreateCustomAdmin().then(({sysadmin}) => {
+            // # Search for the admin.
+            cy.get('#searchUsers').type(sysadmin.username).wait(TIMEOUTS.HALF_SEC);
 
-        // # Search for the admin.
-        cy.get('#searchUsers').type(sysadmin.username).wait(TIMEOUTS.HALF_SEC);
+            // # Open the actions menu.
+            cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .text-right a').
+                click().wait(TIMEOUTS.HALF_SEC);
 
-        // # Open the actions menu.
-        cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .text-right a').
-            click().wait(TIMEOUTS.HALF_SEC);
+            // # Click the Reset Password menu option.
+            cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .MenuWrapperAnimation-enter-done').
+                find('li').eq(2).click().wait(TIMEOUTS.HALF_SEC);
 
-        // # Click the Reset Password menu option.
-        cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .MenuWrapperAnimation-enter-done').
-            find('li').eq(2).click().wait(TIMEOUTS.HALF_SEC);
+            // # Type current password and a new too short password.
+            cy.get('input[type=password]').eq(0).type(sysadmin.password);
+            cy.get('input[type=password]').eq(1).type('new');
 
-        // # Type current password and a new too short password.
-        cy.get('input[type=password]').eq(0).type(sysadmin.password);
-        cy.get('input[type=password]').eq(1).type('new');
+            // # Click the 'Reset' button.
+            cy.get('button[type=submit] span').should('contain', 'Reset').click().wait(TIMEOUTS.HALF_SEC);
 
-        // # Click the 'Reset' button.
-        cy.get('button[type=submit] span').should('contain', 'Reset').click().wait(TIMEOUTS.HALF_SEC);
-
-        // * Verify the appropriate error is returned.
-        cy.get('form.form-horizontal').find('.has-error p.error').should('be.visible').
-            and('contain', 'Your password must contain between 5 and 64 characters.');
+            // * Verify the appropriate error is returned.
+            cy.get('form.form-horizontal').find('.has-error p.error').should('be.visible').
+                and('contain', 'Your password must contain between 5 and 64 characters.');
+        });
     });
 
     it('MM-T936 Users - System admin changes own password - Blank fields', () => {
-        const sysadmin = getAdminAccount();
+        cy.apiCreateCustomAdmin().then(({sysadmin}) => {
+            // # Search for the admin.
+            cy.get('#searchUsers').type(sysadmin.username).wait(TIMEOUTS.HALF_SEC);
 
-        // # Search for the admin.
-        cy.get('#searchUsers').type(sysadmin.username).wait(TIMEOUTS.HALF_SEC);
+            // # Open the actions menu.
+            cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .text-right a').
+                click().wait(TIMEOUTS.HALF_SEC);
 
-        // # Open the actions menu.
-        cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .text-right a').
-            click().wait(TIMEOUTS.HALF_SEC);
+            // # Click the Reset Password menu option.
+            cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .MenuWrapperAnimation-enter-done').
+                find('li').eq(2).click().wait(TIMEOUTS.HALF_SEC);
 
-        // # Click the Reset Password menu option.
-        cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .MenuWrapperAnimation-enter-done').
-            find('li').eq(2).click().wait(TIMEOUTS.HALF_SEC);
+            // # Click the 'Reset' button.
+            cy.get('button[type=submit] span').should('contain', 'Reset').click().wait(TIMEOUTS.HALF_SEC);
 
-        // # Click the 'Reset' button.
-        cy.get('button[type=submit] span').should('contain', 'Reset').click().wait(TIMEOUTS.HALF_SEC);
+            // * Verify the appropriate error is returned.
+            cy.get('form.form-horizontal').find('.has-error p.error').should('be.visible').
+                and('contain', 'Please enter your current password.');
 
-        // * Verify the appropriate error is returned.
-        cy.get('form.form-horizontal').find('.has-error p.error').should('be.visible').
-            and('contain', 'Please enter your current password.');
+            // # Type current password, leave new password blank.
+            cy.get('input[type=password]').eq(0).type(sysadmin.password);
 
-        // # Type current password, leave new password blank.
-        cy.get('input[type=password]').eq(0).type(sysadmin.password);
+            // # Click the 'Reset' button.
+            cy.get('button[type=submit] span').should('contain', 'Reset').click().wait(TIMEOUTS.HALF_SEC);
 
-        // # Click the 'Reset' button.
-        cy.get('button[type=submit] span').should('contain', 'Reset').click().wait(TIMEOUTS.HALF_SEC);
-
-        // * Verify the appropriate error is returned.
-        cy.get('form.form-horizontal').find('.has-error p.error').should('be.visible').
-            and('contain', 'Your password must contain between 5 and 64 characters.');
+            // * Verify the appropriate error is returned.
+            cy.get('form.form-horizontal').find('.has-error p.error').should('be.visible').
+                and('contain', 'Your password must contain between 5 and 64 characters.');
+        });
     });
 
     it('MM-T937 Users - System admin changes own password - Successfully changed', () => {
-        const sysadmin = getAdminAccount();
+        cy.apiCreateCustomAdmin().then(({sysadmin}) => {
+            // # Search for the admin.
+            cy.get('#searchUsers').type(sysadmin.username).wait(TIMEOUTS.HALF_SEC);
 
-        // # Search for the admin.
-        cy.get('#searchUsers').type(sysadmin.username).wait(TIMEOUTS.HALF_SEC);
+            // # Open the actions menu.
+            cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .text-right a').
+                click().wait(TIMEOUTS.HALF_SEC);
 
-        // # Open the actions menu.
-        cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .text-right a').
-            click().wait(TIMEOUTS.HALF_SEC);
+            // # Click the Reset Password menu option.
+            cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .MenuWrapperAnimation-enter-done').
+                find('li').eq(2).click().wait(TIMEOUTS.HALF_SEC);
 
-        // # Click the Reset Password menu option.
-        cy.get('[data-testid="userListRow"] .more-modal__right .more-modal__actions .MenuWrapper .MenuWrapperAnimation-enter-done').
-            find('li').eq(2).click().wait(TIMEOUTS.HALF_SEC);
+            // # Type current and new passwords..
+            cy.get('input[type=password]').eq(0).type(sysadmin.password);
+            cy.get('input[type=password]').eq(1).type('new' + sysadmin.password);
 
-        // # Type current and new passwords..
-        cy.get('input[type=password]').eq(0).type(sysadmin.password);
-        cy.get('input[type=password]').eq(1).type('new' + sysadmin.password);
+            // # Click the 'Reset' button.
+            cy.get('button[type=submit] span').should('contain', 'Reset').click().wait(TIMEOUTS.HALF_SEC);
 
-        // # Click the 'Reset' button.
-        cy.get('button[type=submit] span').should('contain', 'Reset').click().wait(TIMEOUTS.HALF_SEC);
+            // # Log out.
+            cy.apiLogout();
 
-        // # Log out.
-        cy.apiLogout();
+            // * Verify that logging in with old password returns an error.
+            apiLogin(sysadmin.username, sysadmin.password).then((response) => {
+                expect(response.status).to.equal(401);
 
-        // * Verify that logging in with old password returns an error.
-        apiLogin(sysadmin.username, sysadmin.password).then((response) => {
-            expect(response.status).to.equal(401);
+                // * Verify that logging in with new password works.
+                sysadmin.password = 'new' + sysadmin.password;
+                cy.apiLogin(sysadmin);
 
-            // * Verify that logging in with new password works.
-            sysadmin.password = 'new' + sysadmin.password;
-            cy.apiLogin(sysadmin);
-
-            // # Reset admin's password to the original.
-            cy.apiResetPassword('me', sysadmin.password, sysadmin.password.substr(3));
+                // # Reset admin's password to the original.
+                cy.apiResetPassword('me', sysadmin.password, sysadmin.password.substr(3));
+            });
         });
     });
 });
