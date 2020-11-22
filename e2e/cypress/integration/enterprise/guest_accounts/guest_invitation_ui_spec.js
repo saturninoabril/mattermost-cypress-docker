@@ -227,48 +227,48 @@ describe('Guest Account - Guest User Invitation Flow', () => {
         cy.findByTestId('inviteGuestLink').should('be.visible');
     });
 
-    it('MM-18042 Verify Add New/Existing Guest Users', () => {
-        // # Search and add an existing member by username who is part of the team
-        invitePeople(newUser.username, 1, newUser.username);
+    // it('MM-18042 Verify Add New/Existing Guest Users', () => {
+    //     // # Search and add an existing member by username who is part of the team
+    //     invitePeople(newUser.username, 1, newUser.username);
 
-        // * Verify the content and message in next screen
-        verifyInvitationError(newUser.username, testTeam, 'This person is already a member.');
+    //     // * Verify the content and message in next screen
+    //     verifyInvitationError(newUser.username, testTeam, 'This person is already a member.');
 
-        // # Search and add an existing member by email who is not part of the team
-        invitePeople(regularUser.email, 1, regularUser.username);
+    //     // # Search and add an existing member by email who is not part of the team
+    //     invitePeople(regularUser.email, 1, regularUser.username);
 
-        // * Verify the content and message in next screen
-        verifyInvitationError(regularUser.username, testTeam, 'This person is already a member.');
+    //     // * Verify the content and message in next screen
+    //     verifyInvitationError(regularUser.username, testTeam, 'This person is already a member.');
 
-        // # Demote the user from member to guest
-        cy.apiDemoteUserToGuest(newUser.id);
+    //     // # Demote the user from member to guest
+    //     cy.apiDemoteUserToGuest(newUser.id);
 
-        // # Search and add an existing guest by first name, who is part of the team but not channel
-        invitePeople(newUser.first_name, 1, newUser.username, 'Off-Topic');
+    //     // # Search and add an existing guest by first name, who is part of the team but not channel
+    //     invitePeople(newUser.first_name, 1, newUser.username, 'Off-Topic');
 
-        // * Verify the content and message in next screen
-        verifyInvitationSuccess(newUser.username, testTeam, 'This guest has been added to the team and channel.');
+    //     // * Verify the content and message in next screen
+    //     verifyInvitationSuccess(newUser.username, testTeam, 'This guest has been added to the team and channel.');
 
-        // # Search and add an existing guest by last name, who is part of the team and channel
-        invitePeople(newUser.last_name, 1, newUser.username);
+    //     // # Search and add an existing guest by last name, who is part of the team and channel
+    //     invitePeople(newUser.last_name, 1, newUser.username);
 
-        // * Verify the content and message in next screen
-        verifyInvitationError(newUser.username, testTeam, 'This person is already a member of all the channels.', true);
+    //     // * Verify the content and message in next screen
+    //     verifyInvitationError(newUser.username, testTeam, 'This person is already a member of all the channels.', true);
 
-        // # Search and add an existing guest by email, who is not part of the team
-        cy.apiCreateGuestUser().then(({guest}) => {
-            invitePeople(guest.email, 1, guest.username);
+    //     // # Search and add an existing guest by email, who is not part of the team
+    //     cy.apiCreateGuestUser().then(({guest}) => {
+    //         invitePeople(guest.email, 1, guest.username);
 
-            verifyInvitationSuccess(guest.username, testTeam, 'This guest has been added to the team and channel.', true);
-        });
+    //         verifyInvitationSuccess(guest.username, testTeam, 'This guest has been added to the team and channel.', true);
+    //     });
 
-        // # Search and add a new guest by email, who is not part of the team
-        const email = `temp-${getRandomId()}@mattermost.com`;
-        invitePeople(email, 1, email);
+    //     // # Search and add a new guest by email, who is not part of the team
+    //     const email = `temp-${getRandomId()}@mattermost.com`;
+    //     invitePeople(email, 1, email);
 
-        // * Verify the content and message in next screen
-        verifyInvitationSuccess(email, testTeam, 'An invitation email has been sent.');
-    });
+    //     // * Verify the content and message in next screen
+    //     verifyInvitationSuccess(email, testTeam, 'An invitation email has been sent.');
+    // });
 
     it('MM-18050 Verify when different feature settings are disabled', () => {
         // # Disable Guest Accounts
@@ -308,44 +308,44 @@ describe('Guest Account - Guest User Invitation Flow', () => {
         cy.get('#inviteGuestButton').should('be.disabled');
     });
 
-    it('MM-18047 Verify Guest User whitelisted domains', () => {
-        // # Configure a whitelisted domain
-        changeGuestFeatureSettings(true, true, 'example.com');
+    // it('MM-18047 Verify Guest User whitelisted domains', () => {
+    //     // # Configure a whitelisted domain
+    //     changeGuestFeatureSettings(true, true, 'example.com');
 
-        // # Visit to newly created team
-        cy.reload();
-        cy.visit(`/${testTeam.name}/channels/town-square`);
+    //     // # Visit to newly created team
+    //     cy.reload();
+    //     cy.visit(`/${testTeam.name}/channels/town-square`);
 
-        // # Invite a Guest by email
-        const email = `temp-${getRandomId()}@mattermost.com`;
-        invitePeople(email, 1, email);
+    //     // # Invite a Guest by email
+    //     const email = `temp-${getRandomId()}@mattermost.com`;
+    //     invitePeople(email, 1, email);
 
-        // * Verify the content and message in next screen
-        const expectedError = `The following email addresses do not belong to an accepted domain: ${email}. Please contact your System Administrator for details.`;
-        verifyInvitationError(email, testTeam, expectedError);
+    //     // * Verify the content and message in next screen
+    //     const expectedError = `The following email addresses do not belong to an accepted domain: ${email}. Please contact your System Administrator for details.`;
+    //     verifyInvitationError(email, testTeam, expectedError);
 
-        // # From System Console try to update email of guest user
-        cy.apiCreateGuestUser().then(({guest}) => {
-            // # Navigate to System Console Users listing page
-            cy.visit('/admin_console/user_management/users');
+    //     // # From System Console try to update email of guest user
+    //     cy.apiCreateGuestUser().then(({guest}) => {
+    //         // # Navigate to System Console Users listing page
+    //         cy.visit('/admin_console/user_management/users');
 
-            // # Search for User by username and select the option to update email
-            cy.get('#searchUsers').should('be.visible').type(guest.username);
+    //         // # Search for User by username and select the option to update email
+    //         cy.get('#searchUsers').should('be.visible').type(guest.username);
 
-            // # Click on the option to update email
-            cy.wait(TIMEOUTS.HALF_SEC);
-            cy.findByTestId('userListRow').find('.MenuWrapper a').should('be.visible').click();
-            cy.findByText('Update Email').should('be.visible').click();
+    //         // # Click on the option to update email
+    //         cy.wait(TIMEOUTS.HALF_SEC);
+    //         cy.findByTestId('userListRow').find('.MenuWrapper a').should('be.visible').click();
+    //         cy.findByText('Update Email').should('be.visible').click();
 
-            // * Update email outside whitelisted domain and verify error message
-            cy.findByTestId('resetEmailModal').should('be.visible').within(() => {
-                cy.findByTestId('resetEmailForm').should('be.visible').get('input').type(email);
-                cy.findByTestId('resetEmailButton').click();
-                cy.get('.error').should('be.visible').and('have.text', 'The email you provided does not belong to an accepted domain for guest accounts. Please contact your administrator or sign up with a different email.');
-                cy.get('.close').click();
-            });
-        });
-    });
+    //         // * Update email outside whitelisted domain and verify error message
+    //         cy.findByTestId('resetEmailModal').should('be.visible').within(() => {
+    //             cy.findByTestId('resetEmailForm').should('be.visible').get('input').type(email);
+    //             cy.findByTestId('resetEmailButton').click();
+    //             cy.get('.error').should('be.visible').and('have.text', 'The email you provided does not belong to an accepted domain for guest accounts. Please contact your administrator or sign up with a different email.');
+    //             cy.get('.close').click();
+    //         });
+    //     });
+    // });
 
     it('MM-22037 Invite Guest via Email containing upper case letters', () => {
         // # Reset Guest Feature settings

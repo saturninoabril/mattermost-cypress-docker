@@ -221,28 +221,28 @@ describe('Guest Account - Guest User Experience', () => {
         });
     });
 
-    it('MM-T1412 Revoke Guest User Sessions when Guest feature is disabled', () => {
-        // # Demote Guest user if applicable
-        demoteGuestUser(guestUser);
+    // it('MM-T1412 Revoke Guest User Sessions when Guest feature is disabled', () => {
+    //     // # Demote Guest user if applicable
+    //     demoteGuestUser(guestUser);
 
-        // # Disable Guest Access
-        cy.apiUpdateConfig({
-            GuestAccountsSettings: {
-                Enable: false,
-            },
-        });
+    //     // # Disable Guest Access
+    //     cy.apiUpdateConfig({
+    //         GuestAccountsSettings: {
+    //             Enable: false,
+    //         },
+    //     });
 
-        // # Wait for page to load and then logout
-        cy.get('#post_textbox').should('be.visible').wait(TIMEOUTS.TWO_SEC);
-        cy.apiLogout();
-        cy.visit('/');
+    //     // # Wait for page to load and then logout
+    //     cy.get('#post_textbox').should('be.visible').wait(TIMEOUTS.TWO_SEC);
+    //     cy.apiLogout();
+    //     cy.visit('/');
 
-        // # Login with guest user credentials and check the error message
-        cy.get('#loginId').type(guestUser.username);
-        cy.get('#loginPassword').type('passwd');
-        cy.findByText('Sign in').click();
+    //     // # Login with guest user credentials and check the error message
+    //     cy.get('#loginId').type(guestUser.username);
+    //     cy.get('#loginPassword').type('passwd');
+    //     cy.findByText('Sign in').click();
 
-        // * Verify if guest account is deactivated
-        cy.findByText('Login failed because your account has been deactivated. Please contact an administrator.').should('be.visible');
-    });
+    //     // * Verify if guest account is deactivated
+    //     cy.findByText('Login failed because your account has been deactivated. Please contact an administrator.').should('be.visible');
+    // });
 });

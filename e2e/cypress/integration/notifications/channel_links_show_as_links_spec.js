@@ -77,7 +77,7 @@ describe('Notifications', () => {
             const bodyText = response.data.body.text.split('\n').map((d) => d.trim());
 
             // * Verify that the email was properly received and has the correct output
-            verifyEmailNotification(response, testTeam, testTeam.display_name, otherUser.email);
+            verifyEmailNotification(response, testTeam.name, testTeam.display_name, otherUser.email);
 
             const permalink = bodyText[9].match(reUrl)[0];
 

@@ -7,7 +7,6 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: @prod
 // Group: @bot_accounts
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
@@ -50,45 +49,45 @@ describe('Bot accounts ownership and API', () => {
         });
     });
 
-    it('MM-T1861 Bots do not re-enable if the owner is re-activated', () => {
-        // # Create another admin account
-        cy.apiCreateCustomAdmin().then(({sysadmin}) => {
-            // # Login as the new admin
-            cy.apiLogin(sysadmin);
+    // it('MM-T1861 Bots do not re-enable if the owner is re-activated', () => {
+    //     // # Create another admin account
+    //     cy.apiCreateCustomAdmin().then(({sysadmin}) => {
+    //         // # Login as the new admin
+    //         cy.apiLogin(sysadmin);
 
-            // # Create a new bot as the new admin
-            cy.apiCreateBot({prefix: 'stay-enabled-bot'}).then(({bot}) => {
-                // # Login again as main admin
-                cy.apiAdminLogin();
+    //         // # Create a new bot as the new admin
+    //         cy.apiCreateBot({prefix: 'stay-enabled-bot'}).then(({bot}) => {
+    //             // # Login again as main admin
+    //             cy.apiAdminLogin();
 
-                // # Deactivate the newly created admin
-                cy.apiDeactivateUser(sysadmin.id);
+    //             // # Deactivate the newly created admin
+    //             cy.apiDeactivateUser(sysadmin.id);
 
-                // # Get bot list
-                cy.visit(`/${newTeam.name}/integrations/bots`);
+    //             // # Get bot list
+    //             cy.visit(`/${newTeam.name}/integrations/bots`);
 
-                // # Search for the other bot
-                cy.get('#searchInput', {timeout: TIMEOUTS.ONE_MIN}).type(bot.username);
+    //             // # Search for the other bot
+    //             cy.get('#searchInput', {timeout: TIMEOUTS.ONE_MIN}).type(bot.username);
 
-                // * Validate that the plugin is disabled since its owner is deactivated
-                cy.get('.bot-list__disabled').scrollIntoView().should('be.visible');
+    //             // * Validate that the plugin is disabled since its owner is deactivated
+    //             cy.get('.bot-list__disabled').scrollIntoView().should('be.visible');
 
-                // # Re-activate the newly created admin
-                cy.apiActivateUser(sysadmin.id);
+    //             // # Re-activate the newly created admin
+    //             cy.apiActivateUser(sysadmin.id);
 
-                // # Repeat the test to confirm it stays disabled
+    //             // # Repeat the test to confirm it stays disabled
 
-                // # Get bot list
-                cy.visit(`/${newTeam.name}/integrations/bots`);
+    //             // # Get bot list
+    //             cy.visit(`/${newTeam.name}/integrations/bots`);
 
-                // # Search for the other bot
-                cy.get('#searchInput', {timeout: TIMEOUTS.ONE_MIN}).type(bot.username);
+    //             // # Search for the other bot
+    //             cy.get('#searchInput', {timeout: TIMEOUTS.ONE_MIN}).type(bot.username);
 
-                // * Validate that the plugin is disabled even though its owner is activated
-                cy.get('.bot-list__disabled').scrollIntoView().should('be.visible');
-            })
-        });
-    });
+    //             // * Validate that the plugin is disabled even though its owner is activated
+    //             cy.get('.bot-list__disabled').scrollIntoView().should('be.visible');
+    //         })
+    //     });
+    // });
 
     it('MM-T1862 Only system admin are able to create bots', () => {
         // # Login as admin
@@ -267,32 +266,32 @@ describe('Bot accounts ownership and API', () => {
         });
     });
 
-    it('MM-T1870 BOT has a system admin role and can also post to private channels they do not belong to', () => {
-        // # Login as admin
-        cy.apiAdminLogin();
+    // it('MM-T1870 BOT has a system admin role and can also post to private channels they do not belong to', () => {
+    //     // # Login as admin
+    //     cy.apiAdminLogin();
 
-        const channelName = 'channel' + Date.now();
+    //     const channelName = 'channel' + Date.now();
 
-        // # Create private channel that bot doesn't belong to
-        cy.apiCreateChannel(newTeam.id, channelName, channelName, 'P').then(({channel}) => {
-            // # Create token for the bot
-            cy.apiCreateToken(newBot.user_id).then(({token}) => {
-                // # Logout to allow posting as bot
-                cy.apiLogout();
-                const msg1 = 'this is a bot message ' + botName;
+    //     // # Create private channel that bot doesn't belong to
+    //     cy.apiCreateChannel(newTeam.id, channelName, channelName, 'P').then(({channel}) => {
+    //         // # Create token for the bot
+    //         cy.apiCreateToken(newBot.user_id).then(({token}) => {
+    //             // # Logout to allow posting as bot
+    //             cy.apiLogout();
+    //             const msg1 = 'this is a bot message ' + botName;
 
-                // # Create a post
-                cy.apiCreatePost(channel.id, msg1 + ' to @sysadmin', '', {}, token);
+    //             // # Create a post
+    //             cy.apiCreatePost(channel.id, msg1 + ' to @sysadmin', '', {}, token);
 
-                // # Re-login to validate post presence
-                cy.apiAdminLogin();
-                cy.visit(`/${newTeam.name}/channels/` + channel.name);
+    //             // # Re-login to validate post presence
+    //             cy.apiAdminLogin();
+    //             cy.visit(`/${newTeam.name}/channels/` + channel.name);
 
-                cy.getLastPostId().then((postId) => {
-                    // * Validate post was created
-                    cy.get(`#postMessageText_${postId}`, {timeout: TIMEOUTS.ONE_MIN}).should('contain', msg1);
-                });
-            });
-        });
-    });
+    //             cy.getLastPostId().then((postId) => {
+    //                 // * Validate post was created
+    //                 cy.get(`#postMessageText_${postId}`, {timeout: TIMEOUTS.ONE_MIN}).should('contain', msg1);
+    //             });
+    //         });
+    //     });
+    // });
 });
