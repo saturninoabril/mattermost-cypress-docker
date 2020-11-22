@@ -108,9 +108,33 @@ before(() => {
         // * Verify that the server database matches with the DB client and config at "cypress.json"
         cy.apiRequireServerDBToMatch();
 
+        cy.apiGetClientLicense().then(({license}) => {
+            const hasLicense = license.IsLicensed === 'true';
+            if (hasLicense) {
+                let hasLicenseKey = false;
+                for (const [k, v] of Object.entries(license)) {
+                    if (k === 'Cloud' && v === 'true') {
+                        hasLicenseKey = true;
+                        break;
+                    }
+                }
+
+                if (!hasLicenseKey) {
+                    cy.log('Server has license but without Cloud feature.')
+                }
+                
+            } else {
+                cy.log('Server is without license.')
+            }
+        });
+
         if (Cypress.env('runWithEELicense')) {
             // * Verify that the server is loaded with license when running tests for EE
             cy.apiRequireLicense();
+        }
+
+        if (Cypress.env('runOnCloud')) {
+            cy.apiRequireLicenseForFeature('Cloud');
         }
     });
 });

@@ -7,8 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: @prod
-// Group: @autocomplete
+// Group: @autocomplete @te-only
 
 import {getTestUsers} from '../enterprise/elasticsearch_autocomplete/helpers';
 
@@ -19,6 +18,7 @@ describe('Autocomplete without Elasticsearch - Users', () => {
 
     before(() => {
         // # Remove license
+        // TODO:
         cy.apiDeleteLicense();
 
         // # Create new team for tests

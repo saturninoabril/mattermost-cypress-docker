@@ -160,14 +160,6 @@ describe('Message', () => {
         // * Focus to remain in the RHS text box
         cy.get('#reply_textbox').should('be.focused');
     });
-
-    it('MM-T1796 Standard view: Show single image thumbnail', () => {
-        verifySingleImageThumbnail({mode: 'Standard'});
-    });
-
-    it('MM-T1797 Compact view: Show single image thumbnail', () => {
-        verifySingleImageThumbnail({mode: 'Compact'});
-    });
 });
 
 function verifySingleImageThumbnail({mode = null} = {}) {

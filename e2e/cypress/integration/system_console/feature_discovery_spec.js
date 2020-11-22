@@ -7,8 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: @prod
-// Group: @system_console
+// Group: @system_console @te-only
 
 describe('Feature discovery', () => {
     before(() => {
