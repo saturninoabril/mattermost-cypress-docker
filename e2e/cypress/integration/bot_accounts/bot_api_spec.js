@@ -266,32 +266,32 @@ describe('Bot accounts ownership and API', () => {
         });
     });
 
-    // it('MM-T1870 BOT has a system admin role and can also post to private channels they do not belong to', () => {
-    //     // # Login as admin
-    //     cy.apiAdminLogin();
+    it('MM-T1870 BOT has a system admin role and can also post to private channels they do not belong to', () => {
+        // # Login as admin
+        cy.apiAdminLogin();
 
-    //     const channelName = 'channel' + Date.now();
+        const channelName = 'channel' + Date.now();
 
-    //     // # Create private channel that bot doesn't belong to
-    //     cy.apiCreateChannel(newTeam.id, channelName, channelName, 'P').then(({channel}) => {
-    //         // # Create token for the bot
-    //         cy.apiCreateToken(newBot.user_id).then(({token}) => {
-    //             // # Logout to allow posting as bot
-    //             cy.apiLogout();
-    //             const msg1 = 'this is a bot message ' + botName;
+        // # Create private channel that bot doesn't belong to
+        cy.apiCreateChannel(newTeam.id, channelName, channelName, 'P').then(({channel}) => {
+            // # Create token for the bot
+            cy.apiCreateToken(newBot.user_id).then(({token}) => {
+                // # Logout to allow posting as bot
+                cy.apiLogout();
+                const msg1 = 'this is a bot message ' + botName;
 
-    //             // # Create a post
-    //             cy.apiCreatePost(channel.id, msg1 + ' to @sysadmin', '', {}, token);
+                // # Create a post
+                cy.apiCreatePost(channel.id, msg1 + ' to @sysadmin', '', {}, token);
 
-    //             // # Re-login to validate post presence
-    //             cy.apiAdminLogin();
-    //             cy.visit(`/${newTeam.name}/channels/` + channel.name);
+                // # Re-login to validate post presence
+                cy.apiAdminLogin();
+                cy.visit(`/${newTeam.name}/channels/` + channel.name);
 
-    //             cy.getLastPostId().then((postId) => {
-    //                 // * Validate post was created
-    //                 cy.get(`#postMessageText_${postId}`, {timeout: TIMEOUTS.ONE_MIN}).should('contain', msg1);
-    //             });
-    //         });
-    //     });
-    // });
+                cy.getLastPostId().then((postId) => {
+                    // * Validate post was created
+                    cy.get(`#postMessageText_${postId}`, {timeout: TIMEOUTS.ONE_MIN}).should('contain', msg1);
+                });
+            });
+        });
+    });
 });

@@ -73,9 +73,6 @@ Cypress.Commands.add('apiLogout', () => {
 
     // # Clear remainder of cookies
     cy.clearCookies();
-
-    // * Verify cookies are empty
-    cy.getCookies({log: false}).should('be.empty');
 });
 
 Cypress.Commands.add('apiGetMe', () => {
