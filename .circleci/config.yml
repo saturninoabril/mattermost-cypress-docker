@@ -5,13 +5,13 @@ orbs:
 workflows:
   build:
     jobs:
-      - test-1:
+      - e2e-test-1:
           context: cypress-circleci-env
-      - test-2:
+      - e2e-test-2:
           context: cypress-circleci-env
-      - test-3:
+      - e2e-test-3:
           context: cypress-circleci-env
-      - test-4:
+      - e2e-test-4:
           context: cypress-circleci-env
       - merge-and-save-test-reports:
           context: cypress-circleci-env
@@ -84,7 +84,7 @@ jobs:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost
     environment:
-      MM_DOCKER_IMAGE_TAG: mattermost/mm-cloud-ee:prod-d922f9d-10
+      MM_DOCKER_IMAGE_TAG: mm-cloud-ee:prod-d922f9d-10
       TYPE: CLOUD
       PULL_REQUEST:
       BROWSER: chrome
@@ -119,7 +119,7 @@ jobs:
           when: always
           path: ~/mattermost/e2e/results/junit
 
-  test-1:
+  e2e-test-1:
     docker:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost/test-1
@@ -169,7 +169,7 @@ jobs:
           when: always
           path: ~/mattermost/test-1/e2e/results/junit
 
-  test-2:
+  e2e-test-2:
     docker:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost/test-2
@@ -219,7 +219,7 @@ jobs:
           when: always
           path: ~/mattermost/test-2/e2e/results/junit
 
-  test-3:
+  e2e-test-3:
     docker:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost/test-3
@@ -269,7 +269,7 @@ jobs:
           when: always
           path: ~/mattermost/test-3/e2e/results/junit
 
-  test-4:
+  e2e-test-4:
     docker:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost/test-4
