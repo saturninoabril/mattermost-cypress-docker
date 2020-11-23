@@ -5,23 +5,14 @@ orbs:
 workflows:
   build:
     jobs:
-      - checkout
       - test-1:
           context: cypress-circleci-env
-          requires:
-            - checkout
       - test-2:
           context: cypress-circleci-env
-          requires:
-            - checkout
       - test-3:
           context: cypress-circleci-env
-          requires:
-            - checkout
       - test-4:
           context: cypress-circleci-env
-          requires:
-            - checkout
       - save-report:
           context: cypress-circleci-env
           requires:
@@ -52,7 +43,7 @@ commands:
             wget -O mattermost-cypress-docker/e2e/cypress/fixtures/com.mattermost.demo-plugin-0.2.0.tar.gz https://github.com/mattermost/mattermost-plugin-demo/releases/download/v0.2.0/com.mattermost.demo-plugin-0.2.0.tar.gz
             echo $USERS > mattermost-cypress-docker/e2e/cypress/fixtures/users.txt
 
-            ls -rtl mattermost-cypress-docker/e2e/cypress/fixtures
+            ls -rtl mattermost/mattermost-cypress-docker/e2e/cypress/fixtures
   install-npm:
     description: "Install npm packages"
     steps:
@@ -95,21 +86,6 @@ commands:
             cd e2e && node save_report.js
 
 jobs:
-  checkout:
-    docker:
-      - image: circleci/node:14-stretch-browsers-legacy
-    working_directory: ~/mattermost
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/mattermost/
-      - setup-client
-      - setup-required-files
-      - install-npm
-      - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
-          paths:
-            - ./mattermost-cypress-docker/e2e/node_modules
   save-report:
     docker:
       - image: circleci/node:14-stretch-browsers-legacy
