@@ -16,10 +16,10 @@ workflows:
       - merge-and-save-test-reports:
           context: cypress-circleci-env
           requires:
-            - test-1
-            - test-2
-            - test-3
-            - test-4
+            - e2e-test-1
+            - e2e-test-2
+            - e2e-test-3
+            - e2e-test-4
 
 commands:
   setup-client:
