@@ -51,7 +51,7 @@ commands:
     steps:
       - run:
           name: Install npm packages
-          command: cd mattermost/e2e && npm install
+          command: cd e2e && npm install
   mark-test-done:
     description: "Add 1 as test done"
     steps:
@@ -121,7 +121,7 @@ jobs:
       - save_cache: # special step to save the dependency cache
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
-            - ./mattermost/e2e/node_modules
+            -  ./e2e/node_modules
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -153,12 +153,12 @@ jobs:
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd mattermost/e2e && node run_tests.js --stage='@prod' --group='@accessibility' --part=1 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --stage='@prod' --group='@accessibility' --part=1 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - mark-test-done
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - mattermost/e2e/results
+            - e2e/results
       - run:
           name: Debug
           no_output_timeout: 30m
@@ -196,7 +196,7 @@ jobs:
       - save_cache: # special step to save the dependency cache
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
-            - ./mattermost/e2e/node_modules
+            -  ./e2e/node_modules
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -228,12 +228,12 @@ jobs:
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd mattermost/e2e && node run_tests.js --stage='@prod' --group='@accessibility' --part=2 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --stage='@prod' --group='@accessibility' --part=2 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - mark-test-done
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - mattermost/e2e/results
+            - e2e/results
       - run:
           name: Debug
           no_output_timeout: 30m
@@ -271,7 +271,7 @@ jobs:
       - save_cache: # special step to save the dependency cache
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
-            - ./mattermost/e2e/node_modules
+            -  ./e2e/node_modules
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -303,12 +303,12 @@ jobs:
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd mattermost/e2e && node run_tests.js --stage='@prod' --group='@accessibility' --part=3 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --stage='@prod' --group='@accessibility' --part=3 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - mark-test-done
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - mattermost/e2e/results
+            - e2e/results
       - run:
           name: Debug
           no_output_timeout: 30m
@@ -346,7 +346,7 @@ jobs:
       - save_cache: # special step to save the dependency cache
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
-            - ./mattermost/e2e/node_modules
+            -  ./e2e/node_modules
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -378,12 +378,12 @@ jobs:
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd mattermost/e2e && node run_tests.js --stage='@prod' --group='@accessibility' --part=4 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --stage='@prod' --group='@accessibility' --part=4 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - mark-test-done
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - mattermost/e2e/results
+            - e2e/results
       - run:
           name: Debug
           no_output_timeout: 30m
