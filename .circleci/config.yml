@@ -114,7 +114,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/mattermost/
+          at: ~/mattermost/mattermost-cypress-docker/
       - setup-client
       - setup-required-files
       - install-npm
@@ -189,7 +189,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/mattermost/
+          at: ~/mattermost/mattermost-cypress-docker/
       - setup-client
       - setup-required-files
       - install-npm
@@ -264,7 +264,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/mattermost/
+          at: ~/mattermost/mattermost-cypress-docker/
       - setup-client
       - setup-required-files
       - install-npm
@@ -339,7 +339,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/mattermost/
+          at: ~/mattermost/mattermost-cypress-docker/
       - setup-client
       - setup-required-files
       - install-npm
