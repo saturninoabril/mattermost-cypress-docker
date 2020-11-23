@@ -113,6 +113,7 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment, te
         TEST_CYCLE_LINK_PREFIX,
         TYPE,
     } = process.env;
+    console.log('process.env', process.env)
     const {statsFieldValue, stats} = summary;
     const {
         cypressVersion,
