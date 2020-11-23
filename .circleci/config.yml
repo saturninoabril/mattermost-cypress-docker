@@ -37,6 +37,8 @@ commands:
       - run:
           name: Setup required files
           command: |
+            pwd
+            ls -rtl
             wget -O mattermost-cypress-docker/e2e/cypress/fixtures/com.mattermost.draw-plugin.tar.gz https://github.com/jespino/mattermost-plugin-draw/releases/download/v0.0.4/com.mattermost.draw-plugin-0.0.4.tar.gz
             wget -O mattermost-cypress-docker/e2e/cypress/fixtures/com.github.matterpoll.matterpoll.tar.gz https://github.com/matterpoll/matterpoll/releases/download/v1.3.0/com.github.matterpoll.matterpoll-1.3.0.tar.gz
             wget -O mattermost-cypress-docker/e2e/cypress/fixtures/com.mattermost.demo-plugin-0.1.0.tar.gz https://github.com/mattermost/mattermost-plugin-demo/releases/download/v0.1.0/com.mattermost.demo-plugin-0.1.0.tar.gz
