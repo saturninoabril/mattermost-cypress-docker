@@ -178,7 +178,7 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment, te
         }
 
         let testCycleField;
-        if (testCycle) {
+        if (testCycleKey) {
             testCycleField = {
                 short: false,
                 title: 'Test Execution',
