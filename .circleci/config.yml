@@ -67,8 +67,13 @@ commands:
           when: always
           command: |
             ls -rtl .
-            ls -rtl ~/mattermost/e2e/results
+            ls -rtl ~/mattermost
             echo "$TEST_DONE"
+
+            ls -rtl ~/mattermost/test-1/e2e/results
+            ls -rtl ~/mattermost/test-2/e2e/results
+            ls -rtl ~/mattermost/test-3/e2e/results
+            ls -rtl ~/mattermost/test-4/e2e/results
 
             export BRANCH=$CIRCLE_BRANCH
             export BUILD_ID=$CIRCLE_BUILD_NUM
@@ -102,7 +107,7 @@ jobs:
   test-1:
     docker:
       - image: circleci/node:14-stretch-browsers-legacy
-    working_directory: ~/mattermost
+    working_directory: ~/mattermost/test-1
     environment:
       CI_BASE_URL: ec2-54-173-221-175.compute-1.amazonaws.com
       TYPE: NONE
@@ -121,14 +126,14 @@ jobs:
       - save_cache: # special step to save the dependency cache
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
-            -  ./e2e/node_modules
+            -  ./test-1/e2e/node_modules
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
             pwd
             ls -rtl
-            ls -rtl ~/mattermost
+            ls -rtl ~/mattermost/test-1
             export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
             export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
@@ -158,7 +163,7 @@ jobs:
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - e2e/results
+            - test-1
       - run:
           name: Debug
           no_output_timeout: 30m
@@ -166,18 +171,18 @@ jobs:
             pwd
             ls -rtl
             ls -rtl .
-            ls -rtl ~/mattermost/e2e/results
+            ls -rtl ~/mattermost/test-1/e2e/results
       - store_artifacts:
-          path: ~/mattermost/e2e/results
+          path: ~/mattermost/test-1/e2e/results
       - store_test_results:
           when: always
-          path: ~/mattermost/e2e/results/junit
+          path: ~/mattermost/test-1/e2e/results/junit
       - save-report
 
   test-2:
     docker:
       - image: circleci/node:14-stretch-browsers-legacy
-    working_directory: ~/mattermost
+    working_directory: ~/mattermost/test-2
     environment:
       CI_BASE_URL: ec2-52-207-213-253.compute-1.amazonaws.com
       TYPE: NONE
@@ -196,7 +201,7 @@ jobs:
       - save_cache: # special step to save the dependency cache
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
-            -  ./e2e/node_modules
+            -  ./test-2/e2e/node_modules
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -233,7 +238,7 @@ jobs:
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - e2e/results
+            - test-2
       - run:
           name: Debug
           no_output_timeout: 30m
@@ -241,18 +246,18 @@ jobs:
             pwd
             ls -rtl
             ls -rtl .
-            ls -rtl ~/mattermost/e2e/results
+            ls -rtl ~/mattermost/test-2/e2e/results
       - store_artifacts:
-          path: ~/mattermost/e2e/results
+          path: ~/mattermost/test-2/e2e/results
       - store_test_results:
           when: always
-          path: ~/mattermost/e2e/results/junit
+          path: ~/mattermost/test-2/e2e/results/junit
       - save-report
 
   test-3:
     docker:
       - image: circleci/node:14-stretch-browsers-legacy
-    working_directory: ~/mattermost
+    working_directory: ~/mattermost/test-3
     environment:
       CI_BASE_URL: ec2-54-172-222-17.compute-1.amazonaws.com
       TYPE: NONE
@@ -308,7 +313,7 @@ jobs:
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - e2e/results
+            - test-3
       - run:
           name: Debug
           no_output_timeout: 30m
@@ -316,18 +321,18 @@ jobs:
             pwd
             ls -rtl
             ls -rtl .
-            ls -rtl ~/mattermost/e2e/results
+            ls -rtl ~/mattermost/test-3/e2e/results
       - store_artifacts:
-          path: ~/mattermost/e2e/results
+          path: ~/mattermost/test-3/e2e/results
       - store_test_results:
           when: always
-          path: ~/mattermost/e2e/results/junit
+          path: ~/mattermost/test-3/e2e/results/junit
       - save-report
 
   test-4:
     docker:
       - image: circleci/node:14-stretch-browsers-legacy
-    working_directory: ~/mattermost
+    working_directory: ~/mattermost/test-4
     environment:
       CI_BASE_URL: ec2-3-84-83-19.compute-1.amazonaws.com
       TYPE: NONE
@@ -346,7 +351,7 @@ jobs:
       - save_cache: # special step to save the dependency cache
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
-            -  ./e2e/node_modules
+            -  ./test-4/e2e/node_modules
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -383,7 +388,7 @@ jobs:
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - e2e/results
+            - test-4
       - run:
           name: Debug
           no_output_timeout: 30m
@@ -391,10 +396,10 @@ jobs:
             pwd
             ls -rtl
             ls -rtl .
-            ls -rtl ~/mattermost/e2e/results
+            ls -rtl ~/mattermost/test-4/e2e/results
       - store_artifacts:
-          path: ~/mattermost/e2e/results
+          path: ~/mattermost/test-4/e2e/results
       - store_test_results:
           when: always
-          path: ~/mattermost/e2e/results/junit
+          path: ~/mattermost/test-4/e2e/results/junit
       - save-report
