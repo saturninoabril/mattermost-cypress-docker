@@ -101,6 +101,7 @@ async function createTestCycle(startDate, endDate) {
     };
 
     const response = await saveToEndpoint('https://api.adaptavist.io/tm4j/v2/testcycles', testCycle);
+    console.log('response.data', response.data)
     return response.data;
 }
 
@@ -158,6 +159,8 @@ const saveTestCases = async (allReport) => {
 
     const testCycle = await createTestCycle(start, end);
 
+    console.log('testCycle', testCycle)
+
     await createTestExecutions(allReport, testCycle);
 };
 
@@ -192,5 +195,7 @@ async function saveTestExecution(testExecution, index) {
 }
 
 module.exports = {
+    createTestCycle,
     saveTestCases,
+    saveTestExecution,
 };

@@ -104,7 +104,7 @@ const result = [
     {status: 'Failed', priority: 'high', cutOff: 0, color: '#F44336'},
 ];
 
-function generateTestReport(summary, isUploadedToS3, reportLink, environment) {
+function generateTestReport(summary, isUploadedToS3, reportLink, environment, testCycle) {
     const {
         BRANCH,
         BUILD_TAG,
@@ -131,15 +131,6 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment) {
         }
     }
 
-    let awsS3Fields;
-    if (isUploadedToS3) {
-        awsS3Fields = {
-            short: false,
-            title: 'Test Report',
-            value: `[Link to the report](${reportLink})`,
-        };
-    }
-
     let dockerImageLink = '';
     if (BUILD_TAG) {
         dockerImageLink = `with [mattermost-enterprise-edition:${BUILD_TAG}](https://hub.docker.com/r/mattermost/mattermost-enterprise-edition/tags?name=${BUILD_TAG})`;
@@ -161,10 +152,10 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment) {
         title = `E2E for Master Nightly Build (Unstable tests) ${dockerImageLink}`;
         break;
     case 'CLOUD':
-        title = `E2E for Cloud Build (Prod tests) with ${BUILD_TAG}`;
+        title = `E2E for Cloud Build (Prod tests) with [${BUILD_TAG}](https://hub.docker.com/r/mattermost/mm-cloud-ee/tags)`;
         break;
     case 'CLOUD_UNSTABLE':
-        title = `E2E for Cloud Build (Unstable tests) with ${BUILD_TAG}`;
+        title = `E2E for Cloud Build (Unstable tests) with [${BUILD_TAG}](https://hub.docker.com/r/mattermost/mm-cloud-ee/tags)`;
         break;
     default:
         title = `E2E for Build ${dockerImageLink}`;
@@ -173,6 +164,25 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment) {
     const envValue = `cypress@${cypressVersion} | node@${nodeVersion} | ${browserName}@${browserVersion}${headless ? ' (headless)' : ''} | ${osName}@${osVersion}`;
 
     if (FULL_REPORT === 'true') {
+        let awsS3Fields;
+        if (isUploadedToS3) {
+            awsS3Fields = {
+                short: false,
+                title: 'Test Report',
+                value: `[Link to the report](${reportLink})`,
+            };
+        }
+
+        let withTestCycle;
+        console.log('testCycle', testCycle);
+        if (testCycle) {
+            withTestCycle = {
+                short: false,
+                title: 'Test Execution',
+                value: `[Recorded test executions](${testCycle})`,
+            };
+        }
+
         return {
             username: 'Cypress UI Test',
             icon_url: 'https://www.mattermost.org/wp-content/uploads/2016/04/icon.png',
@@ -189,6 +199,7 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment) {
                         value: envValue,
                     },
                     awsS3Fields,
+                    withTestCycle,
                     {
                         short: false,
                         title: `Key metrics (required support: ${testResult.priority})`,

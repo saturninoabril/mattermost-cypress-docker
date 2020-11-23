@@ -41,7 +41,7 @@ const {
 const {saveArtifacts} = require('./utils/artifacts');
 const {MOCHAWESOME_REPORT_DIR, RESULTS_DIR} = require('./utils/constants');
 const {saveDashboard} = require('./utils/dashboard');
-const {saveTestCases} = require('./utils/test_cases');
+const {createTestCycle, createTestExecutions} = require('./utils/test_cases');
 
 require('dotenv').config();
 
@@ -85,10 +85,17 @@ const saveReport = async () => {
         console.log('Successfully uploaded artifacts to S3:', result.reportLink);
     }
 
+    // Create test cycle to Test Management
+    let testCycle;
+    if (TM4J_ENABLE === 'true') {
+        const {start, end} = jsonReport.stats;
+        testCycle = await createTestCycle(start, end);
+    }
+
     // Send test report to "QA: UI Test Automation" channel via webhook
     if (TYPE && TYPE !== 'NONE' && WEBHOOK_URL) {
         const environment = readJsonFromFile(`${RESULTS_DIR}/environment.json`);
-        const data = generateTestReport(summary, result && result.success, result && result.reportLink, environment);
+        const data = generateTestReport(summary, result && result.success, result && result.reportLink, environment, testCycle);
         await sendReport('summary report to Community channel', WEBHOOK_URL, data);
     }
 
@@ -105,8 +112,9 @@ const saveReport = async () => {
     }
 
     // Save test cases to Test Management
+    // Do it in the later stage since saving test executions tend to be unstable.
     if (TM4J_ENABLE === 'true') {
-        await saveTestCases(jsonReport);
+        await createTestExecutions(jsonReport, testCycle);
     }
 
     chai.expect(Boolean(jsonReport.stats.failures), FAILURE_MESSAGE).to.be.false;
