@@ -108,4 +108,13 @@ const saveReport = async () => {
     }
 };
 
-saveReport();
+console.log('process.env.PARALLEL', process.env.PARALLEL)
+console.log('process.env.PARALLEL_RUN', process.env.PARALLEL_RUN)
+console.log('process.env.TEST_DONE', process.env.TEST_DONE)
+if (process.env.PARALLEL) {
+    if (process.env.TEST_DONE === process.env.PARALLEL_RUN) {
+        saveReport();
+    }
+} else {
+    saveReport();
+}

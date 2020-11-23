@@ -43,6 +43,13 @@ commands:
       - run:
           name: Install npm packages
           command: cd e2e && npm install
+  mark-test-done:
+    description: "Add 1 as test done"
+    steps:
+      - run:
+          name: Add 1 as test done
+          command: |
+            echo "export TEST_DONE=$((TEST_DONE+1))" >> $BASH_ENV
   save-report:
     description: "Save and publish reports"
     steps:
@@ -50,6 +57,11 @@ commands:
           name: Save and publish reports
           when: always
           command: |
+            cp -r /tmp/workspace/results ~/mattermost-cypress-docker/e2e/results
+            ls -rtl /tmp/workspace/results
+            ls -rtl ~/mattermost-cypress-docker/e2e/results
+            echo "$TEST_DONE"
+
             export BRANCH=$CIRCLE_BRANCH
             export BUILD_ID=$CIRCLE_BUILD_NUM
 
@@ -73,7 +85,7 @@ jobs:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost-cypress-docker
     environment:
-      CI_BASE_URL: ec2-54-159-116-229.compute-1.amazonaws.com
+      CI_BASE_URL: ec2-54-173-221-175.compute-1.amazonaws.com
       TYPE: NONE
       PULL_REQUEST:
       BROWSER: chrome
@@ -122,20 +134,33 @@ jobs:
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --stage='@prod' --part=1 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
-      - save-report
+            cd e2e && node run_tests.js --stage='@prod' --group='@accessibility' --part=1 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+      - mark-test-done
+      - persist_to_workspace:
+          root: /tmp/workspace/results
+          paths:
+            - ~/mattermost-cypress-docker/e2e/results/*
+      - run:
+          name: Debug
+          no_output_timeout: 30m
+          command: |
+            pwd
+            ls -rtl
+            ls -rtl /tmp/workspace/results
+            ls -rtl ~/mattermost-cypress-docker/e2e/results
       - store_artifacts:
           path: ~/mattermost-cypress-docker/e2e/results
       - store_test_results:
           when: always
           path: ~/mattermost-cypress-docker/e2e/results/junit
+      - save-report
 
   test-2:
     docker:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost-cypress-docker
     environment:
-      CI_BASE_URL: ec2-52-23-248-34.compute-1.amazonaws.com
+      CI_BASE_URL: ec2-52-207-213-253.compute-1.amazonaws.com
       TYPE: NONE
       PULL_REQUEST:
       BROWSER: chrome
@@ -184,20 +209,33 @@ jobs:
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --stage='@prod' --part=2 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
-      - save-report
+            cd e2e && node run_tests.js --stage='@prod' --group='@accessibility' --part=2 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+      - mark-test-done
+      - persist_to_workspace:
+          root: /tmp/workspace/results
+          paths:
+            - ~/mattermost-cypress-docker/e2e/results/*
+      - run:
+          name: Debug
+          no_output_timeout: 30m
+          command: |
+            pwd
+            ls -rtl
+            ls -rtl /tmp/workspace/results
+            ls -rtl ~/mattermost-cypress-docker/e2e/results
       - store_artifacts:
           path: ~/mattermost-cypress-docker/e2e/results
       - store_test_results:
           when: always
           path: ~/mattermost-cypress-docker/e2e/results/junit
+      - save-report
 
   test-3:
     docker:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost-cypress-docker
     environment:
-      CI_BASE_URL: ec2-54-211-139-160.compute-1.amazonaws.com
+      CI_BASE_URL: ec2-54-172-222-17.compute-1.amazonaws.com
       TYPE: NONE
       PULL_REQUEST:
       BROWSER: chrome
@@ -246,20 +284,33 @@ jobs:
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --stage='@prod' --part=3 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
-      - save-report
+            cd e2e && node run_tests.js --stage='@prod' --group='@accessibility' --part=3 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+      - mark-test-done
+      - persist_to_workspace:
+          root: /tmp/workspace/results
+          paths:
+            - ~/mattermost-cypress-docker/e2e/results/*
+      - run:
+          name: Debug
+          no_output_timeout: 30m
+          command: |
+            pwd
+            ls -rtl
+            ls -rtl /tmp/workspace/results
+            ls -rtl ~/mattermost-cypress-docker/e2e/results
       - store_artifacts:
           path: ~/mattermost-cypress-docker/e2e/results
       - store_test_results:
           when: always
           path: ~/mattermost-cypress-docker/e2e/results/junit
+      - save-report
 
   test-4:
     docker:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost-cypress-docker
     environment:
-      CI_BASE_URL: ec2-54-85-255-50.compute-1.amazonaws.com
+      CI_BASE_URL: ec2-3-84-83-19.compute-1.amazonaws.com
       TYPE: NONE
       PULL_REQUEST:
       BROWSER: chrome
@@ -308,10 +359,23 @@ jobs:
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --stage='@prod' --part=4 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
-      - save-report
+            cd e2e && node run_tests.js --stage='@prod' --group='@accessibility' --part=4 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+      - mark-test-done
+      - persist_to_workspace:
+          root: /tmp/workspace/results
+          paths:
+            - ~/mattermost-cypress-docker/e2e/results/*
+      - run:
+          name: Debug
+          no_output_timeout: 30m
+          command: |
+            pwd
+            ls -rtl
+            ls -rtl /tmp/workspace/results
+            ls -rtl ~/mattermost-cypress-docker/e2e/results
       - store_artifacts:
           path: ~/mattermost-cypress-docker/e2e/results
       - store_test_results:
           when: always
           path: ~/mattermost-cypress-docker/e2e/results/junit
+      - save-report
