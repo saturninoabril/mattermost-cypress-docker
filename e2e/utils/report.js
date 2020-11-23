@@ -160,6 +160,12 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment) {
     case 'MASTER_UNSTABLE':
         title = `E2E for Master Nightly Build (Unstable tests) ${dockerImageLink}`;
         break;
+    case 'CLOUD':
+        title = `E2E for Cloud Build (Prod tests) with ${BUILD_TAG}`;
+        break;
+    case 'CLOUD_UNSTABLE':
+        title = `E2E for Cloud Build (Unstable tests) with ${BUILD_TAG}`;
+        break;
     default:
         title = `E2E for Build ${dockerImageLink}`;
     }

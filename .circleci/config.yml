@@ -13,7 +13,7 @@ workflows:
           context: cypress-circleci-env
       - test-4:
           context: cypress-circleci-env
-      - merge-and-save-report:
+      - merge-and-save-test-reports:
           context: cypress-circleci-env
           requires:
             - test-1
@@ -37,15 +37,11 @@ commands:
       - run:
           name: Setup required files
           command: |
-            pwd
-            ls -rtl
             wget -O e2e/cypress/fixtures/com.mattermost.draw-plugin.tar.gz https://github.com/jespino/mattermost-plugin-draw/releases/download/v0.0.4/com.mattermost.draw-plugin-0.0.4.tar.gz
             wget -O e2e/cypress/fixtures/com.github.matterpoll.matterpoll.tar.gz https://github.com/matterpoll/matterpoll/releases/download/v1.3.0/com.github.matterpoll.matterpoll-1.3.0.tar.gz
             wget -O e2e/cypress/fixtures/com.mattermost.demo-plugin-0.1.0.tar.gz https://github.com/mattermost/mattermost-plugin-demo/releases/download/v0.1.0/com.mattermost.demo-plugin-0.1.0.tar.gz
             wget -O e2e/cypress/fixtures/com.mattermost.demo-plugin-0.2.0.tar.gz https://github.com/mattermost/mattermost-plugin-demo/releases/download/v0.2.0/com.mattermost.demo-plugin-0.2.0.tar.gz
             echo $USERS > e2e/cypress/fixtures/users.txt
-
-            ls -rtl e2e/cypress/fixtures
   install-npm:
     description: "Install npm packages"
     steps:
@@ -59,9 +55,6 @@ commands:
           name: Save and publish reports
           when: always
           command: |
-            ls -rtl .
-            ls -rtl ~/mattermost
-
             export BRANCH=$CIRCLE_BRANCH
             export BUILD_ID=$CIRCLE_BUILD_NUM
 
@@ -80,13 +73,24 @@ commands:
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
 
+            # Local debug
+            export WEBHOOK_URL=https://019356ab66d1.ngrok.io/hooks/dzsn6ebtsbfexnh43pwtanz8ty
+
             cd e2e && node save_report.js |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
 
 jobs:
-  merge-and-save-report:
+  merge-and-save-test-reports:
     docker:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost
+    environment:
+      MM_DOCKER_IMAGE_TAG: mattermost/mm-cloud-ee:prod-d922f9d-10
+      TYPE: CLOUD
+      PULL_REQUEST:
+      BROWSER: chrome
+      HEADLESS: true
+      DASHBOARD_ENABLE: false
+      FULL_REPORT: true
     steps:
       - checkout
       - attach_workspace:
@@ -100,21 +104,13 @@ jobs:
           name: Merge and save reports
           no_output_timeout: 30m
           command: |
-            pwd
-            ls -rtl
-            ls -rtl ~/mattermost
-            ls -rtl ~/mattermost/test-1/e2e/results
-            ls -rtl ~/mattermost/test-2/e2e/results
-            ls -rtl ~/mattermost/test-3/e2e/results
-            ls -rtl ~/mattermost/test-4/e2e/results
             cd e2e
             mkdir results
             cp -r ~/mattermost/test-1/e2e/results .
             cp -r ~/mattermost/test-2/e2e/results .
             cp -r ~/mattermost/test-3/e2e/results .
             cp -r ~/mattermost/test-4/e2e/results .
-            pwd
-            ls -rtl
+
             cd ..
       - save-report
       - store_artifacts:
@@ -129,12 +125,8 @@ jobs:
     working_directory: ~/mattermost/test-1
     environment:
       CI_BASE_URL: ec2-54-173-221-175.compute-1.amazonaws.com
-      TYPE: NONE
-      PULL_REQUEST:
       BROWSER: chrome
       HEADLESS: true
-      DASHBOARD_ENABLE: false
-      FULL_REPORT: false
     steps:
       - checkout
       - attach_workspace:
@@ -150,9 +142,6 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            pwd
-            ls -rtl
-            ls -rtl ~/mattermost/test-1
             export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
             export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
@@ -166,12 +155,6 @@ jobs:
             export CYPRESS_runLDAPSync=false
             # export CYPRESS_runWithEELicense=true
             export CYPRESS_runOnCloud=true
-
-            echo "$CI_BASE_URL"
-            echo "$CYPRESS_baseUrl"
-            echo "$CYPRESS_dbConnection"
-            echo "$CYPRESS_webhookBaseUrl"
-            echo "$CYPRESS_smtpUrl"
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
@@ -192,12 +175,8 @@ jobs:
     working_directory: ~/mattermost/test-2
     environment:
       CI_BASE_URL: ec2-52-207-213-253.compute-1.amazonaws.com
-      TYPE: NONE
-      PULL_REQUEST:
       BROWSER: chrome
       HEADLESS: true
-      DASHBOARD_ENABLE: false
-      FULL_REPORT: false
     steps:
       - checkout
       - attach_workspace:
@@ -213,9 +192,6 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            pwd
-            ls -rtl
-            ls -rtl ~/mattermost/test-2
             export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
             export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
@@ -229,12 +205,6 @@ jobs:
             export CYPRESS_runLDAPSync=false
             # export CYPRESS_runWithEELicense=true
             export CYPRESS_runOnCloud=true
-
-            echo "$CI_BASE_URL"
-            echo "$CYPRESS_baseUrl"
-            echo "$CYPRESS_dbConnection"
-            echo "$CYPRESS_webhookBaseUrl"
-            echo "$CYPRESS_smtpUrl"
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
@@ -255,12 +225,8 @@ jobs:
     working_directory: ~/mattermost/test-3
     environment:
       CI_BASE_URL: ec2-54-172-222-17.compute-1.amazonaws.com
-      TYPE: NONE
-      PULL_REQUEST:
       BROWSER: chrome
       HEADLESS: true
-      DASHBOARD_ENABLE: false
-      FULL_REPORT: false
     steps:
       - checkout
       - attach_workspace:
@@ -276,9 +242,6 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            pwd
-            ls -rtl
-            ls -rtl ~/mattermost
             export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
             export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
@@ -292,12 +255,6 @@ jobs:
             export CYPRESS_runLDAPSync=false
             # export CYPRESS_runWithEELicense=true
             export CYPRESS_runOnCloud=true
-
-            echo "$CI_BASE_URL"
-            echo "$CYPRESS_baseUrl"
-            echo "$CYPRESS_dbConnection"
-            echo "$CYPRESS_webhookBaseUrl"
-            echo "$CYPRESS_smtpUrl"
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
@@ -318,12 +275,8 @@ jobs:
     working_directory: ~/mattermost/test-4
     environment:
       CI_BASE_URL: ec2-3-84-83-19.compute-1.amazonaws.com
-      TYPE: NONE
-      PULL_REQUEST:
       BROWSER: chrome
       HEADLESS: true
-      DASHBOARD_ENABLE: false
-      FULL_REPORT: false
     steps:
       - checkout
       - attach_workspace:
@@ -339,9 +292,6 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            pwd
-            ls -rtl
-            ls -rtl ~/mattermost
             export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
             export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
@@ -355,12 +305,6 @@ jobs:
             export CYPRESS_runLDAPSync=false
             # export CYPRESS_runWithEELicense=true
             export CYPRESS_runOnCloud=true
-
-            echo "$CI_BASE_URL"
-            echo "$CYPRESS_baseUrl"
-            echo "$CYPRESS_dbConnection"
-            echo "$CYPRESS_webhookBaseUrl"
-            echo "$CYPRESS_smtpUrl"
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 

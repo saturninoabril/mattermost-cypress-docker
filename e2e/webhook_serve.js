@@ -17,7 +17,6 @@ const {
     CYPRESS_adminUsername,
     CYPRESS_adminPassword,
     SITE_URL,
-    WEBHOOK_URL,
     SITE_ADMIN_USERNAME,
     SITE_ADMIN_PASSWORD,
 } = process.env;
@@ -45,7 +44,7 @@ server.post('/postOAuthMessage', postOAuthMessage);
 
 function ping(req, res) {
     const baseUrl = CYPRESS_baseUrl || SITE_URL || 'http://localhost:8065';
-    const webhookBaseUrl = CYPRESS_webhookBaseUrl || WEBHOOK_URL || 'http://localhost:3000';
+    const webhookBaseUrl = CYPRESS_webhookBaseUrl || 'http://localhost:3000';
 
     return res.json({
         message: 'I\'m alive!',
@@ -56,7 +55,7 @@ function ping(req, res) {
 
 server.listen(port, () => {
     const baseUrl = CYPRESS_baseUrl || SITE_URL || 'http://localhost:8065';
-    const webhookBaseUrl = CYPRESS_webhookBaseUrl || WEBHOOK_URL || 'http://localhost:3000';
+    const webhookBaseUrl = CYPRESS_webhookBaseUrl || 'http://localhost:3000';
 
     console.log(`Webhook test server listening on port ${port}!`); // eslint-disable-line no-console
     console.log(`baseUrl: ${baseUrl}!`); // eslint-disable-line no-console
@@ -247,7 +246,7 @@ function postSendMessageToChannel(req, res) {
 }
 
 function getWebhookBaseUrl() {
-    return CYPRESS_webhookBaseUrl || WEBHOOK_URL || 'http://localhost:3000';
+    return CYPRESS_webhookBaseUrl || 'http://localhost:3000';
 }
 
 function getBaseUrl() {
