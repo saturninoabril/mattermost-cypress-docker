@@ -70,11 +70,6 @@ commands:
             ls -rtl ~/mattermost
             echo "$TEST_DONE"
 
-            ls -rtl ~/mattermost/test-1/e2e/results
-            ls -rtl ~/mattermost/test-2/e2e/results
-            ls -rtl ~/mattermost/test-3/e2e/results
-            ls -rtl ~/mattermost/test-4/e2e/results
-
             export BRANCH=$CIRCLE_BRANCH
             export BUILD_ID=$CIRCLE_BUILD_NUM
 
@@ -98,6 +93,34 @@ jobs:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost
     steps:
+      - checkout
+      - attach_workspace:
+          at: ~/mattermost
+      - install-npm
+      - save_cache: # special step to save the dependency cache
+          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
+          paths:
+            -  ./e2e/node_modules
+      - run:
+          name: Merge and save reports
+          no_output_timeout: 30m
+          command: |
+            pwd
+            ls -rtl
+            ls -rtl ~/mattermost
+            ls -rtl ~/mattermost/test-1/e2e/results
+            ls -rtl ~/mattermost/test-2/e2e/results
+            ls -rtl ~/mattermost/test-3/e2e/results
+            ls -rtl ~/mattermost/test-4/e2e/results
+            cd e2e
+            mkdir results
+            cp -r ~/mattermost/test-1/e2e/results .
+            cp -r ~/mattermost/test-2/e2e/results .
+            cp -r ~/mattermost/test-3/e2e/results .
+            cp -r ~/mattermost/test-4/e2e/results .
+            pwd
+            ls -rtl
+            cd ..
       - store_artifacts:
           path: ~/mattermost/e2e/results
       - store_test_results:
@@ -163,21 +186,12 @@ jobs:
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - test-1
-      - run:
-          name: Debug
-          no_output_timeout: 30m
-          command: |
-            pwd
-            ls -rtl
-            ls -rtl .
-            ls -rtl ~/mattermost/test-1/e2e/results
+            - test-1/e2e/results
       - store_artifacts:
           path: ~/mattermost/test-1/e2e/results
       - store_test_results:
           when: always
           path: ~/mattermost/test-1/e2e/results/junit
-      - save-report
 
   test-2:
     docker:
@@ -208,7 +222,7 @@ jobs:
           command: |
             pwd
             ls -rtl
-            ls -rtl ~/mattermost/e2e
+            ls -rtl ~/mattermost/test-2
             export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
             export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
@@ -238,21 +252,12 @@ jobs:
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - test-2
-      - run:
-          name: Debug
-          no_output_timeout: 30m
-          command: |
-            pwd
-            ls -rtl
-            ls -rtl .
-            ls -rtl ~/mattermost/test-2/e2e/results
+            - test-2/e2e/results
       - store_artifacts:
           path: ~/mattermost/test-2/e2e/results
       - store_test_results:
           when: always
           path: ~/mattermost/test-2/e2e/results/junit
-      - save-report
 
   test-3:
     docker:
@@ -313,21 +318,12 @@ jobs:
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - test-3
-      - run:
-          name: Debug
-          no_output_timeout: 30m
-          command: |
-            pwd
-            ls -rtl
-            ls -rtl .
-            ls -rtl ~/mattermost/test-3/e2e/results
+            - test-3/e2e/results
       - store_artifacts:
           path: ~/mattermost/test-3/e2e/results
       - store_test_results:
           when: always
           path: ~/mattermost/test-3/e2e/results/junit
-      - save-report
 
   test-4:
     docker:
@@ -388,18 +384,9 @@ jobs:
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - test-4
-      - run:
-          name: Debug
-          no_output_timeout: 30m
-          command: |
-            pwd
-            ls -rtl
-            ls -rtl .
-            ls -rtl ~/mattermost/test-4/e2e/results
+            - test-4/e2e/results
       - store_artifacts:
           path: ~/mattermost/test-4/e2e/results
       - store_test_results:
           when: always
           path: ~/mattermost/test-4/e2e/results/junit
-      - save-report
