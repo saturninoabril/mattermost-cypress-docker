@@ -52,13 +52,6 @@ commands:
       - run:
           name: Install npm packages
           command: cd e2e && npm install
-  mark-test-done:
-    description: "Add 1 as test done"
-    steps:
-      - run:
-          name: Add 1 as test done
-          command: |
-            echo "export TEST_DONE=$((TEST_DONE+1))" >> $BASH_ENV
   save-report:
     description: "Save and publish reports"
     steps:
@@ -68,7 +61,6 @@ commands:
           command: |
             ls -rtl .
             ls -rtl ~/mattermost
-            echo "$TEST_DONE"
 
             export BRANCH=$CIRCLE_BRANCH
             export BUILD_ID=$CIRCLE_BUILD_NUM
@@ -121,12 +113,13 @@ jobs:
             pwd
             ls -rtl
             cd ..
+      - save-report
       - store_artifacts:
           path: ~/mattermost/e2e/results
       - store_test_results:
           when: always
           path: ~/mattermost/e2e/results/junit
-      - save-report
+
   test-1:
     docker:
       - image: circleci/node:14-stretch-browsers-legacy
@@ -182,7 +175,6 @@ jobs:
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
             cd e2e && node run_tests.js --stage='@prod' --group='@accessibility' --part=1 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
-      - mark-test-done
       - persist_to_workspace:
           root: ~/mattermost
           paths:
@@ -248,7 +240,6 @@ jobs:
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
             cd e2e && node run_tests.js --stage='@prod' --group='@accessibility' --part=2 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
-      - mark-test-done
       - persist_to_workspace:
           root: ~/mattermost
           paths:
@@ -314,7 +305,6 @@ jobs:
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
             cd e2e && node run_tests.js --stage='@prod' --group='@accessibility' --part=3 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
-      - mark-test-done
       - persist_to_workspace:
           root: ~/mattermost
           paths:
@@ -380,7 +370,6 @@ jobs:
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
             cd e2e && node run_tests.js --stage='@prod' --group='@accessibility' --part=4 --of=4 |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
-      - mark-test-done
       - persist_to_workspace:
           root: ~/mattermost
           paths:

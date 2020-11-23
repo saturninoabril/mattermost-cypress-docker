@@ -47,7 +47,6 @@
  */
 
 const os = require('os');
-const chai = require('chai');
 const chalk = require('chalk');
 const cypress = require('cypress');
 const argv = require('yargs').argv;
@@ -67,7 +66,6 @@ async function runTests() {
         ENABLE_VISUAL_TEST,
         APPLITOOLS_API_KEY,
         APPLITOOLS_BATCH_NAME,
-        FAILURE_MESSAGE,
     } = process.env;
 
     const browser = BROWSER || 'chrome';
@@ -153,8 +151,6 @@ async function runTests() {
             hasFailed = true;
         }
     }
-
-    // chai.expect(hasFailed, FAILURE_MESSAGE).to.be.false;
 }
 
 function printMessage(testFiles, overallIndex, currentIndex, lastIndex) {
