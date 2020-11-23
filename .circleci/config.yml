@@ -5,14 +5,30 @@ orbs:
 workflows:
   build:
     jobs:
+      - checkout
       - test-1:
           context: cypress-circleci-env
+          requires:
+            - checkout
       - test-2:
           context: cypress-circleci-env
+          requires:
+            - checkout
       - test-3:
           context: cypress-circleci-env
+          requires:
+            - checkout
       - test-4:
           context: cypress-circleci-env
+          requires:
+            - checkout
+      - save-report:
+          context: cypress-circleci-env
+          requires:
+            - test-1
+            - test-2
+            - test-3
+            - test-4
 
 commands:
   setup-client:
@@ -79,6 +95,32 @@ commands:
             cd e2e && node save_report.js
 
 jobs:
+  checkout:
+    docker:
+      - image: circleci/node:14-stretch-browsers-legacy
+    working_directory: ~/mattermost-cypress-docker
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/mattermost-cypress-docker
+      - setup-client
+      - setup-required-files
+      - install-npm
+      - save_cache: # special step to save the dependency cache
+          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
+          paths:
+            - ./e2e/node_modules
+  save-report:
+    docker:
+      - image: circleci/node:14-stretch-browsers-legacy
+    working_directory: ~/mattermost-cypress-docker
+    steps:
+      - store_artifacts:
+          path: ~/mattermost-cypress-docker/e2e/results
+      - store_test_results:
+          when: always
+          path: ~/mattermost-cypress-docker/e2e/results/junit
+      - save-report
   test-1:
     docker:
       - image: circleci/node:14-stretch-browsers-legacy
@@ -92,16 +134,6 @@ jobs:
       DASHBOARD_ENABLE: false
       FULL_REPORT: false
     steps:
-      - checkout
-      - attach_workspace:
-          at: ~/mattermost-cypress-docker
-      - setup-client
-      - setup-required-files
-      - install-npm
-      - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
-          paths:
-            - ./e2e/node_modules
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -167,16 +199,6 @@ jobs:
       DASHBOARD_ENABLE: false
       FULL_REPORT: false
     steps:
-      - checkout
-      - attach_workspace:
-          at: ~/mattermost-cypress-docker
-      - setup-client
-      - setup-required-files
-      - install-npm
-      - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
-          paths:
-            - ./e2e/node_modules
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -242,16 +264,6 @@ jobs:
       DASHBOARD_ENABLE: false
       FULL_REPORT: false
     steps:
-      - checkout
-      - attach_workspace:
-          at: ~/mattermost-cypress-docker
-      - setup-client
-      - setup-required-files
-      - install-npm
-      - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
-          paths:
-            - ./e2e/node_modules
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -317,16 +329,6 @@ jobs:
       DASHBOARD_ENABLE: false
       FULL_REPORT: false
     steps:
-      - checkout
-      - attach_workspace:
-          at: ~/mattermost-cypress-docker
-      - setup-client
-      - setup-required-files
-      - install-npm
-      - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
-          paths:
-            - ./e2e/node_modules
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
