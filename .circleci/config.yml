@@ -13,7 +13,7 @@ workflows:
           context: cypress-circleci-env
       - test-4:
           context: cypress-circleci-env
-      - save-report:
+      - merge-and-save-report:
           context: cypress-circleci-env
           requires:
             - test-1
@@ -83,7 +83,7 @@ commands:
             cd e2e && node save_report.js |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
 
 jobs:
-  save-report:
+  merge-and-save-report:
     docker:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost

@@ -478,6 +478,9 @@
             },
             "com.mattermost.plugin-incident-response": {
                 "Enable": false
+            },
+            "com.mattermost.plugin-incident-management": {
+                "Enable": false
             }
         },
         "EnableMarketplace": true,
