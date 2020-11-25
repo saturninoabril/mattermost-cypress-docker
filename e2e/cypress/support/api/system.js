@@ -99,12 +99,34 @@ const getDefaultConfig = () => {
     return merge(partialDefaultConfig, fromCypressEnv);
 };
 
+const expectConfigToBeUpdatable = (currentConfig, newConfig) => {
+    function errorMessage(name) {
+        return `${name} is restricted or not available to update. You may check user/sysadmin access, license requirement, server version or edition (on-prem/cloud) compatibility.`;
+    }
+
+    Object.entries(newConfig).forEach(([key, value]) => {
+        const setting = currentConfig[key];
+        if (setting) {
+            const subSetting = setting;
+            Object.keys(value).forEach((k) => {
+                const name = `${key}.${k}`;
+                expect(Boolean(subSetting[k]), Boolean(subSetting[k]) ? `${name} setting can be updated.` : errorMessage(name)).to.equal(true);
+            });
+        } else {
+            expect(Boolean(setting), Boolean(setting) ? `${key} setting can be updated.` : errorMessage(name)).to.equal(true)
+        }
+    });
+}
+
 Cypress.Commands.add('apiUpdateConfig', (newConfig = {}) => {
     // # Get current settings
     return cy.request('/api/v4/config').then((response) => {
-        const oldConfig = response.body;
+        const currentConfig = response.body;
 
-        const config = merge.all([oldConfig, getDefaultConfig(), newConfig]);
+        // * Check if config can be updated
+        expectConfigToBeUpdatable(currentConfig, newConfig);
+
+        const config = merge.all([currentConfig, getDefaultConfig(), newConfig]);
 
         // # Set the modified config
         return cy.request({

@@ -82,7 +82,7 @@ jobs:
     working_directory: ~/mattermost
     environment:
       MM_DOCKER_IMAGE_TAG: mm-cloud-ee:test-5ea88ae-13
-      TYPE: CLOUD
+      TYPE: NONE
       PULL_REQUEST:
       BROWSER: chrome
       HEADLESS: true
