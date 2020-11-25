@@ -81,7 +81,7 @@ jobs:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost
     environment:
-      MM_DOCKER_IMAGE_TAG: mm-cloud-ee:prod-d922f9d-10
+      MM_DOCKER_IMAGE_TAG: mm-cloud-ee:test-5ea88ae-13
       TYPE: CLOUD
       PULL_REQUEST:
       BROWSER: chrome
@@ -121,7 +121,7 @@ jobs:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost/test-1
     environment:
-      CI_BASE_URL: ec2-18-212-41-72.compute-1.amazonaws.com
+      CI_BASE_URL: ec2-34-238-41-18.compute-1.amazonaws.com
       BROWSER: chrome
       HEADLESS: true
     steps:
@@ -171,7 +171,7 @@ jobs:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost/test-2
     environment:
-      CI_BASE_URL: ec2-54-85-59-80.compute-1.amazonaws.com
+      CI_BASE_URL: ec2-54-157-49-83.compute-1.amazonaws.com
       BROWSER: chrome
       HEADLESS: true
     steps:
@@ -221,7 +221,7 @@ jobs:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost/test-3
     environment:
-      CI_BASE_URL: ec2-3-82-204-119.compute-1.amazonaws.com
+      CI_BASE_URL: ec2-18-233-155-31.compute-1.amazonaws.com
       BROWSER: chrome
       HEADLESS: true
     steps:
@@ -271,7 +271,7 @@ jobs:
       - image: circleci/node:14-stretch-browsers-legacy
     working_directory: ~/mattermost/test-4
     environment:
-      CI_BASE_URL: ec2-52-87-234-61.compute-1.amazonaws.com
+      CI_BASE_URL: ec2-34-227-150-34.compute-1.amazonaws.com
       BROWSER: chrome
       HEADLESS: true
     steps:
