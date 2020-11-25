@@ -105,9 +105,6 @@ before(() => {
             });
         }
 
-        // * Verify that the server database matches with the DB client and config at "cypress.json"
-        cy.apiRequireServerDBToMatch();
-
         cy.apiGetClientLicense().then(({license}) => {
             const hasLicense = license.IsLicensed === 'true';
             if (hasLicense) {
@@ -135,6 +132,9 @@ before(() => {
 
         if (Cypress.env('runOnCloud')) {
             cy.apiRequireLicenseForFeature('Cloud');
+        } else {
+            // * Verify that the server database matches with the DB client and config at "cypress.json"
+            cy.apiRequireServerDBToMatch();
         }
     });
 });
