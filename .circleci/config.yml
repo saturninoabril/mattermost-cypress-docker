@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  node: circleci/node@1.1.6
+  node: circleci/node@4.1.0
 
 workflows:
   build:
@@ -78,7 +78,7 @@ commands:
 jobs:
   merge-and-save-test-reports:
     docker:
-      - image: circleci/node:14-stretch-browsers-legacy
+      - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost
     environment:
       MM_DOCKER_IMAGE_TAG: mm-cloud-ee:test-5ea88ae-13
@@ -118,7 +118,7 @@ jobs:
 
   e2e-test-1:
     docker:
-      - image: circleci/node:14-stretch-browsers-legacy
+      - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/test-1
     environment:
       CI_BASE_URL: ec2-34-238-41-18.compute-1.amazonaws.com
@@ -168,7 +168,7 @@ jobs:
 
   e2e-test-2:
     docker:
-      - image: circleci/node:14-stretch-browsers-legacy
+      - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/test-2
     environment:
       CI_BASE_URL: ec2-54-157-49-83.compute-1.amazonaws.com
@@ -218,7 +218,7 @@ jobs:
 
   e2e-test-3:
     docker:
-      - image: circleci/node:lts-stretch-browsers
+      - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/test-3
     environment:
       CI_BASE_URL: ec2-18-233-155-31.compute-1.amazonaws.com
@@ -268,7 +268,7 @@ jobs:
 
   e2e-test-4:
     docker:
-      - image: circleci/node:14-stretch-browsers-legacy
+      - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/test-4
     environment:
       CI_BASE_URL: ec2-34-227-150-34.compute-1.amazonaws.com
