@@ -104,16 +104,18 @@ const expectConfigToBeUpdatable = (currentConfig, newConfig) => {
         return `${name} is restricted or not available to update. You may check user/sysadmin access, license requirement, server version or edition (on-prem/cloud) compatibility.`;
     }
 
-    Object.entries(newConfig).forEach(([key, value]) => {
-        const setting = currentConfig[key];
+    Object.entries(newConfig).forEach(([newMainKey, newSubSetting]) => {
+        const setting = currentConfig[newMainKey];
+
         if (setting) {
-            const subSetting = setting;
-            Object.keys(value).forEach((k) => {
-                const name = `${key}.${k}`;
-                expect(Boolean(subSetting[k]), Boolean(subSetting[k]) ? `${name} setting can be updated.` : errorMessage(name)).to.equal(true);
+            Object.keys(newSubSetting).forEach((newSubKey) => {
+                
+                const isAvailable = setting.hasOwnProperty(newSubKey);
+                const name = `${newMainKey}.${newSubKey}`;
+                expect(isAvailable, isAvailable ? `${name} setting can be updated.` : errorMessage(name)).to.equal(true);
             });
         } else {
-            expect(Boolean(setting), Boolean(setting) ? `${key} setting can be updated.` : errorMessage(name)).to.equal(true)
+            expect(Boolean(setting), Boolean(setting) ? `${newMainKey} setting can be updated.` : errorMessage(name)).to.equal(true)
         }
     });
 }
