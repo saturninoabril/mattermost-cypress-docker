@@ -37,7 +37,6 @@ describe('Bot accounts ownership and API', () => {
             },
             PluginSettings: {
                 Enable: true,
-                RequirePluginSignature: false,
             },
         };
         cy.apiUpdateConfig(newSettings);

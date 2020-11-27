@@ -151,11 +151,11 @@ jobs:
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
             # export CYPRESS_runWithEELicense=true
-            export CYPRESS_runOnCloud=true
+            export CYPRESS_serverEdition=CLOUD
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --stage='@prod' --part=1 --of=4
+            cd e2e && node run_tests.js --stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=1 --of=4
       - persist_to_workspace:
           root: ~/mattermost
           paths:
@@ -201,11 +201,11 @@ jobs:
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
             # export CYPRESS_runWithEELicense=true
-            export CYPRESS_runOnCloud=true
+            export CYPRESS_serverEdition=CLOUD
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --stage='@prod' --part=2 --of=4
+            cd e2e && node run_tests.js --stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=2 --of=4
       - persist_to_workspace:
           root: ~/mattermost
           paths:
@@ -251,11 +251,11 @@ jobs:
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
             # export CYPRESS_runWithEELicense=true
-            export CYPRESS_runOnCloud=true
+            export CYPRESS_serverEdition=CLOUD
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --stage='@prod' --part=3 --of=4
+            cd e2e && node run_tests.js --stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=3 --of=4
       - persist_to_workspace:
           root: ~/mattermost
           paths:
@@ -301,11 +301,11 @@ jobs:
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
             # export CYPRESS_runWithEELicense=true
-            export CYPRESS_runOnCloud=true
+            export CYPRESS_serverEdition=CLOUD
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --stage='@prod' --part=4 --of=4
+            cd e2e && node run_tests.js --stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=4 --of=4
       - persist_to_workspace:
           root: ~/mattermost
           paths:

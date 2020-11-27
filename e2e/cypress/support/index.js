@@ -108,6 +108,7 @@ before(() => {
         // * Verify that the server database matches with the DB client and config at "cypress.json"
         cy.apiRequireServerDBToMatch();
 
+        // # TODO: Debug only
         cy.apiGetClientLicense().then(({license}) => {
             const hasLicense = license.IsLicensed === 'true';
             if (hasLicense) {
@@ -128,13 +129,15 @@ before(() => {
             }
         });
 
-        if (Cypress.env('runWithEELicense')) {
-            // * Verify that the server is loaded with license when running tests for EE
-            cy.apiRequireLicense();
-        }
-
-        if (Cypress.env('runOnCloud')) {
+        switch (Cypress.env('serverEdition')) {
+        case 'Cloud':
             cy.apiRequireLicenseForFeature('Cloud');
+            break;
+        case 'E20':
+            cy.apiRequireLicense();
+            break;
+        default:
+            break;
         }
     });
 });
@@ -171,6 +174,14 @@ function sysadminSetup(user) {
     cy.apiGetClientLicense().then(({license}) => {
         if (license.IsLicensed === 'true') {
             cy.apiResetRoles();
+
+            for (const [k, v] of Object.entries(license)) {
+                if (k === 'Cloud' && v === 'true') {
+                    // # Modify sysadmin role for Cloud edition
+                    cy.apiPatchUserRoles(user.id, ['system_admin', 'system_manager', 'system_user']);
+                    break;
+                }
+            }
         }
     });
 

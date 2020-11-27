@@ -3,7 +3,10 @@
 
 import merge from 'deepmerge';
 
+import {Constants} from '../../utils';
+
 import partialDefaultConfig from '../../fixtures/partial_default_config.json';
+import cloudDefaultConfig from '../../fixtures/cloud_default_config.json';
 
 // *****************************************************************************
 // System
@@ -96,7 +99,10 @@ const getDefaultConfig = () => {
         },
     };
 
-    return merge(partialDefaultConfig, fromCypressEnv);
+    const isCloud = cypressEnv.serverEdition === Constants.serverEdition.CLOUD;
+    const defaultConfig = isCloud ? cloudDefaultConfig : partialDefaultConfig;
+
+    return merge(defaultConfig, fromCypressEnv);
 };
 
 const expectConfigToBeUpdatable = (currentConfig, newConfig) => {
@@ -113,9 +119,17 @@ const expectConfigToBeUpdatable = (currentConfig, newConfig) => {
                 const isAvailable = setting.hasOwnProperty(newSubKey);
                 const name = `${newMainKey}.${newSubKey}`;
                 expect(isAvailable, isAvailable ? `${name} setting can be updated.` : errorMessage(name)).to.equal(true);
+
+                // if (!isAvailable) {
+                //     console.log('not available', name)
+                // }
             });
         } else {
-            expect(Boolean(setting), Boolean(setting) ? `${newMainKey} setting can be updated.` : errorMessage(name)).to.equal(true)
+            expect(Boolean(setting), Boolean(setting) ? `${newMainKey} setting can be updated.` : errorMessage(name)).to.equal(true);
+
+            // if (!Boolean(setting)) {
+            //     console.log('not available', newMainKey)
+            // }
         }
     });
 }
@@ -180,6 +194,64 @@ Cypress.Commands.add('apiInvalidateCache', () => {
     }).then((response) => {
         expect(response.status).to.equal(200);
         return cy.wrap(response);
+    });
+});
+
+Cypress.Commands.add('isCloudEdition', () => {
+    const isCloudServer = Cypress.env('serverEdition') === Constants.serverEdition.CLOUD;
+
+    return cy.apiGetClientLicense().then(({license}) => {
+        let withCloudLicense = false;
+
+        if (license.IsLicensed === 'true') {
+            for (const [k, v] of Object.entries(license)) {
+                if (k === 'Cloud' && v === 'true') {
+                    withCloudLicense = true;
+                }
+            }
+        }
+
+        return cy.wrap(isCloudServer || withCloudLicense);
+    });
+});
+
+Cypress.Commands.add('shouldNotRunOnCloudEdition', () => {
+    cy.isCloudEdition().then((data) => {
+        expect(data, data ? 'Should not run on Cloud server' : '').to.equal(false);
+    });
+});
+
+Cypress.Commands.add('isTeamEdition', () => {
+    const isTeamServer = Cypress.env('serverEdition') === Constants.serverEdition.TEAM;
+
+    return cy.apiGetClientLicense().then(({license}) => {
+        return cy.wrap(isTeamServer || license.IsLicensed !== 'true');
+    });
+});
+
+Cypress.Commands.add('shouldRunOnTeamEdition', () => {
+    cy.isTeamEdition().then((data) => {
+        expect(data, !data ? 'Should run on Team edition only' : '').to.equal(true);
+    });
+});
+
+Cypress.Commands.add('isElasticsearchEnabled', () => {
+    return cy.apiGetConfig().then(({config}) => {
+        let isEnabled = false;
+
+        if (config.ElasticsearchSettings) {
+            const {EnableAutocomplete, EnableIndexing, EnableSearching} = config.ElasticsearchSettings;
+
+            isEnabled = EnableAutocomplete && EnableIndexing && EnableSearching;
+        }
+
+        return cy.wrap(isEnabled);
+    });
+});
+
+Cypress.Commands.add('shouldHaveElasticsearchDisabled', () => {
+    cy.isElasticsearchEnabled().then((data) => {
+        expect(data, data ? 'Should have Elasticsearch disabled' : '').to.equal(false);
     });
 });
 

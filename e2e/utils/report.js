@@ -139,6 +139,7 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment, te
 
     let title;
 
+    // TODO: simplify, type/stage, constants
     switch (TYPE) {
     case 'PR':
         title = `E2E for Pull Request Build: [${BRANCH}](${PULL_REQUEST}) ${dockerImageLink}`;

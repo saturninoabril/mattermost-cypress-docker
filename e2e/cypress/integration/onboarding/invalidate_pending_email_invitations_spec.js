@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @onboarding @te-only
+// Group: @onboarding @te_only
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
 import {getRandomId} from '../../utils';
@@ -25,9 +25,7 @@ describe('Onboarding', () => {
     const password = 'passwd';
 
     before(() => {
-        // # Delete license
-        // TODO: not to be deleted
-        cy.apiDeleteLicense();
+        cy.shouldRunOnTeamEdition();
 
         // # Disable LDAP and do email test if setup properly
         cy.apiUpdateConfig({LdapSettings: {Enable: false}});

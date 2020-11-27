@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @autocomplete @te-only
+// Group: @autocomplete
 
 import {getTestUsers} from '../enterprise/elasticsearch_autocomplete/helpers';
 
@@ -17,9 +17,7 @@ describe('Autocomplete without Elasticsearch - Users', () => {
     let testTeam;
 
     before(() => {
-        // # Remove license
-        // TODO:
-        cy.apiDeleteLicense();
+        cy.shouldHaveElasticsearchDisabled();
 
         // # Create new team for tests
         cy.apiCreateTeam(`search-${timestamp}`, `search-${timestamp}`).then(({team}) => {
@@ -31,16 +29,6 @@ describe('Autocomplete without Elasticsearch - Users', () => {
                     cy.apiAddUserToTeam(testTeam.id, user.id);
                 });
             });
-        });
-
-        // # Disable elastic search via API
-        cy.apiUpdateConfig({
-            ElasticsearchSettings: {
-                EnableAutocomplete: false,
-                EnableIndexing: false,
-                EnableSearching: false,
-                Sniff: false,
-            },
         });
     });
 

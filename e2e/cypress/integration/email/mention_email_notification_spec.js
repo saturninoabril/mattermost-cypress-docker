@@ -12,7 +12,7 @@
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
 
-import {getEmailUrl, reUrl} from '../../utils';
+import {getEmailUrl, reUrl, Constants} from '../../utils';
 
 let config;
 
@@ -28,6 +28,7 @@ describe('Email notification', () => {
         // # Get config
         cy.apiGetConfig().then((data) => {
             ({config} = data);
+            console.log('config', config);
         });
 
         cy.apiInitSetup().then(({team, user}) => {
@@ -79,7 +80,7 @@ describe('Email notification', () => {
     });
 });
 
-function verifyEmailNotification(response, siteName, teamDisplayName, channelDisplayName, mentionedUser, byUser, message, feedbackEmail, supportEmail) {
+function verifyEmailNotification(response, siteName, teamDisplayName, channelDisplayName, mentionedUser, byUser, message, feedbackEmail = Constants.config.DEFAULT_FEEDBACK_EMAIL, supportEmail) {
     const isoDate = new Date().toISOString().substring(0, 10);
     const {data, status} = response;
 
