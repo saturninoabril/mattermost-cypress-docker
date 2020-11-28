@@ -10,7 +10,7 @@
 // Stage: @prod
 // Group: @signin_authentication
 
-import {getEmailUrl, reUrl} from '../../utils';
+import {Constants, getEmailUrl, reUrl} from '../../utils';
 
 describe('Signin/Authentication', () => {
     let testUser;
@@ -52,7 +52,7 @@ function verifyForgotPasswordEmail(response, toUser, config) {
     expect(data.to[0]).to.contain(toUser.email);
 
     // * Verify that email is from default feedback email
-    expect(data.from).to.contain(config.EmailSettings.FeedbackEmail);
+    expect(data.from).to.contain(config.EmailSettings.FeedbackEmail || Constants.FixedCloudConfig.EmailSettings.FEEDBACK_EMAIL);
 
     // * Verify that date is current
     expect(data.date).to.contain(isoDate);

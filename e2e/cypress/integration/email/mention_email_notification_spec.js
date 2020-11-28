@@ -80,7 +80,7 @@ describe('Email notification', () => {
     });
 });
 
-function verifyEmailNotification(response, siteName, teamDisplayName, channelDisplayName, mentionedUser, byUser, message, feedbackEmail = Constants.config.DEFAULT_FEEDBACK_EMAIL, supportEmail) {
+function verifyEmailNotification(response, siteName, teamDisplayName, channelDisplayName, mentionedUser, byUser, message, feedbackEmail = Constants.FixedCloudConfig.EmailSettings.FEEDBACK_EMAIL, supportEmail) {
     const isoDate = new Date().toISOString().substring(0, 10);
     const {data, status} = response;
 

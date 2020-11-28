@@ -23,12 +23,12 @@ describe('Draw Plugin - Upload', () => {
 
     before(() => {
         cy.shouldNotRunOnCloudEdition();
+        cy.shouldHavePluginUploadEnabled();
 
         // # Update config
         cy.apiUpdateConfig({
             PluginSettings: {
                 Enable: true,
-                RequirePluginSignature: false,
             },
         });
 

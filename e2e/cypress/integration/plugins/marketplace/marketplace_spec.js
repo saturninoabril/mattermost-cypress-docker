@@ -17,6 +17,8 @@ describe('Plugin Marketplace', () => {
     let regularUser;
 
     before(() => {
+        cy.shouldHavePluginUploadEnabled();
+
         cy.apiInitSetup().then(({team, user}) => {
             regularUser = user;
             townsquareLink = `/${team.name}/channels/town-square`;

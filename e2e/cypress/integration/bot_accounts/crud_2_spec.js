@@ -20,6 +20,7 @@ describe('Bot accounts - CRUD Testing', () => {
 
     before(() => {
         cy.shouldNotRunOnCloudEdition();
+        cy.shouldHavePluginUploadEnabled();
 
         // # Set ServiceSettings to expected values
         const newSettings = {

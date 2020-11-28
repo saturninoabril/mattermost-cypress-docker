@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @enterprise @system_console
+// Group: @enterprise @not_cloud @system_console
 
 // # Goes to the System Scheme page as System Admin
 const goToSessionLengths = () => {

@@ -39,6 +39,7 @@ describe('System console', () => {
         goToAdminConsole();
 
         // # Enable Plugin Marketplace and Remote Marketplace
+        cy.shouldHavePluginUploadEnabled();
         cy.apiUpdateConfig({
             PluginSettings: {
                 Enable: true,

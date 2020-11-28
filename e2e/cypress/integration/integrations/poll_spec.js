@@ -23,6 +23,8 @@ describe('/poll', () => {
     let testChannelUrl;
 
     before(() => {
+        cy.shouldHavePluginUploadEnabled();
+
         cy.apiInitSetup().then(({team, user}) => {
             user1 = user;
             testChannelUrl = `/${team.name}/channels/town-square`;
@@ -37,7 +39,6 @@ describe('/poll', () => {
         cy.apiUpdateConfig({
             PluginSettings: {
                 Enable: true,
-                RequirePluginSignature: false,
             },
         });
 

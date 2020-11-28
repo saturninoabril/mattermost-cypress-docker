@@ -21,7 +21,6 @@ Cypress.Commands.add('apiCreateBot', ({prefix, bot = null} ={}) => {
         const bot = response.body;
         bot.fullDisplayName = `${bot.display_name} (@${bot.username})`;
 
-        console.log('bot', bot)
         return cy.wrap({bot});
     });
 });

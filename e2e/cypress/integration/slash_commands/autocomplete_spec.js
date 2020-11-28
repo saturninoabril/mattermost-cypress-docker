@@ -13,6 +13,8 @@ describe('Integrations', () => {
     const pluginIdJira = 'jira';
 
     before(() => {
+        cy.shouldHavePluginUploadEnabled();
+
         // # Initialize setup and visit town-square
         cy.apiInitSetup().then(({team}) => {
             cy.visit(`/${team.name}/channels/town-square`);

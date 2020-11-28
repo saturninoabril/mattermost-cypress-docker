@@ -86,7 +86,6 @@ Cypress.Commands.add('apiDeleteLicense', () => {
 
 const getDefaultConfig = () => {
     const cypressEnv = Cypress.env();
-    console.log('cypressEnv', cypressEnv)
 
     const fromCypressEnv = {
         LdapSettings: {
@@ -99,7 +98,7 @@ const getDefaultConfig = () => {
         },
     };
 
-    const isCloud = cypressEnv.serverEdition === Constants.serverEdition.CLOUD;
+    const isCloud = cypressEnv.serverEdition === Constants.ServerEdition.CLOUD;
     const defaultConfig = isCloud ? cloudDefaultConfig : partialDefaultConfig;
 
     return merge(defaultConfig, fromCypressEnv);
@@ -198,7 +197,7 @@ Cypress.Commands.add('apiInvalidateCache', () => {
 });
 
 Cypress.Commands.add('isCloudEdition', () => {
-    const isCloudServer = Cypress.env('serverEdition') === Constants.serverEdition.CLOUD;
+    const isCloudServer = Cypress.env('serverEdition') === Constants.ServerEdition.CLOUD;
 
     return cy.apiGetClientLicense().then(({license}) => {
         let withCloudLicense = false;
@@ -222,7 +221,7 @@ Cypress.Commands.add('shouldNotRunOnCloudEdition', () => {
 });
 
 Cypress.Commands.add('isTeamEdition', () => {
-    const isTeamServer = Cypress.env('serverEdition') === Constants.serverEdition.TEAM;
+    const isTeamServer = Cypress.env('serverEdition') === Constants.ServerEdition.TEAM;
 
     return cy.apiGetClientLicense().then(({license}) => {
         return cy.wrap(isTeamServer || license.IsLicensed !== 'true');
@@ -252,6 +251,14 @@ Cypress.Commands.add('isElasticsearchEnabled', () => {
 Cypress.Commands.add('shouldHaveElasticsearchDisabled', () => {
     cy.isElasticsearchEnabled().then((data) => {
         expect(data, data ? 'Should have Elasticsearch disabled' : '').to.equal(false);
+    });
+});
+
+Cypress.Commands.add('shouldHavePluginUploadEnabled', () => {
+    return cy.apiGetConfig().then(({config}) => {
+        let isUploadEnabled = config.PluginSettings.EnableUploads;
+
+        expect(isUploadEnabled, !isUploadEnabled ? 'Should have Plugin upload enabled' : '').to.equal(true);
     });
 });
 

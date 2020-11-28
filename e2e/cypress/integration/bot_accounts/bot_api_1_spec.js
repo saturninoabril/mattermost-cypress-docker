@@ -33,10 +33,6 @@ describe('Bot accounts ownership and API', () => {
         const newSettings = {
             ServiceSettings: {
                 EnableBotAccountCreation: true,
-                DisableBotsWhenOwnerIsDeactivated: true,
-            },
-            PluginSettings: {
-                Enable: true,
             },
         };
         cy.apiUpdateConfig(newSettings);
@@ -47,46 +43,6 @@ describe('Bot accounts ownership and API', () => {
             cy.apiPatchUserRoles(bot.user_id, ['system_admin', 'system_user']);
         });
     });
-
-    // it('MM-T1861 Bots do not re-enable if the owner is re-activated', () => {
-    //     // # Create another admin account
-    //     cy.apiCreateCustomAdmin().then(({sysadmin}) => {
-    //         // # Login as the new admin
-    //         cy.apiLogin(sysadmin);
-
-    //         // # Create a new bot as the new admin
-    //         cy.apiCreateBot({prefix: 'stay-enabled-bot'}).then(({bot}) => {
-    //             // # Login again as main admin
-    //             cy.apiAdminLogin();
-
-    //             // # Deactivate the newly created admin
-    //             cy.apiDeactivateUser(sysadmin.id);
-
-    //             // # Get bot list
-    //             cy.visit(`/${newTeam.name}/integrations/bots`);
-
-    //             // # Search for the other bot
-    //             cy.get('#searchInput', {timeout: TIMEOUTS.ONE_MIN}).type(bot.username);
-
-    //             // * Validate that the plugin is disabled since its owner is deactivated
-    //             cy.get('.bot-list__disabled').scrollIntoView().should('be.visible');
-
-    //             // # Re-activate the newly created admin
-    //             cy.apiActivateUser(sysadmin.id);
-
-    //             // # Repeat the test to confirm it stays disabled
-
-    //             // # Get bot list
-    //             cy.visit(`/${newTeam.name}/integrations/bots`);
-
-    //             // # Search for the other bot
-    //             cy.get('#searchInput', {timeout: TIMEOUTS.ONE_MIN}).type(bot.username);
-
-    //             // * Validate that the plugin is disabled even though its owner is activated
-    //             cy.get('.bot-list__disabled').scrollIntoView().should('be.visible');
-    //         })
-    //     });
-    // });
 
     it('MM-T1862 Only system admin are able to create bots', () => {
         // # Login as admin

@@ -34,7 +34,6 @@ Cypress.Commands.add('apiInstallPluginFromUrl', (pluginDownloadUrl, force = fals
         timeout: TIMEOUTS.ONE_MIN,
         failOnStatusCode: false,
     }).then((response) => {
-        console.log('apiInstallPluginFromUrl response', response)
         expect(response.status).to.equal(201);
 
         cy.wait(TIMEOUTS.HALF_MIN);

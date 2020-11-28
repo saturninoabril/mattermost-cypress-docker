@@ -19,6 +19,8 @@ describe('Bot accounts - CRUD Testing', () => {
     let testBot;
 
     before(() => {
+        cy.shouldHavePluginUploadEnabled();
+
         // # Set ServiceSettings to expected values
         const newSettings = {
             ServiceSettings: {
@@ -26,7 +28,6 @@ describe('Bot accounts - CRUD Testing', () => {
             },
             PluginSettings: {
                 Enable: true,
-                // RequirePluginSignature: false,
             },
         };
         cy.apiUpdateConfig(newSettings);

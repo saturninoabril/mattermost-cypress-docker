@@ -10,6 +10,8 @@
 // Stage: @prod
 // Group: @enterprise @bot_accounts @verify
 
+// TODO: no need to be enterprise only
+
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 
 describe('Managing bot accounts', () => {
@@ -24,11 +26,6 @@ describe('Managing bot accounts', () => {
         const newSettings = {
             ServiceSettings: {
                 EnableBotAccountCreation: true,
-                DisableBotsWhenOwnerIsDeactivated: true,
-            },
-            PluginSettings: {
-                Enable: true,
-                RequirePluginSignature: false,
             },
         };
         cy.apiUpdateConfig(newSettings);

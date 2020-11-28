@@ -122,6 +122,7 @@ describe('Header', () => {
 
     it('MM-T1837_2 - DM channel with bot from plugin displays a normal header', () => {
         cy.apiAdminLogin();
+        cy.shouldHavePluginUploadEnabled();
 
         // # Enable Bots and plugins
         cy.apiUpdateConfig({
@@ -130,7 +131,6 @@ describe('Header', () => {
             },
             PluginSettings: {
                 Enable: true,
-                RequirePluginSignature: false,
             },
         });
 

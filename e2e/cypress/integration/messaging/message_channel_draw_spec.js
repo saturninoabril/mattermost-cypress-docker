@@ -23,11 +23,12 @@ describe('M17448 Does not post draft message', () => {
     const pluginId = 'com.mattermost.draw-plugin';
 
     before(() => {
+        cy.shouldHavePluginUploadEnabled();
+
         // # Update config
         cy.apiUpdateConfig({
             PluginSettings: {
                 Enable: true,
-                RequirePluginSignature: false,
             },
         });
 
