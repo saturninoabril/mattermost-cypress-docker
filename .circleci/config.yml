@@ -151,7 +151,7 @@ jobs:
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
             # export CYPRESS_runWithEELicense=true
-            export CYPRESS_serverEdition=CLOUD
+            export CYPRESS_serverEdition=Cloud
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
@@ -201,7 +201,7 @@ jobs:
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
             # export CYPRESS_runWithEELicense=true
-            export CYPRESS_serverEdition=CLOUD
+            export CYPRESS_serverEdition=Cloud
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
@@ -251,7 +251,7 @@ jobs:
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
             # export CYPRESS_runWithEELicense=true
-            export CYPRESS_serverEdition=CLOUD
+            export CYPRESS_serverEdition=Cloud
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
@@ -301,7 +301,7 @@ jobs:
             export CYPRESS_resetBeforeTest=true
             export CYPRESS_runLDAPSync=false
             # export CYPRESS_runWithEELicense=true
-            export CYPRESS_serverEdition=CLOUD
+            export CYPRESS_serverEdition=Cloud
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 

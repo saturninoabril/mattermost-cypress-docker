@@ -109,25 +109,7 @@ before(() => {
         cy.apiRequireServerDBToMatch();
 
         // # TODO: Debug only
-        cy.apiGetClientLicense().then(({license}) => {
-            const hasLicense = license.IsLicensed === 'true';
-            if (hasLicense) {
-                let hasLicenseKey = false;
-                for (const [k, v] of Object.entries(license)) {
-                    if (k === 'Cloud' && v === 'true') {
-                        hasLicenseKey = true;
-                        break;
-                    }
-                }
-
-                if (!hasLicenseKey) {
-                    cy.log('Server has license but without Cloud feature.')
-                }
-                
-            } else {
-                cy.log('Server is without license.')
-            }
-        });
+        cloudLicenseCheck();
 
         switch (Cypress.env('serverEdition')) {
         case 'Cloud':
@@ -139,6 +121,8 @@ before(() => {
         default:
             break;
         }
+
+        cloudLicenseCheck();
     });
 });
 
@@ -146,6 +130,28 @@ before(() => {
 beforeEach(() => {
     Cypress.Cookies.preserveOnce('MMAUTHTOKEN', 'MMUSERID', 'MMCSRF');
 });
+
+function cloudLicenseCheck() {
+    cy.apiGetClientLicense().then(({license}) => {
+        const hasLicense = license.IsLicensed === 'true';
+        if (hasLicense) {
+            let hasLicenseKey = false;
+            for (const [k, v] of Object.entries(license)) {
+                if (k === 'Cloud' && v === 'true') {
+                    hasLicenseKey = true;
+                    break;
+                }
+            }
+
+            if (!hasLicenseKey) {
+                cy.log('Server has license but without Cloud feature.')
+            }
+            
+        } else {
+            cy.log('Server is without license.')
+        }
+    });
+}
 
 function sysadminSetup(user) {
     if (!user.email_verified) {
