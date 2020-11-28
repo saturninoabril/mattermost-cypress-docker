@@ -212,13 +212,13 @@ describe('System Console - Non-Enterprise', () => {
     testCases.forEach((testCase) => {
         it(`can navigate to ${testCase.header}`, () => {
             // # Click the link on the sidebar
-            cy.get('.admin-sidebar').should('be.visible').within(() => {
+            cy.get('.admin-sidebar', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible').within(() => {
                 cy.findByText(testCase.sidebar).scrollIntoView().should('be.visible').click();
             });
 
             // * Verify that it redirects to the URL and matches with the header
             cy.url().should('include', testCase.url);
-            cy.get('.admin-console').should('be.visible').within(() => {
+            cy.get('.admin-console', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible').within(() => {
                 cy.get('.admin-console__header').should('be.visible').and(testCase.headerContains ? 'contain' : 'have.text', testCase.header);
             });
         });
@@ -229,7 +229,7 @@ describe('System Console - Non-Enterprise', () => {
         cy.visit('/');
 
         // # Click on "Main Menu"
-        cy.get('#sidebarHeaderDropdownButton').should('be.visible').click();
+        cy.get('#sidebarHeaderDropdownButton', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible').click();
 
         // # Click on "System Console"
         cy.get('.Menu__content').should('be.visible').within(() => {
@@ -238,7 +238,7 @@ describe('System Console - Non-Enterprise', () => {
 
         // * Verify that it redirects to "Edition and License" system console page
         cy.url().should('include', '/admin_console/about/license');
-        cy.get('.admin-console').should('be.visible').within(() => {
+        cy.get('.admin-console', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible').within(() => {
             cy.get('.admin-console__header').should('be.visible').and('have.text', 'Edition and License');
         });
     });

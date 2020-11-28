@@ -257,7 +257,10 @@ Cypress.Commands.add('shouldHaveElasticsearchDisabled', () => {
 Cypress.Commands.add('shouldHavePluginUploadEnabled', () => {
     return cy.apiGetConfig().then(({config}) => {
         let isUploadEnabled = config.PluginSettings.EnableUploads;
-
+        console.log('config', config)
+        console.log('config.PluginSettings', config.PluginSettings)
+        console.log('isUploadEnabled', isUploadEnabled)
+        console.log('config.PluginSettings.EnableUploads', config.PluginSettings.EnableUploads)
         expect(isUploadEnabled, !isUploadEnabled ? 'Should have Plugin upload enabled' : '').to.equal(true);
     });
 });

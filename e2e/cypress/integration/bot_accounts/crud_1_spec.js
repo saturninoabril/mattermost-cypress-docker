@@ -19,15 +19,10 @@ describe('Bot accounts - CRUD Testing', () => {
     let testBot;
 
     before(() => {
-        cy.shouldHavePluginUploadEnabled();
-
         // # Set ServiceSettings to expected values
         const newSettings = {
             ServiceSettings: {
                 EnableBotAccountCreation: true,
-            },
-            PluginSettings: {
-                Enable: true,
             },
         };
         cy.apiUpdateConfig(newSettings);

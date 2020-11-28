@@ -121,7 +121,7 @@ jobs:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/test-1
     environment:
-      CI_BASE_URL: ec2-184-72-114-26.compute-1.amazonaws.com
+      CI_BASE_URL: ec2-3-86-237-176.compute-1.amazonaws.com
       BROWSER: chrome
       HEADLESS: true
     steps:
@@ -171,7 +171,7 @@ jobs:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/test-2
     environment:
-      CI_BASE_URL: ec2-100-24-45-241.compute-1.amazonaws.com
+      CI_BASE_URL: ec2-34-201-37-169.compute-1.amazonaws.com
       BROWSER: chrome
       HEADLESS: true
     steps:
@@ -221,7 +221,7 @@ jobs:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/test-3
     environment:
-      CI_BASE_URL: ec2-18-208-110-35.compute-1.amazonaws.com
+      CI_BASE_URL: ec2-3-95-234-255.compute-1.amazonaws.com
       BROWSER: chrome
       HEADLESS: true
     steps:
@@ -271,7 +271,7 @@ jobs:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/test-4
     environment:
-      CI_BASE_URL: ec2-54-91-111-46.compute-1.amazonaws.com
+      CI_BASE_URL: ec2-3-83-162-48.compute-1.amazonaws.com
       BROWSER: chrome
       HEADLESS: true
     steps:
