@@ -124,7 +124,7 @@ const expectConfigToBeUpdatable = (currentConfig, newConfig) => {
                 // }
             });
         } else {
-            expect(Boolean(setting), Boolean(setting) ? `${newMainKey} setting can be updated.` : errorMessage(name)).to.equal(true);
+            expect(Boolean(setting), Boolean(setting) ? `${newMainKey} setting can be updated.` : errorMessage(newMainKey)).to.equal(true);
 
             // if (!Boolean(setting)) {
             //     console.log('not available', newMainKey)

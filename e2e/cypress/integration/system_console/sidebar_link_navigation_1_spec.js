@@ -41,19 +41,9 @@ describe('System Console - Non-Enterprise', () => {
             url: 'admin_console/user_management/users',
         },
         {
-            header: 'Web Server',
-            sidebar: 'Web Server',
-            url: 'admin_console/environment/web_server',
-        },
-        {
             header: 'Database',
             sidebar: 'Database',
             url: 'admin_console/environment/database',
-        },
-        {
-            header: 'File Storage',
-            sidebar: 'File Storage',
-            url: 'admin_console/environment/file_storage',
         },
         {
             header: 'Image Proxy',

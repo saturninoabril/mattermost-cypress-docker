@@ -10,7 +10,7 @@
     "chalk": "4.1.0",
     "client-oauth2": "github:larkox/js-client-oauth2#e24e2eb5dfcbbbb3a59d095e831dbe0012b0ac49",
     "cross-env": "7.0.2",
-    "cypress": "5.6.0",
+    "cypress": "5.1.0",
     "cypress-file-upload": "4.1.1",
     "cypress-multi-reporters": "1.4.0",
     "cypress-plugin-tab": "1.0.5",

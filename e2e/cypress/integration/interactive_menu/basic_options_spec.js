@@ -250,7 +250,7 @@ describe('Interactive Menu', () => {
         });
     });
 
-    it('should truncate properly the selected long basic option', () => {
+    it.only('should truncate properly the selected long basic option', () => {
         const withLongBasicOption = [
             {text: 'Option 0 - This is with very long option', value: 'option0'},
             ...options,
@@ -263,7 +263,7 @@ describe('Interactive Menu', () => {
         });
     });
 
-    it('should truncate properly the selected long username option', () => {
+    it.only('should truncate properly the selected long username option', () => {
         const userOptions = getMessageMenusPayload({dataSource: 'users'});
 
         // # Post an incoming webhook for interactive menu with user options and verify the post
@@ -272,7 +272,7 @@ describe('Interactive Menu', () => {
         });
     });
 
-    it('should truncate properly the selected long channel display name option', () => {
+    it.only('should truncate properly the selected long channel display name option', () => {
         const channelOptions = getMessageMenusPayload({dataSource: 'channels'});
 
         cy.getCurrentTeamId().then((teamId) => {
@@ -602,6 +602,7 @@ function verifyMessageAttachmentList(postId, isRhs, text) {
             and('have.css', 'padding-right', '30px');
 
         return cy.findByPlaceholderText('Select an option...').scrollIntoView().invoke('attr', 'value').then((value) => {
+            console.log('verifyMessageAttachmentList value', value)
             return cy.wrap({value});
         });
     });
@@ -612,6 +613,7 @@ function verifyLastPost() {
     // * Verify its content in center view
     cy.getLastPostId().then((postId) => {
         verifyMessageAttachmentList(postId, false).then(({value}) => {
+            console.log('center value', value)
             // Open the same post in RHS, and
             // * Verify its content in RHS
             cy.clickPostCommentIcon(postId);

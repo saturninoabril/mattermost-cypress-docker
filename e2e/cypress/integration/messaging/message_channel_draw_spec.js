@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @messaging @plugin @verify
+// Group: @not_cloud @messaging @plugin @verify
 
 /**
  * Note: This test requires draw plugin tar file under fixtures folder.
