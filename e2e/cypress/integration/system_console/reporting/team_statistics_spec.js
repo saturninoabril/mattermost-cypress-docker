@@ -29,6 +29,8 @@ describe('System Console > Team Statistics', () => {
 
             // # Select created team.
             cy.get('select.team-statistics__team-filter__dropdown').select(team.id);
+
+            cy.wait(TIMEOUTS.TWO_SEC);
         });
     });
 
