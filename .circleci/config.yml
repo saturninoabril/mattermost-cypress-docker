@@ -134,7 +134,7 @@ jobs:
       - save_cache: # special step to save the dependency cache
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
-            -  ./test-1/e2e/node_modules
+            -  ./e2e/node_modules
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -159,7 +159,7 @@ jobs:
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - test-1/e2e/results
+            - e2e-test-1/e2e/results
       - store_artifacts:
           path: ~/mattermost/e2e-test-1/e2e/results
       - store_test_results:
@@ -184,7 +184,7 @@ jobs:
       - save_cache: # special step to save the dependency cache
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
-            -  ./test-2/e2e/node_modules
+            -  ./e2e/node_modules
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -209,7 +209,7 @@ jobs:
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - test-2/e2e/results
+            - e2e-test-2/e2e/results
       - store_artifacts:
           path: ~/mattermost/e2e-test-2/e2e/results
       - store_test_results:
@@ -259,7 +259,7 @@ jobs:
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - test-3/e2e/results
+            - e2e-test-3/e2e/results
       - store_artifacts:
           path: ~/mattermost/e2e-test-3/e2e/results
       - store_test_results:
@@ -284,7 +284,7 @@ jobs:
       - save_cache: # special step to save the dependency cache
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
-            -  ./test-4/e2e/node_modules
+            -  ./e2e/node_modules
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -309,7 +309,7 @@ jobs:
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - test-4/e2e/results
+            - e2e-test-4/e2e/results
       - store_artifacts:
           path: ~/mattermost/e2e-test-4/e2e/results
       - store_test_results:
