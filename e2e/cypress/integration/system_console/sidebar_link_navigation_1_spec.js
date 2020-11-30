@@ -41,16 +41,6 @@ describe('System Console - Non-Enterprise', () => {
             url: 'admin_console/user_management/users',
         },
         {
-            header: 'Database',
-            sidebar: 'Database',
-            url: 'admin_console/environment/database',
-        },
-        {
-            header: 'Image Proxy',
-            sidebar: 'Image Proxy',
-            url: 'admin_console/environment/image_proxy',
-        },
-        {
             header: 'SMTP',
             sidebar: 'SMTP',
             url: 'admin_console/environment/smtp',

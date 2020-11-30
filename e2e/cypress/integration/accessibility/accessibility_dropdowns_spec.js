@@ -104,7 +104,7 @@ describe('Verify Accessibility Support in Dropdown Menus', () => {
 
     it('MM-T1477 Accessibility Support in Status Dropdown', () => {
         // # Press tab from Add Team button
-        cy.get('#create_teamTeamButton').focus().wait(TIMEOUTS.HALF_SEC).tab({shift: true}).tab().tab();
+        cy.findAllByTestId('teamIconInitial').last().focus().wait(TIMEOUTS.HALF_SEC).tab({shift: true}).tab().tab();
 
         // * Verify the aria-label in status menu button
         cy.get('.status-wrapper button.status').should('have.attr', 'aria-label', 'set status').and('have.class', 'a11y--active a11y--focused').click();

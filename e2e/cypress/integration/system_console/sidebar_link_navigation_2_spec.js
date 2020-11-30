@@ -24,6 +24,11 @@ describe('System Console - Non-Enterprise', () => {
             sidebar: 'Database',
             url: 'admin_console/environment/database',
         },
+        {
+            header: 'Image Proxy',
+            sidebar: 'Image Proxy',
+            url: 'admin_console/environment/image_proxy',
+        },
     ];
 
     before(() => {
