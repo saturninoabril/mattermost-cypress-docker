@@ -15,7 +15,6 @@ import addContext from 'mochawesome/addContext';
 
 import './api';
 import './api_commands'; // soon to deprecate
-import './client';
 import './common_login_commands';
 import './db_commands';
 import './fetch_commands';
@@ -28,8 +27,6 @@ import './ui';
 import './ui_commands'; // soon to deprecate
 import './visual_commands';
 import './external_commands';
-
-import {getAdminAccount} from './env';
 
 Cypress.on('test:after:run', (test, runnable) => {
     // Only if the test is failed do we want to add
@@ -93,12 +90,10 @@ Cypress.on('test:after:run', (test, runnable) => {
 });
 
 before(() => {
-    const admin = getAdminAccount();
-
-    cy.dbGetUser({username: admin.username}).then(({user}) => {
-        if (user.id) {
-            // # Login existing sysadmin
-            cy.apiAdminLogin().then(() => sysadminSetup(user));
+    // # Try to login using existing sysadmin account
+    cy.apiAdminLogin({failOnStatusCode: false}).then((response) => {
+        if (response.user) {
+            sysadminSetup(response.user);
         } else {
             // # Create and login a newly created user as sysadmin
             cy.apiCreateAdmin().then(({sysadmin}) => {
@@ -106,13 +101,21 @@ before(() => {
             });
         }
 
-        // * Verify that the server database matches with the DB client and config at "cypress.json"
-        cy.apiRequireServerDBToMatch();
+        // # TODO: Debug only
+        cloudLicenseCheck();
 
-        if (Cypress.env('runWithEELicense')) {
-            // * Verify that the server is loaded with license when running tests for EE
+        switch (Cypress.env('serverEdition')) {
+        case 'Cloud':
+            cy.apiRequireLicenseForFeature('Cloud');
+            break;
+        case 'E20':
             cy.apiRequireLicense();
+            break;
+        default:
+            break;
         }
+
+        cloudLicenseCheck();
     });
 });
 
@@ -120,6 +123,29 @@ before(() => {
 beforeEach(() => {
     Cypress.Cookies.preserveOnce('MMAUTHTOKEN', 'MMUSERID', 'MMCSRF');
 });
+
+function cloudLicenseCheck() {
+    cy.apiGetClientLicense().then(({license}) => {
+        const hasLicense = license.IsLicensed === 'true';
+        if (hasLicense) {
+            let hasLicenseKey = false;
+            for (const [k, v] of Object.entries(license)) {
+                if (k === 'Cloud' && v === 'true') {
+                    hasLicenseKey = true;
+                    break;
+                }
+            }
+
+            if (hasLicenseKey) {
+                cy.log('Server has license with Cloud feature.');
+            } else {
+                cy.log('Server has license but without Cloud feature.');
+            }
+        } else {
+            cy.log('Server is without license.');
+        }
+    });
+}
 
 function sysadminSetup(user) {
     if (!user.email_verified) {
@@ -148,6 +174,14 @@ function sysadminSetup(user) {
     cy.apiGetClientLicense().then(({license}) => {
         if (license.IsLicensed === 'true') {
             cy.apiResetRoles();
+
+            for (const [k, v] of Object.entries(license)) {
+                if (k === 'Cloud' && v === 'true') {
+                    // # Modify sysadmin role for Cloud edition
+                    cy.apiPatchUserRoles(user.id, ['system_admin', 'system_manager', 'system_user']);
+                    break;
+                }
+            }
         }
     });
 

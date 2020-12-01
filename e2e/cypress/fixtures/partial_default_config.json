@@ -327,7 +327,7 @@
         "LoginIdAttribute": "uid",
         "PictureAttribute": "",
         "SyncIntervalMinutes": 10000,
-        "SkipCertificateVerification": false,
+        "SkipCertificateVerification": true,
         "QueryTimeout": 60,
         "MaxPageSize": 500,
         "LoginFieldName": "",
@@ -424,7 +424,7 @@
         "EnableIndexing": false,
         "EnableSearching": false,
         "EnableAutocomplete": false,
-        "Sniff": true,
+        "Sniff": false,
         "PostIndexReplicas": 1,
         "PostIndexShards": 1,
         "ChannelIndexReplicas": 1,
@@ -477,6 +477,9 @@
                 "Enable": false
             },
             "com.mattermost.plugin-incident-response": {
+                "Enable": false
+            },
+            "com.mattermost.plugin-incident-management": {
                 "Enable": false
             }
         },

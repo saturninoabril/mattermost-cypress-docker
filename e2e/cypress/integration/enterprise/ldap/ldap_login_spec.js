@@ -46,7 +46,7 @@ context('ldap', () => {
             const ldapSetting = {
                 LdapSettings: {
                     EnableAdminFilter: true,
-                    AdminFilter: '(cn=dev*)',
+                    AdminFilter: '(cn=Dev*)',
                 },
             };
             cy.apiUpdateConfig(ldapSetting).then(() => {
@@ -95,7 +95,7 @@ context('ldap', () => {
             testSettings.user = user1;
             const ldapSetting = {
                 LdapSettings: {
-                    UserFilter: '(cn=test*)',
+                    UserFilter: '(cn=Test*)',
                 },
             };
             cy.apiAdminLogin().then(() => {
@@ -133,14 +133,14 @@ context('ldap', () => {
             const ldapSetting = {
                 LdapSettings: {
                     UserFilter: '(cn=no_users)',
-                    GuestFilter: '(cn=board*)',
+                    GuestFilter: '(cn=Board*)',
                 },
             };
             cy.apiAdminLogin().then(() => {
                 cy.apiUpdateConfig(ldapSetting).then(() => {
                     cy.doLDAPLogin(testSettings).then(() => {
-                        // # Do logout from sign up
-                        cy.doLogoutFromSignUp(testSettings);
+                        // # Check guest had successfully logged in but without channel assigned
+                        cy.checkGuestNoChannels();
                     });
                 });
             });
@@ -171,7 +171,7 @@ context('ldap', () => {
             testSettings.user = user1;
             const ldapSetting = {
                 LdapSettings: {
-                    UserFilter: '(cn=test*)',
+                    UserFilter: '(cn=Test*)',
                 },
             };
             cy.apiAdminLogin().then(() => {
@@ -188,7 +188,7 @@ context('ldap', () => {
             testSettings.user = guest1;
             const ldapSetting = {
                 LdapSettings: {
-                    GuestFilter: '(cn=board*)',
+                    GuestFilter: '(cn=Board*)',
                 },
             };
             cy.apiAdminLogin().then(() => {

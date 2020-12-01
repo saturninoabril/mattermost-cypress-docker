@@ -15,9 +15,7 @@ Cypress.Commands.add('uiCreateSidebarCategory', (categoryName = `category-${getR
     cy.contains('button', 'Create').click();
 
     // * Wait for the category to appear in the sidebar
-    cy.contains('.SidebarChannelGroup', categoryName, {matchCase: false});
-
-    return cy.wrap({displayName: categoryName});
+    return cy.contains('.SidebarChannelGroup', categoryName, {matchCase: false});
 });
 
 Cypress.Commands.add('uiMoveChannelToCategory', (channelName, categoryName = `category-${getRandomId()}`, newCategory = false) => {

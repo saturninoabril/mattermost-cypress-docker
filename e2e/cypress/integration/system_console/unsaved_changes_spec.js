@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @system_console
+// Group: @system_console @not_cloud
 
 describe('Unsaved Changes', () => {
     it('MM-T955 Warning leaving changed page without saving: Leave page, discard changes', () => {

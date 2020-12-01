@@ -3,7 +3,10 @@
 
 import merge from 'deepmerge';
 
+import {Constants} from '../../utils';
+
 import partialDefaultConfig from '../../fixtures/partial_default_config.json';
+import cloudDefaultConfig from '../../fixtures/cloud_default_config.json';
 
 // *****************************************************************************
 // System
@@ -82,23 +85,55 @@ Cypress.Commands.add('apiDeleteLicense', () => {
 });
 
 const getDefaultConfig = () => {
+    const cypressEnv = Cypress.env();
+
     const fromCypressEnv = {
         LdapSettings: {
-            LdapServer: Cypress.env('ldapServer'),
-            LdapPort: Cypress.env('ldapPort'),
+            LdapServer: cypressEnv.ldapServer,
+            LdapPort: cypressEnv.ldapPort,
         },
-        ServiceSettings: {SiteURL: Cypress.config('baseUrl')},
+        ServiceSettings: {
+            AllowedUntrustedInternalConnections: `localhost,${cypressEnv.ciBaseUrl}`,
+            SiteURL: Cypress.config('baseUrl'),
+        },
     };
 
-    return merge(partialDefaultConfig, fromCypressEnv);
+    const isCloud = cypressEnv.serverEdition === Constants.ServerEdition.CLOUD;
+    const defaultConfig = isCloud ? cloudDefaultConfig : partialDefaultConfig;
+
+    return merge(defaultConfig, fromCypressEnv);
+};
+
+const expectConfigToBeUpdatable = (currentConfig, newConfig) => {
+    function errorMessage(name) {
+        return `${name} is restricted or not available to update. You may check user/sysadmin access, license requirement, server version or edition (on-prem/cloud) compatibility.`;
+    }
+
+    Object.entries(newConfig).forEach(([newMainKey, newSubSetting]) => {
+        const setting = currentConfig[newMainKey];
+
+        if (setting) {
+            Object.keys(newSubSetting).forEach((newSubKey) => {
+                const isAvailable = setting.hasOwnProperty(newSubKey);
+                const name = `${newMainKey}.${newSubKey}`;
+                expect(isAvailable, isAvailable ? `${name} setting can be updated.` : errorMessage(name)).to.equal(true);
+            });
+        } else {
+            const withSetting = Boolean(setting);
+            expect(withSetting, withSetting ? `${newMainKey} setting can be updated.` : errorMessage(newMainKey)).to.equal(true);
+        }
+    });
 };
 
 Cypress.Commands.add('apiUpdateConfig', (newConfig = {}) => {
     // # Get current settings
     return cy.request('/api/v4/config').then((response) => {
-        const oldConfig = response.body;
+        const currentConfig = response.body;
 
-        const config = merge.all([oldConfig, getDefaultConfig(), newConfig]);
+        // * Check if config can be updated
+        expectConfigToBeUpdatable(currentConfig, newConfig);
+
+        const config = merge.all([currentConfig, getDefaultConfig(), newConfig]);
 
         // # Set the modified config
         return cy.request({
@@ -153,6 +188,71 @@ Cypress.Commands.add('apiInvalidateCache', () => {
     });
 });
 
+Cypress.Commands.add('isCloudEdition', () => {
+    const isCloudServer = Cypress.env('serverEdition') === Constants.ServerEdition.CLOUD;
+
+    return cy.apiGetClientLicense().then(({license}) => {
+        let withCloudLicense = false;
+
+        if (license.IsLicensed === 'true') {
+            for (const [k, v] of Object.entries(license)) {
+                if (k === 'Cloud' && v === 'true') {
+                    withCloudLicense = true;
+                }
+            }
+        }
+
+        return cy.wrap(isCloudServer || withCloudLicense);
+    });
+});
+
+Cypress.Commands.add('shouldNotRunOnCloudEdition', () => {
+    cy.isCloudEdition().then((data) => {
+        expect(data, data ? 'Should not run on Cloud server' : '').to.equal(false);
+    });
+});
+
+Cypress.Commands.add('isTeamEdition', () => {
+    const isTeamServer = Cypress.env('serverEdition') === Constants.ServerEdition.TEAM;
+
+    return cy.apiGetClientLicense().then(({license}) => {
+        return cy.wrap(isTeamServer || license.IsLicensed !== 'true');
+    });
+});
+
+Cypress.Commands.add('shouldRunOnTeamEdition', () => {
+    cy.isTeamEdition().then((data) => {
+        expect(data, data ? '' : 'Should run on Team edition only').to.equal(true);
+    });
+});
+
+Cypress.Commands.add('isElasticsearchEnabled', () => {
+    return cy.apiGetConfig().then(({config}) => {
+        let isEnabled = false;
+
+        if (config.ElasticsearchSettings) {
+            const {EnableAutocomplete, EnableIndexing, EnableSearching} = config.ElasticsearchSettings;
+
+            isEnabled = EnableAutocomplete && EnableIndexing && EnableSearching;
+        }
+
+        return cy.wrap(isEnabled);
+    });
+});
+
+Cypress.Commands.add('shouldHaveElasticsearchDisabled', () => {
+    cy.isElasticsearchEnabled().then((data) => {
+        expect(data, data ? 'Should have Elasticsearch disabled' : '').to.equal(false);
+    });
+});
+
+Cypress.Commands.add('shouldHavePluginUploadEnabled', () => {
+    return cy.apiGetConfig().then(({config}) => {
+        const isUploadEnabled = config.PluginSettings.EnableUploads;
+        expect(isUploadEnabled, isUploadEnabled ? '' : 'Should have Plugin upload enabled').to.equal(true);
+    });
+});
+
 /**
  * Upload a license if it does not exist.
  */
@@ -162,8 +262,16 @@ function uploadLicenseIfNotExist() {
             return cy.wrap({license});
         }
 
-        return cy.apiInstallTrialLicense().then(() => {
-            return cy.apiGetClientLicense();
+        const filename = 'users.txt';
+
+        return cy.task('fileExist', filename).then((exist) => {
+            if (!exist) {
+                return cy.wrap({license});
+            }
+
+            return cy.apiUploadLicense(filename).then(() => {
+                return cy.apiGetClientLicense();
+            });
         });
     });
 }

@@ -10,6 +10,8 @@
 // Stage: @prod
 // Group: @enterprise @bot_accounts
 
+// TODO: no need to be enterprise only
+
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 
 describe('Managing bot accounts', () => {
@@ -19,23 +21,19 @@ describe('Managing bot accounts', () => {
         cy.apiRequireLicenseForFeature('LDAP');
 
         cy.apiAdminLogin();
-        botName = 'bot-' + Date.now();
 
         // # Set ServiceSettings to expected values
         const newSettings = {
             ServiceSettings: {
                 EnableBotAccountCreation: true,
-                DisableBotsWhenOwnerIsDeactivated: true,
-            },
-            PluginSettings: {
-                Enable: true,
-                RequirePluginSignature: false,
             },
         };
         cy.apiUpdateConfig(newSettings);
 
         // # Create a test bot
-        cy.apiCreateBot(botName, 'Test Bot', 'test bot');
+        cy.apiCreateBot().then(({bot}) => {
+            botName = bot.username;
+        });
     });
 
     it('MM-T1855 Bot cannot login', () => {

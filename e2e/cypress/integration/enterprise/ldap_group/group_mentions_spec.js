@@ -12,120 +12,12 @@
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 import users from '../../../fixtures/ldap_users.json';
 
-let groupID;
-let boardUser;
-let regularUser;
-let testTeam;
-
-// Goes to the groups page for the group specified by id as sysadmin
-const navigateToGroup = (id) => {
-    // # Login as sysadmin and visit board group page, and wait until board user is visible
-    cy.apiAdminLogin();
-    cy.visit(`/admin_console/user_management/groups/${id}`);
-
-    // # Scroll users list into view and then make sure it has loaded before scrolling back to the top
-    cy.get('#group_users').scrollIntoView();
-    cy.findByText(boardUser.email).should('be.visible');
-    cy.get('#group_profile').scrollIntoView();
-};
-
-// Goes to the townsquare and attempts to display suggestions for the given group name
-// Attempts to @mention the given group
-// Checks to see that the group is not highlighted as a link when viewed by a user without permission to mention
-// Checks to see that the group is not highlighted as a mention when viewed by user inside the group
-const assertGroupMentionDisabled = (groupName) => {
-    const suggestion = groupName.substring(0, groupName.length - 1);
-
-    // # Visit town-square
-    cy.visit(`/${testTeam.name}/channels/town-square`);
-
-    // # Type suggestion in channel post text box
-    cy.get('#post_textbox').should('be.visible').clear().type(`@${suggestion}`).wait(TIMEOUTS.HALF_SEC);
-
-    // * Should not open up suggestion list for groups
-    cy.get('#suggestionList').should('not.be.visible');
-
-    // # Type @groupName and post it to the channel
-    cy.get('#post_textbox').clear().type(`@${groupName}{enter}{enter}`);
-
-    // # Get last post message text
-    cy.getLastPostId().then((postId) => {
-        // * Assert that the last message posted contains the group name and is not highlighted with the class group-mention-link
-        cy.get(`#postMessageText_${postId}`).find('.group-mention-link').should('not.be.visible');
-        cy.get(`#postMessageText_${postId}`).should('include.text', `@${groupName}`);
-    });
-
-    // # Login as board user
-    cy.apiLogin(boardUser);
-
-    // # Visit town-square
-    cy.visit(`/${testTeam.name}/channels/town-square`);
-
-    // # Get last post message text
-    cy.getLastPostId().then((postId) => {
-        // * Assert that the last message posted contains the group name and is not highlighted with the class mention--highlight
-        cy.get(`#postMessageText_${postId}`).find('.mention--highlight').should('not.be.visible');
-        cy.get(`#postMessageText_${postId}`).should('include.text', `@${groupName}`);
-    });
-};
-
-// Goes to the townsquare and attempts to display suggestions for the given group name
-// Attempts to @mention the given group
-// Checks to see that the group is highlighted as a link when viewed by a user outside of the group
-// Checks to see that the group is highlighted as a mention when viewed by user inside the group
-const assertGroupMentionEnabled = (groupName) => {
-    const suggestion = groupName.substring(0, groupName.length - 1);
-
-    // # Visit town-square
-    cy.visit(`/${testTeam.name}/channels/town-square`);
-
-    // # Type suggestion in channel post text box
-    cy.get('#post_textbox').should('be.visible').clear().type(`@${suggestion}`).wait(TIMEOUTS.HALF_SEC);
-
-    // * Should open up suggestion list for groups
-    // * Should match group item and group label
-    cy.get('#suggestionList', {timeout: TIMEOUTS.FIVE_SEC}).should('be.visible').children().within((el) => {
-        cy.wrap(el).eq(0).should('contain', 'Group Mentions');
-        cy.wrap(el).eq(1).should('contain', `@${groupName}`);
-    });
-
-    // # Type @groupName and post it to the channel
-    cy.get('#post_textbox').clear().type(`@${groupName}{enter}{enter}`).wait(TIMEOUTS.HALF_SEC);
-
-    // # Get last post message text
-    cy.getLastPostId().then((postId) => {
-        // * Assert that the last message posted contains the group name and is highlighted with the class group-mention-link
-        cy.get(`#postMessageText_${postId}`).find('.group-mention-link').should('be.visible').should('include.text', `@${groupName}`);
-    });
-
-    // # Login as board user
-    cy.apiLogin(boardUser);
-
-    // # Visit town-square
-    cy.visit(`/${testTeam.name}/channels/town-square`);
-
-    // # Get last post message text
-    cy.getLastPostId().then((postId) => {
-        // * Assert that the last message posted contains the group name and is highlighted with the class mention--highlight
-        cy.get(`#postMessageText_${postId}`).find('.mention--highlight').should('be.visible').should('include.text', `@${groupName}`);
-    });
-};
-
-// Clicks the save button in the system console page.
-const saveConfig = () => {
-    // # Save if possible (if previous test ended abruptly all permissions may already be enabled)
-    cy.get('#saveSetting').then((btn) => {
-        if (btn.is(':enabled')) {
-            btn.click();
-
-            cy.waitUntil(() => cy.get('#saveSetting').then((el) => {
-                return el[0].innerText === 'Save';
-            }));
-        }
-    });
-};
-
 describe('System Console', () => {
+    let groupID;
+    const boardUser = users['board-1'];
+    let regularUser;
+    let testTeam;
+
     before(() => {
         // * Check if server has license for LDAP Groups
         cy.apiRequireLicenseForFeature('LDAPGroups');
@@ -163,7 +55,6 @@ describe('System Console', () => {
         });
 
         // # Login once as board user to ensure the user is created in the system
-        boardUser = users['board-1'];
         cy.apiLogin(boardUser);
 
         // # Login as sysadmin and add board-one to test team
@@ -191,12 +82,12 @@ describe('System Console', () => {
         const groupName = `board_test_case_${Date.now()}`;
 
         // # Login as sysadmin and navigate to board group page
-        navigateToGroup(groupID);
+        navigateToGroup(groupID, boardUser.email);
 
         // # Click the allow reference button
-        cy.findByTestId('allowReferenceSwitch').then((el) => {
-            el.find('button').click();
-        });
+        cy.wait(TIMEOUTS.ONE_SEC);
+        cy.findByTestId('allowReferenceSwitch-button').should('be.visible').click();
+        cy.findByTestId('allowReferenceSwitch-button').should('have.attr', 'aria-pressed', 'true');
 
         // # Give the group a custom name different from its DisplayName attribute
         cy.get('#groupMention').find('input').clear().type(groupName);
@@ -205,21 +96,21 @@ describe('System Console', () => {
         saveConfig();
 
         // * Assert that the group mention works as expected since the group is enabled and sysadmin always has permission to mention
-        assertGroupMentionEnabled(groupName);
+        assertGroupMentionEnabled(testTeam.name, groupName, boardUser);
 
         // # Login as sysadmin and navigate to board group page
-        navigateToGroup(groupID);
+        navigateToGroup(groupID, boardUser.email);
 
         // # Click the allow reference button
-        cy.findByTestId('allowReferenceSwitch').then((el) => {
-            el.find('button').click();
-        });
+        cy.wait(TIMEOUTS.ONE_SEC);
+        cy.findByTestId('allowReferenceSwitch-button').should('be.visible').click();
+        cy.findByTestId('allowReferenceSwitch-button').should('have.attr', 'aria-pressed', 'false');
 
         // # Click save button
         saveConfig();
 
         // * Assert that the group mention does not do anything since the group is disabled even though sysadmin has permission to mention
-        assertGroupMentionDisabled(groupName);
+        assertGroupMentionDisabled(testTeam.name, groupName, boardUser);
     });
 
     it('MM-23937 - Can restrict users from mentioning a group through the use_group_mentions permission', () => {
@@ -235,7 +126,7 @@ describe('System Console', () => {
         cy.visit('/admin_console/user_management/permissions/system_scheme');
 
         // # Click reset to defaults, confirm and save
-        cy.findByTestId('resetPermissionsToDefault').click();
+        cy.findByTestId('resetPermissionsToDefault', {timeout: TIMEOUTS.ONE_MIN}).click();
         cy.get('#confirmModalButton').click();
         saveConfig();
 
@@ -243,7 +134,7 @@ describe('System Console', () => {
         cy.apiLogin(regularUser);
 
         // * Assert that the group mention works as expected since the group is enabled and user has permission to mention
-        assertGroupMentionEnabled(groupName);
+        assertGroupMentionEnabled(testTeam.name, groupName, boardUser);
 
         // # Login as sysadmin and navigate to system scheme
         cy.apiAdminLogin();
@@ -261,7 +152,7 @@ describe('System Console', () => {
         cy.apiLogin(regularUser);
 
         // * Assert that the group mention does not do anything since the user does not have the permission to mention the group
-        assertGroupMentionDisabled(groupName);
+        assertGroupMentionDisabled(testTeam.name, groupName, boardUser);
     });
 
     after(() => {
@@ -270,8 +161,118 @@ describe('System Console', () => {
         cy.visit('/admin_console/user_management/permissions/system_scheme');
 
         // # Click reset to defaults confirm and save
-        cy.findByTestId('resetPermissionsToDefault').click();
+        cy.findByTestId('resetPermissionsToDefault', {timeout: TIMEOUTS.ONE_MIN}).click();
         cy.get('#confirmModalButton').click();
         saveConfig();
     });
 });
+
+// Goes to the groups page for the group specified by id as sysadmin
+const navigateToGroup = (id, boardOneUserEmail) => {
+    // # Login as sysadmin and visit board group page, and wait until board user is visible
+    cy.apiAdminLogin();
+    cy.visit(`/admin_console/user_management/groups/${id}`);
+
+    // # Scroll users list into view and then make sure it has loaded before scrolling back to the top
+    cy.get('#group_users').scrollIntoView().should('be.visible').within(() => {
+        cy.findByText(boardOneUserEmail).should('be.visible');
+    });
+
+    cy.get('#group_profile').scrollIntoView().should('be.visible');
+};
+
+// Goes to the townsquare and attempts to display suggestions for the given group name
+// Attempts to @mention the given group
+// Checks to see that the group is not highlighted as a link when viewed by a user without permission to mention
+// Checks to see that the group is not highlighted as a mention when viewed by user inside the group
+const assertGroupMentionDisabled = (teamName, groupName, boardUser) => {
+    const suggestion = groupName.substring(0, groupName.length - 1);
+
+    // # Visit town-square
+    cy.visit(`/${teamName}/channels/town-square`);
+
+    // # Type suggestion in channel post text box
+    cy.get('#post_textbox').should('be.visible').clear().type(`@${suggestion}`).wait(TIMEOUTS.HALF_SEC);
+
+    // * Should not open up suggestion list for groups
+    cy.get('#suggestionList').should('not.be.visible');
+
+    // # Type @groupName and post it to the channel
+    cy.get('#post_textbox').clear().type(`@${groupName}{enter}{enter}`);
+
+    // # Get last post message text
+    cy.getLastPostId().then((postId) => {
+        // * Assert that the last message posted contains the group name and is not highlighted with the class group-mention-link
+        cy.get(`#postMessageText_${postId}`).find('.group-mention-link').should('not.be.visible');
+        cy.get(`#postMessageText_${postId}`).should('include.text', `@${groupName}`);
+    });
+
+    // # Login as board user
+    cy.apiLogin(boardUser);
+
+    // # Visit town-square
+    cy.visit(`/${teamName}/channels/town-square`);
+
+    // # Get last post message text
+    cy.getLastPostId().then((postId) => {
+        // * Assert that the last message posted contains the group name and is not highlighted with the class mention--highlight
+        cy.get(`#postMessageText_${postId}`).find('.mention--highlight').should('not.be.visible');
+        cy.get(`#postMessageText_${postId}`).should('include.text', `@${groupName}`);
+    });
+};
+
+// Goes to the townsquare and attempts to display suggestions for the given group name
+// Attempts to @mention the given group
+// Checks to see that the group is highlighted as a link when viewed by a user outside of the group
+// Checks to see that the group is highlighted as a mention when viewed by user inside the group
+const assertGroupMentionEnabled = (teamName, groupName, boardUser) => {
+    const suggestion = groupName.substring(0, groupName.length - 1);
+
+    // # Visit town-square
+    cy.visit(`/${teamName}/channels/town-square`);
+
+    // # Type suggestion in channel post text box
+    cy.get('#post_textbox').should('be.visible').clear().type(`@${suggestion}`).wait(TIMEOUTS.HALF_SEC);
+
+    // * Should open up suggestion list for groups
+    // * Should match group item and group label
+    cy.get('#suggestionList', {timeout: TIMEOUTS.FIVE_SEC}).should('be.visible').children().within((el) => {
+        cy.wrap(el).eq(0).should('contain', 'Group Mentions');
+        cy.wrap(el).eq(1).should('contain', `@${groupName}`);
+    });
+
+    // # Type @groupName and post it to the channel
+    cy.get('#post_textbox').clear().type(`@${groupName}{enter}{enter}`).wait(TIMEOUTS.HALF_SEC);
+
+    // # Get last post message text
+    cy.getLastPostId().then((postId) => {
+        // * Assert that the last message posted contains the group name and is highlighted with the class group-mention-link
+        cy.get(`#postMessageText_${postId}`).find('.group-mention-link').should('be.visible').should('include.text', `@${groupName}`);
+    });
+
+    // # Login as board user
+    cy.apiLogin(boardUser);
+
+    // # Visit town-square
+    cy.visit(`/${teamName}/channels/town-square`);
+
+    // # Get last post message text
+    cy.getLastPostId().then((postId) => {
+        // * Assert that the last message posted contains the group name and is highlighted with the class mention--highlight
+        cy.get(`#postMessageText_${postId}`).find('.mention--highlight').should('be.visible').should('include.text', `@${groupName}`);
+    });
+};
+
+// Clicks the save button in the system console page.
+const saveConfig = () => {
+    // # Save if possible (if previous test ended abruptly all permissions may already be enabled)
+    cy.get('#saveSetting').then((btn) => {
+        if (btn.is(':enabled')) {
+            btn.click();
+
+            cy.waitUntil(() => cy.get('#saveSetting').then((el) => {
+                return el[0].innerText === 'Save';
+            }));
+        }
+    });
+};
