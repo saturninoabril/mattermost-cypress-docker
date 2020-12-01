@@ -21,8 +21,9 @@ describe('MM-T2575 Extend Session - Email Login', () => {
     before(() => {
         cy.shouldNotRunOnCloudEdition();
 
-        // # Check if with license and has matching database
+        // * Verify that the server has license and its database matches with the DB client and config at "cypress.json"
         cy.apiRequireLicense();
+        cy.apiRequireServerDBToMatch();
 
         cy.apiInitSetup().then(({team, user}) => {
             testUser = user;
