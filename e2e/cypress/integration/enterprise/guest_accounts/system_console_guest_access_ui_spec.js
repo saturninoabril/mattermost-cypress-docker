@@ -68,7 +68,7 @@ describe('Guest Account - Verify Guest Access UI', () => {
         cy.findByTestId('GuestAccountsSettings.EnforceMultifactorAuthenticationhelp-text').should('be.visible').and('have.text', 'Multi-factor authentication is currently not enforced.');
     });
 
-    it.only('MM-T1410 Confirmation Modal when Guest Access is disabled', () => {
+    it('MM-T1410 Confirmation Modal when Guest Access is disabled', () => {
         // # Disable Guest Access and save
         cy.findByTestId('GuestAccountsSettings.Enablefalse').click();
 

@@ -250,7 +250,7 @@ describe('Interactive Menu', () => {
         });
     });
 
-    it.only('should truncate properly the selected long basic option', () => {
+    it('should truncate properly the selected long basic option', () => {
         const withLongBasicOption = [
             {text: 'Option 0 - This is with very long option', value: 'option0'},
             ...options,
@@ -263,7 +263,7 @@ describe('Interactive Menu', () => {
         });
     });
 
-    it.only('should truncate properly the selected long username option', () => {
+    it('should truncate properly the selected long username option', () => {
         const userOptions = getMessageMenusPayload({dataSource: 'users'});
 
         // # Post an incoming webhook for interactive menu with user options and verify the post
@@ -272,7 +272,7 @@ describe('Interactive Menu', () => {
         });
     });
 
-    it.only('should truncate properly the selected long channel display name option', () => {
+    it('should truncate properly the selected long channel display name option', () => {
         const channelOptions = getMessageMenusPayload({dataSource: 'channels'});
 
         cy.getCurrentTeamId().then((teamId) => {

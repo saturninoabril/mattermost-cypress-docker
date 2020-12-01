@@ -102,7 +102,7 @@ describe('Verify Accessibility Support in Dropdown Menus', () => {
         cy.get('#sidebarDropdownMenu').should('not.exist');
     });
 
-    it.only('MM-T1477 Accessibility Support in Status Dropdown', () => {
+    it('MM-T1477 Accessibility Support in Status Dropdown', () => {
         // # Press tab from the test team button
         cy.get(`#${testTeam.name}TeamButton`).focus().wait(TIMEOUTS.HALF_SEC).tab({shift: true}).tab().tab().tab();
 
