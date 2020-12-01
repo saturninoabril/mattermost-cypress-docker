@@ -92,12 +92,12 @@ Cypress.on('test:after:run', (test, runnable) => {
 });
 
 before(() => {
-    const admin = getAdminAccount();
+    // # Try to login using existing sysadmin account
+    cy.apiAdminLogin({failOnStatusCode: false}).then((response) => {
+        console.log('before response', response);
 
-    cy.dbGetUser({username: admin.username}).then(({user}) => {
-        if (user.id) {
-            // # Login existing sysadmin
-            cy.apiAdminLogin().then(() => sysadminSetup(user));
+        if (response.user) {
+            sysadminSetup(response.user);
         } else {
             // # Create and login a newly created user as sysadmin
             cy.apiCreateAdmin().then(({sysadmin}) => {
@@ -124,6 +124,39 @@ before(() => {
 
         cloudLicenseCheck();
     });
+
+    // const admin = getAdminAccount();
+
+    // cy.dbGetUser({username: admin.username}).then(({user}) => {
+    //     if (user.id) {
+    //         // # Login existing sysadmin
+    //         cy.apiAdminLogin().then(() => sysadminSetup(user));
+    //     } else {
+    //         // # Create and login a newly created user as sysadmin
+    //         cy.apiCreateAdmin().then(({sysadmin}) => {
+    //             cy.apiAdminLogin().then(() => sysadminSetup(sysadmin));
+    //         });
+    //     }
+
+    //     // * Verify that the server database matches with the DB client and config at "cypress.json"
+    //     cy.apiRequireServerDBToMatch();
+
+    //     // # TODO: Debug only
+    //     cloudLicenseCheck();
+
+    //     switch (Cypress.env('serverEdition')) {
+    //     case 'Cloud':
+    //         cy.apiRequireLicenseForFeature('Cloud');
+    //         break;
+    //     case 'E20':
+    //         cy.apiRequireLicense();
+    //         break;
+    //     default:
+    //         break;
+    //     }
+
+    //     cloudLicenseCheck();
+    // });
 });
 
 // Add login cookies to whitelist to preserve it
