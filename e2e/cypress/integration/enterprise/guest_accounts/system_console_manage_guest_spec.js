@@ -66,7 +66,7 @@ describe('Guest Account - Verify Manage Guest Users', () => {
         cy.get('#searchUsers').should('be.visible').type(guestUser.username);
     });
 
-    it.only('MM-18048 Verify the manage options displayed for Guest User', () => {
+    it('MM-18048 Verify the manage options displayed for Guest User', () => {
         // * Verify Guest user
         verifyGuest();
 
