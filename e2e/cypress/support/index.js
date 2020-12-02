@@ -123,13 +123,6 @@ beforeEach(() => {
     Cypress.Cookies.preserveOnce('MMAUTHTOKEN', 'MMUSERID', 'MMCSRF');
 });
 
-after(() => {
-    cy.apiAdminLogin().then(() => {
-        // Log license status after test
-        printLicenseStatus();
-    });
-});
-
 function printLicenseStatus() {
     cy.apiGetClientLicense().then(({isLicensed, isCloudLicensed}) => {
         if (isCloudLicensed) {

@@ -5,8 +5,8 @@ import merge from 'deepmerge';
 
 import {Constants} from '../../utils';
 
-import partialDefaultConfig from '../../fixtures/partial_default_config.json';
-import cloudDefaultConfig from '../../fixtures/cloud_default_config.json';
+import onPremDefaultConfig from './on_prem_default_config.json';
+import cloudDefaultConfig from './cloud_default_config.json';
 
 // *****************************************************************************
 // System
@@ -115,7 +115,7 @@ const getDefaultConfig = () => {
     };
 
     const isCloud = cypressEnv.serverEdition === Constants.ServerEdition.CLOUD;
-    const defaultConfig = isCloud ? cloudDefaultConfig : partialDefaultConfig;
+    const defaultConfig = isCloud ? cloudDefaultConfig : onPremDefaultConfig;
 
     return merge(defaultConfig, fromCypressEnv);
 };
