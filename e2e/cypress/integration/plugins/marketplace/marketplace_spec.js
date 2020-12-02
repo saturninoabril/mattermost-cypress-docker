@@ -17,6 +17,7 @@ describe('Plugin Marketplace', () => {
     let regularUser;
 
     before(() => {
+        cy.shouldNotRunOnCloudEdition();
         cy.shouldHavePluginUploadEnabled();
 
         cy.apiInitSetup().then(({team, user}) => {

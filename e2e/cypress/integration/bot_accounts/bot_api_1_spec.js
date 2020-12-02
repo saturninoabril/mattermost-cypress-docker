@@ -101,9 +101,6 @@ describe('Bot accounts ownership and API', () => {
         // # Login as admin
         cy.apiAdminLogin();
 
-        // # Create a new bot as the new admin
-        const botName3 = 'stay-enabled-bot-' + Date.now();
-
         // * This call will fail if bot was not created
         cy.apiCreateBot();
     });

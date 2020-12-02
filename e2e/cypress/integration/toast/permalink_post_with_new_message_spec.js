@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @toast @verify
+// Group: @toast
 
 import {getRandomId} from '../../utils';
 

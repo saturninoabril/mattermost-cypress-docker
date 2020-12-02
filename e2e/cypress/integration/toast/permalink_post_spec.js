@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @toast @verify
+// Group: @toast
 
 describe('Toast', () => {
     let testTeam;

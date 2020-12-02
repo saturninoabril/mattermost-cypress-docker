@@ -70,11 +70,10 @@ export function stubClipboard() {
     const clipboard = {contents: '', wasCalled: false};
 
     cy.window().then((win) => {
-        console.log('before win.navigator', win.navigator)
         if (!win.navigator.clipboard) {
             win.navigator.clipboard = {
-                writeText: () => {}
-            }
+                writeText: () => {}, //eslint-disable-line no-empty-function
+            };
         }
 
         cy.stub(win.navigator.clipboard, 'writeText', (link) => {

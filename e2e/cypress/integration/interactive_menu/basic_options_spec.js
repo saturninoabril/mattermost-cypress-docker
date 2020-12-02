@@ -602,7 +602,6 @@ function verifyMessageAttachmentList(postId, isRhs, text) {
             and('have.css', 'padding-right', '30px');
 
         return cy.findByPlaceholderText('Select an option...').scrollIntoView().invoke('attr', 'value').then((value) => {
-            console.log('verifyMessageAttachmentList value', value)
             return cy.wrap({value});
         });
     });
@@ -613,7 +612,6 @@ function verifyLastPost() {
     // * Verify its content in center view
     cy.getLastPostId().then((postId) => {
         verifyMessageAttachmentList(postId, false).then(({value}) => {
-            console.log('center value', value)
             // Open the same post in RHS, and
             // * Verify its content in RHS
             cy.clickPostCommentIcon(postId);

@@ -32,6 +32,8 @@ describe('System Console - Non-Enterprise', () => {
     ];
 
     before(() => {
+        cy.shouldNotRunOnCloudEdition();
+
         const newSettings = {
             TeamSettings: {SiteName: 'Mattermost'},
         };

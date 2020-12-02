@@ -8,7 +8,7 @@ import {getRandomId} from '../../utils';
 // https://api.mattermost.com/#tag/bots
 // *****************************************************************************
 
-Cypress.Commands.add('apiCreateBot', ({prefix, bot = null} ={}) => {
+Cypress.Commands.add('apiCreateBot', ({prefix, bot = null} = {}) => {
     const newBot = bot || generateRandomBot(prefix);
 
     return cy.request({
@@ -18,10 +18,13 @@ Cypress.Commands.add('apiCreateBot', ({prefix, bot = null} ={}) => {
         body: newBot,
     }).then((response) => {
         expect(response.status).to.equal(201);
-        const bot = response.body;
-        bot.fullDisplayName = `${bot.display_name} (@${bot.username})`;
-
-        return cy.wrap({bot});
+        const {body} = response;
+        return cy.wrap({
+            bot: {
+                ...body,
+                fullDisplayName: `${body.display_name} (@${body.username})`,
+            },
+        });
     });
 });
 
@@ -40,8 +43,8 @@ function generateRandomBot(prefix = 'bot') {
     const randomId = getRandomId();
 
     return {
-        username: `${prefix}-${randomId}`, 
-        display_name: `Test Bot ${randomId}`, 
-        description: `Test bot description ${randomId}`, 
+        username: `${prefix}-${randomId}`,
+        display_name: `Test Bot ${randomId}`,
+        description: `Test bot description ${randomId}`,
     };
 }

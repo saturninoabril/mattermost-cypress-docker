@@ -22,7 +22,7 @@ describe('Managing bot accounts', () => {
             newTeam = team;
         });
     });
-    
+
     beforeEach(() => {
         cy.apiAdminLogin();
         const newSettings = {
@@ -31,7 +31,7 @@ describe('Managing bot accounts', () => {
             },
         };
         cy.apiUpdateConfig(newSettings);
-    })
+    });
 
     it('MM-T1851 No option to create BOT accounts when Enable Bot Account Creation is set to False.', () => {
         // # Visit bot config

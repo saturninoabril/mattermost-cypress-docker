@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @messaging @verify
+// Group: @messaging
 
 import {getRandomId} from '../../utils';
 import * as TIMEOUTS from '../../fixtures/timeouts';

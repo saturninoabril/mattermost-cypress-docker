@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @bot_accounts @verify
+// Group: @bot_accounts
 
 describe('Bot Tokens', () => {
     let townsquareChannel;

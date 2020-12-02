@@ -34,6 +34,6 @@ export const ServerEdition = {
 export const Constants = {
     FixedCloudConfig,
     ServerEdition,
-}
+};
 
 export default Constants;

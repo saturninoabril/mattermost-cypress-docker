@@ -68,7 +68,7 @@ describe('Bot accounts ownership and API', () => {
 
                 // * Validate that the plugin is disabled even though its owner is activated
                 cy.get('.bot-list__disabled').scrollIntoView().should('be.visible');
-            })
+            });
         });
     });
 });

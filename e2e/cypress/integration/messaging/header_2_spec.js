@@ -14,6 +14,7 @@ import * as TIMEOUTS from '../../fixtures/timeouts';
 
 describe('Header', () => {
     before(() => {
+        cy.shouldNotRunOnCloudEdition();
         cy.shouldHavePluginUploadEnabled();
 
         // # Enable Bots and plugins

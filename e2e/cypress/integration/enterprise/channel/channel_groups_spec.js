@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @enterprise @ldap_group @verify
+// Group: @enterprise @ldap_group
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 
@@ -32,7 +32,6 @@ describe('channel groups', () => {
 
         // # Create a new team and associate one group to the team
         cy.apiCreateTeam('team', 'Team').then(({team}) => {
-            console
             testTeam = team;
             cy.apiLinkGroupTeam(groups[0].id, team.id);
 

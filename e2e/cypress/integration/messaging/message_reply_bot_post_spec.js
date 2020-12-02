@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @messaging @verify
+// Group: @messaging
 
 import {getAdminAccount} from '../../support/env';
 

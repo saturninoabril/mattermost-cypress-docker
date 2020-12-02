@@ -1,6 +1,8 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+/* eslint-disable camelcase, no-console */
+
 const express = require('express');
 const axios = require('axios');
 var ClientOAuth2 = require('client-oauth2');
@@ -16,9 +18,6 @@ const {
     CYPRESS_webhookBaseUrl,
     CYPRESS_adminUsername,
     CYPRESS_adminPassword,
-    SITE_URL,
-    SITE_ADMIN_USERNAME,
-    SITE_ADMIN_PASSWORD,
 } = process.env;
 
 const server = express();
@@ -27,7 +26,7 @@ server.use(express.urlencoded({extended: true}));
 
 process.title = process.argv[2];
 
-server.get('/', (req, res) => res.status(200).send('I\'m alive!\n'));
+server.get('/', ping);
 server.post('/message_menus', postMessageMenus);
 server.post('/dialog_request', onDialogRequest);
 server.post('/simple_dialog_request', onSimpleDialogRequest);
@@ -43,7 +42,7 @@ server.get('/complete_oauth', getCompleteOauth);
 server.post('/postOAuthMessage', postOAuthMessage);
 
 function ping(req, res) {
-    const baseUrl = CYPRESS_baseUrl || SITE_URL || 'http://localhost:8065';
+    const baseUrl = CYPRESS_baseUrl || 'http://localhost:8065';
     const webhookBaseUrl = CYPRESS_webhookBaseUrl || 'http://localhost:3000';
 
     return res.json({
@@ -53,14 +52,7 @@ function ping(req, res) {
     });
 }
 
-server.listen(port, () => {
-    const baseUrl = CYPRESS_baseUrl || SITE_URL || 'http://localhost:8065';
-    const webhookBaseUrl = CYPRESS_webhookBaseUrl || 'http://localhost:3000';
-
-    console.log(`Webhook test server listening on port ${port}!`); // eslint-disable-line no-console
-    console.log(`baseUrl: ${baseUrl}!`); // eslint-disable-line no-console
-    console.log(`webhookBaseUrl ${webhookBaseUrl}!`); // eslint-disable-line no-console
-});
+server.listen(port, () => console.log(`Webhook test server listening on port ${port}!`));
 
 let appID;
 let appSecret;
@@ -250,13 +242,13 @@ function getWebhookBaseUrl() {
 }
 
 function getBaseUrl() {
-    return process.env.CYPRESS_baseUrl || SITE_URL || 'http://localhost:8065';
+    return process.env.CYPRESS_baseUrl || 'http://localhost:8065';
 }
 
 // Convenient way to send response in a channel by using sysadmin account
 function sendSysadminResponse(message, channelId) {
-    const username = CYPRESS_adminUsername || SITE_ADMIN_USERNAME || 'sysadmin';
-    const password = CYPRESS_adminPassword || SITE_ADMIN_PASSWORD || 'Sys@dmin-sample1';
+    const username = CYPRESS_adminUsername || 'sysadmin';
+    const password = CYPRESS_adminPassword || 'Sys@dmin-sample1';
     const baseUrl = getBaseUrl();
     postMessageAs({sender: {username, password}, message, channelId, baseUrl});
 }

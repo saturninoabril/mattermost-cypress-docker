@@ -112,7 +112,6 @@ const saveReport = async () => {
     }
 
     // Save test cases to Test Management
-    // Do it in the later stage since saving test executions tend to be unstable.
     if (TM4J_ENABLE === 'true') {
         await createTestExecutions(jsonReport, testCycle);
     }

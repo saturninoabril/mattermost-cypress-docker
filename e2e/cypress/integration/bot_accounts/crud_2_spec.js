@@ -16,7 +16,6 @@ import {createBotInteractive} from './helpers';
 
 describe('Bot accounts - CRUD Testing', () => {
     let newTeam;
-    let testBot;
 
     before(() => {
         cy.shouldNotRunOnCloudEdition();
@@ -37,9 +36,7 @@ describe('Bot accounts - CRUD Testing', () => {
         cy.apiUpdateConfig(newSettings);
 
         // # Create a test bot
-        cy.apiCreateBot().then(({bot}) => {
-            testBot = bot;
-        });
+        cy.apiCreateBot();
 
         // # Create and visit new channel
         cy.apiInitSetup().then(({team}) => {

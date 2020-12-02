@@ -28,9 +28,9 @@ Cypress.Commands.add('apiLogin', (user, requestOptions = {}) => {
                     password: user.password,
                 },
             });
-        } else {
-            return cy.wrap({error: response.body});
         }
+
+        return cy.wrap({error: response.body});
     });
 });
 

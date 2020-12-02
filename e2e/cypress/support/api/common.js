@@ -49,7 +49,6 @@ function formRequest(method, url, formData, successStatus) {
             xhr.setRequestHeader('Cookie', cookies);
             xhr.send(formData);
             if (xhr.readyState === 4) {
-                console.log('formRequest xhr', xhr)
                 expect(xhr.status, 'Expected form request to be processed successfully').to.equal(successStatus);
             } else {
                 expect(xhr.status, 'Form request process delayed').to.equal(successStatus);

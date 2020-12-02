@@ -4,7 +4,6 @@
 import {stubClipboard} from '../../utils';
 
 Cypress.Commands.add('uiClickCopyLink', (permalink) => {
-    console.log('navigator', navigator)
     stubClipboard().as('clipboard');
 
     // * Verify initial state

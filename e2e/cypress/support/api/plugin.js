@@ -49,7 +49,6 @@ Cypress.Commands.add('apiEnablePluginById', (pluginId) => {
         timeout: TIMEOUTS.ONE_MIN,
         failOnStatusCode: false,
     }).then((response) => {
-        console.log('apiEnablePluginById', response)
         expect(response.status).to.equal(200);
         return cy.wrap(response);
     });

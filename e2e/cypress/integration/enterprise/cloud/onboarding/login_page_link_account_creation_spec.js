@@ -101,7 +101,7 @@ describe('Onboarding', () => {
     // eslint-disable-next-line no-shadow
     function getEmail(username, email) {
         cy.task('getRecentEmail', {username, mailUrl}).then((response) => {
-            verifyEmailVerification(response, testTeam.name, testTeam.display_name, email);
+            verifyEmailVerification(response, email);
 
             const bodyText = response.data.body.text.split('\n').map((d) => d.trim());
             const permalink = bodyText[6].match(reUrl)[0];
@@ -111,7 +111,7 @@ describe('Onboarding', () => {
         });
     }
 
-    function verifyEmailVerification(response, teamName, teamDisplayName, userEmail) {
+    function verifyEmailVerification(response, userEmail) {
         const isoDate = new Date().toISOString().substring(0, 10);
         const {data, status} = response;
 

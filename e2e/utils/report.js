@@ -139,7 +139,6 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment, te
 
     let title;
 
-    // TODO: simplify, type/stage, constants
     switch (TYPE) {
     case 'PR':
         title = `E2E for Pull Request Build: [${BRANCH}](${PULL_REQUEST}) ${dockerImageLink}`;
@@ -216,7 +215,7 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment, te
         quickSummary = `[${quickSummary}](${reportLink})`;
     }
 
-    let testCycleLink
+    let testCycleLink;
     if (testCycleKey) {
         testCycleLink = testCycleKey ? `| [Recorded test executions](${TEST_CYCLE_LINK_PREFIX}${testCycleKey})` : '';
     }

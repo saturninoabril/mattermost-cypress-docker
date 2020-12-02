@@ -15,6 +15,7 @@ import addContext from 'mochawesome/addContext';
 
 import './api';
 import './api_commands'; // soon to deprecate
+import './client';
 import './common_login_commands';
 import './db_commands';
 import './fetch_commands';
@@ -27,8 +28,6 @@ import './ui';
 import './ui_commands'; // soon to deprecate
 import './visual_commands';
 import './external_commands';
-
-import {getAdminAccount} from './env';
 
 Cypress.on('test:after:run', (test, runnable) => {
     // Only if the test is failed do we want to add
@@ -94,8 +93,6 @@ Cypress.on('test:after:run', (test, runnable) => {
 before(() => {
     // # Try to login using existing sysadmin account
     cy.apiAdminLogin({failOnStatusCode: false}).then((response) => {
-        console.log('before response', response);
-
         if (response.user) {
             sysadminSetup(response.user);
         } else {
@@ -104,9 +101,6 @@ before(() => {
                 cy.apiAdminLogin().then(() => sysadminSetup(sysadmin));
             });
         }
-
-        // # TODO: Debug only
-        cloudLicenseCheck();
 
         switch (Cypress.env('serverEdition')) {
         case 'Cloud':
@@ -119,7 +113,8 @@ before(() => {
             break;
         }
 
-        cloudLicenseCheck();
+        // Log license status before test
+        printLicenseStatus();
     });
 });
 
@@ -128,24 +123,21 @@ beforeEach(() => {
     Cypress.Cookies.preserveOnce('MMAUTHTOKEN', 'MMUSERID', 'MMCSRF');
 });
 
-function cloudLicenseCheck() {
-    cy.apiGetClientLicense().then(({license}) => {
-        const hasLicense = license.IsLicensed === 'true';
-        if (hasLicense) {
-            let hasLicenseKey = false;
-            for (const [k, v] of Object.entries(license)) {
-                if (k === 'Cloud' && v === 'true') {
-                    hasLicenseKey = true;
-                    break;
-                }
-            }
+after(() => {
+    cy.apiAdminLogin().then(() => {
+        // Log license status after test
+        printLicenseStatus();
+    });
+});
 
-            if (!hasLicenseKey) {
-                cy.log('Server has license but without Cloud feature.')
-            }
-            
+function printLicenseStatus() {
+    cy.apiGetClientLicense().then(({isLicensed, isCloudLicensed}) => {
+        if (isCloudLicensed) {
+            cy.log('Server has enterprise license for Cloud.');
+        } else if (isLicensed) {
+            cy.log('Server has enterprise license.');
         } else {
-            cy.log('Server is without license.')
+            cy.log('Server is without license.');
         }
     });
 }
@@ -174,17 +166,14 @@ function sysadminSetup(user) {
     });
 
     // # Reset roles
-    cy.apiGetClientLicense().then(({license}) => {
-        if (license.IsLicensed === 'true') {
+    cy.apiGetClientLicense().then(({isLicensed, isCloudLicensed}) => {
+        if (isLicensed) {
             cy.apiResetRoles();
+        }
 
-            for (const [k, v] of Object.entries(license)) {
-                if (k === 'Cloud' && v === 'true') {
-                    // # Modify sysadmin role for Cloud edition
-                    cy.apiPatchUserRoles(user.id, ['system_admin', 'system_manager', 'system_user']);
-                    break;
-                }
-            }
+        if (isCloudLicensed) {
+            // # Modify sysadmin role for Cloud edition
+            cy.apiPatchUserRoles(user.id, ['system_admin', 'system_manager', 'system_user']);
         }
     });
 

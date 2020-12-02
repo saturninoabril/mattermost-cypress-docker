@@ -8,11 +8,13 @@
 // ***************************************************************
 
 // Group: @not_cloud @integrations
+
 describe('Integrations', () => {
     const pluginIdDemo = 'com.mattermost.demo-plugin';
     const pluginIdJira = 'jira';
 
     before(() => {
+        cy.shouldRunOnTeamEdition();
         cy.shouldHavePluginUploadEnabled();
 
         // # Initialize setup and visit town-square

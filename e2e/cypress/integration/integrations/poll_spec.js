@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @verify @not_cloud
+// Group: @not_cloud
 
 /**
  * Note: This test requires "matterpoll" plugin tar file under fixtures folder.
@@ -23,6 +23,7 @@ describe('/poll', () => {
     let testChannelUrl;
 
     before(() => {
+        cy.shouldNotRunOnCloudEdition();
         cy.shouldHavePluginUploadEnabled();
 
         cy.apiInitSetup().then(({team, user}) => {

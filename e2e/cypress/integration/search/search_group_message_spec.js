@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// With valid bug
+// Stage: @prod
 // Group: @search
 
 describe('Search', () => {

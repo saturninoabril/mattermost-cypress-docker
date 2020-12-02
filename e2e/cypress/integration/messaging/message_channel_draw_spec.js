@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @not_cloud @messaging @plugin @verify
+// Group: @not_cloud @messaging @plugin
 
 /**
  * Note: This test requires draw plugin tar file under fixtures folder.
@@ -23,6 +23,7 @@ describe('M17448 Does not post draft message', () => {
     const pluginId = 'com.mattermost.draw-plugin';
 
     before(() => {
+        cy.shouldNotRunOnCloudEdition();
         cy.shouldHavePluginUploadEnabled();
 
         // # Update config

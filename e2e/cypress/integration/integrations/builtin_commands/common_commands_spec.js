@@ -83,7 +83,7 @@ describe('Integrations', () => {
     it('MM-T678 /code', () => {
         loginAndVisitChannel(user1, testChannelUrl);
 
-        const message = '1. Not a list item, **not bolded**, http://notalink.com, ~off-topic is not a link to the channel.'
+        const message = '1. Not a list item, **not bolded**, http://notalink.com, ~off-topic is not a link to the channel.';
 
         // # Use "/code"
         cy.postMessage(`/code ${message}`);

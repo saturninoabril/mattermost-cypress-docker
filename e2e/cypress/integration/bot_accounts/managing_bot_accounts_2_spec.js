@@ -14,7 +14,6 @@ import * as TIMEOUTS from '../../fixtures/timeouts';
 
 describe('Managing bot accounts', () => {
     let newTeam;
-    let testBot;
 
     beforeEach(() => {
         cy.apiAdminLogin();
@@ -32,9 +31,7 @@ describe('Managing bot accounts', () => {
         cy.apiUpdateConfig(newSettings);
 
         // # Create a test bot
-        cy.apiCreateBot({prefix: 'test-bot'}).then(({bot}) => {
-            testBot = bot;
-        });
+        cy.apiCreateBot({prefix: 'test-bot'});
 
         // # Create and visit new channel
         cy.apiInitSetup().then(({team}) => {

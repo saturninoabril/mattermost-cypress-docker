@@ -8,9 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @enterprise @bot_accounts @verify
-
-// TODO: no need to be enterprise only
+// Group: @enterprise @bot_accounts
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 

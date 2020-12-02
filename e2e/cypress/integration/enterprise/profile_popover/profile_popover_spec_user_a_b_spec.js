@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @enterprise @profile_popover @verify
+// Group: @enterprise @profile_popover
 
 describe('Profile popover User A & B', () => {
     let testTeam;

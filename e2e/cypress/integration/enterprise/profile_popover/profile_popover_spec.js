@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @enterprise @profile_popover @verify
+// Group: @enterprise @profile_popover
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 import {createPrivateChannel} from '../elasticsearch_autocomplete/helpers';
