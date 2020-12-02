@@ -62,8 +62,8 @@ Cypress.Commands.add('apiRequireLicense', () => {
     Cypress.log({name: 'EE License', message: 'Checking if server has license.'});
 
     return uploadLicenseIfNotExist().then((data) => {
-        const hasLicenseMessage = `Server ${data.IsLicensed ? 'has' : 'has no'} EE license.`;
-        expect(data.IsLicensed, hasLicenseMessage).to.equal(true);
+        const hasLicenseMessage = `Server ${data.isLicensed ? 'has' : 'has no'} EE license.`;
+        expect(data.isLicensed, hasLicenseMessage).to.equal(true);
 
         return cy.wrap(data);
     });
