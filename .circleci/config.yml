@@ -68,7 +68,7 @@ commands:
 
             export TM4J_ENABLE=true
             export JIRA_PROJECT_KEY=MM
-            export TM4J_FOLDER_ID=1044238
+            export TM4J_FOLDER_ID=1063065
 
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
