@@ -58,8 +58,8 @@ jobs:
     working_directory: ~/mattermost-cypress-docker
     environment:
       MM_DOCKER_IMAGE_TAG: master
-      TYPE: NONE
-      PULL_REQUEST:
+      TYPE: PR
+      PULL_REQUEST: https://github.com/mattermost/mattermost-webapp/pull/7021
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
