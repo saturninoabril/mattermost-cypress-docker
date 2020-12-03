@@ -81,7 +81,7 @@ jobs:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost
     environment:
-      MM_DOCKER_IMAGE_TAG: mm-cloud-ee:latest
+      MM_DOCKER_IMAGE_TAG: mm-cloud-ee:test-8d0fe62-22
       TYPE: CLOUD
       PULL_REQUEST:
       BROWSER: chrome
@@ -121,7 +121,7 @@ jobs:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-1
     environment:
-      CI_BASE_URL: latest-cloud-1.dev.spinmint.com
+      CI_BASE_URL: test-8d0fe62-22-cloud-1.dev.spinmint.com
       BROWSER: chrome
       HEADLESS: true
     steps:
@@ -171,7 +171,7 @@ jobs:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-2
     environment:
-      CI_BASE_URL: latest-cloud-2.dev.spinmint.com
+      CI_BASE_URL: test-8d0fe62-22-cloud-2.dev.spinmint.com
       BROWSER: chrome
       HEADLESS: true
     steps:
@@ -221,7 +221,7 @@ jobs:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-3
     environment:
-      CI_BASE_URL: latest-cloud-3.dev.spinmint.com
+      CI_BASE_URL: test-8d0fe62-22-cloud-3.dev.spinmint.com
       BROWSER: chrome
       HEADLESS: true
     steps:
@@ -271,7 +271,7 @@ jobs:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-4
     environment:
-      CI_BASE_URL: latest-cloud-4.dev.spinmint.com
+      CI_BASE_URL: test-8d0fe62-22-cloud-4.dev.spinmint.com
       BROWSER: chrome
       HEADLESS: true
     steps:
