@@ -101,6 +101,7 @@ jobs:
           no_output_timeout: 30m
           command: |
             node --version
+            curl ${TEST_SERVER_CREATE_ENDPOINT}
             curl --request POST --url '${TEST_SERVER_CREATE_ENDPOINT}&workspace=${CIRCLE_BRANCH}&docker-image=${MM_DOCKER_IMAGE}&docker-tag=${MM_DOCKER_TAG}&instance_count=4'
             export BASE=$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG
              
