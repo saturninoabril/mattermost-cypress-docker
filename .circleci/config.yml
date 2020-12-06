@@ -92,16 +92,16 @@ commands:
 jobs:
   create-test-server:
     environment:
-      BASH_ENV: /etc/profile
-      MM_DOCKER_IMAGE: mm-cloud-ee
-      MM_DOCKER_TAG: test-1282467-23
-      BROWSER: chrome
-      HEADLESS: true
-      CYPRESS_chromeWebSecurity: true
-      CYPRESS_numberOfTrialUsers: 10000
-      CYPRESS_resetBeforeTest: true
-      CYPRESS_runLDAPSync: false
-      CYPRESS_serverEdition: Cloud
+      - BASH_ENV: /etc/profile
+      - MM_DOCKER_IMAGE: mm-cloud-ee
+      - MM_DOCKER_TAG: test-1282467-23
+      - BROWSER: chrome
+      - HEADLESS: true
+      - CYPRESS_chromeWebSecurity: true
+      - CYPRESS_numberOfTrialUsers: 10000
+      - CYPRESS_resetBeforeTest: true
+      - CYPRESS_runLDAPSync: false
+      - CYPRESS_serverEdition: Cloud
     steps:
       - run:
           name: Create test servers
