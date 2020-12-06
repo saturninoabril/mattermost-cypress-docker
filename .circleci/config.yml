@@ -245,7 +245,7 @@ jobs:
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --stage='@prod' --group='@account_setting' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=1 --of=4
+            cd e2e && node run_tests.js --stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=1 --of=4
       - persist_to_workspace:
           root: ~/mattermost
           paths:
