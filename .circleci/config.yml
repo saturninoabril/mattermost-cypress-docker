@@ -103,7 +103,7 @@ jobs:
           no_output_timeout: 30m
           command: |
             node --version
-            curl -X POST "${TEST_SERVER_CREATE_ENDPOINT}&workspace=${CIRCLE_BRANCH}&docker-image=${MM_DOCKER_IMAGE}&docker-tag=${MM_DOCKER_TAG}&instance-count=4"
+            curl -X POST "$TEST_SERVER_CREATE_ENDPOINT&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=4"
              
             until curl --max-time 5 --output - "${BASE}-1.dev.spinmint.com:8065"; do echo waiting for app server; sleep 5; done;
             until curl --max-time 5 --output - "${BASE}-2.dev.spinmint.com:8065"; do echo waiting for app server; sleep 5; done;
