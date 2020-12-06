@@ -96,6 +96,7 @@ jobs:
     environment:
       MM_DOCKER_IMAGE: mm-cloud-ee
       MM_DOCKER_TAG: test-1282467-23
+      BASE: main-test-server-mm-cloud-ee-test-1282467-23
     steps:
       - run:
           name: Create test servers
@@ -103,8 +104,7 @@ jobs:
           command: |
             node --version
             # curl ${TEST_SERVER_CREATE_ENDPOINT}
-            curl --request POST --url '$TEST_SERVER_CREATE_ENDPOINT&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance_count=4'
-            export BASE=$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG
+            curl --request POST --url '$TEST_SERVER_CREATE_ENDPOINT&workspace=main-test-server&docker-image=mm-cloud-ee&docker-tag=test-1282467-23&instance_count=4'
              
             until curl --max-time 5 --output - $BASE-1.dev.spinmint.com:8065; do echo waiting for app server; sleep 5; done;
             until curl --max-time 5 --output - $BASE-2.dev.spinmint.com:8065; do echo waiting for app server; sleep 5; done;
