@@ -153,38 +153,7 @@ jobs:
             # export CYPRESS_runWithEELicense=true
             export CYPRESS_serverEdition=Cloud
 
-            until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
-
-            cd e2e && node run_tests.js --stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=1 --of=4
-      - persist_to_workspace:
-          root: ~/mattermost
-          paths:
-            - e2e-test-1/e2e/results
-      - store_artifacts:
-          path: ~/mattermost/e2e-test-1/e2e/results
-      - store_test_results:
-          when: always
-          path: ~/mattermost/e2e-test-1/e2e/results/junit
-
-  e2e-test-2:
-    docker:
-      - image: circleci/node:lts-buster-browsers-legacy
-    working_directory: ~/mattermost/e2e-test-2
-    environment:
-      CI_BASE_URL: test-8d0fe62-22-cloud-2.dev.spinmint.com
-      BROWSER: chrome
-      HEADLESS: true
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/mattermost
-      - setup-client
-      - setup-required-files
-      - install-npm
-      - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
-          paths:
-            -  ./e2e/node_modules
+            cd e2e && node run_tests.js --stage='@prod' --excludeGroup='@te_only' |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
