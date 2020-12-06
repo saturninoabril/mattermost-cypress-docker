@@ -106,12 +106,12 @@ jobs:
             # curl ${TEST_SERVER_CREATE_ENDPOINT}
             # webhook-test-server-webhook.dev.spinmint.com:9000/hooks/destroy?x-token=Ecr9vWumNS&workspace=cloud-dec-07
             # webhook-test-server-webhook.dev.spinmint.com:9000/hooks/create?x-token=Ecr9vWumNS&workspace=cloud-dec-07&docker-image=mm-cloud-ee&docker-tag=test-1282467-23
-            curl -X POST "${TEST_SERVER_CREATE_ENDPOINT}&workspace=main-test-server&docker-image=mm-cloud-ee&docker-tag=test-1282467-23&instance_count=4"
+            curl -X POST "${TEST_SERVER_CREATE_ENDPOINT}&workspace=${CIRCLE_BRANCH}&docker-image=${MM_DOCKER_IMAGE}&docker-tag=${MM_DOCKER_TAG}&instance-count=4"
              
-            until curl --max-time 5 --output - $BASE-1.dev.spinmint.com:8065; do echo waiting for app server; sleep 5; done;
-            until curl --max-time 5 --output - $BASE-2.dev.spinmint.com:8065; do echo waiting for app server; sleep 5; done;
-            until curl --max-time 5 --output - $BASE-3.dev.spinmint.com:8065; do echo waiting for app server; sleep 5; done;
-            until curl --max-time 5 --output - $BASE-4.dev.spinmint.com:8065; do echo waiting for app server; sleep 5; done;
+            until curl --max-time 5 --output - "${BASE}-1.dev.spinmint.com:8065"; do echo waiting for app server; sleep 5; done;
+            until curl --max-time 5 --output - "${BASE}-2.dev.spinmint.com:8065"; do echo waiting for app server; sleep 5; done;
+            until curl --max-time 5 --output - "${BASE}-3.dev.spinmint.com:8065"; do echo waiting for app server; sleep 5; done;
+            until curl --max-time 5 --output - "${BASE}-4.dev.spinmint.com:8065"; do echo waiting for app server; sleep 5; done;
   teardown-test-server:
     docker:
       - image: cimg/node:15.3.0
