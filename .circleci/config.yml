@@ -146,6 +146,7 @@ jobs:
             until curl --max-time 5 --output - "${BASE_URL_2}:8065/api/v4/system/ping"; do echo waiting for app 2; sleep 5; done;
             until curl --max-time 5 --output - "${BASE_URL_3}:8065/api/v4/system/ping"; do echo waiting for app 3; sleep 5; done;
             until curl --max-time 5 --output - "${BASE_URL_4}:8065/api/v4/system/ping"; do echo waiting for app 4; sleep 5; done;
+            ls -rtl
             cat shared-env-vars
       - persist_to_workspace:
           root: ~/mattermost
@@ -222,11 +223,13 @@ jobs:
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
             -  ./e2e/node_modules
-      - run: cat shared-env-vars >> $BASH_ENV
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
+            pwd
+            ls -rtl
+            cat shared-env-vars >> $BASH_ENV
             echo $BASH_ENV
 
             export CYPRESS_baseUrl="http://${BASE_URL_1}:8065"
