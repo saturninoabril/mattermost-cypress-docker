@@ -104,7 +104,7 @@ jobs:
           command: |
             node --version
             # curl ${TEST_SERVER_CREATE_ENDPOINT}
-            curl --request POST --url '$TEST_SERVER_CREATE_ENDPOINT&workspace=main-test-server&docker-image=mm-cloud-ee&docker-tag=test-1282467-23&instance_count=4'
+            curl -X POST $TEST_SERVER_CREATE_ENDPOINT&workspace=main-test-server&docker-image=mm-cloud-ee&docker-tag=test-1282467-23&instance_count=4
              
             until curl --max-time 5 --output - $BASE-1.dev.spinmint.com:8065; do echo waiting for app server; sleep 5; done;
             until curl --max-time 5 --output - $BASE-2.dev.spinmint.com:8065; do echo waiting for app server; sleep 5; done;
