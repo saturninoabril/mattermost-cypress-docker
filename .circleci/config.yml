@@ -101,7 +101,7 @@ jobs:
           no_output_timeout: 30m
           command: |
             node --version
-            curl --request POST --url '$TEST_SERVER_CREATE_ENDPOINT&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance_count=4'
+            curl --request POST --url '${TEST_SERVER_CREATE_ENDPOINT}&workspace=${CIRCLE_BRANCH}&docker-image=${MM_DOCKER_IMAGE}&docker-tag=${MM_DOCKER_TAG}&instance_count=4'
             export BASE=$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG
              
             until curl --max-time 5 --output - $BASE-1.dev.spinmint.com:8065; do echo waiting for app server; sleep 5; done;
@@ -120,7 +120,7 @@ jobs:
           no_output_timeout: 30m
           command: |
             node --version
-            curl --request POST --url '$TEST_SERVER_DESTROY_ENDPOINT&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER'
+            curl --request POST --url '${TEST_SERVER_DESTROY_ENDPOINT}&workspace=${CIRCLE_BRANCH}&docker-image=${MM_DOCKER}'
   merge-and-save-test-reports:
     docker:
       - image: circleci/node:lts-buster-browsers-legacy
