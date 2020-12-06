@@ -91,18 +91,18 @@ commands:
 
 jobs:
   create-test-server:
-    shell: /bin/sh -leo pipefail
+    docker:
+      - image: cimg/node:15.3.0
     environment:
-      - BASH_ENV: /etc/profile
-      - MM_DOCKER_IMAGE: mm-cloud-ee
-      - MM_DOCKER_TAG: test-1282467-23
-      - BROWSER: chrome
-      - HEADLESS: true
-      - CYPRESS_chromeWebSecurity: true
-      - CYPRESS_numberOfTrialUsers: 10000
-      - CYPRESS_resetBeforeTest: true
-      - CYPRESS_runLDAPSync: false
-      - CYPRESS_serverEdition: Cloud
+      MM_DOCKER_IMAGE: mm-cloud-ee
+      MM_DOCKER_TAG: test-1282467-23
+      BROWSER: chrome
+      HEADLESS: true
+      CYPRESS_chromeWebSecurity: true
+      CYPRESS_numberOfTrialUsers: 10000
+      CYPRESS_resetBeforeTest: true
+      CYPRESS_runLDAPSync: false
+      CYPRESS_serverEdition: Cloud
     steps:
       - run:
           name: Create test servers
@@ -143,8 +143,6 @@ jobs:
   teardown-test-server:
     docker:
       - image: cimg/node:15.3.0
-    environment:
-      BASH_ENV: /etc/profile
     steps:
       - run:
           name: Teardown test servers
@@ -225,8 +223,6 @@ jobs:
     docker:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-2
-    environment:
-      BASH_ENV: /etc/profile
     steps:
       - checkout
       - attach_workspace:
@@ -266,8 +262,6 @@ jobs:
     docker:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-3
-    environment:
-      BASH_ENV: /etc/profile
     steps:
       - checkout
       - attach_workspace:
@@ -307,8 +301,6 @@ jobs:
     docker:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-4
-    environment:
-      BASH_ENV: /etc/profile
     steps:
       - checkout
       - attach_workspace:
