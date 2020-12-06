@@ -175,7 +175,7 @@ jobs:
             - env-var/shared
   merge-and-save-test-reports:
     docker:
-      - image: cimg/node:15.3.0
+      - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost
     environment:
       MM_DOCKER_IMAGE_TAG: "$MM_DOCKER_IMAGE:$MM_DOCKER_TAG"
@@ -236,12 +236,13 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            export CYPRESS_baseUrl="http://${BASE_URL_1}:8065"
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@${BASE_URL_1}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
+            export CI_BASE_URL=${BASE_URL_1}
+            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export CYPRESS_webhookBaseUrl="http://${BASE_URL_1}:3000"
-            export CYPRESS_smtpUrl="http://${BASE_URL_1}:10080"
-            export CYPRESS_ciBaseUrl=${BASE_URL_1}
+            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
+            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
+            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
@@ -276,12 +277,13 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            export CYPRESS_baseUrl="http://${BASE_URL_2}:8065"
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@${BASE_URL_2}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
+            export CI_BASE_URL=${BASE_URL_2}
+            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export CYPRESS_webhookBaseUrl="http://${BASE_URL_2}:3000"
-            export CYPRESS_smtpUrl="http://${BASE_URL_2}:10080"
-            export CYPRESS_ciBaseUrl=${BASE_URL_2}
+            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
+            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
+            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
@@ -316,12 +318,13 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            export CYPRESS_baseUrl="http://${BASE_URL_3}:8065"
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@${BASE_URL_3}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
+            export CI_BASE_URL=${BASE_URL_3}
+            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export CYPRESS_webhookBaseUrl="http://${BASE_URL_3}:3000"
-            export CYPRESS_smtpUrl="http://${BASE_URL_3}:10080"
-            export CYPRESS_ciBaseUrl=${BASE_URL_3}
+            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
+            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
+            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
@@ -356,12 +359,13 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            export CYPRESS_baseUrl="http://${BASE_URL_4}:8065"
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@${BASE_URL_4}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
+            export CI_BASE_URL=${BASE_URL_4}
+            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export CYPRESS_webhookBaseUrl="http://${BASE_URL_4}:3000"
-            export CYPRESS_smtpUrl="http://${BASE_URL_4}:10080"
-            export CYPRESS_ciBaseUrl=${BASE_URL_4}
+            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
+            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
+            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
