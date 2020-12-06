@@ -91,6 +91,7 @@ commands:
 
 jobs:
   create-test-server:
+    shell: /bin/sh -leo pipefail
     environment:
       - BASH_ENV: /etc/profile
       - MM_DOCKER_IMAGE: mm-cloud-ee
