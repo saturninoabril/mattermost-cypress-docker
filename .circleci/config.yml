@@ -5,21 +5,34 @@ orbs:
 workflows:
   build:
     jobs:
+      - create-test-server
       - e2e-test-1:
           context: cypress-circleci-env
+          requires:
+            - create-test-server
       - e2e-test-2:
           context: cypress-circleci-env
+          requires:
+            - create-test-server
       - e2e-test-3:
           context: cypress-circleci-env
+          requires:
+            - create-test-server
       - e2e-test-4:
           context: cypress-circleci-env
-      - merge-and-save-test-reports:
+          requires:
+            - create-test-server
+      - teardown-test-server
           context: cypress-circleci-env
           requires:
             - e2e-test-1
             - e2e-test-2
             - e2e-test-3
             - e2e-test-4
+      - merge-and-save-test-reports:
+          context: cypress-circleci-env
+          requires:
+            - teardown-test-server
 
 commands:
   setup-client:
@@ -76,13 +89,39 @@ commands:
             cd e2e && node save_report.js |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
 
 jobs:
+  create-test-server:
+    docker:
+      - image: cimg/node:15.3.0
+    environment:
+      MM_DOCKER_IMAGE: mm-cloud-ee
+      MM_DOCKER_TAG: test-1282467-23
+    steps:
+      - run:
+          name: Create test servers
+          no_output_timeout: 30m
+          command: |
+            node --version
+            curl --request POST --url '$TEST_SERVER_CREATE_ENDPOINT&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance_count=4'
+  teardown-test-server:
+    docker:
+      - image: cimg/node:15.3.0
+    environment:
+      MM_DOCKER_IMAGE: mm-cloud-ee
+      MM_DOCKER_TAG: test-1282467-23
+    steps:
+      - run:
+          name: Teardown test servers
+          no_output_timeout: 30m
+          command: |
+            node --version
+            curl --request POST --url '$TEST_SERVER_DESTROY_ENDPOINT&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER'
   merge-and-save-test-reports:
     docker:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost
     environment:
-      MM_DOCKER_IMAGE_TAG: mm-cloud-ee:test-8d0fe62-22
-      TYPE: CLOUD
+      MM_DOCKER_IMAGE_TAG: mm-cloud-ee:test-1282467-23
+      TYPE: NONE
       PULL_REQUEST:
       BROWSER: chrome
       HEADLESS: true
@@ -115,13 +154,12 @@ jobs:
       - store_test_results:
           when: always
           path: ~/mattermost/e2e/results/junit
-
   e2e-test-1:
     docker:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-1
     environment:
-      CI_BASE_URL: test-8d0fe62-22-cloud-1.dev.spinmint.com
+      CI_BASE_URL: $CIRCLE_BRANCH-mm-cloud-ee-test-1282467-23-1.dev.spinmint.com
       BROWSER: chrome
       HEADLESS: true
     steps:
@@ -154,6 +192,25 @@ jobs:
             export CYPRESS_serverEdition=Cloud
 
             cd e2e && node run_tests.js --stage='@prod' --excludeGroup='@te_only' |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+  e2e-test-2:
+    docker:
+      - image: circleci/node:lts-buster-browsers-legacy
+    working_directory: ~/mattermost/e2e-test-2
+    environment:
+      CI_BASE_URL: $CIRCLE_BRANCH-mm-cloud-ee-test-1282467-23-2.dev.spinmint.com
+      BROWSER: chrome
+      HEADLESS: true
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/mattermost
+      - setup-client
+      - setup-required-files
+      - install-npm
+      - save_cache: # special step to save the dependency cache
+          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
+          paths:
+            -  ./e2e/node_modules
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -190,7 +247,7 @@ jobs:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-3
     environment:
-      CI_BASE_URL: test-8d0fe62-22-cloud-3.dev.spinmint.com
+      CI_BASE_URL: $CIRCLE_BRANCH-mm-cloud-ee-test-1282467-23-3.dev.spinmint.com
       BROWSER: chrome
       HEADLESS: true
     steps:
@@ -240,7 +297,7 @@ jobs:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-4
     environment:
-      CI_BASE_URL: test-8d0fe62-22-cloud-4.dev.spinmint.com
+      CI_BASE_URL: $CIRCLE_BRANCH-mm-cloud-ee-test-1282467-23-4.dev.spinmint.com
       BROWSER: chrome
       HEADLESS: true
     steps:
