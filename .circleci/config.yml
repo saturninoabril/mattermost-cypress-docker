@@ -5,7 +5,8 @@ orbs:
 workflows:
   build:
     jobs:
-      - create-test-server
+      - create-test-server:
+          context: cypress-circleci-env
       - e2e-test-1:
           context: cypress-circleci-env
           requires:
