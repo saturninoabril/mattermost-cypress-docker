@@ -227,22 +227,19 @@ jobs:
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
             -  ./e2e/node_modules
+      - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            pwd
-            ls -rtl
-            cat ~/mattermost/env-var/shared
-            cat ~/mattermost/env-var/shared >> $BASH_ENV
-            echo $BASH_ENV
-
             export CYPRESS_baseUrl="http://${BASE_URL_1}:8065"
             export CYPRESS_dbConnection="postgres://mmuser:mostest@${BASE_URL_1}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
             export CYPRESS_webhookBaseUrl="http://${BASE_URL_1}:3000"
             export CYPRESS_smtpUrl="http://${BASE_URL_1}:10080"
             export CYPRESS_ciBaseUrl=${BASE_URL_1}
+
+            until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
             cd e2e && node run_tests.js --stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=1 --of=4
   e2e-test-2:
