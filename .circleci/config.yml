@@ -122,16 +122,16 @@ jobs:
 
             echo 'export MM_DOCKER_IMAGE=mm-cloud-ee' >> shared
             echo 'export MM_DOCKER_TAG=test-1282467-23' >> shared
-            echo 'export TEST_SERVER_QUERY=$TEST_SERVER_QUERY' >> shared
+            echo 'export TEST_SERVER_QUERY=${TEST_SERVER_QUERY}' >> shared
 
-            echo 'export BROWSER=$BROWSER' >> shared
-            echo 'export HEADLESS=$HEADLESS' >> shared
+            echo 'export BROWSER=${BROWSER}' >> shared
+            echo 'export HEADLESS=${HEADLESS}' >> shared
 
-            echo 'export CYPRESS_chromeWebSecurity=$CYPRESS_chromeWebSecurity' >> shared
-            echo 'export CYPRESS_numberOfTrialUsers=$CYPRESS_numberOfTrialUsers' >> shared
-            echo 'export CYPRESS_resetBeforeTest=$CYPRESS_resetBeforeTest' >> shared
-            echo 'export CYPRESS_runLDAPSync=$CYPRESS_runLDAPSync' >> shared
-            echo 'export CYPRESS_serverEdition=$CYPRESS_serverEdition' >> shared
+            echo 'export CYPRESS_chromeWebSecurity=${CYPRESS_chromeWebSecurity}' >> shared
+            echo 'export CYPRESS_numberOfTrialUsers=${CYPRESS_numberOfTrialUsers}' >> shared
+            echo 'export CYPRESS_resetBeforeTest=${CYPRESS_resetBeforeTest}' >> shared
+            echo 'export CYPRESS_runLDAPSync=${CYPRESS_runLDAPSync}' >> shared
+            echo 'export CYPRESS_serverEdition=${CYPRESS_serverEdition}' >> shared
 
             node --version
             url="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
