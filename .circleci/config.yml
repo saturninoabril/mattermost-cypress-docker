@@ -23,17 +23,13 @@ workflows:
           context: cypress-circleci-env
           requires:
             - create-test-server
-      - teardown-test-server:
+      - merge-and-save-test-reports:
           context: cypress-circleci-env
           requires:
             - e2e-test-1
             - e2e-test-2
             - e2e-test-3
             - e2e-test-4
-      - merge-and-save-test-reports:
-          context: cypress-circleci-env
-          requires:
-            - teardown-test-server
 
 commands:
   setup-client:
@@ -88,6 +84,18 @@ commands:
             export RESULTS_OUTPUT="results-output.txt"
 
             cd e2e && node save_report.js |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+  teardown-test-server:
+    description: "Teardown the test server"
+    steps:
+      - run:
+          name: Teardown the test server
+          command: |
+            pwd
+            ls -rtl
+            node --version
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE"
+            url="$TEST_SERVER_DESTROY_ENDPOINT$TEST_SERVER_QUERY"
+            curl -X POST $url
 
 jobs:
   create-test-server:
@@ -105,28 +113,19 @@ jobs:
       CYPRESS_runLDAPSync: false
       CYPRESS_serverEdition: Cloud
     steps:
-      - checkout
       - attach_workspace:
           at: ~/mattermost
       - run:
           name: Create test servers
           no_output_timeout: 30m
           command: |
-            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=4"
             BASE_URL_1="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-1.dev.spinmint.com"
             BASE_URL_2="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-2.dev.spinmint.com"
             BASE_URL_3="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-3.dev.spinmint.com"
             BASE_URL_4="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-4.dev.spinmint.com"
 
-            pwd
-
-            touch shared
-
-            pwd
-
             echo 'export MM_DOCKER_IMAGE=mm-cloud-ee' >> shared
             echo 'export MM_DOCKER_TAG=test-1282467-23' >> shared
-            echo export TEST_SERVER_QUERY=${TEST_SERVER_QUERY} >> shared
 
             echo export BROWSER=${BROWSER} >> shared
             echo export HEADLESS=${HEADLESS} >> shared
@@ -143,6 +142,7 @@ jobs:
             echo export BASE_URL_4=${BASE_URL_4} >> shared
 
             node --version
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=4"
             url="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $url
              
@@ -156,25 +156,9 @@ jobs:
           root: ~/mattermost
           paths:
             - env-var/shared
-  teardown-test-server:
-    docker:
-      - image: cimg/node:15.3.0
-    working_directory: ~/mattermost
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/mattermost
-      - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
-      - run:
-          name: Teardown test servers
-          no_output_timeout: 30m
-          command: |
-            node --version
-            url="$TEST_SERVER_DESTROY_ENDPOINT$TEST_SERVER_QUERY"
-            curl -X POST $url
   merge-and-save-test-reports:
     docker:
-      - image: circleci/node:lts-buster-browsers-legacy
+      - image: cimg/node:15.3.0
     working_directory: ~/mattermost
     environment:
       MM_DOCKER_IMAGE_TAG: "$MM_DOCKER_IMAGE:$MM_DOCKER_TAG"
@@ -194,10 +178,13 @@ jobs:
           paths:
             -  ./e2e/node_modules
       - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
+      - teardown-test-server
       - run:
           name: Merge and save reports
           no_output_timeout: 30m
           command: |
+            pwd
+            ls -rtl
             cd e2e
             mkdir results
             cp -r ~/mattermost/e2e-test-1/e2e/results .
@@ -214,7 +201,7 @@ jobs:
           path: ~/mattermost/e2e/results/junit
   e2e-test-1:
     docker:
-      - image: circleci/node:lts-buster-browsers-legacy
+      - image: cimg/node:15.3.0-browsers
     working_directory: ~/mattermost/e2e-test-1
     steps:
       - checkout
@@ -241,10 +228,19 @@ jobs:
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=1 --of=4
+            cd e2e && node run_tests.js --stage='@prod' --group='@account_setting' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=1 --of=4
+      - persist_to_workspace:
+          root: ~/mattermost
+          paths:
+            - e2e-test-3/e2e/results
+      - store_artifacts:
+          path: ~/mattermost/e2e-test-3/e2e/results
+      - store_test_results:
+          when: always
+          path: ~/mattermost/e2e-test-3/e2e/results/junit
   e2e-test-2:
     docker:
-      - image: circleci/node:lts-buster-browsers-legacy
+      - image: cimg/node:15.3.0-browsers
     working_directory: ~/mattermost/e2e-test-2
     steps:
       - checkout
@@ -271,7 +267,7 @@ jobs:
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=2 --of=4
+            cd e2e && node run_tests.js --stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=2 --of=4
       - persist_to_workspace:
           root: ~/mattermost
           paths:
@@ -284,7 +280,7 @@ jobs:
 
   e2e-test-3:
     docker:
-      - image: circleci/node:lts-buster-browsers-legacy
+      - image: cimg/node:15.3.0-browsers
     working_directory: ~/mattermost/e2e-test-3
     steps:
       - checkout
@@ -311,7 +307,7 @@ jobs:
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=3 --of=4
+            cd e2e && node run_tests.js --stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=3 --of=4
       - persist_to_workspace:
           root: ~/mattermost
           paths:
@@ -324,7 +320,7 @@ jobs:
 
   e2e-test-4:
     docker:
-      - image: circleci/node:lts-buster-browsers-legacy
+      - image: cimg/node:15.3.0-browsers
     working_directory: ~/mattermost/e2e-test-4
     steps:
       - checkout
@@ -351,7 +347,7 @@ jobs:
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
-            cd e2e && node run_tests.js --stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=4 --of=4
+            cd e2e && node run_tests.js --stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=4 --of=4
       - persist_to_workspace:
           root: ~/mattermost
           paths:
