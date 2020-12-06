@@ -22,7 +22,7 @@ workflows:
           context: cypress-circleci-env
           requires:
             - create-test-server
-      - teardown-test-server
+      - teardown-test-server:
           context: cypress-circleci-env
           requires:
             - e2e-test-1
@@ -102,6 +102,12 @@ jobs:
           command: |
             node --version
             curl --request POST --url '$TEST_SERVER_CREATE_ENDPOINT&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance_count=4'
+            export BASE=$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG
+             
+            until curl --max-time 5 --output - $BASE-1.dev.spinmint.com:8065; do echo waiting for app server; sleep 5; done;
+            until curl --max-time 5 --output - $BASE-2.dev.spinmint.com:8065; do echo waiting for app server; sleep 5; done;
+            until curl --max-time 5 --output - $BASE-3.dev.spinmint.com:8065; do echo waiting for app server; sleep 5; done;
+            until curl --max-time 5 --output - $BASE-4.dev.spinmint.com:8065; do echo waiting for app server; sleep 5; done;
   teardown-test-server:
     docker:
       - image: cimg/node:15.3.0
