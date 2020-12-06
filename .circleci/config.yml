@@ -84,6 +84,17 @@ commands:
             export RESULTS_OUTPUT="results-output.txt"
 
             cd e2e && node save_report.js |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+  create-test-server:
+    description: "Create the test server"
+    steps:
+      - run:
+          name: Create the test server
+          command: |
+            node --version
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=4"
+            url="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
+            curl -X POST $url
+            sleep 1m
   teardown-test-server:
     description: "Teardown the test server"
     steps:
@@ -96,28 +107,11 @@ commands:
             TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE"
             url="$TEST_SERVER_DESTROY_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $url
-
-jobs:
-  create-test-server:
-    docker:
-      - image: cimg/node:15.3.0
-    working_directory: ~/mattermost/env-var
-    environment:
-      MM_DOCKER_IMAGE: mm-cloud-ee
-      MM_DOCKER_TAG: test-1282467-23
-      BROWSER: chrome
-      HEADLESS: true
-      CYPRESS_chromeWebSecurity: true
-      CYPRESS_numberOfTrialUsers: 10000
-      CYPRESS_resetBeforeTest: true
-      CYPRESS_runLDAPSync: false
-      CYPRESS_serverEdition: Cloud
+  set-shared-env:
+    description: "Set shared environment variables"
     steps:
-      - attach_workspace:
-          at: ~/mattermost
       - run:
-          name: Create test servers
-          no_output_timeout: 30m
+          name: Set shared environment variables
           command: |
             BASE_URL_1="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-1.dev.spinmint.com"
             BASE_URL_2="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-2.dev.spinmint.com"
@@ -140,18 +134,38 @@ jobs:
             echo export BASE_URL_2=${BASE_URL_2} >> shared
             echo export BASE_URL_3=${BASE_URL_3} >> shared
             echo export BASE_URL_4=${BASE_URL_4} >> shared
-
-            node --version
-            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=4"
-            url="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
-            curl -X POST $url
-             
+  server-health-check:
+    description: "Server health check"
+    steps:
+      - run:
+          name: Server health check
+          command: |
             until curl --max-time 5 --output - "${BASE_URL_1}:8065/api/v4/system/ping"; do echo waiting for app 1; sleep 5; done;
             until curl --max-time 5 --output - "${BASE_URL_2}:8065/api/v4/system/ping"; do echo waiting for app 2; sleep 5; done;
             until curl --max-time 5 --output - "${BASE_URL_3}:8065/api/v4/system/ping"; do echo waiting for app 3; sleep 5; done;
             until curl --max-time 5 --output - "${BASE_URL_4}:8065/api/v4/system/ping"; do echo waiting for app 4; sleep 5; done;
-            ls -rtl
-            cat shared
+
+jobs:
+  create-test-server:
+    docker:
+      - image: cimg/node:15.3.0
+    working_directory: ~/mattermost/env-var
+    environment:
+      MM_DOCKER_IMAGE: mm-cloud-ee
+      MM_DOCKER_TAG: test-1282467-23
+      BROWSER: chrome
+      HEADLESS: true
+      CYPRESS_chromeWebSecurity: true
+      CYPRESS_numberOfTrialUsers: 10000
+      CYPRESS_resetBeforeTest: true
+      CYPRESS_runLDAPSync: false
+      CYPRESS_serverEdition: Cloud
+    steps:
+      - attach_workspace:
+          at: ~/mattermost
+      - set-shared-env
+      - create-test-server
+      - server-health-check
       - persist_to_workspace:
           root: ~/mattermost
           paths:
@@ -201,7 +215,7 @@ jobs:
           path: ~/mattermost/e2e/results/junit
   e2e-test-1:
     docker:
-      - image: cimg/node:15.3.0-browsers
+      - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-1
     steps:
       - checkout
@@ -240,7 +254,7 @@ jobs:
           path: ~/mattermost/e2e-test-3/e2e/results/junit
   e2e-test-2:
     docker:
-      - image: cimg/node:15.3.0-browsers
+      - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-2
     steps:
       - checkout
@@ -280,7 +294,7 @@ jobs:
 
   e2e-test-3:
     docker:
-      - image: cimg/node:15.3.0-browsers
+      - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-3
     steps:
       - checkout
@@ -320,7 +334,7 @@ jobs:
 
   e2e-test-4:
     docker:
-      - image: cimg/node:15.3.0-browsers
+      - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-4
     steps:
       - checkout
