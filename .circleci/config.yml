@@ -93,7 +93,7 @@ jobs:
   create-test-server:
     docker:
       - image: cimg/node:15.3.0
-    working_directory: ~/mattermost
+    working_directory: ~/mattermost/env-var
     environment:
       MM_DOCKER_IMAGE: mm-cloud-ee
       MM_DOCKER_TAG: test-1282467-23
@@ -116,22 +116,22 @@ jobs:
 
             pwd
 
-            touch shared-env-vars
+            touch shared
 
             pwd
 
-            echo 'export MM_DOCKER_IMAGE=mm-cloud-ee' >> shared-env-vars
-            echo 'export MM_DOCKER_TAG=test-1282467-23' >> shared-env-vars
-            echo 'export TEST_SERVER_QUERY=$TEST_SERVER_QUERY' >> shared-env-vars
+            echo 'export MM_DOCKER_IMAGE=mm-cloud-ee' >> shared
+            echo 'export MM_DOCKER_TAG=test-1282467-23' >> shared
+            echo 'export TEST_SERVER_QUERY=$TEST_SERVER_QUERY' >> shared
 
-            echo 'export BROWSER=$BROWSER' >> shared-env-vars
-            echo 'export HEADLESS=$HEADLESS' >> shared-env-vars
+            echo 'export BROWSER=$BROWSER' >> shared
+            echo 'export HEADLESS=$HEADLESS' >> shared
 
-            echo 'export CYPRESS_chromeWebSecurity=$CYPRESS_chromeWebSecurity' >> shared-env-vars
-            echo 'export CYPRESS_numberOfTrialUsers=$CYPRESS_numberOfTrialUsers' >> shared-env-vars
-            echo 'export CYPRESS_resetBeforeTest=$CYPRESS_resetBeforeTest' >> shared-env-vars
-            echo 'export CYPRESS_runLDAPSync=$CYPRESS_runLDAPSync' >> shared-env-vars
-            echo 'export CYPRESS_serverEdition=$CYPRESS_serverEdition' >> shared-env-vars
+            echo 'export CYPRESS_chromeWebSecurity=$CYPRESS_chromeWebSecurity' >> shared
+            echo 'export CYPRESS_numberOfTrialUsers=$CYPRESS_numberOfTrialUsers' >> shared
+            echo 'export CYPRESS_resetBeforeTest=$CYPRESS_resetBeforeTest' >> shared
+            echo 'export CYPRESS_runLDAPSync=$CYPRESS_runLDAPSync' >> shared
+            echo 'export CYPRESS_serverEdition=$CYPRESS_serverEdition' >> shared
 
             node --version
             url="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
@@ -147,11 +147,11 @@ jobs:
             until curl --max-time 5 --output - "${BASE_URL_3}:8065/api/v4/system/ping"; do echo waiting for app 3; sleep 5; done;
             until curl --max-time 5 --output - "${BASE_URL_4}:8065/api/v4/system/ping"; do echo waiting for app 4; sleep 5; done;
             ls -rtl
-            cat shared-env-vars
+            cat shared
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - shared-env-vars
+            - env-var/shared
   teardown-test-server:
     docker:
       - image: cimg/node:15.3.0
@@ -160,7 +160,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/mattermost
-      - run: cat shared-env-vars >> $BASH_ENV
+      - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
       - run:
           name: Teardown test servers
           no_output_timeout: 30m
@@ -189,7 +189,7 @@ jobs:
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
             -  ./e2e/node_modules
-      - run: cat shared-env-vars >> $BASH_ENV
+      - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
       - run:
           name: Merge and save reports
           no_output_timeout: 30m
@@ -229,7 +229,8 @@ jobs:
           command: |
             pwd
             ls -rtl
-            cat shared-env-vars >> $BASH_ENV
+            cat ~/mattermost/env-var/shared
+            cat ~/mattermost/env-var/shared >> $BASH_ENV
             echo $BASH_ENV
 
             export CYPRESS_baseUrl="http://${BASE_URL_1}:8065"
@@ -255,7 +256,7 @@ jobs:
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
             -  ./e2e/node_modules
-      - run: cat shared-env-vars >> $BASH_ENV
+      - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -295,7 +296,7 @@ jobs:
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
             -  ./e2e/node_modules
-      - run: cat shared-env-vars >> $BASH_ENV
+      - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -335,7 +336,7 @@ jobs:
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
             -  ./e2e/node_modules
-      - run: cat shared-env-vars >> $BASH_ENV
+      - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
