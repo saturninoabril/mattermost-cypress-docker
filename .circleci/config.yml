@@ -105,7 +105,9 @@ jobs:
       CYPRESS_runLDAPSync: false
       CYPRESS_serverEdition: Cloud
     steps:
-      - run: mkdir -p mattermost
+      - checkout
+      - attach_workspace:
+          at: ~/mattermost
       - run:
           name: Create test servers
           no_output_timeout: 30m
