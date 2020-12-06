@@ -94,7 +94,7 @@ commands:
             TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=4"
             url="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $url
-            sleep 1m
+            sleep 30
   teardown-test-server:
     description: "Teardown the test server"
     steps:
@@ -134,6 +134,9 @@ commands:
             echo export BASE_URL_2=${BASE_URL_2} >> shared
             echo export BASE_URL_3=${BASE_URL_3} >> shared
             echo export BASE_URL_4=${BASE_URL_4} >> shared
+
+            cat shared >> $BASH_ENV
+            source $BASH_ENV
   server-health-check:
     description: "Server health check"
     steps:
