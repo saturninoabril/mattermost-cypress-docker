@@ -93,6 +93,7 @@ jobs:
   create-test-server:
     docker:
       - image: cimg/node:15.3.0
+    working_directory: ~/mattermost
     environment:
       MM_DOCKER_IMAGE: mm-cloud-ee
       MM_DOCKER_TAG: test-1282467-23
@@ -110,22 +111,18 @@ jobs:
           command: |
             TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=4"
 
-            echo 'export MM_DOCKER_IMAGE=mm-cloud-ee' >> $BASH_ENV
-            echo 'export MM_DOCKER_TAG=test-1282467-23' >> $BASH_ENV
-            echo 'export TEST_SERVER_QUERY=$TEST_SERVER_QUERY' >> $BASH_ENV
+            echo 'export MM_DOCKER_IMAGE=mm-cloud-ee' >> mattermost/shared-env-vars
+            echo 'export MM_DOCKER_TAG=test-1282467-23' >> mattermost/shared-env-vars
+            echo 'export TEST_SERVER_QUERY=$TEST_SERVER_QUERY' >> mattermost/shared-env-vars
 
-            echo 'export BROWSER=$BROWSER' >> $BASH_ENV
-            echo 'export HEADLESS=$HEADLESS' >> $BASH_ENV
+            echo 'export BROWSER=$BROWSER' >> mattermost/shared-env-vars
+            echo 'export HEADLESS=$HEADLESS' >> mattermost/shared-env-vars
 
-            echo 'export CYPRESS_chromeWebSecurity=$CYPRESS_chromeWebSecurity' >> $BASH_ENV
-            echo 'export CYPRESS_numberOfTrialUsers=$CYPRESS_numberOfTrialUsers' >> $BASH_ENV
-            echo 'export CYPRESS_resetBeforeTest=$CYPRESS_resetBeforeTest' >> $BASH_ENV
-            echo 'export CYPRESS_runLDAPSync=$CYPRESS_runLDAPSync' >> $BASH_ENV
-            echo 'export CYPRESS_serverEdition=$CYPRESS_serverEdition' >> $BASH_ENV
-  
-            source $BASH_ENV
-
-            echo $BASH_ENV
+            echo 'export CYPRESS_chromeWebSecurity=$CYPRESS_chromeWebSecurity' >> mattermost/shared-env-vars
+            echo 'export CYPRESS_numberOfTrialUsers=$CYPRESS_numberOfTrialUsers' >> mattermost/shared-env-vars
+            echo 'export CYPRESS_resetBeforeTest=$CYPRESS_resetBeforeTest' >> mattermost/shared-env-vars
+            echo 'export CYPRESS_runLDAPSync=$CYPRESS_runLDAPSync' >> mattermost/shared-env-vars
+            echo 'export CYPRESS_serverEdition=$CYPRESS_serverEdition' >> mattermost/shared-env-vars
 
             node --version
             url="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
@@ -140,10 +137,15 @@ jobs:
             until curl --max-time 5 --output - "${BASE_URL_2}:8065/api/v4/system/ping"; do echo waiting for app 2; sleep 5; done;
             until curl --max-time 5 --output - "${BASE_URL_3}:8065/api/v4/system/ping"; do echo waiting for app 3; sleep 5; done;
             until curl --max-time 5 --output - "${BASE_URL_4}:8065/api/v4/system/ping"; do echo waiting for app 4; sleep 5; done;
+      - persist_to_workspace:
+          root: ~/mattermost
+          paths:
+            - shared-env-vars
   teardown-test-server:
     docker:
       - image: cimg/node:15.3.0
     steps:
+      - run: cat mattermost/shared-env-vars >> $BASH_ENV
       - run:
           name: Teardown test servers
           no_output_timeout: 30m
@@ -172,6 +174,7 @@ jobs:
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
             -  ./e2e/node_modules
+      - run: cat mattermost/shared-env-vars >> $BASH_ENV
       - run:
           name: Merge and save reports
           no_output_timeout: 30m
@@ -205,6 +208,7 @@ jobs:
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
             -  ./e2e/node_modules
+      - run: cat mattermost/shared-env-vars >> $BASH_ENV
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -218,7 +222,7 @@ jobs:
             export CYPRESS_smtpUrl="http://${BASE_URL_1}:10080"
             export CYPRESS_ciBaseUrl=${BASE_URL_1}
 
-            cd e2e && node run_tests.js --stage='@prod' --excludeGroup='@te_only' |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            cd e2e && node run_tests.js --stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=1 --of=4
   e2e-test-2:
     docker:
       - image: circleci/node:lts-buster-browsers-legacy
@@ -234,6 +238,7 @@ jobs:
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
             -  ./e2e/node_modules
+      - run: cat mattermost/shared-env-vars >> $BASH_ENV
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -273,6 +278,7 @@ jobs:
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
             -  ./e2e/node_modules
+      - run: cat mattermost/shared-env-vars >> $BASH_ENV
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
@@ -312,6 +318,7 @@ jobs:
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
             -  ./e2e/node_modules
+      - run: cat mattermost/shared-env-vars >> $BASH_ENV
       - run:
           name: Run Cypress Test
           no_output_timeout: 30m
