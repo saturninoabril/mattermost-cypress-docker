@@ -111,6 +111,8 @@ jobs:
           command: |
             TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=4"
 
+            touch mattermost/shared-env-vars
+
             echo 'export MM_DOCKER_IMAGE=mm-cloud-ee' >> mattermost/shared-env-vars
             echo 'export MM_DOCKER_TAG=test-1282467-23' >> mattermost/shared-env-vars
             echo 'export TEST_SERVER_QUERY=$TEST_SERVER_QUERY' >> mattermost/shared-env-vars
