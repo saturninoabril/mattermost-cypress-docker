@@ -94,41 +94,72 @@ jobs:
     docker:
       - image: cimg/node:15.3.0
     environment:
+      BASH_ENV: /etc/profile
       MM_DOCKER_IMAGE: mm-cloud-ee
       MM_DOCKER_TAG: test-1282467-23
-      BASE: main-test-server-mm-cloud-ee-test-1282467-23
+      BROWSER: chrome
+      HEADLESS: true
+      CYPRESS_chromeWebSecurity: true
+      CYPRESS_numberOfTrialUsers: 10000
+      CYPRESS_resetBeforeTest: true
+      CYPRESS_runLDAPSync: false
+      CYPRESS_serverEdition: Cloud
     steps:
       - run:
           name: Create test servers
           no_output_timeout: 30m
           command: |
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=4"
+
+            echo 'export MM_DOCKER_IMAGE=mm-cloud-ee' >> $BASH_ENV
+            echo 'export MM_DOCKER_TAG=test-1282467-23' >> $BASH_ENV
+            echo 'export TEST_SERVER_QUERY=$TEST_SERVER_QUERY' >> $BASH_ENV
+
+            echo 'export BROWSER=$BROWSER' >> $BASH_ENV
+            echo 'export HEADLESS=$HEADLESS' >> $BASH_ENV
+
+            echo 'export CYPRESS_chromeWebSecurity=$CYPRESS_chromeWebSecurity' >> $BASH_ENV
+            echo 'export CYPRESS_numberOfTrialUsers=$CYPRESS_numberOfTrialUsers' >> $BASH_ENV
+            echo 'export CYPRESS_resetBeforeTest=$CYPRESS_resetBeforeTest' >> $BASH_ENV
+            echo 'export CYPRESS_runLDAPSync=$CYPRESS_runLDAPSync' >> $BASH_ENV
+            echo 'export CYPRESS_serverEdition=$CYPRESS_serverEdition' >> $BASH_ENV
+  
+            source $BASH_ENV
+
+            echo $BASH_ENV
+
             node --version
-            url="$TEST_SERVER_CREATE_ENDPOINT&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=4"
+            url="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $url
+
+            BASE_URL_1="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-1.dev.spinmint.com"
+            BASE_URL_2="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-2.dev.spinmint.com"
+            BASE_URL_3="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-3.dev.spinmint.com"
+            BASE_URL_4="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-4.dev.spinmint.com"
              
-            until curl --max-time 5 --output - "${BASE}-1.dev.spinmint.com:8065"; do echo waiting for app server; sleep 5; done;
-            until curl --max-time 5 --output - "${BASE}-2.dev.spinmint.com:8065"; do echo waiting for app server; sleep 5; done;
-            until curl --max-time 5 --output - "${BASE}-3.dev.spinmint.com:8065"; do echo waiting for app server; sleep 5; done;
-            until curl --max-time 5 --output - "${BASE}-4.dev.spinmint.com:8065"; do echo waiting for app server; sleep 5; done;
+            until curl --max-time 5 --output - "${BASE_URL_1}:8065/api/v4/system/ping"; do echo waiting for app 1 ; sleep 5; done;
+            until curl --max-time 5 --output - "${BASE_URL_2}:8065/api/v4/system/ping"; do echo waiting for app 2; sleep 5; done;
+            until curl --max-time 5 --output - "${BASE_URL_3}:8065/api/v4/system/ping"; do echo waiting for app 3; sleep 5; done;
+            until curl --max-time 5 --output - "${BASE_URL_4}:8065/api/v4/system/ping"; do echo waiting for app 4; sleep 5; done;
   teardown-test-server:
     docker:
       - image: cimg/node:15.3.0
     environment:
-      MM_DOCKER_IMAGE: mm-cloud-ee
-      MM_DOCKER_TAG: test-1282467-23
+      BASH_ENV: /etc/profile
     steps:
       - run:
           name: Teardown test servers
           no_output_timeout: 30m
           command: |
             node --version
-            curl --request POST --url '${TEST_SERVER_DESTROY_ENDPOINT}&workspace=${CIRCLE_BRANCH}&docker-image=${MM_DOCKER}'
+            url="$TEST_SERVER_DESTROY_ENDPOINT$TEST_SERVER_QUERY"
+            curl -X POST $url
   merge-and-save-test-reports:
     docker:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost
     environment:
-      MM_DOCKER_IMAGE_TAG: mm-cloud-ee:test-1282467-23
+      MM_DOCKER_IMAGE_TAG: "$MM_DOCKER_IMAGE:$MM_DOCKER_TAG"
       TYPE: NONE
       PULL_REQUEST:
       BROWSER: chrome
@@ -167,9 +198,7 @@ jobs:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-1
     environment:
-      CI_BASE_URL: $CIRCLE_BRANCH-mm-cloud-ee-test-1282467-23-1.dev.spinmint.com
-      BROWSER: chrome
-      HEADLESS: true
+      BASH_ENV: /etc/profile
     steps:
       - checkout
       - attach_workspace:
@@ -185,19 +214,14 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
+            echo $BASH_ENV
 
-            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
-            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
-            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
+            export CYPRESS_baseUrl="http://${BASE_URL_1}:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@${BASE_URL_1}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export CYPRESS_chromeWebSecurity=true
-            export CYPRESS_numberOfTrialUsers=10000
-            export CYPRESS_resetBeforeTest=true
-            export CYPRESS_runLDAPSync=false
-            # export CYPRESS_runWithEELicense=true
-            export CYPRESS_serverEdition=Cloud
+            export CYPRESS_webhookBaseUrl="http://${BASE_URL_1}:3000"
+            export CYPRESS_smtpUrl="http://${BASE_URL_1}:10080"
+            export CYPRESS_ciBaseUrl=${BASE_URL_1}
 
             cd e2e && node run_tests.js --stage='@prod' --excludeGroup='@te_only' |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
   e2e-test-2:
@@ -205,9 +229,7 @@ jobs:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-2
     environment:
-      CI_BASE_URL: $CIRCLE_BRANCH-mm-cloud-ee-test-1282467-23-2.dev.spinmint.com
-      BROWSER: chrome
-      HEADLESS: true
+      BASH_ENV: /etc/profile
     steps:
       - checkout
       - attach_workspace:
@@ -223,19 +245,12 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
+            export CYPRESS_baseUrl="http://${BASE_URL_2}:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@${BASE_URL_2}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
-            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
-            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
-
-            export CYPRESS_chromeWebSecurity=true
-            export CYPRESS_numberOfTrialUsers=10000
-            export CYPRESS_resetBeforeTest=true
-            export CYPRESS_runLDAPSync=false
-            # export CYPRESS_runWithEELicense=true
-            export CYPRESS_serverEdition=Cloud
+            export CYPRESS_webhookBaseUrl="http://${BASE_URL_2}:3000"
+            export CYPRESS_smtpUrl="http://${BASE_URL_2}:10080"
+            export CYPRESS_ciBaseUrl=${BASE_URL_2}
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
@@ -255,9 +270,7 @@ jobs:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-3
     environment:
-      CI_BASE_URL: $CIRCLE_BRANCH-mm-cloud-ee-test-1282467-23-3.dev.spinmint.com
-      BROWSER: chrome
-      HEADLESS: true
+      BASH_ENV: /etc/profile
     steps:
       - checkout
       - attach_workspace:
@@ -273,19 +286,12 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
+            export CYPRESS_baseUrl="http://${BASE_URL_3}:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@${BASE_URL_3}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
-            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
-            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
-
-            export CYPRESS_chromeWebSecurity=true
-            export CYPRESS_numberOfTrialUsers=10000
-            export CYPRESS_resetBeforeTest=true
-            export CYPRESS_runLDAPSync=false
-            # export CYPRESS_runWithEELicense=true
-            export CYPRESS_serverEdition=Cloud
+            export CYPRESS_webhookBaseUrl="http://${BASE_URL_3}:3000"
+            export CYPRESS_smtpUrl="http://${BASE_URL_3}:10080"
+            export CYPRESS_ciBaseUrl=${BASE_URL_3}
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
@@ -305,9 +311,7 @@ jobs:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost/e2e-test-4
     environment:
-      CI_BASE_URL: $CIRCLE_BRANCH-mm-cloud-ee-test-1282467-23-4.dev.spinmint.com
-      BROWSER: chrome
-      HEADLESS: true
+      BASH_ENV: /etc/profile
     steps:
       - checkout
       - attach_workspace:
@@ -323,19 +327,12 @@ jobs:
           name: Run Cypress Test
           no_output_timeout: 30m
           command: |
-            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
+            export CYPRESS_baseUrl="http://${BASE_URL_4}:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@${BASE_URL_4}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
-            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
-            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
-
-            export CYPRESS_chromeWebSecurity=true
-            export CYPRESS_numberOfTrialUsers=10000
-            export CYPRESS_resetBeforeTest=true
-            export CYPRESS_runLDAPSync=false
-            # export CYPRESS_runWithEELicense=true
-            export CYPRESS_serverEdition=Cloud
+            export CYPRESS_webhookBaseUrl="http://${BASE_URL_4}:3000"
+            export CYPRESS_smtpUrl="http://${BASE_URL_4}:10080"
+            export CYPRESS_ciBaseUrl=${BASE_URL_4}
 
             until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
 
