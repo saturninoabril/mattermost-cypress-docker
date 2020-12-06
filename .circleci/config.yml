@@ -249,12 +249,13 @@ jobs:
       - persist_to_workspace:
           root: ~/mattermost
           paths:
-            - e2e-test-3/e2e/results
+            - e2e-test-1/e2e/results
       - store_artifacts:
-          path: ~/mattermost/e2e-test-3/e2e/results
+          path: ~/mattermost/e2e-test-1/e2e/results
       - store_test_results:
           when: always
-          path: ~/mattermost/e2e-test-3/e2e/results/junit
+          path: ~/mattermost/e2e-test-1/e2e/results/junit
+  
   e2e-test-2:
     docker:
       - image: circleci/node:lts-buster-browsers-legacy
