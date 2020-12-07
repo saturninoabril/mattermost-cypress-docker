@@ -77,6 +77,7 @@ function saveToEndpoint(url, data) {
         },
         data,
     }).catch((error) => {
+        console.log('Something went wrong:', error);
         console.log('Something went wrong:', error.response.data.message);
         return error.response.data;
     });
@@ -101,6 +102,7 @@ async function createTestCycle(startDate, endDate) {
     };
 
     const response = await saveToEndpoint('https://api.adaptavist.io/tm4j/v2/testcycles', testCycle);
+    console.log('saveToEndpoint response', response)
     return response.data;
 }
 
