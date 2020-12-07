@@ -38,7 +38,6 @@ commands:
       - run:
           name: Setup client
           command: |
-            whoami
             sudo apt-get update
             sudo apt-get install libxss1
   setup-required-files:
@@ -76,7 +75,6 @@ commands:
     description: "Save and publish reports"
     steps:
       - run:
-          name: Save and publish reports
           when: always
           command: |
             export BRANCH=$CIRCLE_BRANCH
@@ -88,7 +86,7 @@ commands:
             # This is how it should be on main org repo
             # Should match the tag in mattermost/mattermost-enterprise-edition image
             # export BUILD_TAG="${CIRCLE_SHA1:0:7}"
-            export BUILD_TAG=$MM_DOCKER_IMAGE_TAG
+            export BUILD_TAG="$MM_DOCKER_IMAGE:$MM_DOCKER_TAG"
 
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
@@ -98,38 +96,31 @@ commands:
     description: "Create the test server"
     steps:
       - run:
-          name: Create the test server
           command: |
-            node --version
             TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=4"
-            url="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
-            curl -X POST $url
+            CREATE_URL="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
+            curl -X POST $CREATE_URL
             sleep 1m
   teardown-test-server:
     description: "Teardown the test server"
     steps:
       - run:
-          name: Teardown the test server
           command: |
-            pwd
-            ls -rtl
-            node --version
             TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE"
-            url="$TEST_SERVER_DESTROY_ENDPOINT$TEST_SERVER_QUERY"
-            curl -X POST $url
+            DESTROY_URL="$TEST_SERVER_DESTROY_ENDPOINT$TEST_SERVER_QUERY"
+            curl -X POST $DESTROY_URL
   set-shared-env:
     description: "Set shared environment variables"
     steps:
       - run:
-          name: Set shared environment variables
           command: |
             BASE_URL_1="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-1.dev.spinmint.com"
             BASE_URL_2="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-2.dev.spinmint.com"
             BASE_URL_3="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-3.dev.spinmint.com"
             BASE_URL_4="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-4.dev.spinmint.com"
 
-            echo 'export MM_DOCKER_IMAGE=mm-cloud-ee' >> shared
-            echo 'export MM_DOCKER_TAG=test-1282467-23' >> shared
+            echo export MM_DOCKER_IMAGE=mm-cloud-ee >> shared
+            echo export MM_DOCKER_TAG=test-1282467-23 >> shared
 
             echo export BROWSER=${BROWSER} >> shared
             echo export HEADLESS=${HEADLESS} >> shared
@@ -153,14 +144,11 @@ commands:
             source $BASH_ENV
   server-health-check:
     description: "Server health check"
+    parameters:
+      base_url:
+        type: string
     steps:
-      - run:
-          name: Server health check
-          command: |
-            until curl --max-time 2 --output - "${BASE_URL_1}:8065/api/v4/system/ping"; do echo waiting for app 1; sleep 5; done;
-            until curl --max-time 2 --output - "${BASE_URL_2}:8065/api/v4/system/ping"; do echo waiting for app 2; sleep 5; done;
-            until curl --max-time 2 --output - "${BASE_URL_3}:8065/api/v4/system/ping"; do echo waiting for app 3; sleep 5; done;
-            until curl --max-time 2 --output - "${BASE_URL_4}:8065/api/v4/system/ping"; do echo waiting for app 4; sleep 5; done;
+      - run: until curl --max-time 2 --output - "<< parameters.base_url >>:8065/api/v4/system/ping"; sleep 5; done;
   run-cypress:
     description: "Run Cypress test"
     parameters:
@@ -171,8 +159,10 @@ commands:
       run_part:
         type: string
     steps:
+      - server-health-check
+          base_url: << parameters.ci_base_url >>
       - run:
-          name: Run Cypress test
+          name: Set test specific environment variables
           command: |
             export CI_BASE_URL=<< parameters.ci_base_url >>
             export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
@@ -181,10 +171,7 @@ commands:
             export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
             export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
             export CYPRESS_ciBaseUrl=${CI_BASE_URL}
-
-            until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
-
-            cd e2e && node run_tests.js << parameters.run_filter >> << parameters.run_part >>
+      - run: cd e2e && node run_tests.js << parameters.run_filter >> << parameters.run_part >>
   persist-and-store:
     description: "Persist and store test artifacts"
     parameters:
@@ -224,6 +211,7 @@ jobs:
       - set-shared-env
       - create-test-server
       - server-health-check
+          base_url: $BASE_URL_1
       - persist_to_workspace:
           root: ~/mattermost
           paths:
@@ -233,7 +221,6 @@ jobs:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost
     environment:
-      MM_DOCKER_IMAGE_TAG: "$MM_DOCKER_IMAGE:$MM_DOCKER_TAG"
       TYPE: NONE
       PULL_REQUEST:
       BROWSER: chrome
@@ -251,15 +238,12 @@ jobs:
           name: Merge and save reports
           no_output_timeout: 30m
           command: |
-            pwd
-            ls -rtl
             cd e2e
             mkdir results
             cp -r ~/mattermost/e2e-test-1/e2e/results .
             cp -r ~/mattermost/e2e-test-2/e2e/results .
             cp -r ~/mattermost/e2e-test-3/e2e/results .
             cp -r ~/mattermost/e2e-test-4/e2e/results .
-
             cd ..
       - save-report
       - store_artifacts:
