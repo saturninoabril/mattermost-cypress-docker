@@ -201,9 +201,9 @@ jobs:
       - image: cimg/node:15.3.0
     working_directory: ~/mattermost/env-var
     environment:
-      MM_DOCKER_IMAGE: mm-cloud-ee
-      MM_DOCKER_TAG: test-1282467-23
-      TYPE: CLOUD
+      MM_DOCKER_IMAGE: enterprise
+      MM_DOCKER_TAG: master
+      TYPE: NONE
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
@@ -211,12 +211,12 @@ jobs:
       FULL_REPORT: true
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "1063065"
+      TM4J_FOLDER_ID: "847997"
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
       CYPRESS_runLDAPSync: false
-      CYPRESS_serverEdition: Cloud
+      CYPRESS_serverEdition: E20
     steps:
       - attach-workspace
       - set-shared-env
