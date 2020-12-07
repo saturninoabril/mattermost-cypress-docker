@@ -116,10 +116,10 @@ commands:
       - run:
           name: Set shared environment variables
           command: |
-            BASE_URL_1="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-1.dev.spinmint.com"
-            BASE_URL_2="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-2.dev.spinmint.com"
-            BASE_URL_3="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-3.dev.spinmint.com"
-            BASE_URL_4="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-4.dev.spinmint.com"
+            BASE_URL_1="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-1.$DNS_ZONE_NAME"
+            BASE_URL_2="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-2.$DNS_ZONE_NAME"
+            BASE_URL_3="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-3.$DNS_ZONE_NAME"
+            BASE_URL_4="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-4.$DNS_ZONE_NAME"
 
             echo export MM_DOCKER_IMAGE=mm-cloud-ee >> shared
             echo export MM_DOCKER_TAG=test-1282467-23 >> shared
