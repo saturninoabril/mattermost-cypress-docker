@@ -52,12 +52,26 @@ commands:
             wget -O e2e/cypress/fixtures/com.mattermost.demo-plugin-0.1.0.tar.gz https://github.com/mattermost/mattermost-plugin-demo/releases/download/v0.1.0/com.mattermost.demo-plugin-0.1.0.tar.gz
             wget -O e2e/cypress/fixtures/com.mattermost.demo-plugin-0.2.0.tar.gz https://github.com/mattermost/mattermost-plugin-demo/releases/download/v0.2.0/com.mattermost.demo-plugin-0.2.0.tar.gz
             echo $USERS > e2e/cypress/fixtures/users.txt
+  attach-workspace:
+    description: "Attach a workspace"
+    steps:
+      - attach_workspace:
+          at: ~/mattermost
+  set-shared-env:
+    description: "Set shared environment variables"
+    steps:
+      - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
   install-npm:
     description: "Install npm packages"
     steps:
-      - run:
-          name: Install npm packages
-          command: cd e2e && npm install
+      - run: cd e2e && npm install
+  save-cache:
+    description: "Install npm packages"
+    steps:
+      - save_cache:
+          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
+          paths:
+            -  ./e2e/node_modules
   save-report:
     description: "Save and publish reports"
     steps:
@@ -75,10 +89,6 @@ commands:
             # Should match the tag in mattermost/mattermost-enterprise-edition image
             # export BUILD_TAG="${CIRCLE_SHA1:0:7}"
             export BUILD_TAG=$MM_DOCKER_IMAGE_TAG
-
-            export TM4J_ENABLE=true
-            export JIRA_PROJECT_KEY=MM
-            export TM4J_FOLDER_ID=1063065
 
             export FAILURE_MESSAGE="At least one test has failed."
             export RESULTS_OUTPUT="results-output.txt"
@@ -129,6 +139,10 @@ commands:
             echo export CYPRESS_resetBeforeTest=${CYPRESS_resetBeforeTest} >> shared
             echo export CYPRESS_runLDAPSync=${CYPRESS_runLDAPSync} >> shared
             echo export CYPRESS_serverEdition=${CYPRESS_serverEdition} >> shared
+
+            echo export TM4J_ENABLE=${TM4J_ENABLE} >> shared
+            echo export JIRA_PROJECT_KEY=${JIRA_PROJECT_KEY} >> shared
+            echo export TM4J_FOLDER_ID=${TM4J_FOLDER_ID} >> shared
 
             echo export BASE_URL_1=${BASE_URL_1} >> shared
             echo export BASE_URL_2=${BASE_URL_2} >> shared
@@ -202,9 +216,11 @@ jobs:
       CYPRESS_resetBeforeTest: true
       CYPRESS_runLDAPSync: false
       CYPRESS_serverEdition: Cloud
+      TM4J_ENABLE: true
+      JIRA_PROJECT_KEY: MM
+      TM4J_FOLDER_ID: 1063065
     steps:
-      - attach_workspace:
-          at: ~/mattermost
+      - attach-workspace
       - set-shared-env
       - create-test-server
       - server-health-check
@@ -226,14 +242,10 @@ jobs:
       FULL_REPORT: true
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/mattermost
+      - attach-workspace
       - install-npm
-      - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
-          paths:
-            -  ./e2e/node_modules
-      - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
+      - save-cache
+      - set-shared-env
       - teardown-test-server
       - run:
           name: Merge and save reports
@@ -261,16 +273,12 @@ jobs:
     working_directory: ~/mattermost/e2e-test-1
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/mattermost
+      - attach-workspace
       - setup-client
       - setup-required-files
       - install-npm
-      - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
-          paths:
-            -  ./e2e/node_modules
-      - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
+      - save-cache
+      - set-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_1
           run_filter: "--stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only'"
@@ -284,16 +292,12 @@ jobs:
     working_directory: ~/mattermost/e2e-test-2
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/mattermost
+      - attach-workspace
       - setup-client
       - setup-required-files
       - install-npm
-      - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
-          paths:
-            -  ./e2e/node_modules
-      - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
+      - save-cache
+      - set-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_2
           run_filter: "--stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only'"
@@ -307,16 +311,12 @@ jobs:
     working_directory: ~/mattermost/e2e-test-3
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/mattermost
+      - attach-workspace
       - setup-client
       - setup-required-files
       - install-npm
-      - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
-          paths:
-            -  ./e2e/node_modules
-      - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
+      - save-cache
+      - set-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_3
           run_filter: "--stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only'"
@@ -330,16 +330,12 @@ jobs:
     working_directory: ~/mattermost/e2e-test-4
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/mattermost
+      - attach-workspace
       - setup-client
       - setup-required-files
       - install-npm
-      - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
-          paths:
-            -  ./e2e/node_modules
-      - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
+      - save-cache
+      - set-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_4
           run_filter: "--stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only'"
