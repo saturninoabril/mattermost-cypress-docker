@@ -60,7 +60,9 @@ commands:
     steps:
       - run:
           name: Apply shared environment variables
-          command: cat ~/mattermost/env-var/shared >> $BASH_ENV
+          command: |
+            cat ~/mattermost/env-var/shared
+            cat ~/mattermost/env-var/shared >> $BASH_ENV
   install-npm:
     steps:
       - run:
@@ -77,8 +79,12 @@ commands:
     description: "Save and publish reports"
     steps:
       - run:
+          name: Save and publish reports
           when: always
           command: |
+            echo $TM4J_ENABLE
+            echo $JIRA_PROJECT_KEY
+            echo $TM4J_FOLDER_ID
             export BRANCH=$CIRCLE_BRANCH
             export BUILD_ID=$CIRCLE_BUILD_NUM
 
@@ -106,7 +112,7 @@ commands:
   teardown-test-server:
     steps:
       - run:
-          description: Teardown the test server
+          name: Teardown the test server
           command: |
             TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE"
             DESTROY_URL="$TEST_SERVER_DESTROY_ENDPOINT$TEST_SERVER_QUERY"
@@ -125,18 +131,22 @@ commands:
             echo export MM_DOCKER_IMAGE=mm-cloud-ee >> shared
             echo export MM_DOCKER_TAG=test-1282467-23 >> shared
 
+            echo export TYPE=${TYPE} >> shared
+            echo export PULL_REQUEST=${PULL_REQUEST} >> shared
             echo export BROWSER=${BROWSER} >> shared
             echo export HEADLESS=${HEADLESS} >> shared
+            echo export DASHBOARD_ENABLE=${DASHBOARD_ENABLE} >> shared
+            echo export FULL_REPORT=${FULL_REPORT} >> shared
+
+            echo export TM4J_ENABLE=${TM4J_ENABLE} >> shared
+            echo export JIRA_PROJECT_KEY=${JIRA_PROJECT_KEY} >> shared
+            echo export TM4J_FOLDER_ID=${TM4J_FOLDER_ID} >> shared
 
             echo export CYPRESS_chromeWebSecurity=${CYPRESS_chromeWebSecurity} >> shared
             echo export CYPRESS_numberOfTrialUsers=${CYPRESS_numberOfTrialUsers} >> shared
             echo export CYPRESS_resetBeforeTest=${CYPRESS_resetBeforeTest} >> shared
             echo export CYPRESS_runLDAPSync=${CYPRESS_runLDAPSync} >> shared
             echo export CYPRESS_serverEdition=${CYPRESS_serverEdition} >> shared
-
-            echo export TM4J_ENABLE=${TM4J_ENABLE} >> shared
-            echo export JIRA_PROJECT_KEY=${JIRA_PROJECT_KEY} >> shared
-            echo export TM4J_FOLDER_ID=${TM4J_FOLDER_ID} >> shared
 
             echo export BASE_URL_1=${BASE_URL_1} >> shared
             echo export BASE_URL_2=${BASE_URL_2} >> shared
@@ -193,16 +203,20 @@ jobs:
     environment:
       MM_DOCKER_IMAGE: mm-cloud-ee
       MM_DOCKER_TAG: test-1282467-23
+      TYPE: CLOUD
+      PULL_REQUEST:
       BROWSER: chrome
       HEADLESS: true
+      DASHBOARD_ENABLE: false
+      FULL_REPORT: true
+      TM4J_ENABLE: true
+      JIRA_PROJECT_KEY: MM
+      TM4J_FOLDER_ID: 1063065
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
       CYPRESS_runLDAPSync: false
       CYPRESS_serverEdition: Cloud
-      TM4J_ENABLE: true
-      JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: 1063065
     steps:
       - attach-workspace
       - set-shared-env
@@ -219,13 +233,6 @@ jobs:
     docker:
       - image: circleci/node:lts-buster-browsers-legacy
     working_directory: ~/mattermost
-    environment:
-      TYPE: CLOUD
-      PULL_REQUEST:
-      BROWSER: chrome
-      HEADLESS: true
-      DASHBOARD_ENABLE: false
-      FULL_REPORT: true
     steps:
       - checkout
       - attach-workspace
@@ -234,7 +241,7 @@ jobs:
       - apply-shared-env
       - teardown-test-server
       - run:
-          name: Merge and save reports
+          name: Consolidate reports to common /results folder
           no_output_timeout: 30m
           command: |
             cd e2e
@@ -264,7 +271,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_1
-          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_filter: "--stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only'"
           run_part: "--part=1 --of=4"
       - persist-and-store:
           folder: e2e-test-1
@@ -283,7 +290,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_2
-          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_filter: "--stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only'"
           run_part: "--part=2 --of=4"
       - persist-and-store:
           folder: e2e-test-2
@@ -302,7 +309,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_3
-          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_filter: "--stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only'"
           run_part: "--part=3 --of=4"
       - persist-and-store:
           folder: e2e-test-3
@@ -321,7 +328,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_4
-          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_filter: "--stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only'"
           run_part: "--part=4 --of=4"
       - persist-and-store:
           folder: e2e-test-4

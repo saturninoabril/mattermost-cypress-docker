@@ -90,11 +90,13 @@ const saveReport = async () => {
     if (TM4J_ENABLE) {
         const {start, end} = jsonReport.stats;
         testCycle = await createTestCycle(start, end);
+        console.log('testCycle', testCycle)
     }
 
     // Send test report to "QA: UI Test Automation" channel via webhook
     if (TYPE && TYPE !== 'NONE' && WEBHOOK_URL) {
         const environment = readJsonFromFile(`${RESULTS_DIR}/environment.json`);
+        console.log('testCycle', TYPE, testCycle)
         const data = generateTestReport(summary, result && result.success, result && result.reportLink, environment, testCycle.key);
         await sendReport('summary report to Community channel', WEBHOOK_URL, data);
     }
