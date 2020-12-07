@@ -57,13 +57,16 @@ commands:
       - attach_workspace:
           at: ~/mattermost
   apply-shared-env:
-    description: "Set shared environment variables"
     steps:
-      - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
+      - run:
+          name: Apply shared environment variables
+          command: cat ~/mattermost/env-var/shared >> $BASH_ENV
   install-npm:
-    description: "Install npm packages"
     steps:
       - run: cd e2e && npm install
+      - run:
+          name: Install npm packages
+          command: cd e2e && npm install
   save-cache:
     description: "Install npm packages"
     steps:
@@ -93,26 +96,26 @@ commands:
 
             cd e2e && node save_report.js |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
   create-test-server:
-    description: "Create the test server"
     steps:
       - run:
+          name: Create the test server
           command: |
             TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=4"
             CREATE_URL="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $CREATE_URL
             sleep 1m
   teardown-test-server:
-    description: "Teardown the test server"
     steps:
       - run:
+          description: Teardown the test server
           command: |
             TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE"
             DESTROY_URL="$TEST_SERVER_DESTROY_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $DESTROY_URL
   set-shared-env:
-    description: "Set shared environment variables"
     steps:
       - run:
+          name: Set shared environment variables
           command: |
             BASE_URL_1="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-1.dev.spinmint.com"
             BASE_URL_2="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-2.dev.spinmint.com"
@@ -152,7 +155,9 @@ commands:
       run_part:
         type: string
     steps:
-      - run: until curl --max-time 2 --output - "<< parameters.ci_base_url >>:8065/api/v4/system/ping"; sleep 5; done;
+      - run:
+          name: Test server health check
+          command: until curl --max-time 2 --output - "<< parameters.ci_base_url >>:8065/api/v4/system/ping"; do echo waiting for server; sleep 5; done;
       - run:
           name: Set test specific environment variables
           command: |
@@ -163,7 +168,9 @@ commands:
             export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
             export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
             export CYPRESS_ciBaseUrl=${CI_BASE_URL}
-      - run: cd e2e && node run_tests.js << parameters.run_filter >> << parameters.run_part >>
+      - run:
+          name: Actual Cypress test
+          command: cd e2e && node run_tests.js << parameters.run_filter >> << parameters.run_part >>
   persist-and-store:
     description: "Persist and store test artifacts"
     parameters:
@@ -202,7 +209,7 @@ jobs:
       - attach-workspace
       - set-shared-env
       - create-test-server
-      - run: until curl --max-time 2 --output - "${BASE_URL_1}:8065/api/v4/system/ping"; sleep 5; done;
+      - run: until curl --max-time 2 --output - "${BASE_URL_1}:8065/api/v4/system/ping"; do echo waiting for server; sleep 5; done;
       - persist_to_workspace:
           root: ~/mattermost
           paths:
