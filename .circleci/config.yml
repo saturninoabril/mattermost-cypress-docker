@@ -202,7 +202,7 @@ jobs:
       - attach-workspace
       - set-shared-env
       - create-test-server
-      - run: until curl --max-time 2 --output - "$BASE_URL_1:8065/api/v4/system/ping"; sleep 5; done;
+      - run: until curl --max-time 2 --output - "${BASE_URL_1}:8065/api/v4/system/ping"; sleep 5; done;
       - persist_to_workspace:
           root: ~/mattermost
           paths:
