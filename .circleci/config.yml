@@ -208,7 +208,9 @@ jobs:
       - create-test-server
       - run:
           name: Test server health check
-          command: curl --retry 10 --retry-delay 20 --retry-connrefused --max-time 300 $BASE_URL_1:8065/api/v4/system/ping
+          command: |
+            curl "${BASE_URL_1}:8065/api/v4/system/ping"
+            curl --retry 10 --retry-delay 20 --retry-connrefused --max-time 300 "${BASE_URL_1}:8065/api/v4/system/ping"
       - persist_to_workspace:
           root: ~/mattermost
           paths:
