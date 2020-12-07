@@ -204,7 +204,7 @@ jobs:
       MM_DOCKER_IMAGE: mm-cloud-ee
       MM_DOCKER_TAG: test-1282467-23
       TYPE: CLOUD
-      PULL_REQUEST:
+      PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
