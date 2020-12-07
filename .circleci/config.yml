@@ -147,6 +147,30 @@ commands:
             until curl --max-time 5 --output - "${BASE_URL_2}:8065/api/v4/system/ping"; do echo waiting for app 2; sleep 5; done;
             until curl --max-time 5 --output - "${BASE_URL_3}:8065/api/v4/system/ping"; do echo waiting for app 3; sleep 5; done;
             until curl --max-time 5 --output - "${BASE_URL_4}:8065/api/v4/system/ping"; do echo waiting for app 4; sleep 5; done;
+  run-cypress:
+    description: "Run Cypress test"
+    parameters:
+      ci_base_url:
+        type: string
+      run_filter:
+        type: string
+      run_part:
+        type: string
+    steps:
+      - run:
+          name: Run Cypress test
+          command: |
+            export CI_BASE_URL=<< parameters.ci_base_url >>
+            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
+
+            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
+            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
+            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
+
+            until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
+
+            cd e2e && node run_tests.js << parameters.run_filter >> << parameters.run_part >>
 
 jobs:
   create-test-server:
@@ -232,21 +256,10 @@ jobs:
           paths:
             -  ./e2e/node_modules
       - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
-      - run:
-          name: Run Cypress Test
-          no_output_timeout: 30m
-          command: |
-            export CI_BASE_URL=${BASE_URL_1}
-            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
-
-            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
-            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
-            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
-
-            until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
-
-            cd e2e && node run_tests.js --stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=1 --of=4
+      - run-cypress:
+          ci_base_url: $BASE_URL_1
+          run_filter: "--stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_part: "--part=1 --of=4"
       - persist_to_workspace:
           root: ~/mattermost
           paths:
@@ -273,21 +286,10 @@ jobs:
           paths:
             -  ./e2e/node_modules
       - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
-      - run:
-          name: Run Cypress Test
-          no_output_timeout: 30m
-          command: |
-            export CI_BASE_URL=${BASE_URL_2}
-            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
-
-            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
-            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
-            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
-
-            until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
-
-            cd e2e && node run_tests.js --stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=2 --of=4
+      - run-cypress:
+          ci_base_url: $BASE_URL_2
+          run_filter: "--stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_part: "--part=2 --of=4"
       - persist_to_workspace:
           root: ~/mattermost
           paths:
@@ -314,21 +316,10 @@ jobs:
           paths:
             -  ./e2e/node_modules
       - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
-      - run:
-          name: Run Cypress Test
-          no_output_timeout: 30m
-          command: |
-            export CI_BASE_URL=${BASE_URL_3}
-            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
-
-            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
-            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
-            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
-
-            until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
-
-            cd e2e && node run_tests.js --stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=3 --of=4
+      - run-cypress:
+          ci_base_url: $BASE_URL_3
+          run_filter: "--stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_part: "--part=3 --of=4"
       - persist_to_workspace:
           root: ~/mattermost
           paths:
@@ -355,21 +346,10 @@ jobs:
           paths:
             -  ./e2e/node_modules
       - run: cat ~/mattermost/env-var/shared >> $BASH_ENV
-      - run:
-          name: Run Cypress Test
-          no_output_timeout: 30m
-          command: |
-            export CI_BASE_URL=${BASE_URL_4}
-            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
-            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
-
-            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
-            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
-            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
-
-            until curl --max-time 5 --output - ${CYPRESS_baseUrl}; do echo waiting for app server; sleep 5; done;
-
-            cd e2e && node run_tests.js --stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only' --part=4 --of=4
+      - run-cypress:
+          ci_base_url: $BASE_URL_4
+          run_filter: "--stage='@prod' --group='@account_setting' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_part: "--part=4 --of=4"
       - persist_to_workspace:
           root: ~/mattermost
           paths:
