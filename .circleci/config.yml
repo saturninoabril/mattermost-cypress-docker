@@ -142,13 +142,6 @@ commands:
 
             cat shared >> $BASH_ENV
             source $BASH_ENV
-  server-health-check:
-    description: "Server health check"
-    parameters:
-      base_url:
-        type: string
-    steps:
-      - run: until curl --max-time 2 --output - "<< parameters.base_url >>:8065/api/v4/system/ping"; sleep 5; done;
   run-cypress:
     description: "Run Cypress test"
     parameters:
@@ -159,8 +152,7 @@ commands:
       run_part:
         type: string
     steps:
-      - server-health-check
-          base_url: << parameters.ci_base_url >>
+      - run: until curl --max-time 2 --output - "<< parameters.ci_base_url >>:8065/api/v4/system/ping"; sleep 5; done;
       - run:
           name: Set test specific environment variables
           command: |
@@ -210,8 +202,7 @@ jobs:
       - attach-workspace
       - set-shared-env
       - create-test-server
-      - server-health-check
-          base_url: $BASE_URL_1
+      - run: until curl --max-time 2 --output - "$BASE_URL_1:8065/api/v4/system/ping"; sleep 5; done;
       - persist_to_workspace:
           root: ~/mattermost
           paths:
