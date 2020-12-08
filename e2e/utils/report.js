@@ -158,6 +158,9 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment, te
     case 'CLOUD_UNSTABLE':
         title = `E2E for Cloud Build (Unstable tests) with [${BUILD_TAG}](https://hub.docker.com/r/mattermost/mm-cloud-ee/tags)`;
         break;
+    case 'MASTER_TEAM':
+            title = `E2E for Team Edition Build (Prod tests) with [${BUILD_TAG}](https://hub.docker.com/r/mattermost/mattermost-team-edition/tags?name=${BUILD_TAG})`;
+            break;
     default:
         title = `E2E for Build ${dockerImageLink}`;
     }

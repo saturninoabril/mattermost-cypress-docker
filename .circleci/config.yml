@@ -201,10 +201,10 @@ jobs:
       - image: cimg/node:15.3.0
     working_directory: ~/mattermost/env-var
     environment:
-      MM_DOCKER_IMAGE: mattermost-enterprise-edition
+      MM_DOCKER_IMAGE: mattermost-team-edition
       MM_DOCKER_TAG: master
       SERVER_INSTANCE_COUNT: 4
-      TYPE: MASTER
+      TYPE: MASTER_TEAM
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
@@ -212,12 +212,12 @@ jobs:
       FULL_REPORT: true
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "847997"
+      TM4J_FOLDER_ID: "1069649"
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
       CYPRESS_runLDAPSync: false
-      CYPRESS_serverEdition: E20
+      CYPRESS_serverEdition: Team
     steps:
       - attach-workspace
       - set-shared-env
@@ -272,7 +272,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_1
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@enterprise,@e20_only'"
           run_part: "--part=1 --of=4"
       - persist-and-store:
           folder: e2e-test-1
@@ -291,7 +291,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_2
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@enterprise,@e20_only'"
           run_part: "--part=2 --of=4"
       - persist-and-store:
           folder: e2e-test-2
@@ -310,7 +310,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_3
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@enterprise,@e20_only'"
           run_part: "--part=3 --of=4"
       - persist-and-store:
           folder: e2e-test-3
@@ -329,7 +329,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_4
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@enterprise,@e20_only'"
           run_part: "--part=4 --of=4"
       - persist-and-store:
           folder: e2e-test-4
