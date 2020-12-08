@@ -105,7 +105,7 @@ commands:
       - run:
           name: Create the test server
           command: |
-            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=4"
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&$SERVER_INSTANCE_COUNT=4"
             CREATE_URL="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $CREATE_URL
             sleep 1m
@@ -114,7 +114,7 @@ commands:
       - run:
           name: Teardown the test server
           command: |
-            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE"
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG"
             DESTROY_URL="$TEST_SERVER_DESTROY_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $DESTROY_URL
   set-shared-env:
@@ -201,9 +201,10 @@ jobs:
       - image: cimg/node:15.3.0
     working_directory: ~/mattermost/env-var
     environment:
-      MM_DOCKER_IMAGE: mm-cloud-ee
-      MM_DOCKER_TAG: test-1282467-23
-      TYPE: CLOUD
+      MM_DOCKER_IMAGE: mattermost-enterprise-edition
+      MM_DOCKER_TAG: latest
+      SERVER_INSTANCE_COUNT: 4
+      TYPE: MASTER
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
@@ -211,12 +212,12 @@ jobs:
       FULL_REPORT: true
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "1064652"
+      TM4J_FOLDER_ID: "847997"
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
       CYPRESS_runLDAPSync: false
-      CYPRESS_serverEdition: Cloud
+      CYPRESS_serverEdition: E20
     steps:
       - attach-workspace
       - set-shared-env
@@ -271,7 +272,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_1
-          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
           run_part: "--part=1 --of=4"
       - persist-and-store:
           folder: e2e-test-1
@@ -290,7 +291,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_2
-          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
           run_part: "--part=2 --of=4"
       - persist-and-store:
           folder: e2e-test-2
@@ -309,7 +310,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_3
-          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
           run_part: "--part=3 --of=4"
       - persist-and-store:
           folder: e2e-test-3
@@ -328,7 +329,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_4
-          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
           run_part: "--part=4 --of=4"
       - persist-and-store:
           folder: e2e-test-4
