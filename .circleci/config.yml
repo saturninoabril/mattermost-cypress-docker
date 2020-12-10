@@ -1,89 +1,48 @@
 version: 2.1
 orbs:
-  node: circleci/node@1.1.6
+  node: circleci/node@4.1.0
 
 workflows:
-  build-and-test:
+  build:
     jobs:
-      - build-and-test:
+      - create-test-server:
           context: cypress-circleci-env
+      - e2e-test-1:
+          context: cypress-circleci-env
+          requires:
+            - create-test-server
+      - e2e-test-2:
+          context: cypress-circleci-env
+          requires:
+            - create-test-server
+      - e2e-test-3:
+          context: cypress-circleci-env
+          requires:
+            - create-test-server
+      - e2e-test-4:
+          context: cypress-circleci-env
+          requires:
+            - create-test-server
+      - merge-and-save-test-reports:
+          context: cypress-circleci-env
+          requires:
+            - e2e-test-1
+            - e2e-test-2
+            - e2e-test-3
+            - e2e-test-4
 
-jobs:
-  build-and-test:
-    docker:
-      - image: circleci/node:14-stretch-browsers-legacy
-        environment:
-          TEST_DATABASE_URL: postgres://mmuser:mostest@localhost:5432/mattermost_test
-      - image: circleci/postgres:9.6.5-alpine-ram
-        environment:
-          POSTGRES_USER: mmuser
-          POSTGRES_PASSWORD: mostest
-          POSTGRES_DB: mattermost_test
-      - image: jhillyerd/inbucket:release-1.2.0
-      - image: minio/minio:RELEASE.2019-10-11T00-38-09Z
-        command: "server /data"
-        environment:
-          MINIO_ACCESS_KEY: minioaccesskey
-          MINIO_SECRET_KEY: miniosecretkey
-          MINIO_SSE_MASTER_KEY: "my-minio-key:6368616e676520746869732070617373776f726420746f206120736563726574"
-      - image: mattermost/mattermost-elasticsearch-docker:6.5.1
-        environment:
-          http.host: "0.0.0.0"
-          http.port: 9200
-          http.cors.enabled: "true"
-          http.cors.allow-origin: "http://localhost:1358,http://127.0.0.1:1358"
-          http.cors.allow-headers: "X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization"
-          http.cors.allow-credentials: "true"
-          transport.host: "127.0.0.1"
-          ES_JAVA_OPTS: "-Xms512m -Xmx512m"
-      - image: mattermost/mattermost-enterprise-edition:$MM_DOCKER_IMAGE_TAG
-        environment:
-          DB_HOST: localhost
-          DB_PORT_NUMBER: 5432
-          MM_DBNAME: mattermost_test
-          MM_USERNAME: mmuser
-          MM_PASSWORD: mostest
-          CI_INBUCKET_HOST: localhost
-          CI_INBUCKET_PORT: 10080
-          CI_MINIO_HOST: minio
-          IS_CI: true
-          MM_CLUSTERSETTINGS_READONLYCONFIG: false
-          MM_EMAILSETTINGS_SMTPSERVER: localhost
-          MM_EMAILSETTINGS_SMTPPORT: 10025
-          MM_ELASTICSEARCHSETTINGS_CONNECTIONURL: http://localhost:9200
-          MM_EXPERIMENTALSETTINGS_USENEWSAMLLIBRARY: true
-          MM_SQLSETTINGS_DATASOURCE: "postgres://mmuser:mostest@localhost:5432/mattermost_test?sslmode=disable&connect_timeout=10"
-          MM_SQLSETTINGS_DRIVERNAME: postgres
-          MM_PLUGINSETTINGS_ENABLEUPLOADS: true
-    working_directory: ~/mattermost-cypress-docker
-    environment:
-      MM_DOCKER_IMAGE_TAG: master
-      TYPE: NONE
-      PULL_REQUEST:
-      BROWSER: chrome
-      HEADLESS: true
-      DASHBOARD_ENABLE: false
-      FULL_REPORT: false
+commands:
+  setup-client:
+    description: "Setup client"
     steps:
-      - setup_remote_docker
       - run:
-          name: Wait for Inbucket
+          name: Setup client
           command: |
-            until curl --max-time 5 --output - localhost:10080; do echo waiting for Inbucket; sleep 5; done;
-      - run:
-          name: Wait for Elasticsearch
-          command: |
-            until curl --max-time 5 --output - localhost:9200; do echo waiting for Elasticsearch; sleep 5; done;
-      - checkout
-      - attach_workspace:
-          at: ~/mattermost-cypress-docker
-      - run:
-          name: Setup PostgreSQL client
-          command: |
-            whoami
             sudo apt-get update
             sudo apt-get install libxss1
-            sudo apt-get install postgresql-client
+  setup-required-files:
+    description: "Setup required files"
+    steps:
       - run:
           name: Setup required files
           command: |
@@ -91,35 +50,41 @@ jobs:
             wget -O e2e/cypress/fixtures/com.github.matterpoll.matterpoll.tar.gz https://github.com/matterpoll/matterpoll/releases/download/v1.3.0/com.github.matterpoll.matterpoll-1.3.0.tar.gz
             wget -O e2e/cypress/fixtures/com.mattermost.demo-plugin-0.1.0.tar.gz https://github.com/mattermost/mattermost-plugin-demo/releases/download/v0.1.0/com.mattermost.demo-plugin-0.1.0.tar.gz
             wget -O e2e/cypress/fixtures/com.mattermost.demo-plugin-0.2.0.tar.gz https://github.com/mattermost/mattermost-plugin-demo/releases/download/v0.2.0/com.mattermost.demo-plugin-0.2.0.tar.gz
+            echo $USERS > e2e/cypress/fixtures/users.txt
+  attach-workspace:
+    description: "Attach a workspace"
+    steps:
+      - attach_workspace:
+          at: ~/mattermost
+  apply-shared-env:
+    steps:
+      - run:
+          name: Apply shared environment variables
+          command: |
+            cat ~/mattermost/env-var/shared
+            cat ~/mattermost/env-var/shared >> $BASH_ENV
+  install-npm:
+    steps:
       - run:
           name: Install npm packages
           command: cd e2e && npm install
-      - save_cache: # special step to save the dependency cache
+  save-cache:
+    description: "Save cache"
+    steps:
+      - save_cache:
           key: dependency-cache-{{ checksum "e2e/package-lock.json" }}
           paths:
-            - ./e2e/node_modules
-      - run:
-          name: Run Cypress Test
-          no_output_timeout: 30m
-          command: |
-            cd e2e && nohup node webhook_serve.js > webhook_serve.log &
-
-            export CYPRESS_chromeWebSecurity=true
-            export CYPRESS_numberOfTrialUsers=10000
-            export CYPRESS_resetBeforeTest=true
-            export CYPRESS_runLDAPSync=false
-            export CYPRESS_runWithEELicense=true
-            export FAILURE_MESSAGE="At least one test has failed."
-            export RESULTS_OUTPUT="results-output.txt"
-
-            cd e2e && node run_tests.js --stage='@prod' --excludeGroup='@te_only' |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+            -  ./e2e/node_modules
+  save-report:
+    description: "Save and publish reports"
+    steps:
       - run:
           name: Save and publish reports
           when: always
           command: |
-            export DIAGNOSTIC_USER_ID=`psql -d $TEST_DATABASE_URL -t -c "SELECT id FROM users WHERE username='sysadmin';"`
-            export DIAGNOSTIC_TEAM_ID=`psql -d $TEST_DATABASE_URL -t -c "SELECT id FROM teams WHERE name='ad-1';"`
-
+            echo $TM4J_ENABLE
+            echo $JIRA_PROJECT_KEY
+            echo $TM4J_FOLDER_ID
             export BRANCH=$CIRCLE_BRANCH
             export BUILD_ID=$CIRCLE_BUILD_NUM
 
@@ -129,6 +94,242 @@ jobs:
             # This is how it should be on main org repo
             # Should match the tag in mattermost/mattermost-enterprise-edition image
             # export BUILD_TAG="${CIRCLE_SHA1:0:7}"
-            export BUILD_TAG=$MM_DOCKER_IMAGE_TAG
+            export BUILD_TAG="$MM_DOCKER_IMAGE:$MM_DOCKER_TAG"
 
-            cd e2e && node save_report.js
+            export FAILURE_MESSAGE="At least one test has failed."
+            export RESULTS_OUTPUT="results-output.txt"
+
+            cd e2e && node save_report.js |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
+  create-test-server:
+    steps:
+      - run:
+          name: Create the test server
+          command: |
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT"
+            CREATE_URL="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
+            curl -X POST $CREATE_URL
+            sleep 1m
+  teardown-test-server:
+    steps:
+      - run:
+          name: Teardown the test server
+          command: |
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG"
+            DESTROY_URL="$TEST_SERVER_DESTROY_ENDPOINT$TEST_SERVER_QUERY"
+            curl -X POST $DESTROY_URL
+  set-shared-env:
+    steps:
+      - run:
+          name: Set shared environment variables
+          command: |
+            DNS_ZONE_NAME=dev.spinmint.com
+            BASE_URL_1="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-1.$DNS_ZONE_NAME"
+            BASE_URL_2="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-2.$DNS_ZONE_NAME"
+            BASE_URL_3="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-3.$DNS_ZONE_NAME"
+            BASE_URL_4="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-4.$DNS_ZONE_NAME"
+
+            echo export MM_DOCKER_IMAGE=$MM_DOCKER_IMAGE >> shared
+            echo export MM_DOCKER_TAG=$MM_DOCKER_TAG >> shared
+
+            echo export TYPE=${TYPE} >> shared
+            echo export PULL_REQUEST=${PULL_REQUEST} >> shared
+            echo export BROWSER=${BROWSER} >> shared
+            echo export HEADLESS=${HEADLESS} >> shared
+            echo export DASHBOARD_ENABLE=${DASHBOARD_ENABLE} >> shared
+            echo export FULL_REPORT=${FULL_REPORT} >> shared
+
+            echo export TM4J_ENABLE=${TM4J_ENABLE} >> shared
+            echo export JIRA_PROJECT_KEY=${JIRA_PROJECT_KEY} >> shared
+            echo export TM4J_FOLDER_ID=${TM4J_FOLDER_ID} >> shared
+
+            echo export CYPRESS_chromeWebSecurity=${CYPRESS_chromeWebSecurity} >> shared
+            echo export CYPRESS_numberOfTrialUsers=${CYPRESS_numberOfTrialUsers} >> shared
+            echo export CYPRESS_resetBeforeTest=${CYPRESS_resetBeforeTest} >> shared
+            echo export CYPRESS_runLDAPSync=${CYPRESS_runLDAPSync} >> shared
+            echo export CYPRESS_serverEdition=${CYPRESS_serverEdition} >> shared
+
+            echo export BASE_URL_1=${BASE_URL_1} >> shared
+            echo export BASE_URL_2=${BASE_URL_2} >> shared
+            echo export BASE_URL_3=${BASE_URL_3} >> shared
+            echo export BASE_URL_4=${BASE_URL_4} >> shared
+
+            cat shared >> $BASH_ENV
+            source $BASH_ENV
+  run-cypress:
+    description: "Run Cypress test"
+    parameters:
+      ci_base_url:
+        type: string
+      run_filter:
+        type: string
+      run_part:
+        type: string
+    steps:
+      - run:
+          name: Run Cypress test
+          command: |
+            curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 << parameters.ci_base_url >>:8065/api/v4/system/ping
+
+            export CI_BASE_URL=<< parameters.ci_base_url >>
+            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
+            export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
+
+            export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
+            export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
+            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
+
+            cd e2e && node run_tests.js << parameters.run_filter >> << parameters.run_part >>
+  persist-and-store:
+    description: "Persist and store test artifacts"
+    parameters:
+      folder:
+        type: string
+    steps:
+      - persist_to_workspace:
+          root: ~/mattermost
+          paths:
+            - << parameters.folder >>/e2e/results
+      - store_artifacts:
+          path: ~/mattermost/<< parameters.folder >>/e2e/results
+      - store_test_results:
+          when: always
+          path: ~/mattermost/<< parameters.folder >>/e2e/results/junit
+
+jobs:
+  create-test-server:
+    docker:
+      - image: cimg/node:15.3.0
+    working_directory: ~/mattermost/env-var
+    environment:
+      MM_DOCKER_IMAGE: mattermost-enterprise-edition
+      MM_DOCKER_TAG: master
+      SERVER_INSTANCE_COUNT: 4
+      TYPE: NONE
+      PULL_REQUEST: add-link
+      BROWSER: chrome
+      HEADLESS: true
+      DASHBOARD_ENABLE: false
+      FULL_REPORT: false
+      TM4J_ENABLE: false
+      JIRA_PROJECT_KEY: MM
+      TM4J_FOLDER_ID: ""
+      CYPRESS_chromeWebSecurity: true
+      CYPRESS_numberOfTrialUsers: 10000
+      CYPRESS_resetBeforeTest: true
+      CYPRESS_runLDAPSync: false
+      CYPRESS_serverEdition: E20
+    steps:
+      - attach-workspace
+      - set-shared-env
+      - create-test-server
+      - run:
+          name: Test server health check
+          command: |
+            curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 "${BASE_URL_1}:8065/api/v4/system/ping"
+      - persist_to_workspace:
+          root: ~/mattermost
+          paths:
+            - env-var/shared
+  merge-and-save-test-reports:
+    docker:
+      - image: circleci/node:lts-buster-browsers-legacy
+    working_directory: ~/mattermost
+    steps:
+      - checkout
+      - attach-workspace
+      - install-npm
+      - save-cache
+      - apply-shared-env
+      - teardown-test-server
+      - run:
+          name: Consolidate reports to common /results folder
+          no_output_timeout: 30m
+          command: |
+            cd e2e
+            mkdir results
+            cp -r ~/mattermost/e2e-test-1/e2e/results .
+            cp -r ~/mattermost/e2e-test-2/e2e/results .
+            cp -r ~/mattermost/e2e-test-3/e2e/results .
+            cp -r ~/mattermost/e2e-test-4/e2e/results .
+            cd ..
+      - save-report
+      - store_artifacts:
+          path: ~/mattermost/e2e/results
+      - store_test_results:
+          when: always
+          path: ~/mattermost/e2e/results/junit
+  e2e-test-1:
+    docker:
+      - image: circleci/node:lts-buster-browsers-legacy
+    working_directory: ~/mattermost/e2e-test-1
+    steps:
+      - checkout
+      - attach-workspace
+      - setup-client
+      - setup-required-files
+      - install-npm
+      - save-cache
+      - apply-shared-env
+      - run-cypress:
+          ci_base_url: $BASE_URL_1
+          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_part: "--part=1 --of=4"
+      - persist-and-store:
+          folder: e2e-test-1
+  
+  e2e-test-2:
+    docker:
+      - image: circleci/node:lts-buster-browsers-legacy
+    working_directory: ~/mattermost/e2e-test-2
+    steps:
+      - checkout
+      - attach-workspace
+      - setup-client
+      - setup-required-files
+      - install-npm
+      - save-cache
+      - apply-shared-env
+      - run-cypress:
+          ci_base_url: $BASE_URL_2
+          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_part: "--part=2 --of=4"
+      - persist-and-store:
+          folder: e2e-test-2
+
+  e2e-test-3:
+    docker:
+      - image: circleci/node:lts-buster-browsers-legacy
+    working_directory: ~/mattermost/e2e-test-3
+    steps:
+      - checkout
+      - attach-workspace
+      - setup-client
+      - setup-required-files
+      - install-npm
+      - save-cache
+      - apply-shared-env
+      - run-cypress:
+          ci_base_url: $BASE_URL_3
+          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_part: "--part=3 --of=4"
+      - persist-and-store:
+          folder: e2e-test-3
+
+  e2e-test-4:
+    docker:
+      - image: circleci/node:lts-buster-browsers-legacy
+    working_directory: ~/mattermost/e2e-test-4
+    steps:
+      - checkout
+      - attach-workspace
+      - setup-client
+      - setup-required-files
+      - install-npm
+      - save-cache
+      - apply-shared-env
+      - run-cypress:
+          ci_base_url: $BASE_URL_4
+          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_part: "--part=4 --of=4"
+      - persist-and-store:
+          folder: e2e-test-4
