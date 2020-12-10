@@ -7,8 +7,13 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
+<<<<<<< HEAD
 // TODO: to further check
 // Group: @not_cloud @enterprise @guest_account
+=======
+// Stage: @prod
+// Group: @enterprise @guest_account
+>>>>>>> origin/master
 
 /**
  * Note: This test requires Enterprise license to be uploaded
