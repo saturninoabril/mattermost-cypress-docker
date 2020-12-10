@@ -217,7 +217,7 @@ jobs:
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
       CYPRESS_runLDAPSync: false
-      CYPRESS_serverEdition: Team
+      CYPRESS_serverEdition: Cloud
     steps:
       - attach-workspace
       - set-shared-env
