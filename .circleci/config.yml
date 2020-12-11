@@ -202,17 +202,17 @@ jobs:
     working_directory: ~/mattermost/env-var
     environment:
       MM_DOCKER_IMAGE: mattermost-enterprise-edition
-      MM_DOCKER_TAG: master
+      MM_DOCKER_TAG: release-5.30
       SERVER_INSTANCE_COUNT: 4
-      TYPE: NONE
+      TYPE: RELEASE
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
-      FULL_REPORT: false
-      TM4J_ENABLE: false
+      FULL_REPORT: true
+      TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "847997"
+      TM4J_FOLDER_ID: "1075941"
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
