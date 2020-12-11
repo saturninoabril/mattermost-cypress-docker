@@ -202,7 +202,7 @@ jobs:
     working_directory: ~/mattermost/env-var
     environment:
       MM_DOCKER_IMAGE: mattermost-enterprise-edition
-      MM_DOCKER_TAG: release-5.30
+      MM_DOCKER_TAG: 5.30.0-rc1
       SERVER_INSTANCE_COUNT: 4
       TYPE: RELEASE
       PULL_REQUEST: add-link
