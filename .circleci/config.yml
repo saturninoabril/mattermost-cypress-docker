@@ -204,13 +204,13 @@ jobs:
       MM_DOCKER_IMAGE: mattermost-enterprise-edition
       MM_DOCKER_TAG: master
       SERVER_INSTANCE_COUNT: 4
-      TYPE: MASTER
+      TYPE: NONE
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
-      FULL_REPORT: true
-      TM4J_ENABLE: true
+      FULL_REPORT: false
+      TM4J_ENABLE: false
       JIRA_PROJECT_KEY: MM
       TM4J_FOLDER_ID: "847997"
       CYPRESS_chromeWebSecurity: true

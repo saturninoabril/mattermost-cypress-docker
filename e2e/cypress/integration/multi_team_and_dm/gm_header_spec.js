@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: @prod
+// TODO: further check
 
 import {beRead, beUnread} from '../../support/assertions';
 import * as TIMEOUTS from '../../fixtures/timeouts';
