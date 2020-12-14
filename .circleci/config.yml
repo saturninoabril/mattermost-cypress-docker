@@ -178,7 +178,7 @@ commands:
             export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
             export CYPRESS_ciBaseUrl=${CI_BASE_URL}
 
-            cd e2e && node run_tests.js << parameters.run_filter >> << parameters.run_part >>
+            cd e2e && node run_tests.js --group='@elasticsearch' |& tee $RESULTS_OUTPUT; if grep "$FAILURE_MESSAGE" "$RESULTS_OUTPUT"; then exit 1; fi
   persist-and-store:
     description: "Persist and store test artifacts"
     parameters:
