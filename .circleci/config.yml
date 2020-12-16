@@ -3,10 +3,14 @@ orbs:
   node: circleci/node@4.1.0
 
 workflows:
-  build:
+  e2e:
     jobs:
       - create-test-server:
           context: cypress-circleci-env
+          filters:
+            branches:
+              ignore:
+                - master
       - e2e-test-1:
           context: cypress-circleci-env
           requires:
