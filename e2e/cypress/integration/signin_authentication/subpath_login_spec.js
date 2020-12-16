@@ -8,24 +8,18 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @not_cloud @signin_authentication
+// Group: @signin_authentication
 
 describe('Cookie with Subpath', () => {
     let testUser;
     let townsquareLink;
 
     before(() => {
-        cy.shouldNotRunOnCloudEdition();
-
         // # Create new team and user
         cy.apiInitSetup().then(({team, user}) => {
             testUser = user;
-
-            // Logout current session and try to visit town-square
-            cy.apiLogout().then(() => {
-                townsquareLink = `/${team.name}/channels/town-square`;
-                cy.visit(townsquareLink);
-            });
+            townsquareLink = `/${team.name}/channels/town-square`;
+            cy.visit(townsquareLink);
         });
     });
 
@@ -36,6 +30,10 @@ describe('Cookie with Subpath', () => {
                 if (url !== origin) {
                     subpath = url.replace(origin, '').replace(townsquareLink, '');
                 }
+
+                // # Logout current session and visit login page
+                cy.apiLogout();
+                cy.visit('/login');
 
                 // * Check login page is loaded
                 cy.get('#login_section').should('be.visible');
@@ -49,8 +47,8 @@ describe('Cookie with Subpath', () => {
                 cy.get('#channel_view').should('be.visible');
 
                 // * Check subpath included in url
-                cy.url().should('include', subpath);
                 cy.url().should('include', '/channels/town-square');
+                cy.url().should('include', subpath);
 
                 // * Check cookies have correct path parameter
                 cy.getCookies().should('have.length', 5).each((cookie) => {

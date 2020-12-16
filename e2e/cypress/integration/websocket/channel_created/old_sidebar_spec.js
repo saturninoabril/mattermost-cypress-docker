@@ -13,19 +13,24 @@
 import {getRandomId} from '../../../utils';
 
 describe('Handle removed user - new sidebar', () => {
-    it('MM-27202 should add new channels to the sidebar when created from another session', () => {
-        // # Start with a new team
-        const teamName = `team-${getRandomId()}`;
-        cy.createNewTeam(teamName, teamName);
+    let newTeam;
 
+    before(() => {
+        cy.apiInitSetup({loginAfter: true}).then(({team}) => {
+            newTeam = team;
+
+             // # Start with a new team
+            cy.visit(`/${newTeam.name}/channels/town-square`).wait(3000);
+        });
+    });
+
+    it('MM-27202 should add new channels to the sidebar when created from another session', () => {
         // * Verify that we've switched to the new team
-        cy.get('#headerTeamName').should('be.visible').should('contain', teamName);
+        cy.get('#headerTeamName').should('be.visible').should('contain', newTeam.display_name);
 
         // # Create a new channel from another session
         const channelName = `channel-${getRandomId()}`;
-        cy.getCurrentTeamId().then((currentTeamId) => {
-            cy.apiCreateChannel(currentTeamId, channelName, channelName, 'O', '', '', false);
-        });
+        cy.apiCreateChannel(newTeam.id, channelName, channelName, 'O', '', '', false);
 
         // Verify that the new channel is in the sidebar
         cy.get(`#sidebarItem_${channelName}`).should('be.visible');
