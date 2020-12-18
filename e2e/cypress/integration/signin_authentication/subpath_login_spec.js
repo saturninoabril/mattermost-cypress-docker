@@ -51,7 +51,7 @@ describe('Cookie with Subpath', () => {
                 cy.url().should('include', subpath);
 
                 // * Check cookies have correct path parameter
-                cy.getCookies().should('have.length', 5).each((cookie) => {
+                cy.getCookies().each((cookie) => {
                     if (subpath) {
                         expect(cookie).to.have.property('path', subpath);
                     } else {
