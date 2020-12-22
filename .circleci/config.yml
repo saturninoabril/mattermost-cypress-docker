@@ -214,7 +214,7 @@ jobs:
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
-      DASHBOARD_ENABLE: false
+      DASHBOARD_ENABLE: true
       FULL_REPORT: false
       TM4J_ENABLE: false
       JIRA_PROJECT_KEY: MM

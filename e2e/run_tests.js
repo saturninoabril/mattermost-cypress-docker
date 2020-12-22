@@ -50,8 +50,12 @@
 const os = require('os');
 const chalk = require('chalk');
 const cypress = require('cypress');
-const argv = require('yargs').argv;
+const argv = require('yargs').
+    default('part', 1).
+    default('of', 1).
+    argv;
 
+const dashboard = require('./utils/new_dashboard');
 const {getTestFiles, getSkippedFiles} = require('./utils/file');
 const {writeJsonToFile} = require('./utils/report');
 const {MOCHAWESOME_REPORT_DIR, RESULTS_DIR} = require('./utils/constants');
@@ -63,6 +67,7 @@ async function runTests() {
         BRANCH,
         BROWSER,
         BUILD_ID,
+        DASHBOARD_ENABLE,
         HEADLESS,
         ENABLE_VISUAL_TEST,
         APPLITOOLS_API_KEY,
@@ -88,10 +93,89 @@ async function runTests() {
         multiplier,
     } = getTestFilesIdentifier(numberOfTestFiles);
 
+    // createCycle - BUILD_ID BRANCH BROWSER headless platform
+    let cycleKeys;
+    let runKeys;
+    let runData;
+    let runField;
+    const {invert, excludeGroup, group, stage, part, of} = argv;
+    if (DASHBOARD_ENABLE === 'true') {
+        cycleKeys = dashboard.getCycleKeys(BRANCH, BUILD_ID);
+        runKeys = dashboard.getRunKeys(BRANCH, BUILD_ID, part);
+
+        const commonData = {
+            entityType: 'cycle',
+            buildId: BUILD_ID,
+            branch: BRANCH,
+            browser: BROWSER,
+            headless,
+            platform,
+            testFilter: {
+                invert,
+                excludeGroup,
+                group,
+                stage,
+                of,
+            },
+            totalFiles: numberOfTestFiles,
+            testedFiles: 0,
+            testDuration: 0,
+            suites: 0,
+            tests: 0,
+            passes: 0,
+            failures: 0,
+            skipped: 0,
+            pending: 0,
+            startedAt: new Date().toISOString(),
+            endedAt: '0',
+        };
+
+        const runKey = dashboard.getRunName(BRANCH, BUILD_ID, part);
+        runField = `run${part}`;
+        runData = {
+            [runField]: {
+                testStatus: 'ongoing',
+                key: runKey,
+            },
+        };
+        dashboard.createOrUpdateCycle(cycleKeys, commonData, runData);
+    }
+
+    dashboard.createItem(runKeys, {
+        entityType: 'run',
+        branch: BRANCH,
+        buildId: BUILD_ID,
+        run: part,
+        totalFiles: lastIndex,
+        testedFiles: 0,
+        testDuration: 0,
+        suites: 0,
+        tests: 0,
+        passes: 0,
+        failures: 0,
+        skipped: 0,
+        pending: 0,
+        startedAt: new Date().toISOString(),
+        endedAt: '0',
+        testStatus: 'ongoing',
+    });
+
+    let endedAt = '';
+
     for (let i = start; i < end; i++) {
         printMessage(finalTestFiles, i, (i % multiplier) + 1, lastIndex);
 
         const testFile = finalTestFiles[i];
+
+        const specKeys = dashboard.getSpecKeys(BRANCH, BUILD_ID, testFile);
+        dashboard.createItem(specKeys, {
+            entityType: 'spec',
+            branch: BRANCH,
+            buildId: BUILD_ID,
+            spec: testFile,
+            run: part,
+            testStatus: 'ongoing',
+        });
 
         const result = await cypress.run({
             browser,
@@ -146,6 +230,47 @@ async function runTests() {
 
             writeJsonToFile(environment, 'environment.json', RESULTS_DIR);
         }
+
+        result.runs.forEach((run) => { // eslint-disable-line no-loop-func
+            console.log('run.stats', run.stats);
+            dashboard.updateItemWithIncrement(cycleKeys, {...run.stats, testDuration: run.stats.duration, testedFiles: 1});
+            dashboard.updateItemWithIncrement(runKeys, {...run.stats, testDuration: run.stats.duration, testedFiles: 1});
+
+            endedAt = run.stats.endedAt;
+
+            dashboard.updateItem(specKeys, {
+                ...run.stats,
+                testDuration: run.stats.duration,
+                testStatus: 'completed',
+            });
+
+            run.tests.forEach((test) => {
+                const fullTitle = test.title.join(' ');
+
+                const testKeys = dashboard.getTestKeys(BRANCH, BUILD_ID, testFile, fullTitle);
+                const testData = {
+                    entityType: 'test',
+                    fullTitle,
+                    branch: BRANCH,
+                    buildId: BUILD_ID,
+                    spec: testFile,
+                    run: part,
+                    ...test.attempts[0],
+                };
+                if (!testData.error) {
+                    delete testData.error;
+                }
+                delete testData.videoTimestamp;
+                delete testData.screenshots;
+                dashboard.createItem(testKeys, testData);
+            });
+        });
+    }
+
+    if (DASHBOARD_ENABLE === 'true') {
+        runData[runField].testStatus = 'completed';
+        dashboard.updateItem(cycleKeys, {...runData, endedAt});
+        dashboard.updateItem(runKeys, {endedAt, testStatus: 'completed'});
     }
 }
 

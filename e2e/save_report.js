@@ -40,7 +40,6 @@ const {
 } = require('./utils/report');
 const {saveArtifacts} = require('./utils/artifacts');
 const {MOCHAWESOME_REPORT_DIR, RESULTS_DIR} = require('./utils/constants');
-const {saveDashboard} = require('./utils/dashboard');
 const {createTestCycle, createTestExecutions} = require('./utils/test_cases');
 
 require('dotenv').config();
@@ -50,7 +49,6 @@ const saveReport = async () => {
         BRANCH,
         BUILD_ID,
         BUILD_TAG,
-        DASHBOARD_ENABLE,
         DIAGNOSTIC_WEBHOOK_URL,
         DIAGNOSTIC_USER_ID,
         DIAGNOSTIC_TEAM_ID,
@@ -104,11 +102,6 @@ const saveReport = async () => {
     if (TYPE === 'RELEASE' && DIAGNOSTIC_WEBHOOK_URL && DIAGNOSTIC_USER_ID && DIAGNOSTIC_TEAM_ID) {
         const data = generateDiagnosticReport(summary, {userId: DIAGNOSTIC_USER_ID, teamId: DIAGNOSTIC_TEAM_ID});
         await sendReport('test info for diagnostic analysis', DIAGNOSTIC_WEBHOOK_URL, data);
-    }
-
-    // Save data to automation dashboard
-    if (DASHBOARD_ENABLE === 'true') {
-        await saveDashboard(jsonReport, BRANCH);
     }
 
     // Save test cases to Test Management

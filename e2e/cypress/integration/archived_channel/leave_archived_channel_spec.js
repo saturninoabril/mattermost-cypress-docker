@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: @prod
+// Stage: @prod @verify
 // Group: @channel
 
 describe('Leaving archived channels', () => {
