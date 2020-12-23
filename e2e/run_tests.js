@@ -63,6 +63,8 @@ const {MOCHAWESOME_REPORT_DIR, RESULTS_DIR} = require('./utils/constants');
 require('dotenv').config();
 
 async function runTests() {
+    const overallStartedAt = new Date();
+
     const {
         BRANCH,
         BROWSER,
@@ -93,7 +95,6 @@ async function runTests() {
         multiplier,
     } = getTestFilesIdentifier(numberOfTestFiles);
 
-    // createCycle - BUILD_ID BRANCH BROWSER headless platform
     let cycleKeys;
     let runKeys;
     let runData;
@@ -126,7 +127,7 @@ async function runTests() {
             failures: 0,
             skipped: 0,
             pending: 0,
-            startedAt: new Date().toISOString(),
+            startedAt: overallStartedAt.toISOString(),
             endedAt: '0',
         };
 
@@ -155,18 +156,16 @@ async function runTests() {
         failures: 0,
         skipped: 0,
         pending: 0,
-        startedAt: new Date().toISOString(),
-        endedAt: '0',
+        startedAt: overallStartedAt.toISOString(),
         testStatus: 'ongoing',
     });
-
-    let endedAt = '';
 
     for (let i = start; i < end; i++) {
         printMessage(finalTestFiles, i, (i % multiplier) + 1, lastIndex);
 
         const testFile = finalTestFiles[i];
 
+        const specStartedAt = new Date();
         const specKeys = dashboard.getSpecKeys(BRANCH, BUILD_ID, testFile);
         dashboard.createItem(specKeys, {
             entityType: 'spec',
@@ -174,6 +173,7 @@ async function runTests() {
             buildId: BUILD_ID,
             spec: testFile,
             run: part,
+            startedAt: specStartedAt.toISOString(),
             testStatus: 'ongoing',
         });
 
@@ -231,46 +231,55 @@ async function runTests() {
             writeJsonToFile(environment, 'environment.json', RESULTS_DIR);
         }
 
-        result.runs.forEach((run) => { // eslint-disable-line no-loop-func
-            console.log('run.stats', run.stats);
-            dashboard.updateItemWithIncrement(cycleKeys, {...run.stats, testDuration: run.stats.duration, testedFiles: 1});
-            dashboard.updateItemWithIncrement(runKeys, {...run.stats, testDuration: run.stats.duration, testedFiles: 1});
-
-            endedAt = run.stats.endedAt;
+        result.runs.forEach((run) => {
+            dashboard.updateItemWithIncrement(cycleKeys, {...run.stats, testedFiles: 1});
+            dashboard.updateItemWithIncrement(runKeys, {...run.stats, testedFiles: 1});
 
             dashboard.updateItem(specKeys, {
                 ...run.stats,
-                testDuration: run.stats.duration,
+                testDuration: Date.now() - specStartedAt.getTime(),
                 testStatus: 'completed',
             });
 
-            run.tests.forEach((test) => {
+            run.tests.forEach((test, index) => {
+                const order = index + 1;
                 const fullTitle = test.title.join(' ');
+                const {state, startedAt, duration, error} = test.attempts[0];
 
                 const testKeys = dashboard.getTestKeys(BRANCH, BUILD_ID, testFile, fullTitle);
                 const testData = {
                     entityType: 'test',
                     fullTitle,
+                    order,
                     branch: BRANCH,
                     buildId: BUILD_ID,
                     spec: testFile,
                     run: part,
-                    ...test.attempts[0],
+                    state,
+                    startedAt,
+                    testDuration: duration,
+                    error,
                 };
                 if (!testData.error) {
                     delete testData.error;
                 }
-                delete testData.videoTimestamp;
-                delete testData.screenshots;
+                if (!testData.startedAt) {
+                    delete testData.startedAt;
+                }
+                if (!testData.testDuration) {
+                    delete testData.testDuration;
+                }
                 dashboard.createItem(testKeys, testData);
             });
         });
     }
 
     if (DASHBOARD_ENABLE === 'true') {
+        const overallEndedAt = new Date();
+        const testDuration = overallEndedAt.getTime() - overallStartedAt.getTime();
         runData[runField].testStatus = 'completed';
-        dashboard.updateItem(cycleKeys, {...runData, endedAt});
-        dashboard.updateItem(runKeys, {endedAt, testStatus: 'completed'});
+        dashboard.updateItem(cycleKeys, {...runData, endedAt: overallEndedAt.toISOString(), testDuration});
+        dashboard.updateItem(runKeys, {endedAt: overallEndedAt.toISOString(), testDuration, testStatus: 'completed'});
     }
 }
 
