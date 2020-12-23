@@ -151,7 +151,7 @@ commands:
             echo export BASE_URL_3=${BASE_URL_3} >> shared
             echo export BASE_URL_4=${BASE_URL_4} >> shared
 
-            echo export BRANCH=$C{IRCLE_BRANCH} >> shared
+            echo export BRANCH=${CIRCLE_BRANCH} >> shared
             echo export BUILD_ID=${CIRCLE_BUILD_NUM} >> shared
 
             cat shared >> $BASH_ENV
