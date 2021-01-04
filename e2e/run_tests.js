@@ -105,6 +105,7 @@ async function runTests() {
         runKeys = dashboard.getRunKeys(BRANCH, BUILD_ID, part);
 
         const commonData = {
+            tool: 'cypress',
             entityType: 'cycle',
             buildId: BUILD_ID,
             branch: BRANCH,
