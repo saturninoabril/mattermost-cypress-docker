@@ -205,7 +205,7 @@ jobs:
     environment:
       MM_DOCKER_IMAGE: mattermost-enterprise-edition
       MM_DOCKER_EDITION: ee
-      MM_DOCKER_TAG: 5.30.0
+      MM_DOCKER_TAG: 5.31.0-rc1
       SERVER_INSTANCE_COUNT: 4
       TYPE: RELEASE
       PULL_REQUEST: add-link
@@ -215,7 +215,7 @@ jobs:
       FULL_REPORT: true
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "1075941"
+      TM4J_FOLDER_ID: "1106034"
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
