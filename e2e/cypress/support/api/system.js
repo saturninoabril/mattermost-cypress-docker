@@ -142,8 +142,8 @@ const expectConfigToBeUpdatable = (currentConfig, newConfig) => {
 };
 
 Cypress.Commands.add('apiUpdateConfig', (newConfig = {}) => {
-    // # Get current settings
-    return cy.request('/api/v4/config').then((response) => {
+    // # Get current config
+    return cy.apiGetConfig().then(({config: currentConfig}) => {
         const currentConfig = response.body;
 
         // * Check if config can be updated
