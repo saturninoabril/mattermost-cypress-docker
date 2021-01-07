@@ -4,7 +4,6 @@
 import merge from 'deepmerge';
 
 import {Constants} from '../../utils';
-import timeouts from '../../fixtures/timeouts';
 
 import onPremDefaultConfig from './on_prem_default_config.json';
 import cloudDefaultConfig from './cloud_default_config.json';
@@ -156,7 +155,6 @@ Cypress.Commands.add('apiUpdateConfig', (newConfig = {}) => {
             headers: {'X-Requested-With': 'XMLHttpRequest'},
             method: 'PUT',
             body: config,
-            timeout: timeouts.TWO_MIN,
         }).then((updateResponse) => {
             expect(updateResponse.status).to.equal(200);
             return cy.apiGetConfig();

@@ -118,6 +118,10 @@ before(() => {
         // Log license status and server details before test
         printLicenseStatus();
         printServerDetails();
+
+        // # Reset config and invalidate cache
+        cy.apiInvalidateCache();
+        cy.apiUpdateConfig();
     });
 });
 
@@ -203,8 +207,4 @@ function sysadminSetup(user) {
             });
         }
     });
-
-    // # Reset config and invalidate cache
-    cy.apiInvalidateCache();
-    cy.apiUpdateConfig();
 }
