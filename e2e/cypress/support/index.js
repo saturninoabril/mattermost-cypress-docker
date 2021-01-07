@@ -151,11 +151,6 @@ function sysadminSetup(user) {
         cy.apiVerifyUserEmailById(user.id);
     }
 
-    // # Reset config and invalidate cache
-    cy.log('---> apiUpdateConfig')
-    cy.apiUpdateConfig();
-    cy.apiInvalidateCache();
-
     // # Reset admin preference, online status and locale
     cy.apiSaveTeammateNameDisplayPreference('username');
     cy.apiSaveLinkPreviewsPreference('true');
@@ -212,4 +207,9 @@ function sysadminSetup(user) {
             });
         }
     });
+
+    // # Reset config and invalidate cache
+    cy.log('---> apiUpdateConfig')
+    cy.apiUpdateConfig();
+    cy.apiInvalidateCache();
 }
