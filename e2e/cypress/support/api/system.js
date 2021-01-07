@@ -150,7 +150,6 @@ Cypress.Commands.add('apiUpdateConfig', (newConfig = {}) => {
         expectConfigToBeUpdatable(currentConfig, newConfig);
 
         const config = merge.all([currentConfig, getDefaultConfig(), newConfig]);
-        cy.log(config)
         // # Set the modified config
         return cy.request({
             url: '/api/v4/config',
@@ -159,7 +158,6 @@ Cypress.Commands.add('apiUpdateConfig', (newConfig = {}) => {
             body: config,
             timeout: timeouts.TWO_MIN,
         }).then((updateResponse) => {
-            cy.log(updateResponse)
             expect(updateResponse.status).to.equal(200);
             return cy.apiGetConfig();
         });

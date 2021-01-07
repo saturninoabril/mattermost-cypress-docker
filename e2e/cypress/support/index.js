@@ -93,17 +93,13 @@ Cypress.on('test:after:run', (test, runnable) => {
 before(() => {
     // # Try to login using existing sysadmin account
     cy.apiAdminLogin({failOnStatusCode: false}).then((response) => {
-        cy.log('---> cy.apiAdminLogin')
-        cy.log(response)
         if (response.user) {
             cy.log('---> Existing admin user')
-            cy.log(response.user)
             sysadminSetup(response.user);
         } else {
             cy.log('---> Create admin user')
             // # Create and login a newly created user as sysadmin
             cy.apiCreateAdmin().then(({sysadmin}) => {
-                cy.log(sysadmin)
                 cy.apiAdminLogin().then(() => sysadminSetup(sysadmin));
             });
         }
@@ -209,7 +205,6 @@ function sysadminSetup(user) {
     });
 
     // # Reset config and invalidate cache
-    cy.log('---> apiUpdateConfig')
-    cy.apiUpdateConfig();
     cy.apiInvalidateCache();
+    cy.apiUpdateConfig();
 }
