@@ -207,9 +207,9 @@ jobs:
       - image: cimg/node:15.3.0
     working_directory: ~/mattermost/env-var
     environment:
-      MM_DOCKER_IMAGE: mm-cloud-ee
+      MM_DOCKER_IMAGE: mm-ee-test
       MM_DOCKER_EDITION: ce
-      MM_DOCKER_TAG: test-2cd153f-35
+      MM_DOCKER_TAG: 1082_96c349f5_9f16e221_d4abc176
       SERVER_INSTANCE_COUNT: 4
       TYPE: CLOUD
       PULL_REQUEST: add-link
