@@ -172,10 +172,10 @@ commands:
       - run:
           name: Run Cypress test
           command: |
-            curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 << parameters.ci_base_url >>/api/v4/system/ping
+            curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 << parameters.ci_base_url >>:8065/api/v4/system/ping
 
             export CI_BASE_URL=<< parameters.ci_base_url >>
-            export CYPRESS_baseUrl="http://${CI_BASE_URL}"
+            export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
             export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
             export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
@@ -232,7 +232,7 @@ jobs:
       - run:
           name: Test server health check
           command: |
-            curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 "${BASE_URL_1}/api/v4/system/ping"
+            curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 "${BASE_URL_1}:8065/api/v4/system/ping"
       - persist_to_workspace:
           root: ~/mattermost
           paths:
