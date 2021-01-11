@@ -128,7 +128,7 @@ commands:
           command: |
             DNS_ZONE_NAME=dev.spinmint.com
             export BASE_URL_FULL=$CIRCLE_BRANCH-$MM_DOCKER_EDITION-$MM_DOCKER_TAG
-            export BASE_URL_SUBSTR=${BASE_URL_FULL:0:43}
+            export BASE_URL_SUBSTR=${BASE_URL_FULL:0:45}
             echo $BASE_URL_FULL
             echo $BASE_URL_SUBSTR
 
