@@ -7,8 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// TODO: to further check
-// Group: @not_cloud @channel_settings
+// Group: @channel_settings
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
 

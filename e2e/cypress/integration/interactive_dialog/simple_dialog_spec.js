@@ -7,7 +7,6 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// TODO: to further check
 // Group: @not_cloud @interactive_dialog
 
 /**
@@ -23,6 +22,7 @@ let simpleDialog;
 
 describe('Interactive Dialog without element', () => {
     before(() => {
+        cy.shouldNotRunOnCloudEdition();
         cy.requireWebhookServer();
 
         // # Ensure that teammate name display setting is set to default 'username'

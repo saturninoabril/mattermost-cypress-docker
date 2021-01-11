@@ -6,7 +6,6 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// TODO: further check
 // Group: @enterprise @system_console @group_mentions
 
 import ldapUsers from '../../../fixtures/ldap_users.json';
