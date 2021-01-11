@@ -208,7 +208,7 @@ jobs:
     working_directory: ~/mattermost/env-var
     environment:
       MM_DOCKER_IMAGE: mm-cloud-ee
-      MM_DOCKER_EDITION: ee
+      MM_DOCKER_EDITION: ce
       MM_DOCKER_TAG: test-2cd153f-35
       SERVER_INSTANCE_COUNT: 4
       TYPE: CLOUD
