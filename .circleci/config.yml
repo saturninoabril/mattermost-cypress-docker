@@ -185,9 +185,9 @@ commands:
 
             export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
             export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
-            export CYPRESS_ciBaseUrl=${CI_BASE_URL}
 
             curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 $CYPRESS_baseUrl
+            curl -X PUT $CYPRESS_baseUrl/api/v4/config
 
             cd e2e && node run_tests.js << parameters.run_filter >> << parameters.run_part >>
   persist-and-store:
@@ -214,7 +214,7 @@ jobs:
     environment:
       MM_DOCKER_IMAGE: mm-ee-test
       MM_DOCKER_EDITION: ce
-      MM_DOCKER_TAG: 1082_96c349f5_9f16e221_d4abc176
+      MM_DOCKER_TAG: 1098_f548ecbe_45d2395e_bbae0452
       SERVER_INSTANCE_COUNT: 4
       TYPE: CLOUD
       PULL_REQUEST: add-link
@@ -224,7 +224,7 @@ jobs:
       FULL_REPORT: true
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "1102364"
+      TM4J_FOLDER_ID: "1118224"
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
