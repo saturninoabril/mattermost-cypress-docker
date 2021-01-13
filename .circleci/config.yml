@@ -92,6 +92,8 @@ commands:
             export BRANCH=$CIRCLE_BRANCH
             export BUILD_ID=$CIRCLE_BUILD_NUM
 
+            export TM4J_ENVIRONMENT_NAME='Cypress/Chrome/cloud'
+
             # This is how it should be on main org repo
             # export PULL_REQUEST=$CIRCLE_PULL_REQUESTS
 
@@ -214,17 +216,17 @@ jobs:
     environment:
       MM_DOCKER_IMAGE: mm-ee-test
       MM_DOCKER_EDITION: ce
-      MM_DOCKER_TAG: 1098_f548ecbe_45d2395e_bbae0452
+      MM_DOCKER_TAG: 1110_7da85971_8933b4d8_8350f9cb
       SERVER_INSTANCE_COUNT: 4
       TYPE: CLOUD
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
-      FULL_REPORT: true
+      FULL_REPORT: false
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "1118224"
+      TM4J_FOLDER_ID: "1119716"
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
