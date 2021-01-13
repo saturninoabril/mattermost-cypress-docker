@@ -108,6 +108,8 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment, te
     const {
         BRANCH,
         BUILD_TAG,
+        MM_DOCKER_IMAGE,
+        MM_DOCKER_TAG,
         FULL_REPORT,
         PULL_REQUEST,
         TEST_CYCLE_LINK_PREFIX,
@@ -133,8 +135,8 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment, te
     }
 
     let dockerImageLink = '';
-    if (BUILD_TAG) {
-        dockerImageLink = `with [mattermost-enterprise-edition:${BUILD_TAG}](https://hub.docker.com/r/mattermost/mattermost-enterprise-edition/tags?name=${BUILD_TAG})`;
+    if (MM_DOCKER_IMAGE && MM_DOCKER_TAG) {
+        dockerImageLink = `[${MM_DOCKER_IMAGE}:${MM_DOCKER_TAG}](https://hub.docker.com/r/mattermost/${MM_DOCKER_IMAGE}/tags?name=${MM_DOCKER_TAG})`;
     }
 
     let title;
@@ -144,22 +146,22 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment, te
         title = `E2E for Pull Request Build: [${BRANCH}](${PULL_REQUEST}) ${dockerImageLink}`;
         break;
     case 'RELEASE':
-        title = `E2E for Release Build ${dockerImageLink}`;
+        title = `E2E for Release Build with ${dockerImageLink}`;
         break;
     case 'MASTER':
-        title = `E2E for Master Nightly Build (Prod tests) ${dockerImageLink}`;
+        title = `E2E for Master Nightly Build (Prod tests) with ${dockerImageLink}`;
         break;
     case 'MASTER_UNSTABLE':
-        title = `E2E for Master Nightly Build (Unstable tests) ${dockerImageLink}`;
+        title = `E2E for Master Nightly Build (Unstable tests) with ${dockerImageLink}`;
         break;
     case 'CLOUD':
-        title = `E2E for Cloud Build (Prod tests) with [${BUILD_TAG}](https://hub.docker.com/r/mattermost/mm-cloud-ee/tags)`;
+        title = `E2E for Cloud Build (Prod tests) with ${dockerImageLink}`;
         break;
     case 'CLOUD_UNSTABLE':
-        title = `E2E for Cloud Build (Unstable tests) with [${BUILD_TAG}](https://hub.docker.com/r/mattermost/mm-cloud-ee/tags)`;
+        title = `E2E for Cloud Build (Unstable tests) with ${dockerImageLink}`;
         break;
     default:
-        title = `E2E for Build ${dockerImageLink}`;
+        title = `E2E for Build with ${dockerImageLink}`;
     }
 
     const envValue = `cypress@${cypressVersion} | node@${nodeVersion} | ${browserName}@${browserVersion}${headless ? ' (headless)' : ''} | ${osName}@${osVersion}`;

@@ -205,7 +205,7 @@ jobs:
     environment:
       MM_DOCKER_IMAGE: mattermost-enterprise-edition
       MM_DOCKER_EDITION: ee
-      MM_DOCKER_TAG: 5.31.0-rc2
+      MM_DOCKER_TAG: 5.31.0-rc3
       SERVER_INSTANCE_COUNT: 4
       TYPE: RELEASE
       PULL_REQUEST: add-link
