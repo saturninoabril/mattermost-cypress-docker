@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @system_console @te_only
+// Group: @system_console
 
 describe('Settings', () => {
     before(() => {

@@ -92,8 +92,6 @@ commands:
             export BRANCH=$CIRCLE_BRANCH
             export BUILD_ID=$CIRCLE_BUILD_NUM
 
-            export TM4J_ENVIRONMENT_NAME='Cypress/Chrome/master-e20-prod'
-
             # This is how it should be on main org repo
             # export PULL_REQUEST=$CIRCLE_PULL_REQUESTS
 
@@ -213,15 +211,15 @@ jobs:
       MM_DOCKER_EDITION: ee
       MM_DOCKER_TAG: master
       SERVER_INSTANCE_COUNT: 4
-      TYPE: MASTER
+      TYPE: MASTER_UNSTABLE
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
       FULL_REPORT: false
-      TM4J_ENABLE: true
-      JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "1106027"
+      TM4J_ENABLE: false
+      JIRA_PROJECT_KEY:
+      TM4J_FOLDER_ID:
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
@@ -281,7 +279,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_1
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --invert"
           run_part: "--part=1 --of=4"
       - persist-and-store:
           folder: e2e-test-1
@@ -300,7 +298,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_2
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --invert"
           run_part: "--part=2 --of=4"
       - persist-and-store:
           folder: e2e-test-2
@@ -319,7 +317,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_3
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --invert"
           run_part: "--part=3 --of=4"
       - persist-and-store:
           folder: e2e-test-3
@@ -338,7 +336,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_4
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --invert"
           run_part: "--part=4 --of=4"
       - persist-and-store:
           folder: e2e-test-4

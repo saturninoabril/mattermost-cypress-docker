@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @te_only @onboarding
+// Group: @onboarding
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
 import {getRandomId} from '../../utils';
