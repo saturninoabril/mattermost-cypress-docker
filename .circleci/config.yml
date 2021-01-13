@@ -218,8 +218,8 @@ jobs:
       DASHBOARD_ENABLE: false
       FULL_REPORT: false
       TM4J_ENABLE: false
-      JIRA_PROJECT_KEY:
-      TM4J_FOLDER_ID:
+      JIRA_PROJECT_KEY: MM
+      TM4J_FOLDER_ID: none
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
