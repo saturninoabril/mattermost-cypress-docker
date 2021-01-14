@@ -89,6 +89,7 @@ commands:
             export BUILD_ID=$CIRCLE_BUILD_NUM
 
             export TM4J_ENVIRONMENT_NAME='Cypress/Chrome/release-5.31-e20'
+            exprot TM4J_TEST_CYCLE_KEY='MM-R1014'
 
             # This is how it should be on main org repo
             # export PULL_REQUEST=$CIRCLE_PULL_REQUESTS
@@ -207,7 +208,7 @@ jobs:
     environment:
       MM_DOCKER_IMAGE: mattermost-enterprise-edition
       MM_DOCKER_EDITION: ee
-      MM_DOCKER_TAG: 5.31.0-rc3
+      MM_DOCKER_TAG: 5.31.0-rc6
       SERVER_INSTANCE_COUNT: 4
       TYPE: RELEASE
       PULL_REQUEST: add-link

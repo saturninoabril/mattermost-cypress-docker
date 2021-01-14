@@ -106,14 +106,8 @@ const result = [
 
 function generateTestReport(summary, isUploadedToS3, reportLink, environment, testCycleKey) {
     const {
-        BRANCH,
-        BUILD_TAG,
-        MM_DOCKER_IMAGE,
-        MM_DOCKER_TAG,
         FULL_REPORT,
-        PULL_REQUEST,
         TEST_CYCLE_LINK_PREFIX,
-        TYPE,
     } = process.env;
     const {statsFieldValue, stats} = summary;
     const {
@@ -134,36 +128,7 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment, te
         }
     }
 
-    let dockerImageLink = '';
-    if (MM_DOCKER_IMAGE && MM_DOCKER_TAG) {
-        dockerImageLink = `[${MM_DOCKER_IMAGE}:${MM_DOCKER_TAG}](https://hub.docker.com/r/mattermost/${MM_DOCKER_IMAGE}/tags?name=${MM_DOCKER_TAG})`;
-    }
-
-    let title;
-
-    switch (TYPE) {
-    case 'PR':
-        title = `E2E for Pull Request Build: [${BRANCH}](${PULL_REQUEST}) ${dockerImageLink}`;
-        break;
-    case 'RELEASE':
-        title = `E2E for Release Build with ${dockerImageLink}`;
-        break;
-    case 'MASTER':
-        title = `E2E for Master Nightly Build (Prod tests) with ${dockerImageLink}`;
-        break;
-    case 'MASTER_UNSTABLE':
-        title = `E2E for Master Nightly Build (Unstable tests) with ${dockerImageLink}`;
-        break;
-    case 'CLOUD':
-        title = `E2E for Cloud Build (Prod tests) with ${dockerImageLink}`;
-        break;
-    case 'CLOUD_UNSTABLE':
-        title = `E2E for Cloud Build (Unstable tests) with ${dockerImageLink}`;
-        break;
-    default:
-        title = `E2E for Build with ${dockerImageLink}`;
-    }
-
+    const title = generateTitle();
     const envValue = `cypress@${cypressVersion} | node@${nodeVersion} | ${browserName}@${browserVersion}${headless ? ' (headless)' : ''} | ${osName}@${osVersion}`;
 
     if (FULL_REPORT === 'true') {
@@ -217,7 +182,7 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment, te
         quickSummary = `[${quickSummary}](${reportLink})`;
     }
 
-    let testCycleLink;
+    let testCycleLink = '';
     if (testCycleKey) {
         testCycleLink = testCycleKey ? `| [Recorded test executions](${TEST_CYCLE_LINK_PREFIX}${testCycleKey})` : '';
     }
@@ -234,6 +199,48 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment, te
             text: `${quickSummary} | ${(stats.duration / (60 * 1000)).toFixed(2)} mins ${testCycleLink}\n${envValue}`,
         }],
     };
+}
+
+function generateTitle() {
+    const {
+        BRANCH,
+        MM_DOCKER_IMAGE,
+        MM_DOCKER_TAG,
+        PULL_REQUEST,
+        TYPE,
+    } = process.env;
+
+    let dockerImageLink = '';
+    if (MM_DOCKER_IMAGE && MM_DOCKER_TAG) {
+        dockerImageLink = `[${MM_DOCKER_IMAGE}:${MM_DOCKER_TAG}](https://hub.docker.com/r/mattermost/${MM_DOCKER_IMAGE}/tags?name=${MM_DOCKER_TAG})`;
+    }
+
+    let title;
+
+    switch (TYPE) {
+    case 'PR':
+        title = `E2E for Pull Request Build: [${BRANCH}](${PULL_REQUEST}) ${dockerImageLink}`;
+        break;
+    case 'RELEASE':
+        title = `E2E for Release Build with ${dockerImageLink}`;
+        break;
+    case 'MASTER':
+        title = `E2E for Master Nightly Build (Prod tests) with ${dockerImageLink}`;
+        break;
+    case 'MASTER_UNSTABLE':
+        title = `E2E for Master Nightly Build (Unstable tests) with ${dockerImageLink}`;
+        break;
+    case 'CLOUD':
+        title = `E2E for Cloud Build (Prod tests) with ${dockerImageLink}`;
+        break;
+    case 'CLOUD_UNSTABLE':
+        title = `E2E for Cloud Build (Unstable tests) with ${dockerImageLink}`;
+        break;
+    default:
+        title = `E2E for Build with ${dockerImageLink}`;
+    }
+
+    return title;
 }
 
 function generateDiagnosticReport(summary, serverInfo) {
