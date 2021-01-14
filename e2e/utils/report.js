@@ -182,7 +182,7 @@ function generateTestReport(summary, isUploadedToS3, reportLink, environment, te
         quickSummary = `[${quickSummary}](${reportLink})`;
     }
 
-    let testCycleLink;
+    let testCycleLink = '';
     if (testCycleKey) {
         testCycleLink = testCycleKey ? `| [Recorded test executions](${TEST_CYCLE_LINK_PREFIX}${testCycleKey})` : '';
     }
