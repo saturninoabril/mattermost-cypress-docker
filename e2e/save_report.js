@@ -90,7 +90,12 @@ const saveReport = async () => {
     let testCycle = {};
     if (TM4J_ENABLE === 'true') {
         const {start, end} = jsonReport.stats;
-        testCycle = TM4J_TEST_CYCLE_KEY ? {key: TM4J_TEST_CYCLE_KEY} : await createTestCycle(start, end);
+
+        if (TM4J_TEST_CYCLE_KEY) {
+            testCycle = {key: TM4J_TEST_CYCLE_KEY};
+        } else {
+            testCycle = await createTestCycle(start, end);
+        }
     }
 
     // Send test report to "QA: UI Test Automation" channel via webhook
