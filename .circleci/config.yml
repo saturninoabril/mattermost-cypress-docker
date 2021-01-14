@@ -219,7 +219,7 @@ jobs:
       HEADLESS: true
       DASHBOARD_ENABLE: false
       FULL_REPORT: false
-      TM4J_ENABLE: false
+      TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
       TM4J_FOLDER_ID: "1121527"
       TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/master-e20-unstable"
