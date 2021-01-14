@@ -145,6 +145,8 @@ commands:
             echo export TM4J_ENABLE=${TM4J_ENABLE} >> shared
             echo export JIRA_PROJECT_KEY=${JIRA_PROJECT_KEY} >> shared
             echo export TM4J_FOLDER_ID=${TM4J_FOLDER_ID} >> shared
+            echo export TM4J_TEST_CYCLE_KEY=${TM4J_TEST_CYCLE_KEY} >> shared
+            echo export TM4J_ENVIRONMENT_NAME=${TM4J_ENVIRONMENT_NAME} >> shared
 
             echo export CYPRESS_chromeWebSecurity=${CYPRESS_chromeWebSecurity} >> shared
             echo export CYPRESS_numberOfTrialUsers=${CYPRESS_numberOfTrialUsers} >> shared
@@ -219,7 +221,8 @@ jobs:
       FULL_REPORT: false
       TM4J_ENABLE: false
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: none
+      TM4J_FOLDER_ID: "1121527"
+      TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/master-e20-unstable"
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
