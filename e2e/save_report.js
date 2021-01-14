@@ -86,6 +86,13 @@ const saveReport = async () => {
         console.log('Successfully uploaded artifacts to S3:', result.reportLink);
     }
 
+    // Create or use existing test cycle
+    let testCycle = {};
+    if (TM4J_ENABLE === 'true') {
+        const {start, end} = jsonReport.stats;
+        testCycle = TM4J_TEST_CYCLE_KEY ? {key: TM4J_TEST_CYCLE_KEY} : await createTestCycle(start, end);
+    }
+
     // Send test report to "QA: UI Test Automation" channel via webhook
     if (TYPE && TYPE !== 'NONE' && WEBHOOK_URL) {
         const environment = readJsonFromFile(`${RESULTS_DIR}/environment.json`);
@@ -107,9 +114,6 @@ const saveReport = async () => {
 
     // Save test cases to Test Management
     if (TM4J_ENABLE === 'true') {
-        const {start, end} = jsonReport.stats;
-        const testCycle = TM4J_TEST_CYCLE_KEY ? {key: TM4J_TEST_CYCLE_KEY} : await createTestCycle(start, end);
-
         await createTestExecutions(jsonReport, testCycle);
     }
 
