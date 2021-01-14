@@ -108,7 +108,7 @@ const saveReport = async () => {
     // Save test cases to Test Management
     if (TM4J_ENABLE === 'true') {
         const {start, end} = jsonReport.stats;
-        const testCycle = TM4J_TEST_CYCLE_KEY ? await createTestCycle(start, end) : {key: TM4J_TEST_CYCLE_KEY};
+        const testCycle = TM4J_TEST_CYCLE_KEY ? {key: TM4J_TEST_CYCLE_KEY} : await createTestCycle(start, end);
 
         await createTestExecutions(jsonReport, testCycle);
     }
