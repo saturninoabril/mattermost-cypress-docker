@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: @prod
+// Stage: @prod to exclude in unstable run, pending Elasticsearch setup in test server
 // Group: @enterprise @elasticsearch @autocomplete
 
 import {getAdminAccount} from '../../../support/env';
