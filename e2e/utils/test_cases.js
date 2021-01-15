@@ -108,7 +108,6 @@ async function createTestExecutions(report, testCycle) {
     const {
         BROWSER,
         JIRA_PROJECT_KEY,
-        TM4J_ENVIRONMENT_NAME,
     } = process.env;
 
     const testCases = getTM4JTestCases(report);
@@ -135,7 +134,7 @@ async function createTestExecutions(report, testCycle) {
             testCycleKey: testCycle.key,
             statusName: stateResult.passed && stateResult.passed === steps.length ? 'Pass' : 'Fail',
             testScriptResults,
-            environmentName: TM4J_ENVIRONMENT_NAME || environment[BROWSER] || 'Chrome',
+            environmentName: environment[BROWSER] || 'Chrome',
             actualEndDate: testScriptResults[testScriptResults.length - 1].actualEndDate,
             executionTime: steps.reduce((acc, prev) => {
                 acc += prev.duration; // eslint-disable-line no-param-reassign
