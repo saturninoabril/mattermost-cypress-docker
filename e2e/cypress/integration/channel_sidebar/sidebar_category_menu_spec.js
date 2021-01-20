@@ -13,7 +13,7 @@ describe('Sidebar category menu', () => {
     before(() => {
         cy.apiUpdateConfig({
             ServiceSettings: {
-                EnableLegacySidebar: 'default_on',
+                ExperimentalChannelSidebarOrganization: 'default_on',
             },
         });
 

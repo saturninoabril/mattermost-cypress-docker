@@ -379,7 +379,7 @@ describe('Leave an archived channel', () => {
         cy.apiAdminLogin();
         cy.apiUpdateConfig({
             ServiceSettings: {
-                EnableLegacySidebar: 'default_on',
+                ExperimentalChannelSidebarOrganization: 'default_on',
             },
             TeamSettings: {
                 ExperimentalViewArchivedChannels: false,
