@@ -19,7 +19,7 @@ describe('DM category', () => {
         // # Enable channel sidebar organization
         cy.apiUpdateConfig({
             ServiceSettings: {
-                EnableLegacySidebar: 'default_on',
+                ExperimentalChannelSidebarOrganization: 'default_on',
             },
         });
 

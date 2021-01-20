@@ -19,7 +19,7 @@ describe('Channel sidebar - group unreads seperately setting', () => {
     before(() => {
         cy.apiUpdateConfig({
             ServiceSettings: {
-                EnableLegacySidebar: 'default_on',
+                ExperimentalChannelSidebarOrganization: 'default_on',
             },
         });
     });
