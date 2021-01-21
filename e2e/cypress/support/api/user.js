@@ -80,7 +80,7 @@ Cypress.Commands.add('apiLogout', () => {
     });
 
     // * Verify logged out
-    cy.visit('/login?extra=expired').url().should('include', '/login');
+    cy.visitAndWait('/login?extra=expired').url().should('include', '/login');
 
     // # Ensure we clear out these specific cookies
     ['MMAUTHTOKEN', 'MMUSERID', 'MMCSRF'].forEach((cookie) => {
@@ -260,6 +260,17 @@ Cypress.Commands.add('apiRevokeUserSessions', (userId) => {
     }).then((response) => {
         expect(response.status).to.equal(200);
         return cy.wrap({data: response.body});
+    });
+});
+
+Cypress.Commands.add('apiGetUsers', ({page = 0, perPage = 60} = {}) => {
+    return cy.request({
+        method: 'GET',
+        url: `/api/v4/users?page=${page}&per_page=${perPage}`,
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        return cy.wrap({users: response.body});
     });
 });
 

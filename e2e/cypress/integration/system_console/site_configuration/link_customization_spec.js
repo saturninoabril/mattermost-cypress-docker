@@ -34,7 +34,7 @@ describe('SupportSettings', () => {
         });
 
         // # Visit customization system console page
-        cy.visit('/admin_console/site_config/customization');
+        cy.visitAndWait('/admin_console/site_config/customization');
     });
 
     it('MM-T1031 - Customization Change all links', () => {
@@ -49,7 +49,7 @@ describe('SupportSettings', () => {
         saveSetting();
 
         // # Click Main Menu
-        cy.visit(`/${testTeam.name}/channels/town-square`);
+        cy.visitAndWait(`/${testTeam.name}/channels/town-square`);
         cy.wait(TIMEOUTS.TWO_SEC);
         cy.get('#sidebarHeaderDropdownButton').should('be.visible').click();
 
@@ -104,7 +104,7 @@ describe('SupportSettings', () => {
         saveSetting();
 
         // # Open about modal
-        cy.visit(`/${testTeam.name}/channels/town-square`);
+        cy.visitAndWait(`/${testTeam.name}/channels/town-square`);
         cy.wait(TIMEOUTS.TWO_SEC);
         cy.get('#sidebarHeaderDropdownButton').should('be.visible').click();
         cy.get('#about').click();
@@ -139,7 +139,7 @@ describe('SupportSettings', () => {
         saveSetting();
 
         // # Open about modal
-        cy.visit(`/${testTeam.name}/channels/town-square`);
+        cy.visitAndWait(`/${testTeam.name}/channels/town-square`);
         cy.wait(TIMEOUTS.TWO_SEC);
         cy.get('#sidebarHeaderDropdownButton').should('be.visible').click();
         cy.get('#about').click();
@@ -155,7 +155,7 @@ describe('SupportSettings', () => {
         saveSetting();
 
         // # Open about modal
-        cy.visit(`/${testTeam.name}/channels/town-square`);
+        cy.visitAndWait(`/${testTeam.name}/channels/town-square`);
         cy.wait(TIMEOUTS.TWO_SEC);
         cy.get('#sidebarHeaderDropdownButton').should('be.visible').click();
         cy.get('#about').click();
@@ -191,7 +191,7 @@ describe('SupportSettings', () => {
         saveSetting();
 
         // # Click Main Menu
-        cy.visit(`/${testTeam.name}/channels/town-square`);
+        cy.visitAndWait(`/${testTeam.name}/channels/town-square`);
         cy.wait(TIMEOUTS.TWO_SEC);
         cy.get('#sidebarHeaderDropdownButton').should('be.visible').click();
 
@@ -214,7 +214,7 @@ describe('SupportSettings', () => {
             cy.apiAddUserToTeam(testTeam.id, user1.id);
 
             cy.apiLogin(user1);
-            cy.visit(`/${testTeam.name}/channels/town-square`);
+            cy.visitAndWait(`/${testTeam.name}/channels/town-square`);
 
             // # Hit "Next" twice
             cy.get('#tutorialNextButton').click();
@@ -236,7 +236,7 @@ describe('SupportSettings', () => {
         saveSetting();
 
         // # Click Main Menu
-        cy.visit(`/${testTeam.name}/channels/town-square`);
+        cy.visitAndWait(`/${testTeam.name}/channels/town-square`);
         cy.wait(TIMEOUTS.TWO_SEC);
         cy.get('#sidebarHeaderDropdownButton').should('be.visible').click();
 
@@ -256,7 +256,7 @@ describe('SupportSettings', () => {
         saveSetting();
 
         // # Click Main Menu
-        cy.visit(`/${testTeam.name}/channels/town-square`);
+        cy.visitAndWait(`/${testTeam.name}/channels/town-square`);
         cy.wait(TIMEOUTS.TWO_SEC);
         cy.get('#sidebarHeaderDropdownButton').should('be.visible').click();
 
@@ -268,7 +268,7 @@ describe('SupportSettings', () => {
             cy.apiAddUserToTeam(testTeam.id, user1.id);
 
             cy.apiLogin(user1);
-            cy.visit(`/${testTeam.name}/channels/town-square`);
+            cy.visitAndWait(`/${testTeam.name}/channels/town-square`);
 
             // # Hit "Next"
             cy.get('#tutorialNextButton').click();
@@ -286,7 +286,7 @@ describe('SupportSettings', () => {
         cy.findByTestId('SupportSettings.EnableAskCommunityLinkhelp-text').should('contain', 'When true, "Ask the community" link appears on the Mattermost user interface and Main Menu, which allows users to join the Mattermost Community to ask questions and help others troubleshoot issues. When false, the link is hidden from users.');
 
         // # Click Main Menu
-        cy.visit(`/${testTeam.name}/channels/town-square`);
+        cy.visitAndWait(`/${testTeam.name}/channels/town-square`);
 
         cy.get('#channel-header', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible').within(() => {
             // * Verify that hover shows "Help" text
@@ -323,7 +323,7 @@ describe('SupportSettings', () => {
         saveSetting();
 
         // # Go to town-square
-        cy.visit(`/${testTeam.name}/channels/town-square`);
+        cy.visitAndWait(`/${testTeam.name}/channels/town-square`);
 
         cy.get('#channel-header', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible').within(() => {
             // # Click on the help icon
