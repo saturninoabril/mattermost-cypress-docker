@@ -92,7 +92,7 @@ async function createTestCycle(startDate, endDate) {
 
     const testCycle = {
         projectKey: JIRA_PROJECT_KEY,
-        name: `${BUILD_ID}-${BRANCH}`,
+        name: `Cloud Jan 26 Cypress (${BUILD_ID}-${BRANCH})`,
         description: `Cypress automated test with ${BRANCH}`,
         plannedStartDate: startDate,
         plannedEndDate: endDate,

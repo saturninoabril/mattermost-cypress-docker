@@ -7,6 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
+// Stage: @prod
 // Group: @messaging
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
@@ -32,7 +33,7 @@ describe('Direct Message', () => {
 
     beforeEach(() => {
         cy.apiLogin(testUser);
-        cy.visit(townsquareLink);
+        cy.visitAndWait(townsquareLink);
     });
 
     it('MM-T449 - Edit a direct message body', () => {
@@ -47,7 +48,7 @@ describe('Direct Message', () => {
 
         cy.apiLogin(otherUser).then(() => {
             // # Visit the DM channel
-            cy.visit(`/${testTeam.name}/messages/@${testUser.username}`);
+            cy.visitAndWait(`/${testTeam.name}/messages/@${testUser.username}`);
 
             // * Verify message is sent and not pending
             cy.getLastPostId().then((postId) => {
@@ -58,7 +59,7 @@ describe('Direct Message', () => {
 
         cy.apiLogin(testUser).then(() => {
             // # Visit the DM channel
-            cy.visit(`/${testTeam.name}/messages/@${otherUser.username}`);
+            cy.visitAndWait(`/${testTeam.name}/messages/@${otherUser.username}`);
             cy.wait(TIMEOUTS.ONE_SEC);
 
             // # Edit the last post
@@ -79,7 +80,7 @@ describe('Direct Message', () => {
 
         cy.apiLogin(otherUser).then(() => {
             // # Visit the DM channel
-            cy.visit(`/${testTeam.name}/messages/@${testUser.username}`);
+            cy.visitAndWait(`/${testTeam.name}/messages/@${testUser.username}`);
 
             // * Should not have unread mentions indicator.
             cy.get('#sidebarItem_off-topic').
@@ -136,7 +137,7 @@ describe('Direct Message', () => {
         });
 
         // # Visit the DM channel
-        cy.visit(`/${testTeam.name}/messages/@${otherUser.username}`);
+        cy.visitAndWait(`/${testTeam.name}/messages/@${otherUser.username}`);
 
         // # Click on the channel header
         cy.get('#channelHeaderTitle').click().wait(TIMEOUTS.HALF_SEC);
@@ -168,7 +169,7 @@ describe('Direct Message', () => {
         });
 
         // # Visit the DM channel
-        cy.visit(`/${testTeam.name}/messages/@${otherUser.username}`);
+        cy.visitAndWait(`/${testTeam.name}/messages/@${otherUser.username}`);
 
         // # Clicks on Mute Channel
         cy.get('#channelHeaderDropdownButton button').click().then(() => {

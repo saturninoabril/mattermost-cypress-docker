@@ -216,7 +216,7 @@ jobs:
     environment:
       MM_DOCKER_IMAGE: mm-ee-test
       MM_DOCKER_EDITION: ce
-      MM_DOCKER_TAG: 1125_110ac3b1_505fbfe6_941501d1
+      MM_DOCKER_TAG: 1229_495a8150_2bd65f08_2fdf2376
       SERVER_INSTANCE_COUNT: 4
       TYPE: CLOUD
       PULL_REQUEST: add-link

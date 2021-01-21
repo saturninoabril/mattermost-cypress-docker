@@ -29,7 +29,7 @@ describe('Sidebar channel menu', () => {
     before(() => {
         cy.apiUpdateConfig({
             ServiceSettings: {
-                ExperimentalChannelSidebarOrganization: 'default_on',
+                EnableLegacySidebar: false,
             },
         });
 
@@ -37,7 +37,7 @@ describe('Sidebar channel menu', () => {
             teamName = team.name;
             userName = user.username;
 
-            cy.visit(`/${team.name}/channels/town-square`);
+            cy.visitAndWait(`/${team.name}/channels/town-square`);
         });
     });
 
