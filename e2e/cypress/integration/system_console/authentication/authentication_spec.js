@@ -101,33 +101,6 @@ describe('Authentication', () => {
         });
     });
 
-    it('MM-T1770 - Default password settings', () => {
-        cy.apiAdminLogin();
-
-        cy.apiUpdateConfig({
-            PasswordSettings: {
-                MinimumLength: null,
-                Lowercase: null,
-                Number: null,
-                Uppercase: null,
-                Symbol: null,
-            },
-            ServiceSettings: {
-                MaximumLoginAttempts: null,
-            },
-        });
-
-        // * Ensure password has a minimum lenght of 10, all password requirements are checked, and the maximum login attempts is set to 10
-        cy.apiGetConfig().then(({config: {PasswordSettings, ServiceSettings: {MaximumLoginAttempts}}}) => {
-            expect(PasswordSettings.MinimumLength).equal(10);
-            expect(PasswordSettings.Lowercase).equal(true);
-            expect(PasswordSettings.Number).equal(true);
-            expect(PasswordSettings.Uppercase).equal(true);
-            expect(PasswordSettings.Symbol).equal(true);
-            expect(MaximumLoginAttempts).equal(10);
-        });
-    });
-
     it('MM-T1783 - Username validation shows errors for various username requirements', () => {
         cy.apiAdminLogin();
 

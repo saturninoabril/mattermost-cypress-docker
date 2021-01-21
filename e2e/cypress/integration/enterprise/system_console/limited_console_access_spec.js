@@ -31,16 +31,6 @@ describe('Limited console access', () => {
         });
     });
 
-    it('MM-T3386 - Verify the Admin Role - System Manager', () => {
-        const role = 'system_manager';
-
-        // # Make the user a System  Manager
-        makeUserASystemRole(role);
-
-        // * Login as the new user and verify the role permissions (ensure they really are a system manager)
-        forEachConsoleSection(role);
-    });
-
     it('MM-T3387 - Verify the Admin Role - System User Manager', () => {
         const role = 'system_user_manager';
 

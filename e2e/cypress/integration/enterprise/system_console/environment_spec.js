@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @enterprise
+// Group: @not_cloud @enterprise
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 

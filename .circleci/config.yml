@@ -223,7 +223,7 @@ jobs:
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
-      FULL_REPORT: false
+      FULL_REPORT: true
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
       TM4J_FOLDER_ID: "1119716"
