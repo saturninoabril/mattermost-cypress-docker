@@ -205,7 +205,6 @@ describe('Group Message', () => {
                 cy.visitAndWait(townsquareLink);
 
                 // * Assert that user does not receives a notification
-                cy.wait(TIMEOUTS.HALF_SEC);
                 cy.get('@withNotification').should('not.have.been.called');
 
                 // * Should not have unread mentions indicator.
@@ -221,7 +220,6 @@ describe('Group Message', () => {
                 cy.visitAndWait(townsquareLink);
 
                 // * Assert that user does not receives a notification
-                cy.wait(TIMEOUTS.HALF_SEC);
                 cy.get('@withNotification').should('not.have.been.called');
 
                 // * Should have unread mentions indicator.

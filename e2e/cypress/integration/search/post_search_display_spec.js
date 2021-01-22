@@ -114,7 +114,7 @@ describe('Post search display', () => {
             });
 
             // # Visit town-square.
-            cy.visitAndWait(`/${testTeam.name}/channels/town-square`).wait(TIMEOUTS.HALF_SEC);
+            cy.visitAndWait(`/${testTeam.name}/channels/town-square`);
 
             // # Search for posts from that user
             cy.get('#searchBox').click().type(testSearch, {force: true});
@@ -244,7 +244,7 @@ describe('Post search display', () => {
 
 const enableTestCommands = (team) => {
     // # Visit system console
-    cy.visitAndWait('/admin_console/environment/developer').wait(TIMEOUTS.HALF_SEC);
+    cy.visitAndWait('/admin_console/environment/developer');
 
     // # Enable testing commands
     cy.get('[data-testid="ServiceSettings.EnableTestingtrue"]').click();

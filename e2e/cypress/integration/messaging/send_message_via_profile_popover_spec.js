@@ -73,7 +73,6 @@ function verifyDMChannelViaSendMessage(postId, team, channel, profileSelector, u
     cy.visitAndWait(`/${team.name}/channels/${channel.name}`);
 
     // # Visit post thread on RHS and verify that RHS is opened
-    cy.wait(TIMEOUTS.HALF_SEC);
     cy.clickPostCommentIcon(postId);
     cy.get('#rhsContainer').should('be.visible');
 
