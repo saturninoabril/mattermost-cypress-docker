@@ -7,6 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
+// Stage: @prod should run on Team edition only
 // Group: @system_console
 
 describe('Feature discovery', () => {

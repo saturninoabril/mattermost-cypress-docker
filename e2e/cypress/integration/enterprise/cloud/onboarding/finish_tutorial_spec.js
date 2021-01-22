@@ -8,6 +8,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
+// Stage: @prod should run on Cloud only
 // Group: @enterprise @onboarding
 // Skip:  @electron @chrome @firefox
 
@@ -19,6 +20,7 @@ describe('Onboarding', () => {
     const {username, email, password} = generateRandomUser();
 
     before(() => {
+        cy.shouldRunOnCloudEdition();
         // * Check if server has license for Cloud
         cy.apiRequireLicenseForFeature('Cloud');
 

@@ -7,6 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
+// Stage: @prod should run on Cloud only
 // Group: @enterprise @onboarding
 // Skip:  @electron @chrome @firefox
 
@@ -17,6 +18,7 @@ describe('Cloud Onboarding - Sysadmin', () => {
     let sysadmin;
 
     before(() => {
+        cy.shouldRunOnCloudEdition();
         cy.apiUpdateConfig({
             ServiceSettings: {
                 EnableLegacySidebar: false,
