@@ -35,7 +35,7 @@ describe('Autocomplete with Elasticsearch - Channel', () => {
             testUser = user;
             testTeam = team;
 
-            cy.visit(`/${testTeam.name}/channels/town-square`);
+            cy.visitAndWait(`/${testTeam.name}/channels/town-square`);
         });
     });
 
@@ -121,7 +121,7 @@ describe('Autocomplete with Elasticsearch - Channel', () => {
         before(() => {
             // # Login as admin
             cy.apiAdminLogin();
-            cy.visit(`/${testTeam.name}`);
+            cy.visitAndWait(`/${testTeam.name}`);
 
             const name = 'hellothere';
 

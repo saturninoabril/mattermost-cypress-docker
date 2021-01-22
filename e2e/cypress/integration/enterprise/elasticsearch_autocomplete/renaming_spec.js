@@ -48,7 +48,7 @@ describe('Autocomplete with Elasticsearch - Renaming', () => {
         // # Create a new user
         cy.apiCreateUser({user: spiderman}).then(({user}) => {
             cy.apiAddUserToTeam(testTeam.id, user.id).then(() => {
-                cy.visit(`/${testTeam.name}/channels/town-square`);
+                cy.visitAndWait(`/${testTeam.name}/channels/town-square`);
 
                 // # Verify user appears in search results pre-change
                 searchAndVerifyUser(user);
@@ -104,7 +104,7 @@ describe('Autocomplete with Elasticsearch - Renaming', () => {
                 testUser = user;
 
                 cy.apiAddUserToTeam(testTeam.id, testUser.id).then(() => {
-                    cy.visit(`/${testTeam.name}/channels/town-square`);
+                    cy.visitAndWait(`/${testTeam.name}/channels/town-square`);
 
                     // # Hit escape to close and lingering modals
                     cy.get('body').type('{esc}');
