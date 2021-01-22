@@ -70,7 +70,6 @@ describe('Notifications', () => {
         // # User 1 views team A
         cy.apiLogin(user1);
         cy.visitAndWait(testTeam1TownSquareUrl);
-        cy.wait(TIMEOUTS.HALF_SEC);
 
         // # Return to town square
         cy.visitAndWait(testTeam1TownSquareUrl);
@@ -112,7 +111,6 @@ describe('Notifications', () => {
         // # Have another user view team B
         cy.apiLogin(user2);
         cy.visitAndWait(testTeam2TownSquareUrl);
-        cy.wait(TIMEOUTS.HALF_SEC);
 
         // # Create a new channel
         cy.get('#createPublicChannel').should('be.visible').click();

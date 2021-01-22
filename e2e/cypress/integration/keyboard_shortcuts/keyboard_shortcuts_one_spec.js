@@ -140,7 +140,7 @@ describe('Keyboard Shortcuts', () => {
             // # Add posts by second user to the newly created channels in the first team
             cy.apiLogout();
             cy.apiLogin(otherUser).then(() => {
-                cy.visitAndWait(`/${team.name}/channels/off-topic`).wait(TIMEOUTS.FIVE_SEC);
+                cy.visitAndWait(`/${team.name}/channels/off-topic`);
 
                 cy.get('#sidebarItem_' + publicChannels[0].name).scrollIntoView().click();
                 cy.get('#post_textbox').clear().type('message to public channel').type('{enter}');
@@ -154,7 +154,7 @@ describe('Keyboard Shortcuts', () => {
 
             cy.apiLogout();
             cy.apiLogin(testUser).then(() => {
-                cy.visitAndWait(`/${team.name}/channels/off-topic`).wait(TIMEOUTS.FIVE_SEC);
+                cy.visitAndWait(`/${team.name}/channels/off-topic`);
 
                 // # Verify that the channels are unread
                 cy.get(`#sidebarItem_${publicChannels[0].name}`).should('have.class', 'unread-title');
@@ -214,7 +214,7 @@ describe('Keyboard Shortcuts', () => {
             // # Add posts by second user to the newly created channels in the first team
             cy.apiLogout();
             cy.apiLogin(otherUser).then(() => {
-                cy.visitAndWait(`/${team.name}/channels/off-topic`).wait(TIMEOUTS.FIVE_SEC);
+                cy.visitAndWait(`/${team.name}/channels/off-topic`);
 
                 cy.get('#sidebarItem_' + favPublicChannels[0].name).scrollIntoView().click();
                 cy.get('#post_textbox').clear().type('message to public channel').type('{enter}');
@@ -228,7 +228,7 @@ describe('Keyboard Shortcuts', () => {
 
             cy.apiLogout();
             cy.apiLogin(testUser).then(() => {
-                cy.visitAndWait(`/${team.name}/channels/off-topic`).wait(TIMEOUTS.FIVE_SEC);
+                cy.visitAndWait(`/${team.name}/channels/off-topic`);
 
                 // # Verify that the channels are unread - in the Favorites tab the unread channels are ordered alphabetically
                 cy.get(`#sidebarItem_${favDMChannels[0].name}`).should('have.class', 'unread-title');
@@ -299,7 +299,7 @@ describe('Keyboard Shortcuts', () => {
             // # Add posts by second user to the newly created channels in the first team
             cy.apiLogout();
             cy.apiLogin(otherUser).then(() => {
-                cy.visitAndWait(`/${team.name}/channels/off-topic`).wait(TIMEOUTS.FIVE_SEC);
+                cy.visitAndWait(`/${team.name}/channels/off-topic`);
 
                 cy.get('#sidebarItem_' + publicChannels[0].name).scrollIntoView().click();
                 cy.get('#post_textbox').clear().type('message to public channel').type('{enter}');
@@ -313,7 +313,7 @@ describe('Keyboard Shortcuts', () => {
 
             cy.apiLogout();
             cy.apiLogin(testUser).then(() => {
-                cy.visitAndWait(`/${team.name}/channels/off-topic`).wait(TIMEOUTS.FIVE_SEC);
+                cy.visitAndWait(`/${team.name}/channels/off-topic`);
 
                 // # Verify that the channels are unread
                 cy.get(`#sidebarItem_${publicChannels[0].name}`).should('have.class', 'unread-title');
@@ -373,7 +373,7 @@ describe('Keyboard Shortcuts', () => {
             // # Add posts by second user to the newly created channels in the first team
             cy.apiLogout();
             cy.apiLogin(otherUser).then(() => {
-                cy.visitAndWait(`/${team.name}/channels/off-topic`).wait(TIMEOUTS.FIVE_SEC);
+                cy.visitAndWait(`/${team.name}/channels/off-topic`);
 
                 cy.get('#sidebarItem_' + favPublicChannels[0].name).scrollIntoView().click();
                 cy.get('#post_textbox').clear().type('message to public channel').type('{enter}');
@@ -387,7 +387,7 @@ describe('Keyboard Shortcuts', () => {
 
             cy.apiLogout();
             cy.apiLogin(testUser).then(() => {
-                cy.visitAndWait(`/${team.name}/channels/off-topic`).wait(TIMEOUTS.FIVE_SEC);
+                cy.visitAndWait(`/${team.name}/channels/off-topic`);
 
                 // # Verify that the channels are unread - in the Favorites tab the unread channels are ordered alphabetically
                 cy.get(`#sidebarItem_${favDMChannels[0].name}`).should('have.class', 'unread-title');

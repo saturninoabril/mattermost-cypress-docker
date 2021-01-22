@@ -17,7 +17,7 @@ describe('Settings', () => {
         cy.apiRequireLicense();
     });
 
-    it('MM-T1161: Data retention - Settings are saved', () => {
+    it('MM-T1161 Data retention - Settings are saved', () => {
         cy.visitAndWait('/admin_console/compliance/data_retention');
 
         // # Change dropdown
@@ -82,7 +82,7 @@ describe('Settings', () => {
 
     it('MM-T1635: Channel listing is displayed correctly with proper team name', () => {
         let teamName;
-        cy.visitAndWait('/admin_console/user_management/channels').wait(TIMEOUTS.FIVE_SEC);
+        cy.visitAndWait('/admin_console/user_management/channels');
 
         // # Get the team name
         cy.get('#channels .DataGrid .DataGrid_rows > :nth-child(1)').

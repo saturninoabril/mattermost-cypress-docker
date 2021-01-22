@@ -7,7 +7,6 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: @prod
 // Group: @bot_accounts
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
@@ -51,7 +50,7 @@ describe('Bot accounts ownership and API', () => {
         // # Login as admin
         cy.apiAdminLogin();
 
-        cy.visitAndWait(`/${newTeam.name}/channels/town-square`).wait(TIMEOUTS.THREE_SEC);
+        cy.visitAndWait(`/${newTeam.name}/channels/town-square`);
 
         // # Open the menu
         cy.get('#lhsHeader', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible').within(() => {

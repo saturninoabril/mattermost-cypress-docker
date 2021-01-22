@@ -61,7 +61,7 @@ describe('Messaging', () => {
         writeLinesToPostTextBox(lines);
 
         // # Visit a different channel by URL and verify textbox
-        cy.visitAndWait(`/${testTeam.name}/channels/off-topic`).wait(TIMEOUTS.THREE_SEC);
+        cy.visitAndWait(`/${testTeam.name}/channels/off-topic`);
         verifyPostTextbox('@initialHeight', '');
 
         // # Should have returned to the channel by URL. However, Cypress is clearing storage for some reason.
