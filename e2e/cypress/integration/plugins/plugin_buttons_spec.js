@@ -9,7 +9,7 @@
 
 /**
  * Note: This test requires test and demo plugin tar file under fixtures folder.
- * Download from: https://github.com/mattermost/mattermost-plugin-test/releases/download/v0.1.0/com.mattermost.test-plugin-0.1.0.tar.gz
+ * Download from: https://github.com/mattermost/mattermost-plugin-test/archive/v0.1.0.tar.gz
  * Copy to: ./e2e/cypress/fixtures/com.mattermost.test-plugin-0.1.0.tar.gz
  *
  * Download version 0.1.0 from :
