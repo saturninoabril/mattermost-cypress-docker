@@ -61,6 +61,8 @@ module.exports = async ({baseUrl, user, method = 'get', path, data = {}}) => {
                 data: error.response.data,
                 isError: true,
             };
+        }else if (error.code === 'ECONNABORTED') {
+            return {isTimeout: true};
         } else {
             // If we get here something else went wrong, so throw
             throw error;
