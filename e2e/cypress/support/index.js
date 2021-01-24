@@ -32,6 +32,8 @@ import './ui';
 import './ui_commands'; // soon to deprecate
 import './visual_commands';
 
+import {getDefaultConfig} from './api/system';
+
 Cypress.on('test:after:run', (test, runnable) => {
     // Only if the test is failed do we want to add
     // the additional context of the screenshot.
@@ -106,6 +108,8 @@ before(() => {
         } else {
             // # Create and login a newly created user as sysadmin
             cy.apiCreateAdmin().then(({sysadmin}) => {
+                console.log('Create new admin')
+                cy.externalRequest({user: sysadmin, method: 'put', path: 'config', data: getDefaultConfig()});
                 cy.apiAdminLogin().then(() => sysadminSetup(sysadmin));
             });
         }

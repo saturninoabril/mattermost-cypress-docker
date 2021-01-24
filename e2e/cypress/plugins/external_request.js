@@ -53,6 +53,6 @@ module.exports = async ({baseUrl, user, method = 'get', path, data = {}}) => {
             throw error;
         }
     }
-
+    console.log('response', response);
     return response;
 };

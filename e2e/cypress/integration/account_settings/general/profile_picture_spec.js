@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @account_setting
+// Group: @account_setting @verify
 
 import * as TIMEOUTS from '../../../fixtures/timeouts';
 

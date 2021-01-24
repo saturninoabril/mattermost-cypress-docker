@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @channel
+// Group: @channel @verify
 
 describe('Archive channel members spec', () => {
     before(() => {
