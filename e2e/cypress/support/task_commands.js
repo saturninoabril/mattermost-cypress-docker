@@ -74,13 +74,13 @@ Cypress.Commands.add('postIncomingWebhook', ({url, data, waitFor}) => {
 * @param {String} path - API path that is relative to Cypress.config().baseUrl
 * @param {Object} data - payload
 */
-Cypress.Commands.add('externalRequest', ({user, method, path, data}) => {
+Cypress.Commands.add('externalRequest', ({user, method, path, data, failOnError = true}) => {
     const baseUrl = Cypress.config('baseUrl');
 
     return cy.task('externalRequest', {baseUrl, user, method, path, data}).then((response) => {
         cy.log(JSON.stringify(response));
         // Temporarily ignore error related to Cloud
-        if (response.data.id !== 'ent.cloud.request_error') {
+        if (response.data.id !== 'ent.cloud.request_error' && !failOnError) {
             expect(response.status).to.be.oneOf([200, 201, 204]);
         }
 

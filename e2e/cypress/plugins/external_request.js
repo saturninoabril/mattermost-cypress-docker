@@ -42,6 +42,7 @@ module.exports = async ({baseUrl, user, method = 'get', path, data = {}}) => {
                 Cookie: cookieString,
                 'X-Requested-With': 'XMLHttpRequest',
             },
+            timeout: 15000,
             data,
         });
         console.log('External config done');
@@ -58,6 +59,7 @@ module.exports = async ({baseUrl, user, method = 'get', path, data = {}}) => {
                 status: error.response.status,
                 statusText: error.response.statusText,
                 data: error.response.data,
+                isError: true,
             };
         } else {
             // If we get here something else went wrong, so throw
