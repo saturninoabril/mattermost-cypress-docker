@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @channel @verify
+// Group: @channel
 
 describe('Archive channel header spec', () => {
     before(() => {

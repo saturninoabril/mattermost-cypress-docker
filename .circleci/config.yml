@@ -288,7 +288,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_1
-          run_filter: "--stage='@prod' --group='@verify' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
           run_part: "--part=1 --of=4"
       - persist-and-store:
           folder: e2e-test-1
@@ -307,7 +307,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_2
-          run_filter: "--stage='@prod' --group='@verify' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
           run_part: "--part=2 --of=4"
       - persist-and-store:
           folder: e2e-test-2
@@ -326,7 +326,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_3
-          run_filter: "--stage='@prod' --group='@verify' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
           run_part: "--part=3 --of=4"
       - persist-and-store:
           folder: e2e-test-3
@@ -345,7 +345,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_4
-          run_filter: "--stage='@prod' --group='@verify' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
           run_part: "--part=4 --of=4"
       - persist-and-store:
           folder: e2e-test-4
