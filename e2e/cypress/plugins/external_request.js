@@ -9,30 +9,27 @@ module.exports = async ({baseUrl, user, method = 'get', path, data = {}}) => {
     const loginUrl = `${baseUrl}/api/v4/users/login`;
 
     // First we need to login with our external user to get cookies/tokens
-    let loginResponse;
+    let cookieString = '';
     try {
-        loginResponse = await axios({
+        const response = await axios({
             url: loginUrl,
             headers: {'X-Requested-With': 'XMLHttpRequest'},
             method: 'post',
             timeout: timeouts.TEN_SEC,
             data: {login_id: user.username, password: user.password},
         });
+
+        const setCookie = response.headers['set-cookie'];
+        setCookie.forEach((cookie) => {
+            const nameAndValue = cookie.split(';')[0];
+            cookieString += nameAndValue + ';';
+        });
     } catch (error) {
         return getErrorResponse(error);
     }
 
-    let cookieString = '';
-    const setCookie = loginResponse.headers['set-cookie'];
-    setCookie.forEach((cookie) => {
-        const nameAndValue = cookie.split(';')[0];
-        cookieString += nameAndValue + ';';
-    });
-
-    let response;
-
     try {
-        response = await axios({
+        const response = await axios({
             method,
             url: `${baseUrl}/api/v4/${path}`,
             headers: {
