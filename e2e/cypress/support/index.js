@@ -108,11 +108,8 @@ before(() => {
         } else {
             // # Create and login a newly created user as sysadmin
             cy.apiCreateAdmin().then(({sysadmin}) => {
-                cy.makeClient().then(async (client) => {
-                    // # Create bot
-                    await client.updateConfig(getDefaultConfig());
-                    cy.apiAdminLogin().then(() => sysadminSetup(sysadmin));
-                });
+                cy.externalRequest({user: sysadmin, method: 'put', path: 'config', data: getDefaultConfig(), failOnStatusCode: false});
+                cy.apiAdminLogin().then(() => sysadminSetup(sysadmin));
             });
         }
 
