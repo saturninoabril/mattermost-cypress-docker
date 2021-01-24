@@ -4,18 +4,22 @@
 const axios = require('axios');
 
 module.exports = async ({baseUrl, user, method = 'get', path, data = {}}) => {
+    console.log('External request');
     const loginUrl = `${baseUrl}/api/v4/users/login`;
 
     // First we need to login with our external user to get cookies/tokens
     let loginResponse;
     try {
+        console.log('External Login');
         loginResponse = await axios({
             url: loginUrl,
             headers: {'X-Requested-With': 'XMLHttpRequest'},
             method: 'post',
             data: {login_id: user.username, password: user.password},
         });
+        console.log('External Login done');
     } catch (error) {
+        console.log('External Login error');
         return error;
     }
 
@@ -29,6 +33,7 @@ module.exports = async ({baseUrl, user, method = 'get', path, data = {}}) => {
     let response;
 
     try {
+        console.log('External config');
         response = await axios({
             method,
             url: `${baseUrl}/api/v4/${path}`,
@@ -39,6 +44,7 @@ module.exports = async ({baseUrl, user, method = 'get', path, data = {}}) => {
             },
             data,
         });
+        console.log('External config done');
 
         return {
             status: response.status,
