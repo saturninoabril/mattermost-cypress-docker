@@ -3,24 +3,23 @@
 
 const axios = require('axios');
 
+const timeouts = require('../fixtures/timeouts');
+
 module.exports = async ({baseUrl, user, method = 'get', path, data = {}}) => {
-    console.log('External request');
     const loginUrl = `${baseUrl}/api/v4/users/login`;
 
     // First we need to login with our external user to get cookies/tokens
     let loginResponse;
     try {
-        console.log('External Login');
         loginResponse = await axios({
             url: loginUrl,
             headers: {'X-Requested-With': 'XMLHttpRequest'},
             method: 'post',
+            timeout: timeouts.TEN_SEC,
             data: {login_id: user.username, password: user.password},
         });
-        console.log('External Login done');
     } catch (error) {
-        console.log('External Login error');
-        return error;
+        return getErrorResponse(error);
     }
 
     let cookieString = '';
@@ -33,7 +32,6 @@ module.exports = async ({baseUrl, user, method = 'get', path, data = {}}) => {
     let response;
 
     try {
-        console.log('External config');
         response = await axios({
             method,
             url: `${baseUrl}/api/v4/${path}`,
@@ -42,10 +40,9 @@ module.exports = async ({baseUrl, user, method = 'get', path, data = {}}) => {
                 Cookie: cookieString,
                 'X-Requested-With': 'XMLHttpRequest',
             },
-            timeout: 15000,
+            timeout: timeouts.TEN_SEC,
             data,
         });
-        console.log('External config done');
 
         return {
             status: response.status,
@@ -54,20 +51,22 @@ module.exports = async ({baseUrl, user, method = 'get', path, data = {}}) => {
         };
     } catch (error) {
         // If we have a response for the error, pull out the relevant parts
-        if (error.response) {
-            response = {
-                status: error.response.status,
-                statusText: error.response.statusText,
-                data: error.response.data,
-                isError: true,
-            };
-        }else if (error.code === 'ECONNABORTED') {
-            return {data: {id: error.code, isTimeout: true}};
-        } else {
-            // If we get here something else went wrong, so throw
-            throw error;
-        }
+        return getErrorResponse(error);
     }
-    console.log('External request response', response);
-    return response;
 };
+
+function getErrorResponse(error) {
+    if (error.response) {
+        return {
+            status: error.response.status,
+            statusText: error.response.statusText,
+            data: error.response.data,
+            isError: true,
+        };
+    } else if (error.code === 'ECONNABORTED') {
+        return {data: {id: error.code, isTimeout: true}};
+    }
+
+    // If we get here something else went wrong, so throw
+    throw error;
+}
