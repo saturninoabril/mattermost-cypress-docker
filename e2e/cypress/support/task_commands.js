@@ -78,6 +78,7 @@ Cypress.Commands.add('externalRequest', ({user, method, path, data}) => {
     const baseUrl = Cypress.config('baseUrl');
 
     return cy.task('externalRequest', {baseUrl, user, method, path, data}).then((response) => {
+        cy.log(JSON.stringify(response));
         // Temporarily ignore error related to Cloud
         if (response.data.id !== 'ent.cloud.request_error') {
             expect(response.status).to.be.oneOf([200, 201, 204]);
