@@ -138,6 +138,8 @@ describe('Authentication', () => {
             },
         });
 
+        cy.apiLogout();
+
         // # Go to front page
         cy.visitAndWait('/login');
 

@@ -253,6 +253,7 @@ describe('Incoming webhook', () => {
                 const currentID = `${id} - ${i}`;
                 const payload = makePayloadFromShortValue(testCase.short, currentID);
                 cy.postIncomingWebhook({url: incomingWebhook.url, data: payload});
+                cy.wait(5000);
 
                 cy.getLastPost().within(() => {
                     cy.get('.attachment__body .post-message__text-container p').should('contain', currentID);
@@ -290,6 +291,7 @@ describe('Incoming webhook', () => {
         const payload = {text: id, attachments: [{pretext: 'This is the attachment pretext.', text: 'This is the attachment text.', actions: [{name: 'Select an option...', integration: {url: 'http://127.0.0.1:7357/action_options', context: {action: 'do_something'}}, type: 'select', data_source: 'channels'}, {name: 'Select an option...', integration: {url: 'http://127.0.0.1:7357/action_options', context: {action: 'do_something'}}, type: 'select', options: [{text: 'Option1', value: 'opt1'}, {text: 'Option2', value: 'opt2'}, {text: 'Option3', value: 'opt3'}]}, {name: 'Ephemeral Message', integration: {url: 'http://127.0.0.1:7357', context: {action: 'do_something_ephemeral'}}}, {name: 'Update', integration: {url: 'http://127.0.0.1:7357', context: {action: 'do_something_update'}}}]}]};
 
         cy.postIncomingWebhook({url: incomingWebhook.url, data: payload});
+        cy.uiWaitUntilMessagePostedIncludes(payload.text);
 
         cy.getLastPost().within(() => {
             cy.get('.post-message__text').should('have.text', id);

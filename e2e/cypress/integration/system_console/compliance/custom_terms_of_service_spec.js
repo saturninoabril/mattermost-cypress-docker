@@ -20,49 +20,6 @@ describe('Custom Terms of Service', () => {
         });
     });
 
-    it('MM-T1190 - Appears after creating new account and verifying email address', () => {
-        const customTermsOfServiceText = 'Test custom terms of service';
-
-        // # Verify new user email
-        cy.apiVerifyUserEmailById(testUser.id);
-
-        // # Login as admin
-        cy.apiAdminLogin();
-
-        cy.apiUpdateConfig({
-            EmailSettings: {
-                RequireEmailVerification: true,
-            },
-        });
-
-        // # Visit custom terms of service page
-        cy.visitAndWait('/admin_console/compliance/custom_terms_of_service');
-
-        // # Enable custom terms of service
-        cy.findByTestId('SupportSettings.CustomTermsOfServiceEnabledtrue').click();
-
-        // # Set the terms of service to the first value
-        cy.findByTestId('SupportSettings.CustomTermsOfServiceTextinput').clear().type(customTermsOfServiceText);
-
-        // # Save config
-        cy.get('#saveSetting').click();
-
-        // # Login as the test user
-        cy.apiLogin(testUser);
-
-        // # Visit the test team town square
-        cy.visitAndWait(`/${testTeam.name}/channels/town-square`);
-
-        // * Ensure that the terms of service text shows as expected
-        cy.findByTestId('termsOfService').should('be.visible').and('contain.text', customTermsOfServiceText);
-
-        // * Ensure that the accept terms button is visible and click it
-        cy.get('#acceptTerms').should('be.visible').click();
-
-        // * Ensure the user is redirected to the appropriate team after terms are accepted
-        cy.url().should('include', `/${testTeam.name}/channels/town-square`);
-    });
-
     it('MM-T1191 - Repeated edits must be agreed to', () => {
         const firstTOS = 'First custom terms of service';
         const secondTOS = 'Second custom terms of service';

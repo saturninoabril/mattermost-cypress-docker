@@ -45,31 +45,6 @@ describe('Verify Accessibility Support in Dropdown Menus', () => {
         cy.visitAndWait(`/${testTeam.name}/channels/off-topic`).wait(TIMEOUTS.FIVE_SEC);
     });
 
-    it('MM-T1464 Accessibility Support in Channel Menu Dropdown', () => {
-        // # Press tab from the Channel Favorite button
-        cy.get('#toggleFavorite').focus().wait(TIMEOUTS.HALF_SEC).tab({shift: true}).tab().tab();
-
-        // * Verify the aria-label in channel menu button
-        cy.get('#channelHeaderDropdownButton button').should('have.attr', 'aria-label', 'channel menu').and('have.class', 'a11y--active a11y--focused').click();
-
-        // * Verify the accessibility support in the Channel Dropdown menu
-        cy.get('#channelHeaderDropdownMenu').should('have.attr', 'aria-label', 'channel menu').and('have.class', 'a11y__popup').and('have.attr', 'role', 'menu');
-
-        // * Verify the first option is not selected by default
-        cy.get('#channelHeaderDropdownMenu .MenuItem').children().eq(0).should('not.have.class', 'a11y--active a11y--focused');
-
-        // # Press tab
-        cy.focused().tab();
-
-        // * Verify the accessibility support in the Channel Dropdown menu items
-        const labels = ['View Info dialog', 'Notification Preferences dialog', '', 'Add Members dialog', 'Manage Members dialog', 'Edit Channel Header dialog', 'Edit Channel Purpose dialog', 'Rename Channel dialog', 'Convert to Private Channel dialog', 'Archive Channel dialog', ''];
-        verifyMenuItems('#channelHeaderDropdownMenu', labels);
-
-        // * Verify if menu is closed when we press Escape
-        cy.get('body').type('{esc}', {force: true});
-        cy.get('#channelHeaderDropdownMenu').should('not.exist');
-    });
-
     it('MM-T1476 Accessibility Support in Main Menu Dropdown', () => {
         // # Press tab from the Set Status button
         cy.get('.status-wrapper button.status').focus().wait(TIMEOUTS.HALF_SEC).tab({shift: true}).tab().tab();

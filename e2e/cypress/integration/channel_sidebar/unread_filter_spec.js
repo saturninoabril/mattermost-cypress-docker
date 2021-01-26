@@ -36,24 +36,6 @@ describe('Channel sidebar unread filter', () => {
         });
     });
 
-    it('MM-T3441 should change the filter label when the unread filter changes state', () => {
-        // * Verify that the unread filter is in all channels state
-        cy.get('.SidebarFilters:contains(VIEWING:)').should('be.visible');
-        cy.get('.SidebarFilters:contains(All channels)').should('be.visible');
-
-        enableUnreadFilter();
-
-        // * Verify that the unread filter is in filter by unread state
-        cy.get('.SidebarFilters:contains(FILTERED BY:)').should('be.visible');
-        cy.get('.SidebarFilters:contains(Unread)').should('be.visible');
-
-        disableUnreadFilter();
-
-        // * Verify that the unread filter is back in all channels state
-        cy.get('.SidebarFilters:contains(VIEWING:)').should('be.visible');
-        cy.get('.SidebarFilters:contains(All channels)').should('be.visible');
-    });
-
     it('MM-T3442 should not persist the state of the unread filter on reload', () => {
         // * Verify that all categories are visible
         cy.get('.SidebarChannelGroupHeader:contains(CHANNELS)').should('be.visible');
