@@ -87,12 +87,13 @@ async function createTestCycle(startDate, endDate) {
         BRANCH,
         BUILD_ID,
         JIRA_PROJECT_KEY,
+        TM4J_CYCLE_NAME,
         TM4J_FOLDER_ID,
     } = process.env;
 
     const testCycle = {
         projectKey: JIRA_PROJECT_KEY,
-        name: `${BUILD_ID}-${BRANCH}`,
+        name: TM4J_CYCLE_NAME ? `${TM4J_CYCLE_NAME} (${BUILD_ID}-${BRANCH})` : `${BUILD_ID}-${BRANCH}`,
         description: `Cypress automated test with ${BRANCH}`,
         plannedStartDate: startDate,
         plannedEndDate: endDate,
