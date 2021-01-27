@@ -10,7 +10,49 @@
 // Stage: @prod
 // Group: @channel @channel_settings @smoke
 
-describe('Channel Settings', () => {
+function verifyMentionedUserAndProfilePopover(postId) {
+    cy.get(`#post_${postId}`).find('.mention-link').each(($el) => {
+        // # Get username from each mentioned link
+        const userName = $el[0].innerHTML;
+
+        // # Click each username link
+        cy.wrap($el).click();
+
+        // * Profile popover should be visible
+        cy.get('#user-profile-popover').should('be.visible');
+
+        // * The popover title  at the top of the popover should be the same as the username link for each user
+        cy.findByTestId(`profilePopoverTitle_${userName.replace('@', '')}`).should('contain', userName);
+
+        // Click anywhere to close profile popover
+        cy.get('#channelHeaderInfo').click();
+    });
+}
+
+function addNumberOfUsersToChannel(num = 1) {
+    // # Then click it to access the drop-down menu
+    cy.get('#channelHeaderTitle').click();
+
+    // * The dropdown menu of the channel header should be visible;
+    cy.get('#channelLeaveChannel').should('be.visible');
+
+    // # Click 'Add Members'
+    cy.get('#channelAddMembers').click();
+
+    // * Assert that modal appears
+    // # Click the first row for a number of times
+    Cypress._.times(num, () => {
+        cy.get('#multiSelectList').should('be.visible').first().click();
+    });
+
+    // # Click the button "Add" to add user to a channel
+    cy.get('#saveItems').click();
+
+    // # Wait for the modal to disappear
+    cy.get('#addUsersToChannelModal').should('not.exist');
+}
+
+describe('CS15445 Join/leave messages', () => {
     let testTeam;
     let firstUser;
     let addedUsersChannel;
@@ -37,10 +79,10 @@ describe('Channel Settings', () => {
         });
     });
 
-    it('MM-T859_1 Single User: Usernames are links, open profile popovers', () => {
+    it('Single User: Usernames are links, open profile popovers', () => {
         // # Create and visit new channel
         cy.apiCreateChannel(testTeam.id, 'channel-test', 'Channel').then(({channel}) => {
-            cy.visitAndWait(`/${testTeam.name}/channels/${channel.name}`);
+            cy.visit(`/${testTeam.name}/channels/${channel.name}`);
 
             // # Add users to channel
             addNumberOfUsersToChannel(1);
@@ -55,10 +97,10 @@ describe('Channel Settings', () => {
         });
     });
 
-    it('MM-T859_2 Combined Users: Usernames are links, open profile popovers', () => {
+    it('Combined Users: Usernames are links, open profile popovers', () => {
         // # Create and visit new channel
         cy.apiCreateChannel(testTeam.id, 'channel-test', 'Channel').then(({channel}) => {
-            cy.visitAndWait(`/${testTeam.name}/channels/${channel.name}`);
+            cy.visit(`/${testTeam.name}/channels/${channel.name}`);
 
             addNumberOfUsersToChannel(3);
 
@@ -76,14 +118,11 @@ describe('Channel Settings', () => {
 
     it('MM-T856_1 Add existing users to public channel from drop-down > Add Members', () => {
         // # Visit the add users channel
-        cy.visitAndWait(`/${testTeam.name}/channels/${addedUsersChannel.name}`);
+        cy.visit(`/${testTeam.name}/channels/${addedUsersChannel.name}`);
 
-        // # Open channel menu and click 'Add Members'
-        cy.uiOpenChannelMenu('Add Members');
-        cy.get('#addUsersToChannelModal').should('be.visible');
-
-        // # Type into the input box to search for a user
-        cy.get('#selectItems input').type('u');
+        // # Click 'Add Members'
+        cy.get('#channelHeaderTitle').click();
+        cy.get('#channelAddMembers').click();
 
         // # First add one user in order to see them disappearing from the list
         cy.get('#multiSelectList > div').first().then((el) => {
@@ -123,7 +162,7 @@ describe('Channel Settings', () => {
         cy.apiAdminLogin();
 
         // # Visit the add users channel
-        cy.visitAndWait(`/${testTeam.name}/channels/${addedUsersChannel.name}`);
+        cy.visit(`/${testTeam.name}/channels/${addedUsersChannel.name}`);
 
         // # Verify that the system message for adding users displays
         cy.getLastPostId().then((id) => {
@@ -131,57 +170,14 @@ describe('Channel Settings', () => {
         });
 
         // Visit off topic where all users are added
-        cy.visitAndWait(`/${testTeam.name}/channels/off-topic`);
+        cy.visit(`/${testTeam.name}/channels/off-topic`);
 
-        // # Open channel menu and click 'Add Members'
-        cy.uiOpenChannelMenu('Add Members');
-        cy.get('#addUsersToChannelModal').should('be.visible');
+        // # Click 'Add Members'
+        cy.get('#channelHeaderTitle').click();
+        cy.get('#channelAddMembers').click();
 
-        // # Type into the input box to search for already added user
-        cy.get('#selectItems input').type(firstUser.username);
-
-        // * Verify users list does not exist
+        // # Verify users list does not exist
         cy.get('#multiSelectList').should('not.exist');
-        cy.findByText('No results found matching');
-
         cy.get('body').type('{esc}');
     });
 });
-
-function verifyMentionedUserAndProfilePopover(postId) {
-    cy.get(`#post_${postId}`).find('.mention-link').each(($el) => {
-        // # Get username from each mentioned link
-        const userName = $el[0].innerHTML;
-
-        // # Click each username link
-        cy.wrap($el).click();
-
-        // * Profile popover should be visible
-        cy.get('#user-profile-popover').should('be.visible');
-
-        // * The popover title  at the top of the popover should be the same as the username link for each user
-        cy.findByTestId(`profilePopoverTitle_${userName.replace('@', '')}`).should('contain', userName);
-
-        // Click anywhere to close profile popover
-        cy.get('#channelHeaderInfo').click();
-    });
-}
-
-function addNumberOfUsersToChannel(num = 1) {
-    // # Open channel menu and click 'Add Members'
-    cy.uiOpenChannelMenu('Add Members');
-    cy.get('#addUsersToChannelModal').should('be.visible');
-
-    // * Assert that modal appears
-    // # Click the first row for a number of times
-    Cypress._.times(num, () => {
-        cy.get('#selectItems input').type('u');
-        cy.get('#multiSelectList').should('be.visible').first().click();
-    });
-
-    // # Click the button "Add" to add user to a channel
-    cy.get('#saveItems').click();
-
-    // # Wait for the modal to disappear
-    cy.get('#addUsersToChannelModal').should('not.exist');
-}
