@@ -134,10 +134,15 @@ commands:
           name: Set shared environment variables
           command: |
             DNS_ZONE_NAME=dev.spinmint.com
-            BASE_URL_1="$CIRCLE_BRANCH-$MM_DOCKER_EDITION-$MM_DOCKER_TAG-1.$DNS_ZONE_NAME"
-            BASE_URL_2="$CIRCLE_BRANCH-$MM_DOCKER_EDITION-$MM_DOCKER_TAG-2.$DNS_ZONE_NAME"
-            BASE_URL_3="$CIRCLE_BRANCH-$MM_DOCKER_EDITION-$MM_DOCKER_TAG-3.$DNS_ZONE_NAME"
-            BASE_URL_4="$CIRCLE_BRANCH-$MM_DOCKER_EDITION-$MM_DOCKER_TAG-4.$DNS_ZONE_NAME"
+            export BASE_URL_FULL=$CIRCLE_BRANCH-$MM_DOCKER_EDITION-$MM_DOCKER_TAG
+            export BASE_URL_SUBSTR=${BASE_URL_FULL:0:45}
+            echo $BASE_URL_FULL
+            echo $BASE_URL_SUBSTR
+
+            BASE_URL_1="$BASE_URL_SUBSTR-1.$DNS_ZONE_NAME"
+            BASE_URL_2="$BASE_URL_SUBSTR-2.$DNS_ZONE_NAME"
+            BASE_URL_3="$BASE_URL_SUBSTR-3.$DNS_ZONE_NAME"
+            BASE_URL_4="$BASE_URL_SUBSTR-4.$DNS_ZONE_NAME"
 
             echo export MM_DOCKER_IMAGE=$MM_DOCKER_IMAGE >> shared
             echo export MM_DOCKER_TAG=$MM_DOCKER_TAG >> shared
@@ -288,7 +293,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_1
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
           run_part: "--part=1 --of=4"
       - persist-and-store:
           folder: e2e-test-1
@@ -307,7 +312,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_2
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
           run_part: "--part=2 --of=4"
       - persist-and-store:
           folder: e2e-test-2
@@ -326,7 +331,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_3
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
           run_part: "--part=3 --of=4"
       - persist-and-store:
           folder: e2e-test-3
@@ -345,7 +350,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_4
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
           run_part: "--part=4 --of=4"
       - persist-and-store:
           folder: e2e-test-4
