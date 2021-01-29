@@ -217,14 +217,14 @@ jobs:
     environment:
       MM_DOCKER_IMAGE: mattermost-enterprise-edition
       MM_DOCKER_EDITION: ee
-      MM_DOCKER_TAG: 5.32.0-rc1
+      MM_DOCKER_TAG: 1336_c7bfae10_4ab25ee3_2ee627c6
       SERVER_INSTANCE_COUNT: 4
       TYPE: RELEASE
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
-      FULL_REPORT: false
+      FULL_REPORT: true
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
       TM4J_FOLDER_ID: "1146800"
