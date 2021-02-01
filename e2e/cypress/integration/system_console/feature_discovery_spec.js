@@ -15,7 +15,7 @@ describe('Feature discovery', () => {
         cy.shouldRunOnTeamEdition();
 
         // # Visit admin console
-        cy.visitAndWait('/admin_console');
+        cy.visit('/admin_console');
     });
 
     const testCallsToAction = () => {

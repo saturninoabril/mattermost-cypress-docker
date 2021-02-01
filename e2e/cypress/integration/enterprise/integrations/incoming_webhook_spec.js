@@ -55,7 +55,7 @@ describe('Incoming webhook', () => {
             }],
         };
 
-        cy.visitAndWait(`/${testTeam.name}/channels/${testChannel.name}`);
+        cy.visit(`/${testTeam.name}/channels/${testChannel.name}`);
 
         cy.postIncomingWebhook({url: incomingWebhook.url, data: payload});
 
