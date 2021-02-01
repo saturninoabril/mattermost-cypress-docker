@@ -13,7 +13,7 @@ declare namespace Cypress {
          * @param duration — wait duration with 3 seconds by default
          *
          * @example
-         *   cy.visitAndWait('url');
+         *   cy.visit('url');
          */
         visitAndWait(url: string, options?: Partial<Cypress.VisitOptions>, duration?: number): Chainable;
     }
