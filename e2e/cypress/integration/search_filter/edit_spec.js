@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: @prod
+// TODO: investigate timeout error
 // Group: @search_date_filter
 
 import {getAdminAccount} from '../../support/env';
