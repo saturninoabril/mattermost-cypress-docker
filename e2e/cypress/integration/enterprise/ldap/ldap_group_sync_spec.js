@@ -355,7 +355,7 @@ context('ldap', () => {
             cy.get('#showInviteModal').should('exist').click();
 
             // * Assess that label is visible and it says we can add new members
-            cy.get('#addUsersToChannelModal').should('be.visible').findByText(`Add people to ${testChannel.display_name}`);
+            cy.get('#addUsersToChannelModal').should('be.visible').and('contain', `Add New Members to ${testChannel.display_name}`);
 
             // # Login as sysadmin and navigate to system scheme page and check off all users can manage private manage channels
             cy.apiAdminLogin();

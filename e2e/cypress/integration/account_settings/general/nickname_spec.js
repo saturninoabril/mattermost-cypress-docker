@@ -123,7 +123,7 @@ describe('Account Settings > Sidebar > General', () => {
             cy.uiOpenChannelMenu('Add Members');
 
             // * Verify that the modal is open
-            cy.get('#addUsersToChannelModal').should('be.visible').findByText(`Add people to ${channel.display_name}`);
+            cy.get('#addUsersToChannelModal').should('be.visible').and('contain', `Add New Members to ${channel.display_name}`);
 
             // # Type into the input box to search for a user
             cy.get('#selectItems input').type('sys');

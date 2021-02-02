@@ -154,7 +154,7 @@ describe('Sidebar channel menu', () => {
         cy.get('.SidebarMenu').contains('.MenuItem', 'Add Members').click();
 
         // * Verify that the modal appears and then close it
-        cy.get('#addUsersToChannelModal').should('be.visible').findByText('Add people to Town Square');
+        cy.get('#addUsersToChannelModal').should('be.visible').and('contain', 'Add New Members to Town Square');
         cy.uiClose();
     });
 
