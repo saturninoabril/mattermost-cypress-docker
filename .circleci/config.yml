@@ -192,6 +192,9 @@ commands:
             export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
             export CYPRESS_ciBaseUrl=${CI_BASE_URL}
 
+            // TODO: remove
+            export DEBUG=cypress:*
+
             curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 $CYPRESS_baseUrl
 
             cd e2e && node run_tests.js << parameters.run_filter >> << parameters.run_part >>
