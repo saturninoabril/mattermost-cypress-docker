@@ -116,6 +116,9 @@ commands:
       - run:
           name: Create the test server
           command: |
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT"
+            CREATE_URL="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
+            curl -X POST $CREATE_URL
             sleep 1m
   teardown-test-server:
     steps:
@@ -162,10 +165,10 @@ commands:
             echo export CYPRESS_runLDAPSync=${CYPRESS_runLDAPSync} >> shared
             echo export CYPRESS_serverEdition=${CYPRESS_serverEdition} >> shared
 
-            echo export BASE_URL_1=ec2-34-207-125-184.compute-1.amazonaws.com >> shared
-            echo export BASE_URL_2=ec2-34-207-69-255.compute-1.amazonaws.com >> shared
-            echo export BASE_URL_3=ec2-3-95-166-109.compute-1.amazonaws.com >> shared
-            echo export BASE_URL_4=ec2-34-227-112-234.compute-1.amazonaws.com >> shared
+            echo export BASE_URL_1=${BASE_URL_1} >> shared
+            echo export BASE_URL_2=${BASE_URL_2} >> shared
+            echo export BASE_URL_3=${BASE_URL_3} >> shared
+            echo export BASE_URL_4=${BASE_URL_4} >> shared
 
             cat shared >> $BASH_ENV
             source $BASH_ENV
@@ -191,9 +194,6 @@ commands:
             export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
             export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
             export CYPRESS_ciBaseUrl=${CI_BASE_URL}
-
-            # TODO: remove
-            export DEBUG=cypress:*
 
             curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 $CYPRESS_baseUrl
 
@@ -243,6 +243,10 @@ jobs:
       - attach-workspace
       - set-shared-env
       - create-test-server
+      - run:
+          name: Test server health check
+          command: |
+            curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 "${BASE_URL_1}:8065/api/v4/system/ping"
       - persist_to_workspace:
           root: ~/mattermost
           paths:
