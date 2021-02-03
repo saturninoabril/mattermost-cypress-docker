@@ -222,14 +222,14 @@ jobs:
     environment:
       MM_DOCKER_IMAGE: mattermost-enterprise-edition
       MM_DOCKER_EDITION: ee
-      MM_DOCKER_TAG: 1371_960be4cb_4ab25ee3_8155bd7b
+      MM_DOCKER_TAG: 5.32.0-rc1
       SERVER_INSTANCE_COUNT: 4
       TYPE: RELEASE
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
-      FULL_REPORT: true
+      FULL_REPORT: false
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
       TM4J_FOLDER_ID: "1146800"
@@ -261,7 +261,6 @@ jobs:
       - install-npm
       - save-cache
       - apply-shared-env
-      - teardown-test-server
       - run:
           name: Consolidate reports to common /results folder
           no_output_timeout: 30m
