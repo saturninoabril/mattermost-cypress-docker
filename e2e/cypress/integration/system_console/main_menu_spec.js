@@ -54,9 +54,9 @@ describe('Main menu', () => {
 
     it('MM-T912 Can open Commercial Support', () => {
         // * Verify commercial support
-        cy.findByText('Commercial Support').click();
-        cy.get('#commercialSupportModal').should('be.visible');
-        cy.uiClose();
+        cy.findByText('Commercial Support').
+            should('be.visible').
+            and('have.attr', 'href', 'https://about.mattermost.com/commercial-support/').
+            and('have.attr', 'target', '_blank');
     });
 });
-

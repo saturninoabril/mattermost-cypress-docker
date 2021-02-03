@@ -10,6 +10,8 @@
 // Stage: @prod
 // Group: @notifications
 
+import * as TIMEOUTS from '../../fixtures/timeouts';
+
 describe('Notifications', () => {
     let user1;
     let user2;
@@ -19,12 +21,12 @@ describe('Notifications', () => {
     let siteName;
 
     before(() => {
-        cy.apiInitSetup().then(({team, user}) => {
+        cy.apiInitSetup({userPrefix: 'user_one_'}).then(({team, user, channel}) => {
             team1 = team;
             user1 = user;
             testTeam1TownSquareUrl = `/${team.name}/channels/town-square`;
 
-            cy.apiCreateUser().then(({user: otherUser}) => {
+            cy.apiCreateUser({prefix: 'user_two_'}).then(({user: otherUser}) => {
                 user2 = otherUser;
                 cy.apiAddUserToTeam(team.id, user2.id);
             });
@@ -41,8 +43,8 @@ describe('Notifications', () => {
 
             // # Remove mention notification (for initial channel).
             cy.apiLogin(user1);
-            cy.visit(testTeam1TownSquareUrl);
-            cy.get('#publicChannelList').get('.unread-title').click();
+            cy.visit(testTeam1TownSquareUrl).wait(TIMEOUTS.THREE_SEC);
+            cy.get('#publicChannelList').findByText(channel.display_name).click().wait(TIMEOUTS.THREE_SEC);
             cy.apiLogout();
         });
     });

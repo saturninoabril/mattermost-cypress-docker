@@ -20,7 +20,7 @@ describe('Messaging', () => {
         });
     });
 
-    it('MM-T198 Emojis preceeded by 4 or more spaces are always treated as markdown', () => {
+    it('MM-T198 Emojis preceded by 4 or more spaces are always treated as markdown', () => {
         [
             '    :taco:',
             '     :taco:',
@@ -40,14 +40,14 @@ describe('Messaging', () => {
 });
 
 function createMessages(message, aliases) {
-    cy.postMessage(message);
+    cy.postMessage(`${message}{enter}`);
     cy.getLastPostId().then((postId) => {
         cy.get(`#postMessageText_${postId}`).as(aliases[0]);
         cy.clickPostCommentIcon(postId);
         cy.wait(TIMEOUTS.HALF_SEC);
     });
 
-    cy.postMessageReplyInRHS(message);
+    cy.postMessageReplyInRHS(`${message}{enter}`);
     cy.getLastPostId().then((postId) => {
         cy.get(`#postMessageText_${postId}`).as(aliases[1]);
     });

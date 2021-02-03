@@ -155,8 +155,6 @@ describe('Authentication', () => {
     });
 
     it('MM-T1752 - Enable account creation - true', () => {
-        cy.apiAdminLogin();
-
         // # Enable open server
         cy.apiUpdateConfig({
             TeamSettings: {
@@ -165,7 +163,8 @@ describe('Authentication', () => {
             },
         });
 
-        // # Go to front page
+        // # Logout and go to front page
+        cy.apiLogout();
         cy.visit('/login');
 
         // * Assert that create account button is visible

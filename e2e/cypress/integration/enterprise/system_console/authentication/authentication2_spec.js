@@ -172,21 +172,6 @@ describe('Authentication Part 2', () => {
         });
     });
 
-    it('MM-T1760 - Enable Open Server false: Create account link is hidden', () => {
-        // # Enable open server and turn on user account creation and set restricted domain
-        cy.apiUpdateConfig({
-            TeamSettings: {
-                EnableOpenServer: false,
-            },
-        }).then(() => {
-            cy.apiLogout();
-            cy.visit('/');
-
-            // * Assert that create account button is not visible
-            cy.findByText('Create one now.', {timeout: TIMEOUTS.ONE_MIN}).should('not.be.visible');
-        });
-    });
-
     it('MM-T1761 - Enable Open Server - Create link appears if email account creation is false and other signin methods are true', () => {
         // # Enable open server and turn on user account creation and set restricted domain
         cy.apiUpdateConfig({

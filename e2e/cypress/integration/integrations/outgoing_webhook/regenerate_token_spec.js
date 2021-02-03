@@ -10,6 +10,8 @@
 // Stage: @prod
 // Group: @integrations
 
+import * as TIMEOUTS from '../../../fixtures/timeouts';
+
 describe('Integrations', () => {
     let testTeam;
     let testChannel;
@@ -41,7 +43,8 @@ describe('Integrations', () => {
         let generatedToken;
         cy.get('.item-details__token').then((number1) => {
             generatedToken = number1.text().split(' ').pop();
-            cy.visit(`/${testTeam}/channels/${testChannel}`);
+            console.log('generatedToken', generatedToken);
+            cy.visit(`/${testTeam}/channels/${testChannel}`).wait(TIMEOUTS.THREE_SEC);
 
             // * Post message and assert token is present in test message
             cy.postMessage('testing');
@@ -50,15 +53,15 @@ describe('Integrations', () => {
 
         // # Regenerate the token
         cy.visit(`/${testTeam}/integrations/outgoing_webhooks`);
-        cy.findAllByText('Regenerate Token').click();
+        cy.findAllByText('Regenerate Token').click().wait(TIMEOUTS.THREE_SEC);
 
         // # Grab the regenerated token
         let regeneratedToken;
         cy.get('.item-details__token').then((number2) => {
             regeneratedToken = number2.text().split(' ').pop();
-
+            console.log('regeneratedToken', regeneratedToken);
             // * Post a message and confirm regenerated token appears only
-            cy.visit(`/${testTeam}/channels/${testChannel}`);
+            cy.visit(`/${testTeam}/channels/${testChannel}`).wait(TIMEOUTS.THREE_SEC);
             cy.postMessage('testing');
             cy.uiWaitUntilMessagePostedIncludes(regeneratedToken).then(() => {
                 cy.getLastPostId().then((lastPostId) => {
