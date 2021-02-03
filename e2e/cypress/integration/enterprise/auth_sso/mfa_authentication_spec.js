@@ -8,9 +8,9 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @enterprise @system_console @authentication
+// Group: @enterprise @system_console @authentication @mfa
 
-import * as TIMEOUTS from '../../../../fixtures/timeouts';
+import * as TIMEOUTS from '../../../fixtures/timeouts';
 
 const authenticator = require('authenticator');
 
