@@ -56,7 +56,7 @@ describe('Header', () => {
         cy.apiRemovePluginById('com.github.matterpoll.matterpoll');
 
         // # Upload and enable "matterpoll" plugin
-        cy.apiUploadPlugin('com.github.matterpoll.matterpoll.tar.gz', 0).then(() => {
+        cy.apiUploadPlugin('com.github.matterpoll.matterpoll.tar.gz').then(() => {
             cy.apiEnablePluginById('com.github.matterpoll.matterpoll');
         });
 
