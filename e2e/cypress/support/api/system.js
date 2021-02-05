@@ -102,6 +102,7 @@ Cypress.Commands.add('apiDeleteLicense', () => {
 
 export const getDefaultConfig = () => {
     const cypressEnv = Cypress.env();
+    const allowedUntrustedInternalConnections = cypressEnv.ciBaseUrl ? `localhost ${cypressEnv.ciBaseUrl}` : 'localhost';
 
     const fromCypressEnv = {
         LdapSettings: {
@@ -109,7 +110,7 @@ export const getDefaultConfig = () => {
             LdapPort: cypressEnv.ldapPort,
         },
         ServiceSettings: {
-            AllowedUntrustedInternalConnections: 'localhost',
+            AllowedUntrustedInternalConnections: allowedUntrustedInternalConnections,
             SiteURL: Cypress.config('baseUrl'),
         },
     };
