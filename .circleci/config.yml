@@ -186,6 +186,7 @@ commands:
             export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
             export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
             export CYPRESS_ciBaseUrl=${CI_BASE_URL}
+            export CYPRESS_allowedUntrustedInternalConnections="localhost ${CI_BASE_URL}"
 
             curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 $CYPRESS_baseUrl
 
