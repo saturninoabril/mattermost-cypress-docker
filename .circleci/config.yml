@@ -42,8 +42,8 @@ commands:
       - run:
           name: Setup client
           command: |
-            sudo apt-get update
-            sudo apt-get install libxss1
+            # sudo apt-get update
+            # sudo apt-get install libxss1
   setup-required-files:
     description: "Setup required files"
     steps:
