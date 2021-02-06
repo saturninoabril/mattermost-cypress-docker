@@ -282,7 +282,7 @@ jobs:
           path: ~/mattermost/e2e/results/junit
   e2e-test-1:
     docker:
-      - image: cimg/node:lts-browsers
+      - image: cypress/included:6.4.0
     working_directory: ~/mattermost/e2e-test-1
     steps:
       - checkout
@@ -301,7 +301,7 @@ jobs:
   
   e2e-test-2:
     docker:
-      - image: cimg/node:lts-browsers
+      - image: cypress/included:6.4.0
     working_directory: ~/mattermost/e2e-test-2
     steps:
       - checkout
@@ -320,7 +320,7 @@ jobs:
 
   e2e-test-3:
     docker:
-      - image: cimg/node:lts-browsers
+      - image: cypress/included:6.4.0
     working_directory: ~/mattermost/e2e-test-3
     steps:
       - checkout
@@ -339,7 +339,7 @@ jobs:
 
   e2e-test-4:
     docker:
-      - image: cimg/node:lts-browsers
+      - image: cypress/included:6.4.0
     working_directory: ~/mattermost/e2e-test-4
     steps:
       - checkout
