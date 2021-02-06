@@ -218,7 +218,7 @@ commands:
 jobs:
   create-test-server:
     docker:
-      - image: cimg/node:15.3.0
+      - image: cimg/node:lts
     working_directory: ~/mattermost/env-var
     environment:
       MM_DOCKER_IMAGE: mattermost-enterprise-edition
@@ -254,7 +254,7 @@ jobs:
             - env-var/shared
   merge-and-save-test-reports:
     docker:
-      - image: circleci/node:lts-buster-browsers-legacy
+      - image: cimg/node:lts
     working_directory: ~/mattermost
     steps:
       - checkout
@@ -282,7 +282,7 @@ jobs:
           path: ~/mattermost/e2e/results/junit
   e2e-test-1:
     docker:
-      - image: circleci/node:lts-buster-browsers-legacy
+      - image: cimg/node:lts-browsers
     working_directory: ~/mattermost/e2e-test-1
     steps:
       - checkout
@@ -301,7 +301,7 @@ jobs:
   
   e2e-test-2:
     docker:
-      - image: circleci/node:lts-buster-browsers-legacy
+      - image: cimg/node:lts-browsers
     working_directory: ~/mattermost/e2e-test-2
     steps:
       - checkout
@@ -320,7 +320,7 @@ jobs:
 
   e2e-test-3:
     docker:
-      - image: circleci/node:lts-buster-browsers-legacy
+      - image: cimg/node:lts-browsers
     working_directory: ~/mattermost/e2e-test-3
     steps:
       - checkout
@@ -339,7 +339,7 @@ jobs:
 
   e2e-test-4:
     docker:
-      - image: circleci/node:lts-buster-browsers-legacy
+      - image: cimg/node:lts-browsers
     working_directory: ~/mattermost/e2e-test-4
     steps:
       - checkout
