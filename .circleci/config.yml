@@ -228,7 +228,7 @@ jobs:
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
       TM4J_FOLDER_ID: "1164564"
-      TM4J_CYCLE_NAME: "Cloud Feb 10 Cypress"
+      TM4J_CYCLE_NAME: Cloud Feb 10 Cypress
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
