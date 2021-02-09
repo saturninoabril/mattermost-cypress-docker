@@ -111,7 +111,7 @@ describe('Channel sidebar', () => {
         // Wait for state to settle
         // This is necessary since we have no observable way of finding out when the state actually settles so that it persists on reload
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(TIMEOUTS.TWO_SEC);
+        cy.wait(TIMEOUTS.FIVE_SEC);
 
         // # Reload the page and wait
         cy.reload();
@@ -128,7 +128,7 @@ describe('Channel sidebar', () => {
 
         // Wait for state to settle
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(TIMEOUTS.ONE_SEC);
+        cy.wait(TIMEOUTS.FIVE_SEC);
 
         // # Reload the page and wait
         cy.reload();
@@ -136,5 +136,41 @@ describe('Channel sidebar', () => {
 
         // * Verify that the category still appears not collapsed after refresh
         cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('not.have.class', 'icon-rotate-minus-90');
+    });
+
+    it('should retain the collapsed state of categories when unread filter is enabled/disabled', () => {
+        cy.getCurrentTeamId().then((teamId) => {
+            cy.apiCreateChannel(teamId, 'channel-test', 'Channel Test').then(({channel}) => {
+                cy.postMessageAs({sender: sysadmin, message: 'Test', channelId: channel.id});
+
+                // * Verify that CHANNELS starts expanded
+                cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('not.have.class', 'icon-rotate-minus-90');
+
+                // * Verify that all categories are visible
+                cy.get('.SidebarChannelGroupHeader:contains(CHANNELS)').should('be.visible');
+                cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
+                cy.get('.SidebarChannelGroupHeader:contains(DIRECT MESSAGES)').should('be.visible');
+                cy.get('.SidebarChannelGroupHeader:contains(DIRECT MESSAGES) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
+
+                // # Collapse CHANNELS
+                cy.get('.SidebarChannelGroupHeader:contains(CHANNELS)').click();
+
+                // * Verify that CHANNELS is collapsed
+                cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('have.class', 'icon-rotate-minus-90');
+
+                // # Enable the unread filter
+                cy.get('.SidebarFilters_filterButton').click();
+
+                // * Verify that the unread filter is enabled
+                cy.get('.SidebarChannelGroupHeader:contains(UNREADS)').should('be.visible');
+
+                // # Disable the unread filter
+                cy.get('.SidebarFilters_filterButton').click();
+
+                // * Verify that DIRECT MESSAGES is not collapsed but CHANNELS still is
+                cy.get('.SidebarChannelGroupHeader:contains(CHANNELS) i').should('be.visible').should('have.class', 'icon-rotate-minus-90');
+                cy.get('.SidebarChannelGroupHeader:contains(DIRECT MESSAGES) i').should('be.visible').should('not.have.class', 'icon-rotate-minus-90');
+            });
+        });
     });
 });

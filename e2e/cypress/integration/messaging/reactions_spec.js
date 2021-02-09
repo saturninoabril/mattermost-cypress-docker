@@ -16,7 +16,7 @@ describe('Messaging', () => {
     before(() => {
         cy.apiInitSetup().then(({team, channel, user}) => {
             cy.apiLogin(user);
-            cy.visitAndWait(`/${team.name}/channels/${channel.name}`);
+            cy.visit(`/${team.name}/channels/${channel.name}`);
         });
     });
 
@@ -106,6 +106,44 @@ describe('Messaging', () => {
                 // # Close RHS
                 cy.closeRHS();
             });
+        });
+    });
+
+    it('MM-T2195 Emoji reaction - not available on system message Save - not available on system message Pin - not available on system message Can delete your own system message', () => {
+        // # Click add a channel description
+        cy.findByRoleExtended('button', {name: 'Add a channel description'}).should('be.visible').click();
+
+        // # Add or update a channel header
+        cy.get('#editChannelHeaderModalLabel').should('be.visible');
+        cy.get('textarea#edit_textbox').should('be.visible').type('This is a channel description{enter}');
+
+        cy.getLastPostId().then((postId) => {
+            // * Emoji reaction - not available on system message
+            cy.get(`#post_${postId}`).trigger('mouseover', {force: true});
+            cy.wait(TIMEOUTS.HALF_SEC).get(`#CENTER_reaction_${postId}`).should('not.exist');
+
+            // * Save - not available on system message
+            cy.get(`#post_${postId}`).trigger('mouseover', {force: true});
+            cy.wait(TIMEOUTS.HALF_SEC).get(`#CENTER_flagIcon_${postId}`).should('not.exist');
+
+            // * Pin - not available on system message
+            cy.get(`#post_${postId}`).should('be.visible').within(() => {
+                cy.get('.post-menu').should('be.visible').within(() => {
+                    return cy.findByText('Pin to Channel').should('not.exist');
+                });
+            });
+
+            // * If permissions allow, can click [...] >
+            cy.clickPostDotMenu(postId);
+
+            // # Delete to delete system message
+            cy.get(`#delete_post_${postId}`).click();
+
+            // * Check that confirmation dialog is open.
+            cy.get('#deletePostModal').should('be.visible');
+
+            // # Confirm deletion.
+            cy.get('#deletePostModalButton').click();
         });
     });
 

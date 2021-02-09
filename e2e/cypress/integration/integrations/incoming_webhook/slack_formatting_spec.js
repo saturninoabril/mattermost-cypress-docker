@@ -50,7 +50,7 @@ describe('Incoming webhook', () => {
     });
 
     beforeEach(() => {
-        cy.visitAndWait(`/${testTeam.name}/channels/${testChannel.name}`);
+        cy.visit(`/${testTeam.name}/channels/${testChannel.name}`);
     });
 
     describe('MM-T626 Incoming webhook is only image and fallback text', () => {
@@ -77,7 +77,7 @@ describe('Incoming webhook', () => {
             const payload = {channel: 'off-topic', text: search, username: 'new_username', attachments: [{fallback: 'fallback text', image_url: imageUrl}], icon_url: 'http://www.mattermost.org/wp-content/uploads/2016/04/icon_WS.png'};
 
             cy.postIncomingWebhook({url: incomingWebhook.url, data: payload});
-            cy.visitAndWait(offTopicLink);
+            cy.visit(offTopicLink);
 
             cy.getLastPost().within(() => {
                 cy.get('.post-message__text').should('have.text', search);
@@ -168,7 +168,7 @@ describe('Incoming webhook', () => {
                 title_link: 'https://www.google.com'}],
         };
 
-        cy.visitAndWait(offTopicLink);
+        cy.visit(offTopicLink);
 
         cy.postIncomingWebhook({url: incomingWebhook.url, data: payload});
 
@@ -204,7 +204,7 @@ describe('Incoming webhook', () => {
                 title_link: 'https://www.google.com'}],
         };
 
-        cy.visitAndWait(offTopicLink);
+        cy.visit(offTopicLink);
 
         cy.postIncomingWebhook({url: incomingWebhook.url, data: payload});
 
@@ -253,7 +253,6 @@ describe('Incoming webhook', () => {
                 const currentID = `${id} - ${i}`;
                 const payload = makePayloadFromShortValue(testCase.short, currentID);
                 cy.postIncomingWebhook({url: incomingWebhook.url, data: payload});
-                cy.wait(5000);
 
                 cy.getLastPost().within(() => {
                     cy.get('.attachment__body .post-message__text-container p').should('contain', currentID);
@@ -291,7 +290,6 @@ describe('Incoming webhook', () => {
         const payload = {text: id, attachments: [{pretext: 'This is the attachment pretext.', text: 'This is the attachment text.', actions: [{name: 'Select an option...', integration: {url: 'http://127.0.0.1:7357/action_options', context: {action: 'do_something'}}, type: 'select', data_source: 'channels'}, {name: 'Select an option...', integration: {url: 'http://127.0.0.1:7357/action_options', context: {action: 'do_something'}}, type: 'select', options: [{text: 'Option1', value: 'opt1'}, {text: 'Option2', value: 'opt2'}, {text: 'Option3', value: 'opt3'}]}, {name: 'Ephemeral Message', integration: {url: 'http://127.0.0.1:7357', context: {action: 'do_something_ephemeral'}}}, {name: 'Update', integration: {url: 'http://127.0.0.1:7357', context: {action: 'do_something_update'}}}]}]};
 
         cy.postIncomingWebhook({url: incomingWebhook.url, data: payload});
-        cy.uiWaitUntilMessagePostedIncludes(payload.text);
 
         cy.getLastPost().within(() => {
             cy.get('.post-message__text').should('have.text', id);

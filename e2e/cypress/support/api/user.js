@@ -4,6 +4,8 @@
 import {getRandomId} from '../../utils';
 import {getAdminAccount} from '../env';
 
+import {buildQueryString} from './helpers';
+
 // *****************************************************************************
 // Users
 // https://api.mattermost.com/#tag/users
@@ -80,7 +82,7 @@ Cypress.Commands.add('apiLogout', () => {
     });
 
     // * Verify logged out
-    cy.visitAndWait('/login?extra=expired').url().should('include', '/login');
+    cy.visit('/login?extra=expired').url().should('include', '/login');
 
     // # Ensure we clear out these specific cookies
     ['MMAUTHTOKEN', 'MMUSERID', 'MMCSRF'].forEach((cookie) => {
@@ -263,10 +265,12 @@ Cypress.Commands.add('apiRevokeUserSessions', (userId) => {
     });
 });
 
-Cypress.Commands.add('apiGetUsers', ({page = 0, perPage = 60} = {}) => {
+Cypress.Commands.add('apiGetUsers', (queryParams = {}) => {
+    const queryString = buildQueryString(queryParams);
+
     return cy.request({
         method: 'GET',
-        url: `/api/v4/users?page=${page}&per_page=${perPage}`,
+        url: `/api/v4/users?${queryString}`,
         headers: {'X-Requested-With': 'XMLHttpRequest'},
     }).then((response) => {
         expect(response.status).to.equal(200);
@@ -275,14 +279,7 @@ Cypress.Commands.add('apiGetUsers', ({page = 0, perPage = 60} = {}) => {
 });
 
 Cypress.Commands.add('apiGetUsersNotInTeam', ({teamId, page = 0, perPage = 60} = {}) => {
-    return cy.request({
-        method: 'GET',
-        url: `/api/v4/users?not_in_team=${teamId}&page=${page}&per_page=${perPage}`,
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-    }).then((response) => {
-        expect(response.status).to.equal(200);
-        return cy.wrap({users: response.body});
-    });
+    return cy.apiGetUsers({not_in_team: teamId, page, per_page: perPage});
 });
 
 Cypress.Commands.add('apiPatchUserRoles', (userId, roleNames = ['system_user']) => {

@@ -66,14 +66,6 @@ Cypress.Commands.add('postIncomingWebhook', ({url, data, waitFor}) => {
     }));
 });
 
-/**
-* externalRequest is a task which is wrapped as command with post-verification
-* that the external request is successfully completed
-* @param {Object} user - a user initiating external request
-* @param {String} method - an HTTP method (e.g. get, post, etc)
-* @param {String} path - API path that is relative to Cypress.config().baseUrl
-* @param {Object} data - payload
-*/
 Cypress.Commands.add('externalRequest', ({user, method, path, data, failOnStatusCode = true}) => {
     const baseUrl = Cypress.config('baseUrl');
 

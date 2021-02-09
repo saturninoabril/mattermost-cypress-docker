@@ -7,14 +7,14 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: @prod
-// Group: @not_cloud @signin_authentication
+// Group: @subpath @not_cloud @signin_authentication
 
 describe('Cookie with Subpath', () => {
     let testUser;
     let townsquareLink;
 
     before(() => {
+        cy.shouldRunWithSubpath();
         cy.shouldNotRunOnCloudEdition();
 
         // # Create new team and user
@@ -24,7 +24,7 @@ describe('Cookie with Subpath', () => {
             // Logout current session and try to visit town-square
             cy.apiLogout().then(() => {
                 townsquareLink = `/${team.name}/channels/town-square`;
-                cy.visitAndWait(townsquareLink);
+                cy.visit(townsquareLink);
             });
         });
     });

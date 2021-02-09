@@ -152,6 +152,7 @@ commands:
             echo export TM4J_ENABLE=${TM4J_ENABLE} >> shared
             echo export JIRA_PROJECT_KEY=${JIRA_PROJECT_KEY} >> shared
             echo export TM4J_FOLDER_ID=${TM4J_FOLDER_ID} >> shared
+            echo export TM4J_CYCLE_NAME=${TM4J_CYCLE_NAME} >> shared
 
             echo export CYPRESS_chromeWebSecurity=${CYPRESS_chromeWebSecurity} >> shared
             echo export CYPRESS_numberOfTrialUsers=${CYPRESS_numberOfTrialUsers} >> shared
@@ -216,7 +217,7 @@ jobs:
     environment:
       MM_DOCKER_IMAGE: mm-ee-test
       MM_DOCKER_EDITION: ce
-      MM_DOCKER_TAG: 1289_efe2eba2_2bd65f08_4215ffa7
+      MM_DOCKER_TAG: 1481_10bc8d8c_92065f45_350028e8
       SERVER_INSTANCE_COUNT: 4
       TYPE: CLOUD
       PULL_REQUEST: add-link
@@ -226,7 +227,8 @@ jobs:
       FULL_REPORT: true
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "1119716"
+      TM4J_FOLDER_ID: "1164564"
+      TM4J_CYCLE_NAME: "Cloud Feb 10 Cypress"
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
