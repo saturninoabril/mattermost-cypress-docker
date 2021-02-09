@@ -89,6 +89,7 @@ commands:
             echo $TM4J_ENABLE
             echo $JIRA_PROJECT_KEY
             echo $TM4J_FOLDER_ID
+            echo $TM4J_CYCLE_NAME
             export BRANCH=$CIRCLE_BRANCH
             export BUILD_ID=$CIRCLE_BUILD_NUM
 
@@ -228,7 +229,7 @@ jobs:
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
       TM4J_FOLDER_ID: "1164564"
-      TM4J_CYCLE_NAME: Cloud Feb 10 Cypress
+      TM4J_CYCLE_NAME: 'Cloud Feb 10 Cypress'
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
