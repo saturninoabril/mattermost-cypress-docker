@@ -231,18 +231,18 @@ jobs:
     environment:
       MM_DOCKER_IMAGE: mattermost-enterprise-edition
       MM_DOCKER_EDITION: ee
-      MM_DOCKER_TAG: master
+      MM_DOCKER_TAG: 1bcf710
       SERVER_INSTANCE_COUNT: 4
-      TYPE: MASTER
-      PULL_REQUEST: add-link
+      TYPE: PR
+      PULL_REQUEST: https://github.com/mattermost/mattermost-webapp/pull/7512
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
       FULL_REPORT: false
-      TM4J_ENABLE: true
+      TM4J_ENABLE: false
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "1106027"
-      TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/master-e20-prod"
+      TM4J_FOLDER_ID: ""
+      TM4J_ENVIRONMENT_NAME: ""
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
