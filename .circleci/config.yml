@@ -96,6 +96,7 @@ commands:
             echo $TM4J_ENABLE
             echo $JIRA_PROJECT_KEY
             echo $TM4J_FOLDER_ID
+            echo $TM4J_CYCLE_NAME
             export BRANCH=$CIRCLE_BRANCH
             export BUILD_ID=$CIRCLE_BUILD_NUM
 
@@ -159,6 +160,7 @@ commands:
             echo export JIRA_PROJECT_KEY=${JIRA_PROJECT_KEY} >> shared
             echo export TM4J_FOLDER_ID=${TM4J_FOLDER_ID} >> shared
             echo export TM4J_ENVIRONMENT_NAME=${TM4J_ENVIRONMENT_NAME} >> shared
+            echo export TM4J_CYCLE_NAME=${TM4J_CYCLE_NAME} >> shared
 
             echo export CYPRESS_chromeWebSecurity=${CYPRESS_chromeWebSecurity} >> shared
             echo export CYPRESS_numberOfTrialUsers=${CYPRESS_numberOfTrialUsers} >> shared
@@ -229,11 +231,11 @@ jobs:
       - image: cimg/node:lts
     working_directory: ~/mattermost/env-var
     environment:
-      MM_DOCKER_IMAGE: mattermost-enterprise-edition
-      MM_DOCKER_EDITION: ee
-      MM_DOCKER_TAG: master
+      MM_DOCKER_IMAGE: mm-ee-test
+      MM_DOCKER_EDITION: ce
+      MM_DOCKER_TAG: 1561_021c90f2_f1c77d88_888d390c
       SERVER_INSTANCE_COUNT: 4
-      TYPE: MASTER
+      TYPE: CLOUD
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
@@ -241,13 +243,14 @@ jobs:
       FULL_REPORT: false
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "1106027"
-      TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/master-e20-prod"
+      TM4J_FOLDER_ID: "1170710"
+      TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/cloud"
+      TM4J_CYCLE_NAME: "Cloud Feb 10 Cypress"
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
       CYPRESS_runLDAPSync: false
-      CYPRESS_serverEdition: E20
+      CYPRESS_serverEdition: Cloud
     steps:
       - attach-workspace
       - set-shared-env
@@ -303,7 +306,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_1
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
+          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
           run_part: "--part=1 --of=4"
       - persist-and-store:
           folder: e2e-test-1
@@ -323,7 +326,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_2
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
+          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
           run_part: "--part=2 --of=4"
       - persist-and-store:
           folder: e2e-test-2
@@ -343,7 +346,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_3
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
+          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
           run_part: "--part=3 --of=4"
       - persist-and-store:
           folder: e2e-test-3
@@ -363,7 +366,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_4
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
+          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
           run_part: "--part=4 --of=4"
       - persist-and-store:
           folder: e2e-test-4
