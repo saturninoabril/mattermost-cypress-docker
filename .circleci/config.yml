@@ -160,7 +160,7 @@ commands:
             echo export JIRA_PROJECT_KEY=${JIRA_PROJECT_KEY} >> shared
             echo export TM4J_FOLDER_ID=${TM4J_FOLDER_ID} >> shared
             echo export TM4J_ENVIRONMENT_NAME=${TM4J_ENVIRONMENT_NAME} >> shared
-            echo export TM4J_CYCLE_NAME=${TM4J_CYCLE_NAME} >> shared
+            echo export TM4J_CYCLE_NAME="Cloud Feb 10 Cypress" >> shared
 
             echo export CYPRESS_chromeWebSecurity=${CYPRESS_chromeWebSecurity} >> shared
             echo export CYPRESS_numberOfTrialUsers=${CYPRESS_numberOfTrialUsers} >> shared
@@ -245,7 +245,6 @@ jobs:
       JIRA_PROJECT_KEY: MM
       TM4J_FOLDER_ID: "1170710"
       TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/cloud"
-      TM4J_CYCLE_NAME: "Cloud Feb 10 Cypress"
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
