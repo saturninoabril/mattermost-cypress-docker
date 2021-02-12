@@ -231,7 +231,7 @@ jobs:
     environment:
       MM_DOCKER_IMAGE: mattermost-enterprise-edition
       MM_DOCKER_EDITION: ee
-      MM_DOCKER_TAG: 1bcf710
+      MM_DOCKER_TAG: 779d31a
       SERVER_INSTANCE_COUNT: 4
       TYPE: PR
       PULL_REQUEST: https://github.com/mattermost/mattermost-webapp/pull/7512
