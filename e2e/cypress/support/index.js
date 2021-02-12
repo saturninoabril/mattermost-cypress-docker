@@ -104,6 +104,9 @@ before(() => {
     // # Try to login using existing sysadmin account
     cy.apiAdminLogin({failOnStatusCode: false}).then((response) => {
         if (response.user) {
+            // Sends dummy call to update the config after creating an admin user.
+            // Without this, first call to `cy.apiUpdateConfig()` consistently getting time out error in CI against remote server.
+            cy.externalRequest({user: sysadmin, method: 'put', path: 'config', data: getDefaultConfig(), failOnStatusCode: false});
             sysadminSetup(response.user);
         } else {
             // # Create and login a newly created user as sysadmin
