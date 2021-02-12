@@ -50,7 +50,7 @@ module.exports = {
             });
         }
         , {
-            timeout: TIMEOUTS.FIVE_MIN,
+            timeout: TIMEOUTS.TWO_MIN,
             interval: TIMEOUTS.TWO_SEC,
             errorMsg: 'Reindex did not succeed in time',
         });

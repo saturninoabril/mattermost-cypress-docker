@@ -143,6 +143,7 @@ commands:
             BASE_URL_2="$BASE_URL_SUBSTR-2.$DNS_ZONE_NAME"
             BASE_URL_3="$BASE_URL_SUBSTR-3.$DNS_ZONE_NAME"
             BASE_URL_4="$BASE_URL_SUBSTR-4.$DNS_ZONE_NAME"
+            BASE_URL_COMMON="$BASE_URL_SUBSTR-common.$DNS_ZONE_NAME"
 
             echo export MM_DOCKER_IMAGE=$MM_DOCKER_IMAGE >> shared
             echo export MM_DOCKER_TAG=$MM_DOCKER_TAG >> shared
@@ -170,6 +171,7 @@ commands:
             echo export BASE_URL_2=${BASE_URL_2} >> shared
             echo export BASE_URL_3=${BASE_URL_3} >> shared
             echo export BASE_URL_4=${BASE_URL_4} >> shared
+            echo export BASE_URL_COMMON=${BASE_URL_COMMON} >> shared
 
             cat shared >> $BASH_ENV
             source $BASH_ENV
@@ -177,6 +179,8 @@ commands:
     description: "Run Cypress test"
     parameters:
       ci_base_url:
+        type: string
+      common_base_url:
         type: string
       run_filter:
         type: string
@@ -189,9 +193,11 @@ commands:
             curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 << parameters.ci_base_url >>:8065/api/v4/system/ping
 
             export CI_BASE_URL=<< parameters.ci_base_url >>
+            export COMMON_BASE_URL=<< parameters.common_base_url >>
             export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
             export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
+            export CYPRESS_elasticsearchConnectionUrl="http://${COMMON_BASE_URL}:9200"
             export CYPRESS_minioS3Endpoint="${CI_BASE_URL}:9000"
 
             export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
@@ -297,6 +303,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_1
+          common_base_url: $BASE_URL_COMMON
           run_filter: "--stage='@prod' --invert"
           run_part: "--part=1 --of=4"
       - persist-and-store:
@@ -316,6 +323,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_2
+          common_base_url: $BASE_URL_COMMON
           run_filter: "--stage='@prod' --invert"
           run_part: "--part=2 --of=4"
       - persist-and-store:
@@ -335,6 +343,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_3
+          common_base_url: $BASE_URL_COMMON
           run_filter: "--stage='@prod' --invert"
           run_part: "--part=3 --of=4"
       - persist-and-store:
@@ -354,6 +363,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_4
+          common_base_url: $BASE_URL_COMMON
           run_filter: "--stage='@prod' --invert"
           run_part: "--part=4 --of=4"
       - persist-and-store:
