@@ -23,5 +23,7 @@ declare namespace Cypress {
         uiAddDirectMessage(): Chainable;
 
         uiGetChannelSwitcher(): Chainable;
+
+        uiGetChannelSidebarMenu(): Chainable;
     }
 }

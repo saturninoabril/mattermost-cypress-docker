@@ -233,7 +233,7 @@ jobs:
     environment:
       MM_DOCKER_IMAGE: mm-ee-test
       MM_DOCKER_EDITION: ce
-      MM_DOCKER_TAG: prerelease
+      MM_DOCKER_TAG: 1613_1760a72e_b5e750da_4b88c6bc
       SERVER_INSTANCE_COUNT: 4
       TYPE: NONE
       PULL_REQUEST: add-link

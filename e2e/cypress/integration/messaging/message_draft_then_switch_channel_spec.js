@@ -66,7 +66,7 @@ describe('Message Draft and Switch Channels', () => {
 function verifyDraftIcon(channelName, isVisible) {
     cy.uiGetLhsSection('CHANNELS').findByLabelText(`${channelName.toLowerCase()} public channel`).
         should('be.visible').
-        findByTestId('draftIcon').
+        find('.icon-pencil-outline').  // TODO: findByTestId('draftIcon').
         should(isVisible ? 'be.visible' : 'not.exist');
 }
 
