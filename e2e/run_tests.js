@@ -105,7 +105,6 @@ async function runTests() {
                 enableVisualTest: ENABLE_VISUAL_TEST,
                 enableApplitools: Boolean(APPLITOOLS_API_KEY),
                 batchName: APPLITOOLS_BATCH_NAME,
-                firstTest: j === 0,
             },
             reporter: 'cypress-multi-reporters',
             reporterOptions: {

@@ -81,8 +81,8 @@
         "DisableBotsWhenOwnerIsDeactivated": true,
         "EnableBotAccountCreation": true,
         "EnableSVGs": true,
-        "EnableLatex": false,
-        "EnableLegacySidebar": true
+        "EnableLegacySidebar": false,
+        "EnableLatex": false
     },
     "TeamSettings": {
         "SiteName": "Mattermost",

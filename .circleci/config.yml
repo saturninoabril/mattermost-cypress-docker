@@ -235,17 +235,17 @@ jobs:
       MM_DOCKER_EDITION: ce
       MM_DOCKER_TAG: prerelease
       SERVER_INSTANCE_COUNT: 4
-      TYPE: CLOUD
+      TYPE: NONE
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
       FULL_REPORT: false
-      TM4J_ENABLE: true
+      TM4J_ENABLE: false
       JIRA_PROJECT_KEY: MM
       TM4J_FOLDER_ID: "1170710"
       TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/cloud"
-      CYPRESS_chromeWebSecurity: true
+      CYPRESS_chromeWebSecurity: false
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
       CYPRESS_runLDAPSync: false

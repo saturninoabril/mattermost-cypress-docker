@@ -6,7 +6,7 @@ import Client4 from 'mattermost-redux/client/client4';
 import clientRequest from '../plugins/client_request';
 
 export class E2EClient extends Client4 {
-    async doFetchWithResponse(url, options) {
+    doFetchWithResponse = async (url, options) => {
         const {
             body,
             headers,
