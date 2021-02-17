@@ -138,8 +138,9 @@ commands:
             BASE_URL_4="$BASE_URL_SUBSTR-4.$DNS_ZONE_NAME"
             BASE_URL_COMMON="$BASE_URL_SUBSTR-common.$DNS_ZONE_NAME"
 
-            echo export MM_DOCKER_IMAGE=$MM_DOCKER_IMAGE >> shared
-            echo export MM_DOCKER_TAG=$MM_DOCKER_TAG >> shared
+            echo export MM_DOCKER_IMAGE=${MM_DOCKER_IMAGE} >> shared
+            echo export MM_DOCKER_TAG=${MM_DOCKER_TAG} >> shared
+            echo export RELEASE_DATE=${RELEASE_DATE} >> shared
 
             echo export TYPE=${TYPE} >> shared
             echo export PULL_REQUEST=${PULL_REQUEST} >> shared
@@ -224,6 +225,7 @@ jobs:
       MM_DOCKER_IMAGE: mattermost-enterprise-edition
       MM_DOCKER_EDITION: ee
       MM_DOCKER_TAG: master
+      RELEASE_DATE: ""
       SERVER_INSTANCE_COUNT: 4
       TYPE: NONE
       PULL_REQUEST: add-link
