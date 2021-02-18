@@ -99,6 +99,8 @@ commands:
             export BRANCH=$CIRCLE_BRANCH
             export BUILD_ID=$CIRCLE_BUILD_NUM
 
+            export TM4J_CYCLE_NAME="Cloud Feb 24 Cypress"
+
             # This is how it should be on main org repo
             # export PULL_REQUEST=$CIRCLE_PULL_REQUESTS
 
@@ -229,12 +231,12 @@ jobs:
       - image: cimg/node:lts
     working_directory: ~/mattermost/env-var
     environment:
-      MM_DOCKER_IMAGE: mattermost-enterprise-edition
-      MM_DOCKER_EDITION: ee
-      MM_DOCKER_TAG: 6657acc
+      MM_DOCKER_IMAGE: mm-ee-test
+      MM_DOCKER_EDITION: ce
+      MM_DOCKER_TAG: 1613_1760a72e_b5e750da_4b88c6bc
       SERVER_INSTANCE_COUNT: 4
       TYPE: NONE
-      PULL_REQUEST: https://github.com/mattermost/mattermost-webapp/pull/7538
+      PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
@@ -247,7 +249,7 @@ jobs:
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
       CYPRESS_runLDAPSync: false
-      CYPRESS_serverEdition: E20
+      CYPRESS_serverEdition: Cloud
     steps:
       - attach-workspace
       - set-shared-env
@@ -303,7 +305,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_1
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
+          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
           run_part: "--part=1 --of=4"
       - persist-and-store:
           folder: e2e-test-1
@@ -323,7 +325,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_2
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
+          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
           run_part: "--part=2 --of=4"
       - persist-and-store:
           folder: e2e-test-2
@@ -343,7 +345,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_3
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
+          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
           run_part: "--part=3 --of=4"
       - persist-and-store:
           folder: e2e-test-3
@@ -363,7 +365,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_4
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
+          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
           run_part: "--part=4 --of=4"
       - persist-and-store:
           folder: e2e-test-4
