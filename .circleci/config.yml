@@ -100,6 +100,7 @@ commands:
             export BUILD_ID=$CIRCLE_BUILD_NUM
 
             export TM4J_CYCLE_NAME="Cloud Feb 24 Cypress"
+            export RELEASE_DATE="Cloud Feb 24"
 
             # This is how it should be on main org repo
             # export PULL_REQUEST=$CIRCLE_PULL_REQUESTS
@@ -149,7 +150,6 @@ commands:
 
             echo export MM_DOCKER_IMAGE=${MM_DOCKER_IMAGE} >> shared
             echo export MM_DOCKER_TAG=${MM_DOCKER_TAG} >> shared
-            echo export RELEASE_DATE=${RELEASE_DATE} >> shared
 
             echo export TYPE=${TYPE} >> shared
             echo export PULL_REQUEST=${PULL_REQUEST} >> shared
@@ -235,7 +235,6 @@ jobs:
       MM_DOCKER_IMAGE: mm-ee-test
       MM_DOCKER_EDITION: ce
       MM_DOCKER_TAG: 1613_1760a72e_b5e750da_4b88c6bc
-      RELEASE_DATE: "Cloud Feb 24"
       SERVER_INSTANCE_COUNT: 4
       TYPE: CLOUD
       PULL_REQUEST: add-link
