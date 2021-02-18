@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: @prod
+// Stage: to investigate further
 // Group: @search_date_filter
 
 import {getAdminAccount} from '../../support/env';
