@@ -8,7 +8,7 @@ Cypress.Commands.add('uiCreateChannel', ({
     prefix = 'channel-',
     isPrivate = false,
     purpose = '',
-    header = ''
+    header = '',
 }) => {
     cy.get('#SidebarContainer .AddChannelDropdown_dropdownButton').click();
     cy.get('#showNewChannel button').click();
