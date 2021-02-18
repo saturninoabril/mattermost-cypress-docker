@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @enterprise @system_console
+// Group: @enterprise @system_console @not_cloud
 
 import accessRules from '../../../fixtures/system-roles-console-access';
 import disabledTests from '../../../fixtures/console-example-inputs';
@@ -22,6 +22,7 @@ describe('Limited console access', () => {
     const testUsers = {};
 
     before(() => {
+        cy.shouldNotRunOnCloudEdition();
         cy.apiRequireLicense();
 
         Cypress._.forEach(roleNames, (roleName) => {

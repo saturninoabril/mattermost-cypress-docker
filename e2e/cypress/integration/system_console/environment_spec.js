@@ -8,6 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
+// Group: @not_cloud
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
 
@@ -17,6 +18,7 @@ describe('Environment', () => {
 
     const mattermostIcon = 'mattermost-icon_128x128.png';
     before(() => {
+        cy.shouldNotRunOnCloudEdition();
         cy.apiInitSetup().then(({team}) => {
             testTeam = team;
             townsquareLink = `/${team.name}/channels/town-square`;
