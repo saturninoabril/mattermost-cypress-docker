@@ -35,7 +35,7 @@ describe('Header', () => {
         // # Create a bot
         cy.apiCreateBot().then(({bot}) => {
             // # Open a DM with the bot
-            cy.get('#addDirectChannel').click();
+            cy.uiAddDirectMessage().click();
             cy.get('.more-modal__list .more-modal__row');
             cy.get('#moreDmModal input').
                 type(bot.username, {force: true}).
@@ -56,12 +56,12 @@ describe('Header', () => {
         cy.apiRemovePluginById('com.github.matterpoll.matterpoll');
 
         // # Upload and enable "matterpoll" plugin
-        cy.apiUploadPlugin('com.github.matterpoll.matterpoll.tar.gz').then(() => {
+        cy.apiUploadPlugin('com.github.matterpoll.matterpoll.tar.gz', 0).then(() => {
             cy.apiEnablePluginById('com.github.matterpoll.matterpoll');
         });
 
         // # Open a DM with the bot
-        cy.get('#addDirectChannel').click();
+        cy.uiAddDirectMessage().click();
         cy.get('.more-modal__list .more-modal__row');
         cy.get('#moreDmModal input').
             type('matterpoll', {force: true}).
