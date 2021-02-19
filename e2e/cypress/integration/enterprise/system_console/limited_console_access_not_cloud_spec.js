@@ -8,7 +8,7 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @enterprise @system_console
+// Group: @enterprise @system_console @not_cloud
 
 import accessRules from '../../../fixtures/system-roles-console-access';
 import disabledTests from '../../../fixtures/console-example-inputs';
@@ -16,12 +16,14 @@ import * as TIMEOUTS from '../../../fixtures/timeouts';
 
 describe('Limited console access', () => {
     const roleNames = ['system_manager', 'system_user_manager', 'system_read_only_admin'];
+    const testUsers = {};
+
     const ACCESS_NONE = 'none';
     const ACCESS_READ_ONLY = 'read';
     const ACCESS_READ_WRITE = 'read+write';
-    const testUsers = {};
 
     before(() => {
+        cy.shouldNotRunOnCloudEdition();
         cy.apiRequireLicense();
 
         Cypress._.forEach(roleNames, (roleName) => {
@@ -31,23 +33,13 @@ describe('Limited console access', () => {
         });
     });
 
-    it('MM-T3387 - Verify the Admin Role - System User Manager', () => {
-        const role = 'system_user_manager';
+    it('MM-T3386 - Verify the Admin Role - System Manager', () => {
+        const role = 'system_manager';
 
-        // # Make the user a System User Manager
+        // # Make the user a System  Manager
         makeUserASystemRole(role);
 
-        // * Login as the new user and verify the role permissions (ensure they really are a system user manager)
-        forEachConsoleSection(role);
-    });
-
-    it('MM-T3388 - Verify the Admin Role - System Read Only Admin', () => {
-        const role = 'system_read_only_admin';
-
-        // # Make the user a System Ready Only Manager
-        makeUserASystemRole(role);
-
-        // * Login as the new user and verify the role permissions (ensure they really are a system read only manager)
+        // * Login as the new user and verify the role permissions (ensure they really are a system manager)
         forEachConsoleSection(role);
     });
 

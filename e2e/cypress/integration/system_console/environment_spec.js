@@ -248,6 +248,7 @@ describe('Environment', () => {
 
         const amazonS3BucketName = 'test';
         const amazonS3PathPrefix = 'test';
+        cy.findByTestId('FileSettings.MaxFileSizenumber').clear().type(52428800);
         cy.findByTestId('FileSettings.AmazonS3Bucketinput').clear().type(amazonS3BucketName);
         cy.findByTestId('FileSettings.AmazonS3PathPrefixinput').clear().type(amazonS3PathPrefix);
 
