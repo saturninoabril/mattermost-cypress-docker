@@ -53,10 +53,7 @@ describe('Autocomplete without Elasticsearch - Users', () => {
                 },
                 verifySuggestion: (...expectedUsers) => {
                     expectedUsers.forEach((user) => {
-                        cy.findByTestId(`mentionSuggestion_${user.username}`, {exact: false}).within((name) => {
-                            cy.wrap(name).find('.mention--align').should('have.text', `@${user.username}`);
-                            cy.wrap(name).find('.ml-2').should('have.text', `${user.first_name} ${user.last_name} (${user.nickname})`);
-                        });
+                        cy.uiVerifyAtMentionSuggestion(user);
                     });
                 },
             };
@@ -177,9 +174,7 @@ describe('Autocomplete without Elasticsearch - Users', () => {
                 },
                 verifySuggestion: (...expectedUsers) => {
                     expectedUsers.forEach((user) => {
-                        cy.findByTestId(user.username).
-                            should('be.visible').
-                            and('have.text', `@${user.username} - ${user.first_name} ${user.last_name} (${user.nickname})`);
+                        cy.uiVerifyAtMentionSuggestion(user);
                     });
                 },
             };
@@ -314,18 +309,10 @@ describe('Autocomplete without Elasticsearch - Users', () => {
                 type('@odinson');
 
             // * Thor should be a channel member
-            cy.findByTestId(thor.username, {exact: false}).within((name) => {
-                cy.wrap(name).prev('.suggestion-list__divider').should('have.text', 'Channel Members');
-                cy.wrap(name).find('.mention--align').should('have.text', `@${thor.username}`);
-                cy.wrap(name).find('.ml-2').should('have.text', `${thor.first_name} ${thor.last_name} (${thor.nickname})`);
-            });
+            cy.uiVerifyAtMentionInSuggestionList('Channel Members', thor, true);
 
             // * Loki should NOT be a channel member
-            cy.findByTestId(loki.username, {exact: false}).within((name) => {
-                cy.wrap(name).prev('.suggestion-list__divider').should('have.text', 'Not in Channel');
-                cy.wrap(name).find('.mention--align').should('have.text', `@${loki.username}`);
-                cy.wrap(name).find('.ml-2').should('have.text', `${loki.first_name} ${loki.last_name} (${loki.nickname})`);
-            });
+            cy.uiVerifyAtMentionInSuggestionList('Not in Channel', loki, false);
         });
 
         it('DM can be opened with a user not on your team or in your DM channel sidebar', () => {
