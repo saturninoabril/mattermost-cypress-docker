@@ -174,7 +174,9 @@ describe('Autocomplete without Elasticsearch - Users', () => {
                 },
                 verifySuggestion: (...expectedUsers) => {
                     expectedUsers.forEach((user) => {
-                        cy.uiVerifyAtMentionSuggestion(user);
+                        cy.findByTestId(user.username).
+                            should('be.visible').
+                            and('have.text', `@${user.username} - ${user.first_name} ${user.last_name} (${user.nickname})`);
                     });
                 },
             };
