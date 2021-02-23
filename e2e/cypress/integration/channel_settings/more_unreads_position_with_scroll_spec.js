@@ -7,8 +7,8 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// TODO: to further check
-// Group: @not_cloud @channel_settings
+// Stage: @prod
+// Group: @channel_settings
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
 
@@ -49,6 +49,7 @@ describe('Channel settings', () => {
         const lastChannelIndex = channelNames.length - 1;
 
         // # Navigate to off-topic channel
+        cy.apiLogin(mainUser);
         cy.visit(`/${myTeam.name}/channels/off-topic`);
 
         // # Post message as the second user, in a channel near the top of the list
@@ -61,6 +62,7 @@ describe('Channel settings', () => {
 
             // # Scroll down in channels list until last created channel is visible
             cy.get(`#sidebarItem_${channelNames[lastChannelIndex]}`).scrollIntoView({duration: TIMEOUTS.TWO_SEC});
+            cy.get('.scrollbar--view').scrollTo('bottom');
         });
 
         // * After scrolling is complete, "More Unreads" pill should be visible at the top of the channels list
@@ -80,6 +82,7 @@ describe('Channel settings', () => {
 
             // # Scroll down in channels list until last created channel is visible
             cy.get(`#sidebarItem_${channelNames[firstChannelIndex]}`).scrollIntoView({duration: TIMEOUTS.TWO_SEC});
+            cy.get('.scrollbar--view').scrollTo('top');
         });
 
         // * After scrolling is complete, "More Unreads" pill should not be visible at the top of the channels list

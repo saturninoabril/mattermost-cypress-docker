@@ -3,10 +3,14 @@ orbs:
   node: circleci/node@4.1.0
 
 workflows:
-  build:
+  e2e:
     jobs:
       - create-test-server:
           context: cypress-circleci-env
+          filters:
+            branches:
+              ignore:
+                - master
       - e2e-test-1:
           context: cypress-circleci-env
           requires:
@@ -38,8 +42,8 @@ commands:
       - run:
           name: Setup client
           command: |
-            sudo apt-get update
-            sudo apt-get install libxss1
+            # sudo apt-get update
+            # sudo apt-get install libxss1
   setup-required-files:
     description: "Setup required files"
     steps:
@@ -48,8 +52,15 @@ commands:
           command: |
             wget -O e2e/cypress/fixtures/com.mattermost.draw-plugin.tar.gz https://github.com/jespino/mattermost-plugin-draw/releases/download/v0.0.4/com.mattermost.draw-plugin-0.0.4.tar.gz
             wget -O e2e/cypress/fixtures/com.github.matterpoll.matterpoll.tar.gz https://github.com/matterpoll/matterpoll/releases/download/v1.3.0/com.github.matterpoll.matterpoll-1.3.0.tar.gz
+            wget -O e2e/cypress/fixtures/com.github.manland.mattermost-plugin-gitlab-1.3.0.tar.gz https://github.com/mattermost/mattermost-plugin-gitlab/releases/download/v1.3.0/com.github.manland.mattermost-plugin-gitlab-1.3.0.tar.gz
+
             wget -O e2e/cypress/fixtures/com.mattermost.demo-plugin-0.1.0.tar.gz https://github.com/mattermost/mattermost-plugin-demo/releases/download/v0.1.0/com.mattermost.demo-plugin-0.1.0.tar.gz
             wget -O e2e/cypress/fixtures/com.mattermost.demo-plugin-0.2.0.tar.gz https://github.com/mattermost/mattermost-plugin-demo/releases/download/v0.2.0/com.mattermost.demo-plugin-0.2.0.tar.gz
+            wget -O e2e/cypress/fixtures/com.mattermost.demo-plugin-0.9.0.tar.gz https://github.com/mattermost/mattermost-plugin-demo/releases/download/v0.9.0/com.mattermost.demo-plugin-0.9.0.tar.gz
+            wget -O e2e/cypress/fixtures/com.mattermost.test-plugin-0.1.0.tar.gz https://github.com/mattermost/mattermost-plugin-test/archive/v0.1.0.tar.gz
+
+            wget -O e2e/cypress/fixtures/keycloak.crt https://raw.githubusercontent.com/mattermost/mattermost-server/master/build/docker/keycloak/keycloak.crt
+
             echo $USERS > e2e/cypress/fixtures/users.txt
   attach-workspace:
     description: "Attach a workspace"
@@ -88,6 +99,9 @@ commands:
             export BRANCH=$CIRCLE_BRANCH
             export BUILD_ID=$CIRCLE_BUILD_NUM
 
+            export TM4J_CYCLE_NAME="Cloud Prerelease Cypress"
+            export RELEASE_DATE="Cloud Prerelease"
+
             # This is how it should be on main org repo
             # export PULL_REQUEST=$CIRCLE_PULL_REQUESTS
 
@@ -105,7 +119,7 @@ commands:
       - run:
           name: Create the test server
           command: |
-            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT"
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&es=0"
             CREATE_URL="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $CREATE_URL
             sleep 1m
@@ -123,13 +137,19 @@ commands:
           name: Set shared environment variables
           command: |
             DNS_ZONE_NAME=dev.spinmint.com
-            BASE_URL_1="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-1.$DNS_ZONE_NAME"
-            BASE_URL_2="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-2.$DNS_ZONE_NAME"
-            BASE_URL_3="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-3.$DNS_ZONE_NAME"
-            BASE_URL_4="$CIRCLE_BRANCH-$MM_DOCKER_IMAGE-$MM_DOCKER_TAG-4.$DNS_ZONE_NAME"
+            export BASE_URL_FULL=$CIRCLE_BRANCH-$MM_DOCKER_EDITION-$MM_DOCKER_TAG
+            export BASE_URL_SUBSTR=${BASE_URL_FULL:0:45}
+            echo $BASE_URL_FULL
+            echo $BASE_URL_SUBSTR
 
-            echo export MM_DOCKER_IMAGE=$MM_DOCKER_IMAGE >> shared
-            echo export MM_DOCKER_TAG=$MM_DOCKER_TAG >> shared
+            BASE_URL_1="$BASE_URL_SUBSTR-1.$DNS_ZONE_NAME"
+            BASE_URL_2="$BASE_URL_SUBSTR-2.$DNS_ZONE_NAME"
+            BASE_URL_3="$BASE_URL_SUBSTR-3.$DNS_ZONE_NAME"
+            BASE_URL_4="$BASE_URL_SUBSTR-4.$DNS_ZONE_NAME"
+            BASE_URL_COMMON="$BASE_URL_SUBSTR-common.$DNS_ZONE_NAME"
+
+            echo export MM_DOCKER_IMAGE=${MM_DOCKER_IMAGE} >> shared
+            echo export MM_DOCKER_TAG=${MM_DOCKER_TAG} >> shared
 
             echo export TYPE=${TYPE} >> shared
             echo export PULL_REQUEST=${PULL_REQUEST} >> shared
@@ -141,6 +161,7 @@ commands:
             echo export TM4J_ENABLE=${TM4J_ENABLE} >> shared
             echo export JIRA_PROJECT_KEY=${JIRA_PROJECT_KEY} >> shared
             echo export TM4J_FOLDER_ID=${TM4J_FOLDER_ID} >> shared
+            echo export TM4J_ENVIRONMENT_NAME=${TM4J_ENVIRONMENT_NAME} >> shared
 
             echo export CYPRESS_chromeWebSecurity=${CYPRESS_chromeWebSecurity} >> shared
             echo export CYPRESS_numberOfTrialUsers=${CYPRESS_numberOfTrialUsers} >> shared
@@ -152,6 +173,7 @@ commands:
             echo export BASE_URL_2=${BASE_URL_2} >> shared
             echo export BASE_URL_3=${BASE_URL_3} >> shared
             echo export BASE_URL_4=${BASE_URL_4} >> shared
+            echo export BASE_URL_COMMON=${BASE_URL_COMMON} >> shared
 
             cat shared >> $BASH_ENV
             source $BASH_ENV
@@ -159,6 +181,8 @@ commands:
     description: "Run Cypress test"
     parameters:
       ci_base_url:
+        type: string
+      common_base_url:
         type: string
       run_filter:
         type: string
@@ -171,12 +195,19 @@ commands:
             curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 << parameters.ci_base_url >>:8065/api/v4/system/ping
 
             export CI_BASE_URL=<< parameters.ci_base_url >>
+            export COMMON_BASE_URL=<< parameters.common_base_url >>
             export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
             export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
+
+            export CYPRESS_elasticsearchConnectionUrl="http://${COMMON_BASE_URL}:9200"
+            export CYPRESS_minioS3Endpoint="${CI_BASE_URL}:9000"
 
             export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
             export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
             export CYPRESS_ciBaseUrl=${CI_BASE_URL}
+            export CYPRESS_allowedUntrustedInternalConnections="localhost ${CI_BASE_URL}"
+
+            curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 $CYPRESS_baseUrl
 
             cd e2e && node run_tests.js << parameters.run_filter >> << parameters.run_part >>
   persist-and-store:
@@ -198,22 +229,24 @@ commands:
 jobs:
   create-test-server:
     docker:
-      - image: cimg/node:15.3.0
+      - image: cimg/node:lts
     working_directory: ~/mattermost/env-var
     environment:
       MM_DOCKER_IMAGE: mm-ee-test
-      MM_DOCKER_TAG: 704_60b27ef5_9f16e221_d6b4d697
+      MM_DOCKER_EDITION: ce
+      MM_DOCKER_TAG: prerelease
       SERVER_INSTANCE_COUNT: 4
       TYPE: CLOUD
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
-      FULL_REPORT: true
+      FULL_REPORT: false
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "1064652"
-      CYPRESS_chromeWebSecurity: true
+      TM4J_FOLDER_ID: "1187748"
+      TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/cloud-prerelease"
+      CYPRESS_chromeWebSecurity: false
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
       CYPRESS_runLDAPSync: false
@@ -232,7 +265,7 @@ jobs:
             - env-var/shared
   merge-and-save-test-reports:
     docker:
-      - image: circleci/node:lts-buster-browsers-legacy
+      - image: cimg/node:lts
     working_directory: ~/mattermost
     steps:
       - checkout
@@ -260,7 +293,7 @@ jobs:
           path: ~/mattermost/e2e/results/junit
   e2e-test-1:
     docker:
-      - image: circleci/node:lts-buster-browsers-legacy
+      - image: cypress/included:6.4.0
     working_directory: ~/mattermost/e2e-test-1
     steps:
       - checkout
@@ -272,6 +305,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_1
+          common_base_url: $BASE_URL_COMMON
           run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
           run_part: "--part=1 --of=4"
       - persist-and-store:
@@ -279,7 +313,7 @@ jobs:
   
   e2e-test-2:
     docker:
-      - image: circleci/node:lts-buster-browsers-legacy
+      - image: cypress/included:6.4.0
     working_directory: ~/mattermost/e2e-test-2
     steps:
       - checkout
@@ -291,6 +325,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_2
+          common_base_url: $BASE_URL_COMMON
           run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
           run_part: "--part=2 --of=4"
       - persist-and-store:
@@ -298,7 +333,7 @@ jobs:
 
   e2e-test-3:
     docker:
-      - image: circleci/node:lts-buster-browsers-legacy
+      - image: cypress/included:6.4.0
     working_directory: ~/mattermost/e2e-test-3
     steps:
       - checkout
@@ -310,6 +345,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_3
+          common_base_url: $BASE_URL_COMMON
           run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
           run_part: "--part=3 --of=4"
       - persist-and-store:
@@ -317,7 +353,7 @@ jobs:
 
   e2e-test-4:
     docker:
-      - image: circleci/node:lts-buster-browsers-legacy
+      - image: cypress/included:6.4.0
     working_directory: ~/mattermost/e2e-test-4
     steps:
       - checkout
@@ -329,6 +365,7 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_4
+          common_base_url: $BASE_URL_COMMON
           run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
           run_part: "--part=4 --of=4"
       - persist-and-store:

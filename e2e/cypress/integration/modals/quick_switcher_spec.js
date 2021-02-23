@@ -7,8 +7,8 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// TODO: to further check on MM-T3447_5
-// Group: @not_cloud @modals
+// Stage: @prod
+// Group: @modals
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
 
