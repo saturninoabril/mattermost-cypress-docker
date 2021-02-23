@@ -143,7 +143,7 @@ describe('Multi-user group messages', () => {
 
         // * other users are still there
         userList.forEach((user) => {
-            cy.get('.more-modal__name').contains(user.username).should('be.visible');
+            cy.get('.more-modal__name').contains(user.username).scrollIntoView().should('be.visible');
         });
     });
 });

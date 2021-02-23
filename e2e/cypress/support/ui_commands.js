@@ -125,6 +125,7 @@ function postMessageAndWait(textboxSelector, message) {
 }
 
 function waitUntilPermanentPost() {
+    cy.wait(TIMEOUTS.HALF_SEC);
     cy.get('#postListContent', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible');
     cy.waitUntil(() => cy.findAllByTestId('postView').last().then((el) => !(el[0].id.includes(':'))));
 }
