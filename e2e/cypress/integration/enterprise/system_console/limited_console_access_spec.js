@@ -31,16 +31,6 @@ describe('Limited console access', () => {
         });
     });
 
-    it('MM-T3386 - Verify the Admin Role - System Manager', () => {
-        const role = 'system_manager';
-
-        // # Make the user a System  Manager
-        makeUserASystemRole(role);
-
-        // * Login as the new user and verify the role permissions (ensure they really are a system manager)
-        forEachConsoleSection(role);
-    });
-
     it('MM-T3387 - Verify the Admin Role - System User Manager', () => {
         const role = 'system_user_manager';
 
@@ -61,7 +51,7 @@ describe('Limited console access', () => {
         forEachConsoleSection(role);
     });
 
-    const makeUserASystemRole = (role) => {
+    function makeUserASystemRole (role) {
         // # Login as each new role.
         cy.apiAdminLogin();
 
@@ -86,26 +76,26 @@ describe('Limited console access', () => {
 
         // # Click save button
         cy.findByRole('button', {name: 'Save'}).click().wait(TIMEOUTS.HALF_SEC);
-    };
+    }
 
-    const noAccessFunc = (section) => {
+    function noAccessFunc(section) {
         // * If it's a no-access permission, we just need to check that the section doesn't exist in the side bar
         cy.findByTestId(section).should('not.exist');
-    };
+    }
 
-    const readOnlyFunc = (section) => {
+    function readOnlyFunc (section) {
         // * If it's a read only permission, we need to make sure that the section does exist in the sidebar however the inputs in that section is disabled (read only)
         cy.findByTestId(section).should('exist');
         checkInputsShould('be.disabled', section);
-    };
+    }
 
-    const readWriteFunc = (section) => {
+    function readWriteFunc (section) {
         // * If we have read + write (can edit) permissions, we need to make the section exists and also that the inputs are all enabled
         cy.findByTestId(section).should('exist');
         checkInputsShould('be.enabled', section);
-    };
+    }
 
-    const checkInputsShould = (shouldString, section) => {
+    function checkInputsShould (shouldString, section) {
         const {disabledInputs} = disabledTests.find((item) => item.section === section);
         Cypress._.forEach(disabledInputs, ({path, selector}) => {
             if (path.length && selector.length) {
@@ -113,7 +103,7 @@ describe('Limited console access', () => {
                 cy.findByTestId(selector, {timeout: TIMEOUTS.ONE_MIN}).should(shouldString);
             }
         });
-    };
+    }
 
     function forEachConsoleSection(roleName) {
         const user = testUsers[roleName];

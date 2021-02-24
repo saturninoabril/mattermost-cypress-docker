@@ -29,8 +29,9 @@ describe('Message Draft', () => {
         cy.url().should('include', `/${testTeam.name}/channels/town-square`);
 
         // * Validate if the draft icon is not visible on the sidebar before making a draft
-        cy.get('#publicChannel').scrollIntoView();
-        cy.get('#sidebarItem_town-square #draftIcon').should('be.not.visible');
+        // TODO
+        // cy.get('#sidebarItem_town-square').findByTestId('draftIcon').should('not.exist');
+        cy.get('#sidebarItem_town-square').find('.icon-pencil-outline').should('not.exist');
 
         // # Type in some text into the text area of the opened channel
         cy.get('#post_textbox').type('comm');
@@ -42,6 +43,8 @@ describe('Message Draft', () => {
         cy.url().should('include', `/${testTeam.name}/channels/off-topic`);
 
         // * Validate if the draft icon is visible on side bar on the previous channel with a draft
-        cy.get('#sidebarItem_town-square #draftIcon').should('be.visible');
+        // TODO
+        // cy.get('#sidebarItem_town-square').findByTestId('draftIcon').should('be.visible');
+        cy.get('#sidebarItem_town-square').find('.icon-pencil-outline').should('be.visible');
     });
 });

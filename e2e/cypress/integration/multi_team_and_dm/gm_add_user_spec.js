@@ -53,8 +53,7 @@ describe('Multi-user group messages', () => {
         cy.contains('#channelHeaderTitle', 'Town Square');
 
         // # Open the 'Direct messages' dialog
-        cy.get('#addDirectChannel').
-            click();
+        cy.uiAddDirectMessage().click();
 
         // # Start typing part of a username that matches previously created users
         cy.get('#selectItems input').
@@ -144,7 +143,7 @@ describe('Multi-user group messages', () => {
 
         // * other users are still there
         userList.forEach((user) => {
-            cy.get('.more-modal__name').contains(user.username).should('be.visible');
+            cy.get('.more-modal__name').contains(user.username).scrollIntoView().should('be.visible');
         });
     });
 });
