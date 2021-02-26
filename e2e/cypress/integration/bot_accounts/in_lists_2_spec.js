@@ -9,7 +9,8 @@
 
 // Group: @bot_accounts
 
-import {zip, sortBy} from 'lodash';
+import sortBy from 'lodash.sortby';
+import zip from 'lodash.zip';
 
 import {createBotPatch} from '../../support/api/bots';
 import {generateRandomUser} from '../../support/api/user';
@@ -81,9 +82,10 @@ describe('Bots in lists', () => {
             cy.get('#member-list-popover .more-modal__row .more-modal__name').then(async ($query) => {
                 // # Extract usernames from jQuery collection
                 const usernames = $query.toArray().map(({innerText}) => innerText);
-
+                console.log('usernames', usernames);
                 // # Get users
                 const profiles = await client.getProfilesByUsernames(usernames);
+                console.log('profiles', profiles);
                 const statuses = await client.getStatusesByIds(profiles.map((user) => user.id));
                 const users = zip(profiles, statuses).map(([profile, status]) => ({...profile, ...status}));
 
