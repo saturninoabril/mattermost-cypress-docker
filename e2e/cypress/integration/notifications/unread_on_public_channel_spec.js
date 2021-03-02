@@ -54,9 +54,7 @@ describe('Notifications', () => {
                         wait(TIMEOUTS.ONE_SEC);
 
                     // # scroll to the last channel
-                    // TODO
-                    // cy.get('#lhsList li').last().scrollIntoView();
-                    cy.get('#sidebar-left li').last().scrollIntoView();
+                    cy.get('#lhsList li').last().scrollIntoView();
                 });
             });
         });

@@ -9,8 +9,6 @@
 
 // Group: @enterprise @elasticsearch @autocomplete
 
-import * as TIMEOUTS from '../../../fixtures/timeouts';
-
 import {enableElasticSearch, getTestUsers} from './helpers';
 
 describe('Autocomplete with Elasticsearch - Users', () => {
@@ -51,7 +49,7 @@ describe('Autocomplete with Elasticsearch - Users', () => {
         describe('search for user in message input box', () => {
             const area = {
                 getInput: () => {
-                    cy.wait(TIMEOUTS.HALF_SEC).get('#post_textbox').
+                    cy.get('#post_textbox').
                         as('input').
                         should('be.visible').
                         clear();
@@ -309,7 +307,7 @@ describe('Autocomplete with Elasticsearch - Users', () => {
             });
 
             // # Start an at mention that should return 2 users (in this case, the users share a last name)
-            cy.wait(TIMEOUTS.HALF_SEC).get('#post_textbox').
+            cy.get('#post_textbox').
                 as('input').
                 should('be.visible').
                 clear().

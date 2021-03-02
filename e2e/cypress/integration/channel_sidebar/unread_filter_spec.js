@@ -33,9 +33,7 @@ describe('Channel sidebar unread filter', () => {
 
     it('MM-T3441 should change the filter label when the unread filter changes state', () => {
         // * Verify that the unread filter is in all channels state
-        // TODO
-        // cy.findByRole('application', {name: 'channel sidebar region'}).within(() => {
-        cy.get('#sidebar-left').within(() => {
+        cy.findByRole('application', {name: 'channel sidebar region'}).within(() => {
             cy.findAllByText('UNREADS').should('not.exist');
             cy.findAllByRole('button', {name: 'CHANNELS'}).should('be.visible');
             cy.findAllByRole('button', {name: 'DIRECT MESSAGES'}).should('be.visible');
@@ -44,9 +42,7 @@ describe('Channel sidebar unread filter', () => {
         enableUnreadFilter();
 
         // * Verify that the unread filter is in filter by unread state
-        // TODO
-        // cy.findByRole('application', {name: 'channel sidebar region'}).within(() => {
-        cy.get('#sidebar-left').within(() => {
+        cy.findByRole('application', {name: 'channel sidebar region'}).within(() => {
             cy.findAllByText('UNREADS').should('be.visible');
             cy.findAllByRole('button', {name: 'CHANNELS'}).should('not.exist');
             cy.findAllByRole('button', {name: 'DIRECT MESSAGES'}).should('not.exist');
@@ -55,9 +51,7 @@ describe('Channel sidebar unread filter', () => {
         disableUnreadFilter();
 
         // * Verify that the unread filter is back in all channels state
-        // TODO
-        // cy.findByRole('application', {name: 'channel sidebar region'}).within(() => {
-        cy.get('#sidebar-left').within(() => {
+        cy.findByRole('application', {name: 'channel sidebar region'}).within(() => {
             cy.findAllByText('UNREADS').should('not.exist');
             cy.findAllByRole('button', {name: 'CHANNELS'}).should('be.visible');
             cy.findAllByRole('button', {name: 'DIRECT MESSAGES'}).should('be.visible');

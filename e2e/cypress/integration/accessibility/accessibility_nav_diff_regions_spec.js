@@ -104,15 +104,13 @@ describe('Verify Quick Navigation support across different regions in the app', 
         cy.get('#headerInfo button').focus().tab();
 
         // * Verify nav support in LHS channel navigator
-        // TODO
-        // verifyNavSupport('#lhsNavigator', 'channel navigator region', '6');
+        verifyNavSupport('#lhsNavigator', 'channel navigator region', '6');
 
         // # Change the focus to the LHS sidebar
         cy.get('#headerInfo button').focus().tab().tab().tab().tab();
 
-        // TODO
-        // // * Verify nav support in LHS sidebar
-        // verifyNavSupport('#lhsList', 'channel sidebar region', '7');
+        // * Verify nav support in LHS sidebar
+        verifyNavSupport('#lhsList', 'channel sidebar region', '7');
     });
 
     it('MM-T1460_6 Verify Navigation Support in Channel Header', () => {

@@ -193,10 +193,7 @@ describe('LDAP guest', () => {
                     cy.get('.admin-console__header', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible').and('have.text', 'Team Configuration');
 
                     // # Turn on sync group members
-                    cy.findByTestId('syncGroupSwitch').
-                        scrollIntoView().
-                        findByRole('button').
-                        click({force: true});
+                    cy.findByTestId('syncGroupSwitch').scrollIntoView().click();
 
                     // # Add board group to team
                     cy.findByTestId('addGroupsToTeamToggle').scrollIntoView().click();
