@@ -20,7 +20,7 @@ describe('Upload Files', () => {
     let otherUser;
 
     before(() => {
-        // cy.shouldNotRunOnCloudEdition();
+        cy.shouldNotRunOnCloudEdition();
     });
 
     beforeEach(() => {

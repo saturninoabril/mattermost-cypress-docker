@@ -99,8 +99,8 @@ commands:
             export BRANCH=$CIRCLE_BRANCH
             export BUILD_ID=$CIRCLE_BUILD_NUM
 
-            export TM4J_CYCLE_NAME="Cloud Feb 24 Cypress"
-            export RELEASE_DATE="Cloud Feb 24"
+            export TM4J_CYCLE_NAME="Cloud March 10 Cypress"
+            export RELEASE_DATE="Cloud March 10"
 
             # This is how it should be on main org repo
             # export PULL_REQUEST=$CIRCLE_PULL_REQUESTS
@@ -234,7 +234,7 @@ jobs:
     environment:
       MM_DOCKER_IMAGE: mm-ee-test
       MM_DOCKER_EDITION: ce
-      MM_DOCKER_TAG: 1695_a4fa321c_283b1d39_9d2b58ed
+      MM_DOCKER_TAG: 1817_b3764a05_1c208825_985ae491
       SERVER_INSTANCE_COUNT: 4
       TYPE: CLOUD
       PULL_REQUEST: add-link
@@ -244,7 +244,7 @@ jobs:
       FULL_REPORT: true
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "1170710"
+      TM4J_FOLDER_ID: "1198930"
       TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/cloud"
       CYPRESS_chromeWebSecurity: false
       CYPRESS_numberOfTrialUsers: 10000

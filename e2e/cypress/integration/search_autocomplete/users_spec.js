@@ -10,6 +10,8 @@
 // Stage: @prod
 // Group: @autocomplete
 
+import * as TIMEOUTS from '../../fixtures/timeouts';
+
 import {getTestUsers} from '../enterprise/elasticsearch_autocomplete/helpers';
 
 describe('Autocomplete without Elasticsearch - Users', () => {
@@ -46,7 +48,7 @@ describe('Autocomplete without Elasticsearch - Users', () => {
         describe('search for user in message input box', () => {
             const area = {
                 getInput: () => {
-                    cy.get('#post_textbox').
+                    cy.wait(TIMEOUTS.HALF_SEC).get('#post_textbox').
                         as('input').
                         should('be.visible').
                         clear();
@@ -304,7 +306,7 @@ describe('Autocomplete without Elasticsearch - Users', () => {
             });
 
             // # Start an at mention that should return 2 users (in this case, the users share a last name)
-            cy.get('#post_textbox').
+            cy.wait(TIMEOUTS.HALF_SEC).get('#post_textbox').
                 as('input').
                 should('be.visible').
                 clear().

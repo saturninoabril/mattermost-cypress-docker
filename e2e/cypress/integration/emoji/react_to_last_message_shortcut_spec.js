@@ -344,11 +344,11 @@ describe('Keyboard shortcut for adding reactions to last message in channel or t
             message: MESSAGES.MEDIUM,
             channelId: townsquareChannel.id,
         });
-        cy.wait(TIMEOUTS.THREE_SEC);
+        cy.wait(TIMEOUTS.TWO_SEC);
 
         // # Click anywhere to take focus away from RHS text box
         cy.get('body').click();
-        cy.wait(TIMEOUTS.THREE_SEC);
+        cy.wait(TIMEOUTS.TWO_SEC);
 
         // # Enter shortcut without focus on Center textbox
         pressShortcutReactToLastMessage();

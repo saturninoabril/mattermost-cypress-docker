@@ -79,7 +79,6 @@ function setChannelPermission() {
 
 function verifyCreatePublicChannel(teamName, testUsers) {
     for (const testUser of testUsers) {
-        // * Login as system admin and go the channel we created earlier and expect the create public channel button is visible
         const {user, canCreate, isSysadmin} = testUser;
 
         // # Login as a user, and visit the team and channel
@@ -89,7 +88,7 @@ function verifyCreatePublicChannel(teamName, testUsers) {
         // # Click on create new channel at LHS
         cy.uiBrowseOrCreateChannel('Create New Channel').click();
 
-        // * Verify that the create private channel is not present
+        // * Verify if creating a public channel is shown or not
         cy.findByRole('dialog', {name: 'New Channel'}).find('.radio').
             should('have.length', isSysadmin ? 2 : 1).
             and('contain', 'Private').
@@ -104,7 +103,7 @@ function verifyRenamePrivateChannel(teamName, privateChannelName, testUsers) {
         cy.apiLogin(user);
         cy.visit(`/${teamName}/channels/${privateChannelName}`);
 
-        // * Click drop down and ensure the channel rename is visible for a team admin
+        // * Click the dropdown menu and verify if the rename option is visible or not
         cy.get('#channelHeaderDropdownIcon', {timeout: TIMEOUTS.TWO_MIN}).should('be.visible').click();
         cy.get('#channelRename').should(canRename ? 'be.visible' : 'not.exist');
     }
