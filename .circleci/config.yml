@@ -223,10 +223,10 @@ jobs:
     environment:
       MM_DOCKER_IMAGE: mattermost-enterprise-edition
       MM_DOCKER_EDITION: ee
-      MM_DOCKER_TAG: master
+      MM_DOCKER_TAG: b810f6b
       SERVER_INSTANCE_COUNT: 4
-      TYPE: NONE
-      PULL_REQUEST: add-link
+      TYPE: PR
+      PULL_REQUEST: https://github.com/mattermost/mattermost-webapp/pull/7441
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
