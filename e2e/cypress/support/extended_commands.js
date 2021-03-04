@@ -5,10 +5,21 @@ import * as TIMEOUTS from '../fixtures/timeouts';
 
 Cypress.Commands.overwrite('reload', (originalFn, forceReload, options, duration = TIMEOUTS.THREE_SEC) => {
     originalFn(forceReload, options);
+    interceptCloudRequests();
     cy.wait(duration);
 });
 
 Cypress.Commands.overwrite('visit', (originalFn, url, options, duration = TIMEOUTS.THREE_SEC) => {
     originalFn(url, options);
+    interceptCloudRequests();
     cy.wait(duration);
 });
+
+function interceptCloudRequests() {
+    if (Cypress.config('experimentalNetworkStubbing')) {
+        cy.route2('api/v4/cloud/subscription/stats', {
+            remaining_seats: 10,
+            is_paid_tier: 'true',
+        });
+    }
+}

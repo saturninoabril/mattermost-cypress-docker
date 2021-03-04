@@ -1,6 +1,7 @@
 {
     "baseUrl": "http://localhost:8065",
     "defaultCommandTimeout": 20000,
+    "experimentalNetworkStubbing": false,
     "ignoreTestFiles": "**/node_modules/**/*",
     "integrationFolder": "..",
     "taskTimeout": 20000,
