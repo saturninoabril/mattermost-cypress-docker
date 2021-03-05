@@ -99,9 +99,6 @@ commands:
             export BRANCH=$CIRCLE_BRANCH
             export BUILD_ID=$CIRCLE_BUILD_NUM
 
-            export TM4J_CYCLE_NAME="Cloud Feb 24 Cypress"
-            export RELEASE_DATE="Cloud Feb 24"
-
             # This is how it should be on main org repo
             # export PULL_REQUEST=$CIRCLE_PULL_REQUESTS
 
@@ -119,7 +116,7 @@ commands:
       - run:
           name: Create the test server
           command: |
-            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&es=0"
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&es=0"
             CREATE_URL="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $CREATE_URL
             sleep 1m
@@ -128,7 +125,7 @@ commands:
       - run:
           name: Teardown the test server
           command: |
-            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG"
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH"
             DESTROY_URL="$TEST_SERVER_DESTROY_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $DESTROY_URL
   set-shared-env:
@@ -137,7 +134,7 @@ commands:
           name: Set shared environment variables
           command: |
             DNS_ZONE_NAME=dev.spinmint.com
-            export BASE_URL_FULL=$CIRCLE_BRANCH-$MM_DOCKER_EDITION-$MM_DOCKER_TAG
+            export BASE_URL_FULL=$CIRCLE_BRANCH-$MM_EDITION-$MM_DOCKER_TAG
             export BASE_URL_SUBSTR=${BASE_URL_FULL:0:45}
             echo $BASE_URL_FULL
             echo $BASE_URL_SUBSTR
@@ -148,8 +145,8 @@ commands:
             BASE_URL_4="$BASE_URL_SUBSTR-4.$DNS_ZONE_NAME"
             BASE_URL_COMMON="$BASE_URL_SUBSTR-common.$DNS_ZONE_NAME"
 
-            echo export MM_DOCKER_IMAGE=${MM_DOCKER_IMAGE} >> shared
-            echo export MM_DOCKER_TAG=${MM_DOCKER_TAG} >> shared
+            echo export MM_DOCKER_IMAGE=$MM_DOCKER_IMAGE >> shared
+            echo export MM_DOCKER_TAG=$MM_DOCKER_TAG >> shared
 
             echo export TYPE=${TYPE} >> shared
             echo export PULL_REQUEST=${PULL_REQUEST} >> shared
@@ -232,25 +229,25 @@ jobs:
       - image: cimg/node:lts
     working_directory: ~/mattermost/env-var
     environment:
-      MM_DOCKER_IMAGE: mm-ee-test
-      MM_DOCKER_EDITION: ce
-      MM_DOCKER_TAG: 1695_a4fa321c_283b1d39_9d2b58ed
+      MM_DOCKER_IMAGE: mattermost-enterprise-edition
+      MM_EDITION: ee
+      MM_DOCKER_TAG: release-5.33
       SERVER_INSTANCE_COUNT: 4
-      TYPE: CLOUD
+      TYPE: RELEASE
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
-      FULL_REPORT: true
+      FULL_REPORT: false
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "1170710"
-      TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/cloud"
-      CYPRESS_chromeWebSecurity: false
+      TM4J_FOLDER_ID: "1206889"
+      TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/release-5.33-e20"
+      CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
       CYPRESS_runLDAPSync: false
-      CYPRESS_serverEdition: Cloud
+      CYPRESS_serverEdition: E20
     steps:
       - attach-workspace
       - set-shared-env
@@ -306,7 +303,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_1
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
           run_part: "--part=1 --of=4"
       - persist-and-store:
           folder: e2e-test-1
@@ -326,7 +323,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_2
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
           run_part: "--part=2 --of=4"
       - persist-and-store:
           folder: e2e-test-2
@@ -346,7 +343,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_3
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
           run_part: "--part=3 --of=4"
       - persist-and-store:
           folder: e2e-test-3
@@ -366,7 +363,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_4
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
           run_part: "--part=4 --of=4"
       - persist-and-store:
           folder: e2e-test-4
