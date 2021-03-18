@@ -7,7 +7,6 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: @prod to exclude in unstable run, pending keycloak setup in test server
 // Group: @enterprise @ldap @saml
 
 import {getAdminAccount} from '../../support/env';

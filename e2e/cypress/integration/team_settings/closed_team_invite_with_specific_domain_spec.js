@@ -7,8 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: @prod should run on Team edition only
-// Group: @team_settings
+// Group: @te_only @team_settings
 
 import {generateRandomUser} from '../../support/api/user';
 
