@@ -222,7 +222,7 @@ jobs:
     environment:
       MM_EDITION: ee
       MM_DOCKER_IMAGE: mattermost-enterprise-edition
-      MM_DOCKER_TAG: 26018be
+      MM_DOCKER_TAG: 80ee7ab
       SERVER_INSTANCE_COUNT: 4
       TYPE: PR
       PULL_REQUEST: https://github.com/mattermost/mattermost-webapp/pull/7723
