@@ -239,10 +239,10 @@ jobs:
       HEADLESS: true
       DASHBOARD_ENABLE: false
       FULL_REPORT: false
-      TM4J_ENABLE: true
+      TM4J_ENABLE: false
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "1106027"
-      TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/master-e20-prod"
+      TM4J_FOLDER_ID: ""
+      TM4J_ENVIRONMENT_NAME: ""
       CYPRESS_chromeWebSecurity: true
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
