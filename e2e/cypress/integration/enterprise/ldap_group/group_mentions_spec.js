@@ -44,7 +44,7 @@ const assertGroupMentionDisabled = (groupName) => {
     cy.get('#post_textbox').should('be.visible').clear().type(`@${suggestion}`).wait(TIMEOUTS.HALF_SEC);
 
     // * Should not open up suggestion list for groups
-    cy.get('#suggestionList').should('not.be.visible');
+    cy.get('#suggestionList').should('not.exist');
 
     // # Type @groupName and post it to the channel
     cy.get('#post_textbox').clear().type(`@${groupName}{enter}{enter}`);
@@ -52,7 +52,7 @@ const assertGroupMentionDisabled = (groupName) => {
     // # Get last post message text
     cy.getLastPostId().then((postId) => {
         // * Assert that the last message posted contains the group name and is not highlighted with the class group-mention-link
-        cy.get(`#postMessageText_${postId}`).find('.group-mention-link').should('not.be.visible');
+        cy.get(`#postMessageText_${postId}`).find('.group-mention-link').should('not.exist');
         cy.get(`#postMessageText_${postId}`).should('include.text', `@${groupName}`);
     });
 
@@ -65,7 +65,7 @@ const assertGroupMentionDisabled = (groupName) => {
     // # Get last post message text
     cy.getLastPostId().then((postId) => {
         // * Assert that the last message posted contains the group name and is not highlighted with the class mention--highlight
-        cy.get(`#postMessageText_${postId}`).find('.mention--highlight').should('not.be.visible');
+        cy.get(`#postMessageText_${postId}`).find('.mention--highlight').should('not.exist');
         cy.get(`#postMessageText_${postId}`).should('include.text', `@${groupName}`);
     });
 };

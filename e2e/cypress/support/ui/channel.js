@@ -28,7 +28,7 @@ Cypress.Commands.add('uiCreateChannel', ({
         cy.get('#newChannelHeader').clear().type(header);
     }
     cy.get('#submitNewChannel').click();
-    cy.get('#newChannelModalLabel').should('not.be.visible');
+    cy.get('#newChannelModalLabel').should('not.exist');
     cy.get('#channelIntro').should('be.visible');
     return cy.wrap({name: channelName});
 });
@@ -42,7 +42,7 @@ Cypress.Commands.add('uiAddUsersToCurrentChannel', (usernameList) => {
             cy.get('#react-select-2-input').type(`@${username}{enter}`);
         });
         cy.get('#saveItems').click();
-        cy.get('#addUsersToChannelModal').should('not.be.visible');
+        cy.get('#addUsersToChannelModal').should('not.exist');
     }
 });
 
