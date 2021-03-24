@@ -74,7 +74,7 @@ describe('Verify unread toast appears after repeated manual marking post as unre
         cy.get('.post-list__dynamic').scrollTo('bottom');
 
         // * Check that the toast is not visible
-        cy.get('div.toast').should('be.not.visible');
+        cy.get('div.toast').should('not.exist');
 
         // # Mark the first post as unread
         markAsUnreadFromPost(firstPost);
@@ -86,7 +86,7 @@ describe('Verify unread toast appears after repeated manual marking post as unre
         cy.get('.post-list__dynamic').scrollTo('bottom');
 
         // * Check that the toast is not visible
-        cy.get('div.toast').should('be.not.visible');
+        cy.get('div.toast').should('not.exist');
 
         // # Mark the second post as unread
         markAsUnreadFromPost(secondPost);
@@ -98,7 +98,7 @@ describe('Verify unread toast appears after repeated manual marking post as unre
         switchToChannel(offTopicChannel);
 
         // * Check that the toast is not visible
-        cy.get('div.toast').should('be.not.visible');
+        cy.get('div.toast').should('not.exist');
 
         // # Switch channels back
         switchToChannel(townSquareChannel);

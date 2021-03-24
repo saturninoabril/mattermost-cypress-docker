@@ -62,7 +62,7 @@ describe('Emoji reactions to posts/messages in GM channels', () => {
         // * Verify that the Add a Reaction button is visible at the right times
         cy.getLastPostId().then((postId) => {
             // * Verify that the Add Reaction button isn't visible
-            cy.findByLabelText('Add a reaction').should('not.be.visible');
+            cy.findByLabelText('Add a reaction').should('not.exist');
 
             // # Focus on the post since we can't hover with Cypress
             cy.get(`#post_${postId}`).focus().tab().tab();
@@ -74,7 +74,7 @@ describe('Emoji reactions to posts/messages in GM channels', () => {
             cy.get('#channelIntro').click();
 
             // * Verify that the Add Reaction button is no longer visible
-            cy.findByLabelText('Add a reaction').should('not.be.visible');
+            cy.findByLabelText('Add a reaction').should('not.exist');
 
             // # Resize window to mobile view
             cy.viewport('iphone-6');

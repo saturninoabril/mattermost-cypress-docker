@@ -23,7 +23,7 @@ function verifyExpandedPost() {
     cy.get('#showMoreButton').scrollIntoView().should('be.visible').and('have.text', 'Show less');
 
     // * Verify gradient
-    cy.get('#collapseGradient').should('be.not.visible');
+    cy.get('#collapseGradient').should('not.exist');
 }
 
 describe('Long message', () => {

@@ -66,7 +66,7 @@ describe('Channel settings', () => {
         });
 
         // * After scrolling is complete, "More Unreads" pill should be visible at the top of the channels list
-        cy.get('#unreadIndicatorBottom').should('not.be.visible');
+        cy.get('#unreadIndicatorBottom').should('not.exist');
 
         // * "More Unreads" pill should be visible at the top of the channels list
         // # Click on "More Unreads" pill
@@ -86,14 +86,14 @@ describe('Channel settings', () => {
         });
 
         // * After scrolling is complete, "More Unreads" pill should not be visible at the top of the channels list
-        cy.get('#unreadIndicatorTop').should('not.be.visible');
+        cy.get('#unreadIndicatorTop').should('not.exist');
 
         // * "More Unreads" pill should be visible at the bottom of the channels list
         // # Click on "More Unreads" pill
         cy.get('#unreadIndicatorBottom').should('be.visible').click();
 
         // * "More Unreads" pill should not be visible at the bottom of the channels list & visible at the top
-        cy.get('#unreadIndicatorBottom').should('not.be.visible');
+        cy.get('#unreadIndicatorBottom').should('not.exist');
         cy.get('#unreadIndicatorTop').should('be.visible');
     });
 });

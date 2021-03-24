@@ -72,7 +72,7 @@ describe('Messaging', () => {
         // * Check if center channel post text box is not focused
         // Although visually post text box is not visible to user,
         // cypress still considers it visible so the assertion
-        // should('not.be.visible') will fail
+        // should('not.exist') will fail
         cy.get('#post_textbox').should('not.be.focused');
 
         // # Post several replies

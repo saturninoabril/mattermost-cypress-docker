@@ -49,7 +49,7 @@ describe('Notifications', () => {
         cy.postMessageAs({sender: otherUser, message: 'Last Message', channelId: townsquareChannelId});
 
         // * Verify that the last message is currently not visible
-        cy.findByText('Last Message').should('not.be.visible');
+        cy.findByText('Last Message').should('not.exist');
 
         // # Click on the 'Jump to New Messages' button
         cy.get('.toast__visible').should('be.visible').click();
@@ -58,6 +58,6 @@ describe('Notifications', () => {
         cy.findByText('Last Message').should('be.visible');
 
         // * Verify that 'Jump to New Messages' is not visible
-        cy.get('.toast__visible').should('not.be.visible');
+        cy.get('.toast__visible').should('not.exist');
     });
 });

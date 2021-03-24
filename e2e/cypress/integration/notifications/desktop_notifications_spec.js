@@ -532,7 +532,7 @@ describe('Desktop notifications', () => {
                 cy.get('#soundOff').check();
 
                 // # Ensure sound dropdown is not visible
-                cy.get('#displaySoundNotification').should('not.be.visible');
+                cy.get('#displaySoundNotification').should('not.exist');
 
                 // # Click "Save"
                 cy.findByText('Save').scrollIntoView().should('be.visible').click();

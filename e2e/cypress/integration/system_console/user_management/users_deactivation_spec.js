@@ -93,7 +93,7 @@ describe('System Console > User Management > Deactivation', () => {
             cy.get('#displayedUserName' + other.username).click();
 
             // * Confirm DM More... Modal is closed
-            cy.get('#moreDmModal').should('not.be.visible');
+            cy.get('#moreDmModal').should('not.exist');
         });
     });
 
@@ -123,7 +123,7 @@ describe('System Console > User Management > Deactivation', () => {
                 cy.get('.more-direct-channels #selectItems').type(user2.username).wait(TIMEOUTS.HALF_SEC);
 
                 // * Confirm user2 can't be added to the DM
-                cy.get('#displayedUserName' + user2.username).should('not.be.visible');
+                cy.get('#displayedUserName' + user2.username).should('not.exist');
             });
         });
     });
@@ -150,7 +150,7 @@ describe('System Console > User Management > Deactivation', () => {
             cy.get('#rhsContainer .post-create-message').contains('You are viewing an archived channel with a deactivated user. New messages cannot be posted.');
 
             // * Verify status indicator is not shown in channel header
-            cy.get('#channelHeaderDescription .status').should('not.be.visible');
+            cy.get('#channelHeaderDescription .status').should('not.exist');
 
             // * Verify archived icon is shown in LHS
             cy.uiGetLhsSection('DIRECT MESSAGES').

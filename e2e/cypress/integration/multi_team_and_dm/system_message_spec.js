@@ -24,7 +24,7 @@ function verifySystemMessage(post) {
 
     cy.get(post).
         find('.status-wrapper .status svg').
-        should('not.be.visible');
+        should('not.exist');
 }
 
 describe('System message', () => {

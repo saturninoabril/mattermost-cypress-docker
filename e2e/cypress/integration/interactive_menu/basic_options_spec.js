@@ -88,7 +88,7 @@ describe('Interactive Menu', () => {
             cy.get('.select-suggestion-container').should('be.visible');
 
             // * Suggestion list should not be visible before dropdown is clicked
-            cy.get('#suggestionList').should('not.be.visible');
+            cy.get('#suggestionList').should('not.exist');
 
             // # Click on the suggestion dropdown input
             cy.findByPlaceholderText('Select an option...').scrollIntoView().should('be.visible').click();
@@ -154,7 +154,7 @@ describe('Interactive Menu', () => {
 
                 // * Verify that the reply is in the RHS with matching text
                 cy.get(`#rhsPost_${replyMessageId}`).within(() => {
-                    cy.get('.post__link').should('not.be.visible');
+                    cy.get('.post__link').should('not.exist');
                     cy.get(`#rhsPostMessageText_${replyMessageId}`).should('be.visible').and('have.text', 'Reply to webhook');
                 });
 
@@ -399,8 +399,8 @@ describe('Interactive Menu', () => {
                 // # Scroll to bottom of the options
                 cy.get('#suggestionList').scrollTo('bottom').then((listContainer) => {
                     // * When scrolled to bottom, the top options should be not visible but should exist in dom
-                    cy.findByText(manyOptions[0].text, {listContainer}).should('exist').and('not.be.visible');
-                    cy.findByText(manyOptions[1].text, {listContainer}).should('exist').and('not.be.visible');
+                    cy.findByText(manyOptions[0].text, {listContainer}).should('exist').and('not.exist');
+                    cy.findByText(manyOptions[1].text, {listContainer}).should('exist').and('not.exist');
 
                     // # But the last options should be visible
                     cy.findByText(manyOptions[lenghtOfLongListOptions - 1].text, {listContainer}).scrollIntoView().should('exist').and('be.visible');
@@ -410,8 +410,8 @@ describe('Interactive Menu', () => {
                 // # Scroll to top of the options
                 cy.get('#suggestionList').scrollTo('top').then((listContainer) => {
                     // * When scrolled to top, the bottom options should be not visible
-                    cy.findByText(manyOptions[lenghtOfLongListOptions - 1].text, {listContainer}).should('not.be.visible');
-                    cy.findByText(manyOptions[lenghtOfLongListOptions - 2].text, {listContainer}).should('not.be.visible');
+                    cy.findByText(manyOptions[lenghtOfLongListOptions - 1].text, {listContainer}).should('not.exist');
+                    cy.findByText(manyOptions[lenghtOfLongListOptions - 2].text, {listContainer}).should('not.exist');
 
                     // # But the top options should be visible
                     cy.findByText(manyOptions[0].text, {listContainer}).should('be.visible');

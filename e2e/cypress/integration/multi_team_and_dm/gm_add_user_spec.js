@@ -121,7 +121,7 @@ describe('Multi-user group messages', () => {
 
         // # Type a search term and select an autocomplete option.
         cy.get('#selectItems input').click().type('beatrice');
-        cy.get('.loading-screen').should('not.be.visible');
+        cy.get('.loading-screen').should('not.exist');
         cy.contains('#multiSelectList .clickable', 'beatrice').should('be.visible'); // .click(); runs into dettached dom element
         cy.get('#selectItems input').type('{enter}');
 
@@ -129,11 +129,11 @@ describe('Multi-user group messages', () => {
         cy.get('button#saveItems').click({force: true});
 
         // * Modal closes
-        cy.get('#moreDmModal').should('not.be.visible');
+        cy.get('#moreDmModal').should('not.exist');
         cy.wait(TIMEOUTS.ONE_SEC);
 
         // * Original messages does not exist
-        cy.contains('.post-message__text', 'historical').should('not.be.visible');
+        cy.contains('.post-message__text', 'historical').should('not.exist');
 
         cy.contains('p.channel-intro-text span', 'This is the start of your group message history with');
 

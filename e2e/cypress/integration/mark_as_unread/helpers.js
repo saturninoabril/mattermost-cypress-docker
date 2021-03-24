@@ -17,7 +17,7 @@ export function markAsUnreadShouldBeAbsent(postId, prefix = 'post', location = '
     cy.get('.dropdown-menu').
         should('be.visible').
         within(() => {
-            cy.findByText('Mark as Unread').should('not.be.visible');
+            cy.findByText('Mark as Unread').should('not.exist');
         });
 }
 

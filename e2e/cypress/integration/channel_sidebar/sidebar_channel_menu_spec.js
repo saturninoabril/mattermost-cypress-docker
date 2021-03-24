@@ -180,6 +180,6 @@ describe('Sidebar channel menu', () => {
         cy.get('#sidebarItem_town-square').find('.SidebarMenu_menuButton').click({force: true});
 
         // * Verify that the mention badge disappears
-        cy.get('#sidebarItem_town-square .badge').should('not.be.visible');
+        cy.get('#sidebarItem_town-square .badge').should('not.exist');
     });
 });

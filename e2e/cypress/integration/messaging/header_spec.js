@@ -82,7 +82,7 @@ describe('Header', () => {
         // # Close the search side bar
         // * Verify the Search side bar is closed
         cy.get('#searchResultsCloseButton').should('be.visible').click();
-        cy.get('#sidebar-right').should('not.be.visible');
+        cy.get('#sidebar-right').should('not.exist');
 
         // # Verify that the cleared search text does not appear on the search box
         cy.get('#searchBox').should('be.visible').and('be.empty');
