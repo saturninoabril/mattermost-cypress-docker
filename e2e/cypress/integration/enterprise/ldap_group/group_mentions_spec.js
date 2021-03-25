@@ -214,10 +214,10 @@ describe('System Console', () => {
         // # Click the allow reference button
         cy.findByTestId('allowReferenceSwitch').then((el) => {
             el.find('button').click();
-        });
 
-        // # Click save button
-        saveConfig();
+            // # Click save button
+            saveConfig();
+        });
 
         // * Assert that the group mention does not do anything since the group is disabled even though sysadmin has permission to mention
         assertGroupMentionDisabled(groupName);

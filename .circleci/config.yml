@@ -233,7 +233,7 @@ jobs:
       MM_EDITION: ee
       MM_DOCKER_TAG: master
       SERVER_INSTANCE_COUNT: 4
-      TYPE: MASTER
+      TYPE: PR
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true

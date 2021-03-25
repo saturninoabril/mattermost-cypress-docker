@@ -78,7 +78,7 @@ describe('Change Roles', () => {
 
         // * Check to see if no drop down menu exists
         cy.findAllByTestId('userListItemActions').then((el) => {
-            cy.wrap(el[0]).should('not.exist');
+            cy.wrap(el[0]).should('not.be.visible');
         });
 
         // Promote user to a channel admin

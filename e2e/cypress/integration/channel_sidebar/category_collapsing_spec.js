@@ -58,7 +58,7 @@ describe('Channel sidebar', () => {
         cy.get('@channelsGroup').click();
 
         // * Verify that Off-Topic is no longer visible but Town Square still is
-        cy.get('.SidebarChannel:contains(Off-Topic)').should('not.exist');
+        cy.get('.SidebarChannel:contains(Off-Topic)').should('not.be.visible');
         cy.get('.SidebarChannel:contains(Town Square)').should('be.visible');
     });
 
@@ -83,7 +83,7 @@ describe('Channel sidebar', () => {
                 cy.get('@channelsGroup').click();
 
                 // * Verify that Off-Topic is no longer visible but Channel Test still is
-                cy.get('.SidebarChannel:contains(Off-Topic)').should('not.exist');
+                cy.get('.SidebarChannel:contains(Off-Topic)').should('not.be.visible');
                 cy.get('.SidebarChannel:contains(Channel Test)').should('be.visible');
             });
         });

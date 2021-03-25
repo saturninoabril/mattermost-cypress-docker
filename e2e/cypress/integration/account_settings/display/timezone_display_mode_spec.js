@@ -238,7 +238,7 @@ function setTimezoneDisplayTo(isAutomatic, timezone) {
 
     // * Verify timezone description is correct
     if (timezone.type === 'Invalid') {
-        cy.get('#timezoneDesc').should('not.exist');
+        cy.get('#timezoneDesc').should('not.be.visible');
     } else {
         cy.get('#timezoneDesc').should('be.visible').invoke('text').then((timezoneDesc) => {
             expect(expectedTimezoneValue.replace('_', ' ')).to.contain(timezoneDesc);

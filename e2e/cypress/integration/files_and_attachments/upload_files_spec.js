@@ -236,10 +236,10 @@ describe('Upload Files', () => {
         for (let i = 1; i < 4; i++) {
             cy.get(`:nth-child(${i}) > .post-image__thumbnail > .post-image`).should('be.visible');
         }
-        cy.get(':nth-child(5) > .post-image__thumbnail > .post-image').should('not.exist');
+        cy.get(':nth-child(5) > .post-image__thumbnail > .post-image').should('not.be.visible');
         cy.get('.file-preview__container').scrollTo('right');
         for (let i = 1; i < 3; i++) {
-            cy.get(`:nth-child(${i}) > .post-image__thumbnail > .post-image`).should('not.exist');
+            cy.get(`:nth-child(${i}) > .post-image__thumbnail > .post-image`).should('not.be.visible');
         }
         cy.get(':nth-child(5) > .post-image__thumbnail > .post-image').should('be.visible');
         cy.postMessage('test');

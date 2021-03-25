@@ -28,7 +28,7 @@ describe('Category muting', () => {
             cy.visit(`/${team.name}/channels/town-square`);
 
             // # Wait for the team to load
-            cy.get('#headerTeamName', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible');
+            cy.postMessage('hello');
         }));
     });
 

@@ -44,14 +44,14 @@ describe('Integrations', () => {
         // * Suggestion list should be visible
         // # Scroll to bottom and verify that the last command "/shrug" is visible
         cy.get('#suggestionList', {timeout: TIMEOUTS.FIVE_SEC}).should('be.visible').scrollTo('bottom').then((container) => {
-            cy.contains('/away', {container}).should('not.exist');
+            cy.contains('/away', {container}).should('not.be.visible');
             cy.contains('/shrug [message]', {container}).should('be.visible');
         });
 
         // # Scroll to top and verify that the first command "/away" is visible
         cy.get('#suggestionList').scrollTo('top').then((container) => {
             cy.contains('/away', {container}).should('be.visible');
-            cy.contains('/shrug [message]', {container}).should('not.exist');
+            cy.contains('/shrug [message]', {container}).should('not.be.visible');
         });
     });
 
