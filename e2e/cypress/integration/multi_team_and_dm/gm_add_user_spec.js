@@ -53,11 +53,12 @@ describe('Multi-user group messages', () => {
         cy.contains('#channelHeaderTitle', 'Town Square');
 
         // # Open the 'Direct messages' dialog
-        cy.uiAddDirectMessage().click();
+        cy.uiAddDirectMessage().click().wait(TIMEOUTS.ONE_SEC);
+        cy.findByRole('dialog', {name: 'Direct Messages'}).should('be.visible').wait(TIMEOUTS.ONE_SEC);
 
         // # Start typing part of a username that matches previously created users
-        cy.get('#selectItems input').
-            type(searchTerm, {force: true});
+        cy.findByRole('textbox', {name: 'Search for people'}).click({force: true}).
+            type(searchTerm).wait(TIMEOUTS.ONE_SEC);
 
         // * Expect user list to only contain usernames matching the query term and to be sorted alphabetically
         expectUserListSortedAlphabetically(searchTerm);

@@ -49,7 +49,7 @@ describe('Notifications', () => {
         cy.postMessageAs({sender: otherUser, message: 'Last Message', channelId: townsquareChannelId});
 
         // * Verify that the last message is currently not visible
-        cy.findByText('Last Message').should('not.exist');
+        cy.findByText('Last Message').should('not.be.visible');
 
         // # Click on the 'Jump to New Messages' button
         cy.get('.toast__visible').should('be.visible').click();

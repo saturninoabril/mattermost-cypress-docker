@@ -219,7 +219,6 @@ describe('Group Mentions', () => {
         // # Trigger DM with couple of users
         cy.uiAddDirectMessage().click();
         cy.get('.more-modal__row.clickable').first().click();
-        cy.get('.more-modal__row.clickable').eq(1).click();
         cy.get('#saveItems').click();
 
         // # Type the Group Name to check if Autocomplete dropdown is displayed
