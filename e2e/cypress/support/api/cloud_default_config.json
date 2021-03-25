@@ -37,6 +37,7 @@
         "EnableOpenServer": true,
         "EnableUserDeactivation": false,
         "RestrictCreationToDomains": "",
+        "EnableCustomUserStatuses": true,
         "EnableCustomBrand": false,
         "CustomBrandText": "",
         "CustomDescriptionText": "",
@@ -53,8 +54,7 @@
         "ExperimentalTownSquareIsReadOnly": false,
         "LockTeammateNameDisplay": false,
         "ExperimentalPrimaryTeam": "",
-        "ExperimentalDefaultChannels": [],
-        "EnableCustomUserStatuses": true
+        "ExperimentalDefaultChannels": []
     },
     "PasswordSettings": {
         "MinimumLength": 5,

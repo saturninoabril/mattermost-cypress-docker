@@ -110,10 +110,10 @@ function stepThroughStatuses() {
 
     // * Verify the user's status icon changes correctly every time
     statusTestCases.forEach((tc) => {
-        // # Open status menu and click option
+        // # Step through all the status
         cy.uiOpenSetStatusMenu(tc.text);
 
-        // # Verify correct status icon is shown on user's profile picture
+        // * Verify correct status icon is shown on user's profile picture
         cy.get('.MenuWrapper.status-dropdown-menu svg').should('have.attr', 'aria-label', `${tc.text} Icon`);
     });
 }
