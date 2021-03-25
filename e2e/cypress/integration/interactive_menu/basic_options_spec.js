@@ -370,7 +370,7 @@ describe('Interactive Menu', () => {
             });
         });
 
-        // # Get the emphemirical message from webhook, which is only visible to us
+        // # Get the ephemeral message from webhook, which is only visible to us
         verifyEphemeralMessage('Ephemeral | select option: mango');
     });
 
@@ -399,8 +399,8 @@ describe('Interactive Menu', () => {
                 // # Scroll to bottom of the options
                 cy.get('#suggestionList').scrollTo('bottom').then((listContainer) => {
                     // * When scrolled to bottom, the top options should be not visible but should exist in dom
-                    cy.findByText(manyOptions[0].text, {listContainer}).should('exist').and('not.exist');
-                    cy.findByText(manyOptions[1].text, {listContainer}).should('exist').and('not.exist');
+                    cy.findByText(manyOptions[0].text, {listContainer}).should('exist').and('not.be.visible');
+                    cy.findByText(manyOptions[1].text, {listContainer}).should('exist').and('not.be.visible');
 
                     // # But the last options should be visible
                     cy.findByText(manyOptions[lenghtOfLongListOptions - 1].text, {listContainer}).scrollIntoView().should('exist').and('be.visible');
@@ -410,8 +410,8 @@ describe('Interactive Menu', () => {
                 // # Scroll to top of the options
                 cy.get('#suggestionList').scrollTo('top').then((listContainer) => {
                     // * When scrolled to top, the bottom options should be not visible
-                    cy.findByText(manyOptions[lenghtOfLongListOptions - 1].text, {listContainer}).should('not.exist');
-                    cy.findByText(manyOptions[lenghtOfLongListOptions - 2].text, {listContainer}).should('not.exist');
+                    cy.findByText(manyOptions[lenghtOfLongListOptions - 1].text, {listContainer}).should('not.be.visible');
+                    cy.findByText(manyOptions[lenghtOfLongListOptions - 2].text, {listContainer}).should('not.be.visible');
 
                     // # But the top options should be visible
                     cy.findByText(manyOptions[0].text, {listContainer}).should('be.visible');
@@ -487,7 +487,7 @@ describe('Interactive Menu', () => {
         cy.getLastPostId().then((parentPostId) => {
             // # Get the last messages attachment container
             cy.get(`#messageAttachmentList_${parentPostId}`).within(() => {
-                // # Open the message attachment menu dropdown by clickin on input
+                // # Open the message attachment menu dropdown by clicking on input
                 cy.findByPlaceholderText('Select an option...').scrollIntoView().click();
 
                 // * Message attachment dropdown with the selected item should be visible
@@ -531,7 +531,7 @@ describe('Interactive Menu', () => {
             });
 
             // # Checking if we got updated ephemeral message with the new selection we made
-            verifyEphemeralMessage('Ephemeral | select option: avacodo');
+            verifyEphemeralMessage('Ephemeral | select option: avocado');
 
             cy.closeRHS();
         });
@@ -578,7 +578,8 @@ describe('Interactive Menu', () => {
 });
 
 function verifyMessageAttachmentList(postId, isRhs, text) {
-    return cy.get(`#messageAttachmentList_${postId}`).within(() => {
+    console.log('verifyMessageAttachmentList isRhs', isRhs)
+    cy.get(`#messageAttachmentList_${postId}`).within(() => {
         cy.findByTestId('autoCompleteSelector').should('be.visible');
 
         if (isRhs) {
@@ -601,8 +602,9 @@ function verifyMessageAttachmentList(postId, isRhs, text) {
             and('have.css', 'width', '220px').
             and('have.css', 'padding-right', '30px');
 
-        return cy.findByPlaceholderText('Select an option...').scrollIntoView().invoke('attr', 'value').then((value) => {
-            return cy.wrap({value});
+        cy.findByPlaceholderText('Select an option...').scrollIntoView().invoke('attr', 'value').then((value) => {
+            console.log('return value', value)
+            cy.wrap(value).as('optionValue');
         });
     });
 }
@@ -611,17 +613,19 @@ function verifyLastPost() {
     // # Get message attachment from the last post, and
     // * Verify its content in center view
     cy.getLastPostId().then((postId) => {
-        verifyMessageAttachmentList(postId, false).then(({value}) => {
-            // Open the same post in RHS, and
-            // * Verify its content in RHS
-            cy.clickPostCommentIcon(postId);
-            cy.get(`#rhsPost_${postId}`).within(() => {
+        verifyMessageAttachmentList(postId, false);
+        // # Open the same post in RHS, and
+        // * Verify its content in RHS
+        cy.clickPostCommentIcon(postId);
+        cy.get(`#rhsPost_${postId}`).within(() => {
+            cy.get('@optionValue').then((value) => {
+                console.log('postId value', value)
                 verifyMessageAttachmentList(postId, true, value);
             });
-
-            // # Close the RHS
-            cy.closeRHS();
         });
+
+        // # Close the RHS
+        cy.closeRHS();
     });
 }
 

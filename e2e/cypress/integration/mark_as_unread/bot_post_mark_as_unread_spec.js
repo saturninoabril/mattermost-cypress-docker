@@ -31,7 +31,10 @@ describe('Bot post unread message', () => {
         cy.apiUpdateConfig(newSettings);
 
         // # Create and visit new channel
-        cy.apiInitSetup().then(({team, channel}) => {
+        cy.apiInitSetup({
+            promoteNewUserAsAdmin: true,
+            loginAfter: true,
+        }).then(({team, channel}) => {
             testTeam = team;
             newChannel = channel;
             cy.visit(`/${testTeam.name}/channels/${channel.name}`);
@@ -40,7 +43,7 @@ describe('Bot post unread message', () => {
         // # Create a bot and get userID
         cy.apiCreateBot().then(({bot}) => {
             const botUserId = bot.user_id;
-            cy.externalRequest({user: sysadmin, method: 'put', path: `users/${botUserId}/roles`, data: {roles: 'system_user system_post_all system_admin'}});
+            cy.apiPatchUserRoles(botUserId, ['system_user system_post_all system_admin']);
 
             // # Get token from bots id
             cy.apiAccessToken(botUserId, 'Create token').then(({token}) => {

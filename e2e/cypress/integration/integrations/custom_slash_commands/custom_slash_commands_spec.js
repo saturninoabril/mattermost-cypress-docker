@@ -117,7 +117,7 @@ describe('Slash commands', () => {
 
         // # Update username
         // # click on last added command's(first child) edit action
-        cy.get(':nth-child(1) > .item-details > .d-flex > .item-actions > a > span').click();
+        cy.get('.backstage-list').find('.backstage-list__item').first().findByText('Edit').click();
         cy.get('#username').type('newname');
         cy.get('#saveCommand').click();
 
@@ -155,7 +155,7 @@ describe('Slash commands', () => {
 
         // # Update icon URL
         // # click on last added command's(first child) edit action
-        cy.get(':nth-child(1) > .item-details > .d-flex > .item-actions > a > span').click();
+        cy.get('.backstage-list').find('.backstage-list__item').first().findByText('Edit').click();
         const iconURL = 'http://www.mattermost.org/wp-content/uploads/2016/04/icon_WS.png';
         cy.get('#iconUrl').type(iconURL);
         cy.get('#saveCommand').click();
@@ -190,7 +190,7 @@ describe('Slash commands', () => {
 
         // # Update autocomplete
         // # click on last added command's(first child) edit action
-        cy.get(':nth-child(1) > .item-details > .d-flex > .item-actions > a > span').click();
+        cy.get('.backstage-list').find('.backstage-list__item').first().findByText('Edit').click();
         cy.get('#autocomplete').click();
         const hint = '[test-hint]';
         cy.get('#autocompleteHint').type(hint);
@@ -223,7 +223,7 @@ describe('Slash commands', () => {
 
         // # Remove autocomplete
         // # click on last added command's(first child) edit action
-        cy.get(':nth-child(1) > .item-details > .d-flex > .item-actions > a > span').click();
+        cy.get('.backstage-list').find('.backstage-list__item').first().findByText('Edit').click();
         cy.get('#autocomplete').click();
         cy.get('#saveCommand').click();
 

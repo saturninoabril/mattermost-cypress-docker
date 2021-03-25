@@ -49,7 +49,7 @@ describe('Scroll', () => {
         cy.reload();
 
         // * Verify that the top of the channel is scrolled past hidden
-        cy.findByText(`Beginning of ${testChannel.display_name}`).should('exist').and('not.exist');
+        cy.findByText(`Beginning of ${testChannel.display_name}`).should('exist').and('not.be.visible');
 
         // * Verify that the last message is visible implying that channel scrolled to bottom on reload
         cy.findByText('This is the last post').should('exist').and('be.visible');
@@ -65,7 +65,7 @@ describe('Scroll', () => {
         });
 
         // * Verify that we are the bottom of the channel
-        cy.findByText('This is the first post').should('exist').and('not.exist');
+        cy.findByText('This is the first post').should('exist').and('not.be.visible');
 
         // * Make post from another user and verify that channel is scrolled down as post appear
         Cypress._.times(3, (postIndex) => {
@@ -80,8 +80,8 @@ function postMessageAndcheckIfTopMessagesAreScrolled(postIndex, sender, channelI
 
     cy.get('#post-list').should('exist').within(() => {
         // * Verify that top post are hidden behind scroll
-        cy.findByText(`p-${postIndex}`).should('exist').and('not.exist');
-        cy.findByText(`p-${postIndex + 1}`).should('exist').and('not.exist');
+        cy.findByText(`p-${postIndex}`).should('exist').and('not.be.visible');
+        cy.findByText(`p-${postIndex + 1}`).should('exist').and('not.be.visible');
 
         // * Also verify that latest messages from the other user are visible
         cy.findByText(`Other users p-${postIndex}`).should('exist').and('be.visible');

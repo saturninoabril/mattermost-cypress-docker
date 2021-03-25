@@ -495,11 +495,9 @@ describe('Messaging', () => {
 
             // * Close the modal
             cy.get('#editButton', {timeout: TIMEOUTS.FIVE_SEC}).should('be.visible').click();
-        });
 
-        // # Verify that last post does not contain (edited)
-        cy.getLastPostId().then(() => {
-            cy.findByText('@sysadmin').should('not.contain', '(edited)');
+            // # Verify that last post does not contain (edited)
+            cy.get(`#postMessageText_${postId}`).should('contain', message1).and('not.contain', '(edited)');
         });
     });
 

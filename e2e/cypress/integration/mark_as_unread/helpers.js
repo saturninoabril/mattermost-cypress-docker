@@ -6,6 +6,8 @@ import * as TIMEOUTS from '../../fixtures/timeouts';
 export function markAsUnreadFromPost(post, rhs = false) {
     const prefix = rhs ? 'rhsPost' : 'post';
 
+    cy.get(`#${prefix}_${post.id}`).scrollIntoView().should('be.visible');
+
     cy.get('body').type('{alt}', {release: false});
     cy.get(`#${prefix}_${post.id}`).click({force: true});
     cy.get('body').type('{alt}', {release: true});

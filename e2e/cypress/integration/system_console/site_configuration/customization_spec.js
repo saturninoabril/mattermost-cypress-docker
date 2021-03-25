@@ -115,7 +115,7 @@ describe('Customization', () => {
         cy.url().should('include', '/login');
 
         // * Ensure that the signup is loaded and the img doesn't exist
-        cy.get('.signup__markdown').find('img').should('not.exist');
+        cy.get('.signup__markdown').find('img').should('not.be.visible');
     });
 
     it('MM-T1028 - Custom brand image and text - true, and uploaded / updated', () => {
@@ -284,7 +284,7 @@ describe('Customization', () => {
         cy.get('#site_description').should('have.text', 'All team communication in one place, searchable and accessible anywhere');
 
         // * Ensure that the custom branding img is not visible
-        cy.get('img').should('not.exist');
+        cy.get('img').should('not.be.visible');
 
         // * Ensure that the custom branding text is empty
         cy.get('.signup__markdown').should('be.empty');
