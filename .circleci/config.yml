@@ -363,7 +363,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_4
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
+          run_filter: "--stage='@prod' --sortLast='@elasticsearch,@saml,@ldap,@mfa' --invert"
           run_part: "--part=4 --of=4"
       - persist-and-store:
           folder: e2e-test-4
