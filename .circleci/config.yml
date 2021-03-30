@@ -116,7 +116,7 @@ commands:
       - run:
           name: Create the test server
           command: |
-            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&es=1"
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&elasticsearch=1&keycloak=false"
             CREATE_URL="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $CREATE_URL
             sleep 1m
@@ -189,7 +189,7 @@ commands:
       - run:
           name: Run Cypress test
           command: |
-            curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 << parameters.ci_base_url >>:8065/api/v4/system/ping
+            curl --retry 10 --retry-delay 10 --retry-connrefused --max-time 120 << parameters.ci_base_url >>:8065/api/v4/system/ping
 
             export CI_BASE_URL=<< parameters.ci_base_url >>
             export COMMON_BASE_URL=<< parameters.common_base_url >>
@@ -198,13 +198,14 @@ commands:
 
             export CYPRESS_elasticsearchConnectionUrl="http://${COMMON_BASE_URL}:9200"
             export CYPRESS_minioS3Endpoint="${CI_BASE_URL}:9000"
+            export CYPRESS_keycloakBaseUrl="http://${CI_BASE_URL}:8484"
 
             export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
             export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
             export CYPRESS_ciBaseUrl=${CI_BASE_URL}
             export CYPRESS_allowedUntrustedInternalConnections="localhost ${CI_BASE_URL}"
 
-            curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 $CYPRESS_baseUrl
+            curl --retry 10 --retry-delay 10 --retry-connrefused --max-time 120 $CYPRESS_baseUrl
 
             cd e2e && node run_tests.js << parameters.run_filter >> << parameters.run_part >>
   persist-and-store:
@@ -243,7 +244,7 @@ jobs:
       JIRA_PROJECT_KEY: MM
       TM4J_FOLDER_ID: "1106027"
       TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/master-e20-prod"
-      CYPRESS_chromeWebSecurity: true
+      CYPRESS_chromeWebSecurity: false
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
       CYPRESS_runLDAPSync: false
@@ -255,7 +256,7 @@ jobs:
       - run:
           name: Test server health check
           command: |
-            curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 "${BASE_URL_1}:8065/api/v4/system/ping"
+            curl --retry 30 --retry-delay 20 --retry-connrefused --max-time 600 "${BASE_URL_1}:8065/api/v4/system/ping"
       - persist_to_workspace:
           root: ~/mattermost
           paths:
@@ -290,7 +291,7 @@ jobs:
           path: ~/mattermost/e2e/results/junit
   e2e-test-1:
     docker:
-      - image: cypress/included:6.4.0
+      - image: cypress/included:6.8.0
     working_directory: ~/mattermost/e2e-test-1
     steps:
       - checkout
@@ -303,14 +304,14 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_1
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
           run_part: "--part=1 --of=4"
       - persist-and-store:
           folder: e2e-test-1
   
   e2e-test-2:
     docker:
-      - image: cypress/included:6.4.0
+      - image: cypress/included:6.8.0
     working_directory: ~/mattermost/e2e-test-2
     steps:
       - checkout
@@ -323,14 +324,14 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_2
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
           run_part: "--part=2 --of=4"
       - persist-and-store:
           folder: e2e-test-2
 
   e2e-test-3:
     docker:
-      - image: cypress/included:6.4.0
+      - image: cypress/included:6.8.0
     working_directory: ~/mattermost/e2e-test-3
     steps:
       - checkout
@@ -343,14 +344,14 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_3
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
           run_part: "--part=3 --of=4"
       - persist-and-store:
           folder: e2e-test-3
 
   e2e-test-4:
     docker:
-      - image: cypress/included:6.4.0
+      - image: cypress/included:6.8.0
     working_directory: ~/mattermost/e2e-test-4
     steps:
       - checkout
@@ -363,7 +364,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_4
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
           run_part: "--part=4 --of=4"
       - persist-and-store:
           folder: e2e-test-4
