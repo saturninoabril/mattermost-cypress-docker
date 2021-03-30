@@ -10,7 +10,8 @@ Cypress.Commands.add('uiCreateChannel', ({
     purpose = '',
     header = '',
 }) => {
-    cy.uiBrowseOrCreateChannel('Create New Channel').click();
+    cy.get('#SidebarContainer .AddChannelDropdown_dropdownButton').click();
+    cy.get('#showNewChannel button').click();
 
     cy.get('#newChannelModalLabel').should('be.visible');
     if (isPrivate) {

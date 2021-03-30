@@ -1,5 +1,6 @@
 {
     "baseUrl": "http://localhost:8065",
+    "chromeWebSecurity": false,
     "defaultCommandTimeout": 20000,
     "ignoreTestFiles": "**/node_modules/**/*",
     "integrationFolder": "..",
@@ -20,6 +21,8 @@
         "firstTest": false,
         "keycloakAppName": "mattermost",
         "keycloakBaseUrl": "http://localhost:8484",
+        "keycloakUsername": "mmuser",
+        "keycloakPassword": "mostest",
         "ldapServer": "localhost",
         "ldapPort": 389,
         "minioAccessKey": "minioaccesskey",
