@@ -198,6 +198,7 @@ commands:
 
             export CYPRESS_elasticsearchConnectionUrl="http://${COMMON_BASE_URL}:9200"
             export CYPRESS_minioS3Endpoint="${CI_BASE_URL}:9000"
+            export CYPRESS_keycloakBaseUrl="http://${CI_BASE_URL}:8484"
 
             export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
             export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
