@@ -189,7 +189,7 @@ commands:
       - run:
           name: Run Cypress test
           command: |
-            curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 << parameters.ci_base_url >>:8065/api/v4/system/ping
+            curl --retry 10 --retry-delay 10 --retry-connrefused --max-time 120 << parameters.ci_base_url >>:8065/api/v4/system/ping
 
             export CI_BASE_URL=<< parameters.ci_base_url >>
             export COMMON_BASE_URL=<< parameters.common_base_url >>
@@ -204,7 +204,7 @@ commands:
             export CYPRESS_ciBaseUrl=${CI_BASE_URL}
             export CYPRESS_allowedUntrustedInternalConnections="localhost ${CI_BASE_URL}"
 
-            curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 $CYPRESS_baseUrl
+            curl --retry 10 --retry-delay 10 --retry-connrefused --max-time 120 $CYPRESS_baseUrl
 
             cd e2e && node run_tests.js << parameters.run_filter >> << parameters.run_part >>
   persist-and-store:
@@ -255,7 +255,7 @@ jobs:
       - run:
           name: Test server health check
           command: |
-            curl --retry 20 --retry-delay 20 --retry-connrefused --max-time 300 "${BASE_URL_1}:8065/api/v4/system/ping"
+            curl --retry 30 --retry-delay 20 --retry-connrefused --max-time 600 "${BASE_URL_1}:8065/api/v4/system/ping"
       - persist_to_workspace:
           root: ~/mattermost
           paths:
