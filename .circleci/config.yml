@@ -116,7 +116,7 @@ commands:
       - run:
           name: Create the test server
           command: |
-            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&elasticsearch=0&keycloak=false"
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&elasticsearch=1&keycloak=true"
             CREATE_URL="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $CREATE_URL
             sleep 1m
@@ -232,10 +232,10 @@ jobs:
     environment:
       MM_DOCKER_IMAGE: mattermost-enterprise-edition
       MM_EDITION: ee
-      MM_DOCKER_TAG: master
+      MM_DOCKER_TAG: a2cd8ab
       SERVER_INSTANCE_COUNT: 4
-      TYPE: NONE
-      PULL_REQUEST: add-link
+      TYPE: PR
+      PULL_REQUEST: https://github.com/mattermost/mattermost-webapp/pull/7798
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
@@ -291,7 +291,7 @@ jobs:
           path: ~/mattermost/e2e/results/junit
   e2e-test-1:
     docker:
-      - image: cypress/included:6.8.0
+      - image: cypress/included:6.4.0
     working_directory: ~/mattermost/e2e-test-1
     steps:
       - checkout
@@ -304,14 +304,14 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_1
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --sortLast='@elasticsearch,@saml,@ldap,@mfa' --invert"
           run_part: "--part=1 --of=4"
       - persist-and-store:
           folder: e2e-test-1
   
   e2e-test-2:
     docker:
-      - image: cypress/included:6.8.0
+      - image: cypress/included:6.4.0
     working_directory: ~/mattermost/e2e-test-2
     steps:
       - checkout
@@ -324,14 +324,14 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_2
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --sortLast='@elasticsearch,@saml,@ldap,@mfa' --invert"
           run_part: "--part=2 --of=4"
       - persist-and-store:
           folder: e2e-test-2
 
   e2e-test-3:
     docker:
-      - image: cypress/included:6.8.0
+      - image: cypress/included:6.4.0
     working_directory: ~/mattermost/e2e-test-3
     steps:
       - checkout
@@ -344,14 +344,14 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_3
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --sortLast='@elasticsearch,@saml,@ldap,@mfa' --invert"
           run_part: "--part=3 --of=4"
       - persist-and-store:
           folder: e2e-test-3
 
   e2e-test-4:
     docker:
-      - image: cypress/included:6.8.0
+      - image: cypress/included:6.4.0
     working_directory: ~/mattermost/e2e-test-4
     steps:
       - checkout
@@ -364,7 +364,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_4
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --sortLast='@elasticsearch,@saml,@ldap,@mfa' --invert"
           run_part: "--part=4 --of=4"
       - persist-and-store:
           folder: e2e-test-4
