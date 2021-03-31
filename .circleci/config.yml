@@ -116,7 +116,7 @@ commands:
       - run:
           name: Create the test server
           command: |
-            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&elasticsearch=0&keycloak=false"
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&elasticsearch=1&keycloak=false"
             CREATE_URL="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $CREATE_URL
             sleep 1m
@@ -304,7 +304,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_1
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
           run_part: "--part=1 --of=4"
       - persist-and-store:
           folder: e2e-test-1
@@ -324,7 +324,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_2
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
           run_part: "--part=2 --of=4"
       - persist-and-store:
           folder: e2e-test-2
@@ -344,7 +344,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_3
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
           run_part: "--part=3 --of=4"
       - persist-and-store:
           folder: e2e-test-3
@@ -364,7 +364,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_4
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@te_only'"
+          run_filter: "--stage='@prod' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
           run_part: "--part=4 --of=4"
       - persist-and-store:
           folder: e2e-test-4
