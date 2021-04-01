@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: @prod
+// Stage: Timeout error, will investigate further
 // Group: @emoji
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
