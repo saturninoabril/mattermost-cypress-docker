@@ -26,7 +26,7 @@ workflows:
       - e2e-test-4:
           context: cypress-circleci-env
           requires:
-            - create-test-serverv
+            - create-test-server
       - e2e-test-5:
           context: cypress-circleci-env
           requires:
