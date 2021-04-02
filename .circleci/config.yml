@@ -18,7 +18,7 @@ workflows:
       - e2e-test-2:
           context: cypress-circleci-env
           requires:
-            - create-test-server
+            - e2e-test-1
       - e2e-test-3:
           context: cypress-circleci-env
           requires:
@@ -26,7 +26,7 @@ workflows:
       - e2e-test-4:
           context: cypress-circleci-env
           requires:
-            - create-test-server
+            - e2e-test-3
       - e2e-test-5:
           context: cypress-circleci-env
           requires:
@@ -34,7 +34,31 @@ workflows:
       - e2e-test-6:
           context: cypress-circleci-env
           requires:
+            - e2e-test-5
+      - e2e-test-7:
+          context: cypress-circleci-env
+          requires:
             - create-test-server
+      - e2e-test-8:
+          context: cypress-circleci-env
+          requires:
+            - e2e-test-7
+      - e2e-test-9:
+          context: cypress-circleci-env
+          requires:
+            - create-test-server
+      - e2e-test-10:
+          context: cypress-circleci-env
+          requires:
+            - e2e-test-9
+      - e2e-test-11:
+          context: cypress-circleci-env
+          requires:
+            - create-test-server
+      - e2e-test-12:
+          context: cypress-circleci-env
+          requires:
+            - e2e-test-11
       - merge-and-save-test-reports:
           context: cypress-circleci-env
           requires:
@@ -44,6 +68,12 @@ workflows:
             - e2e-test-4
             - e2e-test-5
             - e2e-test-6
+            - e2e-test-7
+            - e2e-test-8
+            - e2e-test-9
+            - e2e-test-10
+            - e2e-test-11
+            - e2e-test-12
 
 commands:
   setup-client:
@@ -303,6 +333,12 @@ jobs:
             cp -r ~/mattermost/e2e-test-4/e2e/results .
             cp -r ~/mattermost/e2e-test-5/e2e/results .
             cp -r ~/mattermost/e2e-test-6/e2e/results .
+            cp -r ~/mattermost/e2e-test-7/e2e/results .
+            cp -r ~/mattermost/e2e-test-8/e2e/results .
+            cp -r ~/mattermost/e2e-test-9/e2e/results .
+            cp -r ~/mattermost/e2e-test-10/e2e/results .
+            cp -r ~/mattermost/e2e-test-11/e2e/results .
+            cp -r ~/mattermost/e2e-test-12/e2e/results .
             cd ..
       - save-report
       - store_artifacts:
@@ -326,7 +362,7 @@ jobs:
           ci_base_url: $BASE_URL_1
           common_base_url: $BASE_URL_COMMON
           run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
-          run_part: "--part=1 --of=6"
+          run_part: "--part=1 --of=12"
       - persist-and-store:
           folder: e2e-test-1
   
@@ -343,10 +379,10 @@ jobs:
       - save-cache
       - apply-shared-env
       - run-cypress:
-          ci_base_url: $BASE_URL_2
+          ci_base_url: $BASE_URL_1
           common_base_url: $BASE_URL_COMMON
           run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
-          run_part: "--part=2 --of=6"
+          run_part: "--part=2 --of=12"
       - persist-and-store:
           folder: e2e-test-2
 
@@ -363,10 +399,10 @@ jobs:
       - save-cache
       - apply-shared-env
       - run-cypress:
-          ci_base_url: $BASE_URL_3
+          ci_base_url: $BASE_URL_2
           common_base_url: $BASE_URL_COMMON
           run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
-          run_part: "--part=3 --of=6"
+          run_part: "--part=3 --of=12"
       - persist-and-store:
           folder: e2e-test-3
 
@@ -383,10 +419,10 @@ jobs:
       - save-cache
       - apply-shared-env
       - run-cypress:
-          ci_base_url: $BASE_URL_4
+          ci_base_url: $BASE_URL_2
           common_base_url: $BASE_URL_COMMON
           run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
-          run_part: "--part=4 --of=6"
+          run_part: "--part=4 --of=12"
       - persist-and-store:
           folder: e2e-test-4
 
@@ -403,10 +439,10 @@ jobs:
       - save-cache
       - apply-shared-env
       - run-cypress:
-          ci_base_url: $BASE_URL_5
+          ci_base_url: $BASE_URL_3
           common_base_url: $BASE_URL_COMMON
           run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
-          run_part: "--part=5 --of=6"
+          run_part: "--part=5 --of=12"
       - persist-and-store:
           folder: e2e-test-5
 
@@ -423,9 +459,129 @@ jobs:
       - save-cache
       - apply-shared-env
       - run-cypress:
+          ci_base_url: $BASE_URL_3
+          common_base_url: $BASE_URL_COMMON
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
+          run_part: "--part=6 --of=12"
+      - persist-and-store:
+          folder: e2e-test-6
+
+  e2e-test-7:
+    docker:
+      - image: cypress/included:6.8.0
+    working_directory: ~/mattermost/e2e-test-7
+    steps:
+      - checkout
+      - attach-workspace
+      - setup-client
+      - setup-required-files
+      - install-npm
+      - save-cache
+      - apply-shared-env
+      - run-cypress:
+          ci_base_url: $BASE_URL_4
+          common_base_url: $BASE_URL_COMMON
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
+          run_part: "--part=7 --of=12"
+      - persist-and-store:
+          folder: e2e-test-7
+
+  e2e-test-8:
+    docker:
+      - image: cypress/included:6.8.0
+    working_directory: ~/mattermost/e2e-test-8
+    steps:
+      - checkout
+      - attach-workspace
+      - setup-client
+      - setup-required-files
+      - install-npm
+      - save-cache
+      - apply-shared-env
+      - run-cypress:
+          ci_base_url: $BASE_URL_4
+          common_base_url: $BASE_URL_COMMON
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
+          run_part: "--part=8 --of=12"
+      - persist-and-store:
+          folder: e2e-test-8
+
+  e2e-test-9:
+    docker:
+      - image: cypress/included:6.8.0
+    working_directory: ~/mattermost/e2e-test-9
+    steps:
+      - checkout
+      - attach-workspace
+      - setup-client
+      - setup-required-files
+      - install-npm
+      - save-cache
+      - apply-shared-env
+      - run-cypress:
+          ci_base_url: $BASE_URL_5
+          common_base_url: $BASE_URL_COMMON
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
+          run_part: "--part=9 --of=12"
+      - persist-and-store:
+          folder: e2e-test-9
+
+  e2e-test-10:
+    docker:
+      - image: cypress/included:6.8.0
+    working_directory: ~/mattermost/e2e-test-10
+    steps:
+      - checkout
+      - attach-workspace
+      - setup-client
+      - setup-required-files
+      - install-npm
+      - save-cache
+      - apply-shared-env
+      - run-cypress:
+          ci_base_url: $BASE_URL_5
+          common_base_url: $BASE_URL_COMMON
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
+          run_part: "--part=10 --of=12"
+      - persist-and-store:
+          folder: e2e-test-10
+
+  e2e-test-11:
+    docker:
+      - image: cypress/included:6.8.0
+    working_directory: ~/mattermost/e2e-test-11
+    steps:
+      - checkout
+      - attach-workspace
+      - setup-client
+      - setup-required-files
+      - install-npm
+      - save-cache
+      - apply-shared-env
+      - run-cypress:
           ci_base_url: $BASE_URL_6
           common_base_url: $BASE_URL_COMMON
           run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
-          run_part: "--part=6 --of=6"
+          run_part: "--part=11 --of=12"
       - persist-and-store:
-          folder: e2e-test-6
+          folder: e2e-test-11
+
+  e2e-test-12:
+    docker:
+      - image: cypress/included:6.8.0
+    working_directory: ~/mattermost/e2e-test-12
+    steps:
+      - checkout
+      - attach-workspace
+      - setup-client
+      - setup-required-files
+      - install-npm
+      - save-cache
+      - apply-shared-env
+      - run-cypress:
+          ci_base_url: $BASE_URL_6
+          common_base_url: $BASE_URL_COMMON
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
+          run_part: "--part=12 --of=12"
+      - persist-and-store:
+          folder: e2e-test-12
