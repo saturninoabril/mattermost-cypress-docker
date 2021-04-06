@@ -167,6 +167,8 @@ commands:
             echo export TYPE=${TYPE} >> shared
             echo export PULL_REQUEST=${PULL_REQUEST} >> shared
             echo export REPO=${REPO} >> shared
+            echo export BRANCH=${CIRCLE_BRANCH} >> shared
+            echo export BUILD_ID=${CIRCLE_BUILD_NUM} >> shared
             echo export BROWSER=${BROWSER} >> shared
             echo export HEADLESS=${HEADLESS} >> shared
             echo export DASHBOARD_ENABLE=${DASHBOARD_ENABLE} >> shared
