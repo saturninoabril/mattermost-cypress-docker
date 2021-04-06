@@ -69,23 +69,17 @@ const {
 } = process.env;
 
 async function createAndStartCycle(data) {
-    try {
-        console.log('createAndStartCycle url', AUTOMATION_DASHBOARD_URL)
-        console.log('createAndStartCycle on', AUTOMATION_DASHBOARD_TOKEN)
-        const response = await axios({
-            url: `${AUTOMATION_DASHBOARD_URL}/cycles/start`,
-            headers: {
-                Authorization: `Bearer ${AUTOMATION_DASHBOARD_TOKEN}`,
-            },
-            method: 'post',
-            timeout: 10000,
-            data,
-        });
+    const response = await axios({
+        url: `${AUTOMATION_DASHBOARD_URL}/cycles/start`,
+        headers: {
+            Authorization: `Bearer ${AUTOMATION_DASHBOARD_TOKEN}`,
+        },
+        method: 'post',
+        timeout: 10000,
+        data,
+    });
 
-        return response.data;
-    } catch (e) {
-        console.log('createAndStartCycle error', e.response)
-    }
+    return response.data;
 }
 
 async function main() {
@@ -99,10 +93,6 @@ async function main() {
         return;
     }
 
-    console.log('main REPO', REPO)
-    console.log('main BRANCH', BRANCH)
-    console.log('main BUILD_ID', BUILD_ID)
-    console.log('main weightedTestFiles', weightedTestFiles)
     const data = await createAndStartCycle({
         repo: REPO,
         branch: BRANCH,
