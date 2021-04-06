@@ -288,6 +288,7 @@ jobs:
     steps:
       - checkout
       - attach-workspace
+      - apply-shared-env
       - install-npm
       - run:
           name: Generate test cycle from the Automation dashboard
