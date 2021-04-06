@@ -188,6 +188,8 @@ commands:
         type: string
       common_base_url:
         type: string
+      test_last_first:
+        type: string
     steps:
       - run:
           name: Run Cypress test
@@ -207,6 +209,8 @@ commands:
             export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
             export CYPRESS_ciBaseUrl=${CI_BASE_URL}
             export CYPRESS_allowedUntrustedInternalConnections="localhost ${CI_BASE_URL}"
+
+            export TEST_LAST_FIRST=<< parameters.test_last_first >>
 
             curl --retry 10 --retry-delay 10 --retry-connrefused --max-time 120 $CYPRESS_baseUrl
 
@@ -326,6 +330,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_1
           common_base_url: $BASE_URL_COMMON
+          test_last_first: 'false'
       - persist-and-store:
           folder: e2e-test-1
   
@@ -344,6 +349,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_2
           common_base_url: $BASE_URL_COMMON
+          test_last_first: 'false'
       - persist-and-store:
           folder: e2e-test-2
 
@@ -362,6 +368,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_3
           common_base_url: $BASE_URL_COMMON
+          test_last_first: 'false'
       - persist-and-store:
           folder: e2e-test-3
 
@@ -380,5 +387,6 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_4
           common_base_url: $BASE_URL_COMMON
+          test_last_first: 'true'
       - persist-and-store:
           folder: e2e-test-4
