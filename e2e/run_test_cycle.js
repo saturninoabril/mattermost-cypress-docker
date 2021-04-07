@@ -56,6 +56,7 @@ async function getSpecToTest({repo, branch, build, server, testLastFirst}) {
 
         return response.data;
     } catch (err) {
+        console.log(err)
         return err.response && err.response.data;
     }
 }
@@ -161,12 +162,34 @@ async function testLoop() {
         return total + parseInt(item.count, 10);
     }, 0);
 
-    console.log(spec.summary);
+    printSummary(spec.summary)
     console.log(chalk.magenta(`(Testing ${currentTestCount} of ${spec.cycle.specs_registered})  - `, spec.execution.file));
 
     await runTest(spec.execution);
 
     return testLoop(); // eslint-disable-line consistent-return
+}
+
+function printSummary(summary) {
+    const obj = summary.reduce((acc, item) => {
+        const {server, state, count} = item;
+        if (!server) return acc;
+
+        if (!acc[server]) {
+            acc[server] = {[state]: count, server};
+        } else {
+            acc[server][state] = count;
+        }
+
+        return acc;
+    }, {});
+
+    Object.values(obj).sort((a, b) => {
+        return a.server.localeCompare(b.server);
+    }).forEach((item) => {
+        const {server, done, started} = item;
+        console.log(chalk.magenta(`${server}: done: ${done || 0}, started: ${started || 0}`))
+    });
 }
 
 testLoop();
