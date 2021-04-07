@@ -16,8 +16,6 @@
  *   BRANCH                     : Branch identifier from CI
  *   BUILD_ID                   : Build identifier from CI
  *   CI_BASE_URL                : Test server base URL in CI
- *   TEST_LAST_FIRST            : Start test from the last spec files which typically require more services or
- *                                known to have side-effect to other tests
  *
  * Example:
  * 1. "node test_player.js"
@@ -38,14 +36,13 @@ const {
     BRANCH,
     BUILD_ID,
     CI_BASE_URL,
-    TEST_LAST_FIRST,
     REPO,
 } = process.env;
 
-async function getSpecToTest({repo, branch, build, server, testLastFirst}) {
+async function getSpecToTest({repo, branch, build, server}) {
     try {
         const response = await axios({
-            url: `${AUTOMATION_DASHBOARD_URL}/executions/specs/start?repo=${repo}&branch=${branch}&build=${build}&test_last_first=${testLastFirst}`,
+            url: `${AUTOMATION_DASHBOARD_URL}/executions/specs/start?repo=${repo}&branch=${branch}&build=${build}`,
             headers: {
                 Authorization: `Bearer ${AUTOMATION_DASHBOARD_TOKEN}`,
             },
@@ -149,7 +146,6 @@ async function testLoop() {
         repo: REPO,
         branch: BRANCH,
         build: BUILD_ID,
-        testLastFirst: TEST_LAST_FIRST === 'true',
         server: CI_BASE_URL,
     });
 
