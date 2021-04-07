@@ -60,6 +60,7 @@
     "uniq-meta": "grep -r \"^// $META:\" cypress | grep -ow '@\\w*' | sort | uniq"
   },
   "dependencies": {
+    "axios-retry": "^3.1.9",
     "node-fetch": "^2.6.1"
   }
 }

@@ -23,12 +23,17 @@
  */
 
 const axios = require('axios');
+const axiosRetry = require('axios-retry');
 const chalk = require('chalk');
 const cypress = require('cypress');
 
 const {MOCHAWESOME_REPORT_DIR} = require('./utils/constants');
 
 require('dotenv').config();
+axiosRetry(axios, {
+    retries: 5,
+    retryDelay: axiosRetry.exponentialDelay,
+});
 
 const {
     AUTOMATION_DASHBOARD_URL,
@@ -54,22 +59,41 @@ async function getSpecToTest({repo, branch, build, server}) {
         return response.data;
     } catch (err) {
         console.log(err)
+        if (err.code === 'ECONNREFUSED' || !err.response) {
+            const {code, syscall} = err;
+
+            console.log(chalk.red(`Failed to get spec to test: ${spec.code} ${spec.syscall}`));
+            return {code, syscall}
+        }
+
         return err.response && err.response.data;
     }
 }
 
 async function recordSpecResult(specId, spec, tests) {
-    const response = await axios({
-        url: `${AUTOMATION_DASHBOARD_URL}/executions/specs/end?id=${specId}`,
-        headers: {
-            Authorization: `Bearer ${AUTOMATION_DASHBOARD_TOKEN}`,
-        },
-        method: 'post',
-        timeout: 10000,
-        data: {spec, tests},
-    });
+    try {
+        const response = await axios({
+            url: `${AUTOMATION_DASHBOARD_URL}/executions/specs/end?id=${specId}`,
+            headers: {
+                Authorization: `Bearer ${AUTOMATION_DASHBOARD_TOKEN}`,
+            },
+            method: 'post',
+            timeout: 10000,
+            data: {spec, tests},
+        });
 
-    return response.data;
+        return response.data;
+    } catch (err) {
+        console.log(err)
+        if (err.code === 'ECONNREFUSED' || !err.response) {
+            const {code, syscall} = err;
+
+            console.log(chalk.red(`Failed to record spec result: ${spec.code} ${spec.syscall}`));
+            return {code, syscall}
+        }
+
+        return err.response && err.response.data;
+    }
 }
 
 async function runTest(specExecution, firstTest = false) {
@@ -141,6 +165,9 @@ async function runTest(specExecution, firstTest = false) {
     await recordSpecResult(specExecution.id, specPatch, testCases);
 }
 
+const maxRetryCount = 5;
+let retries = 0;
+
 async function testLoop() {
     const spec = await getSpecToTest({
         repo: REPO,
@@ -148,6 +175,19 @@ async function testLoop() {
         build: BUILD_ID,
         server: CI_BASE_URL,
     });
+
+    // Retry on connection/timeout errors
+    if (spec.code) {
+        console.log(chalk.red(`${spec.code} ${spec.syscall}`));
+
+        if (retries >= maxRetryCount) {
+            console.log(chalk.red(`Test ended due to multiple (${retries}) connection/timeout errors with the dashboard server.`));
+            return;
+        }
+
+        retries++
+        return testLoop(); // eslint-disable-line consistent-return
+    }
 
     if (!spec || !spec.execution || !spec.execution.file) {
         console.log(chalk.magenta(spec.message));
@@ -162,6 +202,9 @@ async function testLoop() {
     console.log(chalk.magenta(`(Testing ${currentTestCount} of ${spec.cycle.specs_registered})  - `, spec.execution.file));
 
     await runTest(spec.execution);
+
+    // Reset retry count on at least one successful run
+    retries = 0;
 
     return testLoop(); // eslint-disable-line consistent-return
 }
