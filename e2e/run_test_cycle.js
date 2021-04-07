@@ -42,18 +42,22 @@ const {
     REPO,
 } = process.env;
 
-async function getSpecToTest({repo, branch, build, server, lastFirst = false}) {
-    const response = await axios({
-        url: `${AUTOMATION_DASHBOARD_URL}/executions/specs/start?repo=${repo}&branch=${branch}&build=${build}&last=${lastFirst}`,
-        headers: {
-            Authorization: `Bearer ${AUTOMATION_DASHBOARD_TOKEN}`,
-        },
-        method: 'post',
-        timeout: 10000,
-        data: {server},
-    });
+async function getSpecToTest({repo, branch, build, server, testLastFirst}) {
+    try {
+        const response = await axios({
+            url: `${AUTOMATION_DASHBOARD_URL}/executions/specs/start?repo=${repo}&branch=${branch}&build=${build}&test_last_first=${testLastFirst}`,
+            headers: {
+                Authorization: `Bearer ${AUTOMATION_DASHBOARD_TOKEN}`,
+            },
+            method: 'post',
+            timeout: 10000,
+            data: {server},
+        });
 
-    return response.data;
+        return response.data;
+    } catch (err) {
+        return err.response && err.response.data;
+    }
 }
 
 async function recordSpecResult(specId, spec, tests) {
@@ -144,12 +148,12 @@ async function testLoop() {
         repo: REPO,
         branch: BRANCH,
         build: BUILD_ID,
-        lastFirst: TEST_LAST_FIRST === 'true',
+        testLastFirst: TEST_LAST_FIRST === 'true',
         server: CI_BASE_URL,
     });
 
     if (!spec || !spec.execution || !spec.execution.file) {
-        console.log('All tests done!');
+        console.log(chalk.magenta(spec.message));
         return;
     }
 
