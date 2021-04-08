@@ -119,7 +119,7 @@ commands:
       - run:
           name: Create the test server
           command: |
-            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&es=0"
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&elasticsearch=1"
             CREATE_URL="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $CREATE_URL
             sleep 1m
@@ -234,20 +234,20 @@ jobs:
       - image: cimg/node:lts
     working_directory: ~/mattermost/env-var
     environment:
-      MM_DOCKER_IMAGE: mm-ee-test
-      MM_EDITION: ce
-      MM_DOCKER_TAG: 2200_b9a0c544_8d7b6f78_acb92f1f
+      MM_DOCKER_IMAGE: mattermost-enterprise-edition
+      MM_EDITION: ee
+      MM_DOCKER_TAG: release-5.34
       SERVER_INSTANCE_COUNT: 4
-      TYPE: CLOUD
+      TYPE: RELEASE
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
-      FULL_REPORT: true
+      FULL_REPORT: false
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "1226226"
-      TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/cloud"
+      TM4J_FOLDER_ID: "1280512"
+      TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/release-5.34-e20"
       CYPRESS_chromeWebSecurity: false
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
@@ -295,7 +295,7 @@ jobs:
           path: ~/mattermost/e2e/results/junit
   e2e-test-1:
     docker:
-      - image: cypress/included:6.4.0
+      - image: cypress/included:6.8.0
     working_directory: ~/mattermost/e2e-test-1
     steps:
       - checkout
@@ -308,14 +308,14 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_1
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
           run_part: "--part=1 --of=4"
       - persist-and-store:
           folder: e2e-test-1
   
   e2e-test-2:
     docker:
-      - image: cypress/included:6.4.0
+      - image: cypress/included:6.8.0
     working_directory: ~/mattermost/e2e-test-2
     steps:
       - checkout
@@ -328,14 +328,14 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_2
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
           run_part: "--part=2 --of=4"
       - persist-and-store:
           folder: e2e-test-2
 
   e2e-test-3:
     docker:
-      - image: cypress/included:6.4.0
+      - image: cypress/included:6.8.0
     working_directory: ~/mattermost/e2e-test-3
     steps:
       - checkout
@@ -348,14 +348,14 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_3
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
           run_part: "--part=3 --of=4"
       - persist-and-store:
           folder: e2e-test-3
 
   e2e-test-4:
     docker:
-      - image: cypress/included:6.4.0
+      - image: cypress/included:6.8.0
     working_directory: ~/mattermost/e2e-test-4
     steps:
       - checkout
@@ -368,7 +368,7 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_4
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --excludeGroup='@not_cloud,@e20_only,@te_only'"
+          run_filter: "--stage='@prod' --excludeGroup='@te_only,@high_availability' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
           run_part: "--part=4 --of=4"
       - persist-and-store:
           folder: e2e-test-4

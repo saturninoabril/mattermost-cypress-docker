@@ -116,8 +116,7 @@
         "ExperimentalTownSquareIsReadOnly": false,
         "LockTeammateNameDisplay": false,
         "ExperimentalPrimaryTeam": "",
-        "ExperimentalDefaultChannels": [],
-        "EnableCustomUserStatuses": true
+        "ExperimentalDefaultChannels": []
     },
     "ClientRequirements": {
         "AndroidLatestVersion": "",

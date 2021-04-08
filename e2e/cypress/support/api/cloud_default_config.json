@@ -53,8 +53,7 @@
         "ExperimentalTownSquareIsReadOnly": false,
         "LockTeammateNameDisplay": false,
         "ExperimentalPrimaryTeam": "",
-        "ExperimentalDefaultChannels": [],
-        "EnableCustomUserStatuses": true
+        "ExperimentalDefaultChannels": []
     },
     "PasswordSettings": {
         "MinimumLength": 5,
