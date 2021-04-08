@@ -44,6 +44,8 @@ const {
     REPO,
 } = process.env;
 
+const connectionErrors = ['ECONNABORTED', 'ECONNREFUSED'];
+
 async function getSpecToTest({repo, branch, build, server}) {
     try {
         const response = await axios({
@@ -56,14 +58,14 @@ async function getSpecToTest({repo, branch, build, server}) {
             data: {server},
         });
 
+        console.log(chalk.red('Successfully got!', response.data));
         return response.data;
     } catch (err) {
-        console.log(err)
-        if (err.code === 'ECONNREFUSED' || !err.response) {
-            const {code, syscall} = err;
-
-            console.log(chalk.red(`Failed to get spec to test: ${spec.code} ${spec.syscall}`));
-            return {code, syscall}
+        console.log(chalk.red('Failed to get spec to test'));
+        console.log(err);
+        if (connectionErrors.includes(err.code) || !err.response) {
+            console.log(chalk.red(`Error code: ${err.code}`));
+            return {code: err.code}
         }
 
         return err.response && err.response.data;
@@ -82,14 +84,14 @@ async function recordSpecResult(specId, spec, tests) {
             data: {spec, tests},
         });
 
+        console.log(chalk.red('Successfully recorded!', response.data));
         return response.data;
     } catch (err) {
-        console.log(err)
-        if (err.code === 'ECONNREFUSED' || !err.response) {
-            const {code, syscall} = err;
-
-            console.log(chalk.red(`Failed to record spec result: ${spec.code} ${spec.syscall}`));
-            return {code, syscall}
+        console.log(chalk.red('Failed to record spec result'));
+        console.log(err);
+        if (connectionErrors.includes(err.code) || !err.response) {
+            console.log(chalk.red(`Error code: ${err.code}`));
+            return {code: err.code}
         }
 
         return err.response && err.response.data;
@@ -177,19 +179,18 @@ async function testLoop() {
     });
 
     // Retry on connection/timeout errors
-    if (spec.code) {
-        console.log(chalk.red(`${spec.code} ${spec.syscall}`));
-
+    if (!spec || spec.code) {
         if (retries >= maxRetryCount) {
             console.log(chalk.red(`Test ended due to multiple (${retries}) connection/timeout errors with the dashboard server.`));
             return;
         }
 
         retries++
+        console.log(chalk.red(`Retry count: ${retries}`));
         return testLoop(); // eslint-disable-line consistent-return
     }
 
-    if (!spec || !spec.execution || !spec.execution.file) {
+    if (!spec.execution || !spec.execution.file) {
         console.log(chalk.magenta(spec.message));
         return;
     }
