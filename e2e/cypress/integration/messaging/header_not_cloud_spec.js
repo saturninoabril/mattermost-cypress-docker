@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: @prod
+// Stage: to investigate
 // Group: @not_cloud @messaging
 
 describe('Header', () => {
