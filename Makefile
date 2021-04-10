@@ -71,3 +71,13 @@ copy-license:
 
 pg_dump-mattermost-postgres:
 	cd mattermost-e2e/test-data && docker exec mattermost-postgres pg_dump -d mattermost_test -U mmuser > postgresql_mattermost_test_db.sql
+
+build-webhook:
+	@echo --- Webhook image built
+    cd mattermost-e2e/webhook && docker build -t saturnino/mm-e2e-webhook:latest .
+	@echo --- Webhook image built
+
+publish-webhook:
+	@echo --- Publishing Webhook image
+    docker publish saturnino/mm-e2e-webhook:latest
+	@echo --- Published Webhook image

@@ -11,22 +11,26 @@ workflows:
             branches:
               ignore:
                 - master
+      - generate-test-cycle:
+          context: cypress-circleci-env
+          requires:
+            - create-test-server
       - e2e-test-1:
           context: cypress-circleci-env
           requires:
-            - create-test-server
+            - generate-test-cycle
       - e2e-test-2:
           context: cypress-circleci-env
           requires:
-            - create-test-server
+            - generate-test-cycle
       - e2e-test-3:
           context: cypress-circleci-env
           requires:
-            - create-test-server
+            - generate-test-cycle
       - e2e-test-4:
           context: cypress-circleci-env
           requires:
-            - create-test-server
+            - generate-test-cycle
       - merge-and-save-test-reports:
           context: cypress-circleci-env
           requires:
@@ -150,6 +154,9 @@ commands:
 
             echo export TYPE=${TYPE} >> shared
             echo export PULL_REQUEST=${PULL_REQUEST} >> shared
+            echo export REPO=${REPO} >> shared
+            echo export BRANCH=${CIRCLE_BRANCH} >> shared
+            echo export BUILD_ID=${CIRCLE_BUILD_NUM} >> shared
             echo export BROWSER=${BROWSER} >> shared
             echo export HEADLESS=${HEADLESS} >> shared
             echo export DASHBOARD_ENABLE=${DASHBOARD_ENABLE} >> shared
@@ -181,10 +188,6 @@ commands:
         type: string
       common_base_url:
         type: string
-      run_filter:
-        type: string
-      run_part:
-        type: string
     steps:
       - run:
           name: Run Cypress test
@@ -207,7 +210,7 @@ commands:
 
             curl --retry 10 --retry-delay 10 --retry-connrefused --max-time 120 $CYPRESS_baseUrl
 
-            cd e2e && node run_tests.js << parameters.run_filter >> << parameters.run_part >>
+            cd e2e && node run_test_cycle.js
   persist-and-store:
     description: "Persist and store test artifacts"
     parameters:
@@ -230,6 +233,7 @@ jobs:
       - image: cimg/node:lts
     working_directory: ~/mattermost/env-var
     environment:
+      REPO: mattermost-webapp
       MM_DOCKER_IMAGE: mattermost-enterprise-edition
       MM_EDITION: ee
       MM_DOCKER_TAG: master
@@ -257,10 +261,28 @@ jobs:
           name: Test server health check
           command: |
             curl --retry 30 --retry-delay 20 --retry-connrefused --max-time 600 "${BASE_URL_1}:8065/api/v4/system/ping"
+            curl --retry 30 --retry-delay 20 --retry-connrefused --max-time 600 "${BASE_URL_2}:8065/api/v4/system/ping"
+            curl --retry 30 --retry-delay 20 --retry-connrefused --max-time 600 "${BASE_URL_3}:8065/api/v4/system/ping"
+            curl --retry 30 --retry-delay 20 --retry-connrefused --max-time 600 "${BASE_URL_4}:8065/api/v4/system/ping"
       - persist_to_workspace:
           root: ~/mattermost
           paths:
             - env-var/shared
+  generate-test-cycle:
+    docker:
+      - image: cimg/node:lts
+    working_directory: ~/mattermost
+    steps:
+      - checkout
+      - attach-workspace
+      - apply-shared-env
+      - install-npm
+      - run:
+          name: Generate test cycle from the Automation dashboard
+          no_output_timeout: 30m
+          command: |
+            cd e2e
+            node generate_test_cycle.js --stage='@prod' --excludeGroup='@te_only,@high_availability'
   merge-and-save-test-reports:
     docker:
       - image: cimg/node:lts
@@ -304,8 +326,6 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_1
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
-          run_part: "--part=1 --of=4"
       - persist-and-store:
           folder: e2e-test-1
   
@@ -324,8 +344,6 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_2
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
-          run_part: "--part=2 --of=4"
       - persist-and-store:
           folder: e2e-test-2
 
@@ -344,8 +362,6 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_3
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
-          run_part: "--part=3 --of=4"
       - persist-and-store:
           folder: e2e-test-3
 
@@ -364,7 +380,5 @@ jobs:
       - run-cypress:
           ci_base_url: $BASE_URL_4
           common_base_url: $BASE_URL_COMMON
-          run_filter: "--stage='@prod' --sortLast='@elasticsearch,@saml,@ldap,@mfa'"
-          run_part: "--part=4 --of=4"
       - persist-and-store:
           folder: e2e-test-4
