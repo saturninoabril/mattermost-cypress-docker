@@ -186,8 +186,6 @@ describe('Integrations page', () => {
                     data: {
                         appID: clientID,
                         appSecret: clientSecret,
-                        baseUrl,
-                        webhookBaseUrl,
                     }});
             });
         });
@@ -220,11 +218,9 @@ describe('Integrations page', () => {
             cy.postIncomingWebhook({
                 url: `${webhookBaseUrl}/post_oauth_message`,
                 data: {
-                    baseUrl,
                     channelId,
                     message,
-                },
-            });
+                }});
 
             // * The message should be posted
             cy.findByText(message).should('exist');
@@ -280,11 +276,9 @@ describe('Integrations page', () => {
             cy.postIncomingWebhook({
                 url: `${webhookBaseUrl}/post_oauth_message`,
                 data: {
-                    baseUrl,
                     channelId,
                     message,
-                },
-            });
+                }});
 
             // * The message should be posted
             cy.findByText(message).should('exist');
@@ -320,7 +314,6 @@ describe('Integrations page', () => {
             cy.postIncomingWebhook({
                 url: `${webhookBaseUrl}/post_oauth_message`,
                 data: {
-                    baseUrl,
                     channelId,
                     message,
                 }});
@@ -356,7 +349,6 @@ describe('Integrations page', () => {
             cy.postIncomingWebhook({
                 url: `${webhookBaseUrl}/post_oauth_message`,
                 data: {
-                    baseUrl,
                     channelId,
                     message,
                 }});
@@ -399,11 +391,9 @@ describe('Integrations page', () => {
             cy.postIncomingWebhook({
                 url: `${webhookBaseUrl}/post_oauth_message`,
                 data: {
-                    baseUrl,
                     channelId,
                     message,
-                },
-            });
+                }});
 
             // * The message should be posted
             cy.findByText(message).should('exist');
@@ -432,8 +422,6 @@ describe('Integrations page', () => {
             data: {
                 appID: oauthClientID,
                 appSecret: oauthClientSecret,
-                baseUrl,
-                webhookBaseUrl,
             }});
 
         // # Visit the webhook url to start the OAuth handshake
@@ -472,11 +460,9 @@ describe('Integrations page', () => {
             cy.postIncomingWebhook({
                 url: `${webhookBaseUrl}/post_oauth_message`,
                 data: {
-                    baseUrl,
                     channelId,
                     message,
-                },
-            });
+                }});
 
             // * The message should not be posted
             cy.findByText(message).should('not.exist');

@@ -13,17 +13,6 @@ const postMessageAs = require('./cypress/plugins/post_message_as');
 
 const port = 3000;
 
-const {
-    SITE_URL,
-    WEBHOOK_URL,
-    SITE_ADMIN_USERNAME,
-    SITE_ADMIN_PASSWORD,
-    CYPRESS_baseUrl,
-    CYPRESS_webhookBaseUrl,
-    CYPRESS_adminUsername,
-    CYPRESS_adminPassword,
-} = process.env;
-
 const server = express();
 server.use(express.json());
 server.use(express.urlencoded({extended: true}));
@@ -31,6 +20,7 @@ server.use(express.urlencoded({extended: true}));
 process.title = process.argv[2];
 
 server.get('/', ping);
+server.post('/set_base_url', setBaseUrl);
 server.post('/message_menus', postMessageMenus);
 server.post('/dialog_request', onDialogRequest);
 server.post('/simple_dialog_request', onSimpleDialogRequest);
@@ -45,14 +35,14 @@ server.get('/start_oauth', getStartOAuth);
 server.get('/complete_oauth', getCompleteOauth);
 server.post('/post_oauth_message', postOAuthMessage);
 
+server.listen(port, () => console.log(`Webhook test server listening on port ${port}!`));
+
 function ping(req, res) {
-    const baseUrl = SITE_URL || CYPRESS_baseUrl || 'http://localhost:8065';
-    const webhookBaseUrl = WEBHOOK_URL || CYPRESS_webhookBaseUrl || 'http://localhost:3000';
 
     return res.json({
         message: 'I\'m alive!',
-        base_url: baseUrl,
-        webhook_baseUrl: webhookBaseUrl,
+        base_url: baseUrl || 'should set baseUrl',
+        webhook_baseUrl: webhookBaseUrl || 'should set webhookBaseUrl',
         rest_api: [
             'GET /',
             'POST /message_menus',
@@ -72,7 +62,24 @@ function ping(req, res) {
     });
 }
 
-server.listen(port, () => console.log(`Webhook test server listening on port ${port}!`));
+// set baseUrl and webhookBaseUrl to be accessible by any endpoint
+let baseUrl;
+let webhookBaseUrl;
+let adminUsername;
+let adminPassword;
+function setBaseUrl(req, res) {
+    baseUrl = req.body.baseUrl;
+    webhookBaseUrl = req.body.webhookBaseUrl;
+    adminUsername = req.body.adminUsername;
+    adminPassword = req.body.adminPassword;
+
+    return res.status(200).send({
+        baseUrl,
+        webhookBaseUrl,
+        adminUsername,
+        adminPassword,
+    });
+}
 
 let client;
 let authedUser;
@@ -82,8 +89,6 @@ function postSendOauthCredentials(req, res) {
     const {
         appID,
         appSecret,
-        baseUrl,
-        webhookBaseUrl,
     } = req.body;
     client = new ClientOAuth2({
         clientId: appID,
@@ -116,7 +121,7 @@ function getCompleteOauth(req, res) {
 }
 
 async function postOAuthMessage(req, res) {
-    const {baseUrl, channelId, message, rootId, createAt} = req.body;
+    const {channelId, message, rootId, createAt} = req.body;
     const apiUrl = `${baseUrl}/api/v4/posts`;
     console.log('------ POST /post_oauth_message postOAuthMessage --------');
     console.log('-- authedUser:', authedUser);
@@ -174,7 +179,6 @@ function postMessageMenus(req, res) {
 }
 
 async function openDialog(dialog) {
-    const baseUrl = getBaseUrl();
     await axios({
         method: 'post',
         url: `${baseUrl}/api/v4/actions/dialogs/open`,
@@ -185,7 +189,6 @@ async function openDialog(dialog) {
 function onDialogRequest(req, res) {
     const {body} = req;
     if (body.trigger_id) {
-        const webhookBaseUrl = getWebhookBaseUrl();
         const dialog = webhookUtils.getFullDialog(body.trigger_id, webhookBaseUrl);
         openDialog(dialog);
     }
@@ -197,7 +200,6 @@ function onDialogRequest(req, res) {
 function onSimpleDialogRequest(req, res) {
     const {body} = req;
     if (body.trigger_id) {
-        const webhookBaseUrl = getWebhookBaseUrl();
         const dialog = webhookUtils.getSimpleDialog(body.trigger_id, webhookBaseUrl);
         openDialog(dialog);
     }
@@ -209,7 +211,6 @@ function onSimpleDialogRequest(req, res) {
 function onUserAndChannelDialogRequest(req, res) {
     const {body} = req;
     if (body.trigger_id) {
-        const webhookBaseUrl = getWebhookBaseUrl();
         const dialog = webhookUtils.getUserAndChannelDialog(body.trigger_id, webhookBaseUrl);
         openDialog(dialog);
     }
@@ -221,7 +222,6 @@ function onUserAndChannelDialogRequest(req, res) {
 function onBooleanDialogRequest(req, res) {
     const {body} = req;
     if (body.trigger_id) {
-        const webhookBaseUrl = getWebhookBaseUrl();
         const dialog = webhookUtils.getBooleanDialog(body.trigger_id, webhookBaseUrl);
         openDialog(dialog);
     }
@@ -272,20 +272,17 @@ function postSendMessageToChannel(req, res) {
     res.json(response);
 }
 
-function getWebhookBaseUrl() {
-    return WEBHOOK_URL || CYPRESS_webhookBaseUrl || 'http://localhost:3000';
-}
-
-function getBaseUrl() {
-    return SITE_URL || CYPRESS_baseUrl || 'http://localhost:8065';
-}
-
 // Convenient way to send response in a channel by using sysadmin account
 function sendSysadminResponse(message, channelId) {
-    const username = SITE_ADMIN_USERNAME || CYPRESS_adminUsername || 'sysadmin';
-    const password = SITE_ADMIN_PASSWORD || CYPRESS_adminPassword || 'Sys@dmin-sample1';
-    const baseUrl = getBaseUrl();
-    postMessageAs({sender: {username, password}, message, channelId, baseUrl});
+    postMessageAs({
+        sender: {
+            username: adminUsername,
+            password: adminPassword,
+        },
+        message,
+        channelId,
+        baseUrl,
+    });
 }
 
 const responseTypes = ['in_channel', 'comment'];
