@@ -14,6 +14,10 @@ const postMessageAs = require('./cypress/plugins/post_message_as');
 const port = 3000;
 
 const {
+    SITE_URL,
+    WEBHOOK_URL,
+    SITE_ADMIN_USERNAME,
+    SITE_ADMIN_PASSWORD,
     CYPRESS_baseUrl,
     CYPRESS_webhookBaseUrl,
     CYPRESS_adminUsername,
@@ -39,16 +43,32 @@ server.post('/post_outgoing_webhook', postOutgoingWebhook);
 server.post('/send_oauth_credentials', postSendOauthCredentials);
 server.get('/start_oauth', getStartOAuth);
 server.get('/complete_oauth', getCompleteOauth);
-server.post('/postOAuthMessage', postOAuthMessage);
+server.post('/post_oauth_message', postOAuthMessage);
 
 function ping(req, res) {
-    const baseUrl = CYPRESS_baseUrl || 'http://localhost:8065';
-    const webhookBaseUrl = CYPRESS_webhookBaseUrl || 'http://localhost:3000';
+    const baseUrl = SITE_URL || CYPRESS_baseUrl || 'http://localhost:8065';
+    const webhookBaseUrl = WEBHOOK_URL || CYPRESS_webhookBaseUrl || 'http://localhost:3000';
 
     return res.json({
         message: 'I\'m alive!',
-        baseUrl,
-        webhookBaseUrl,
+        base_url: baseUrl,
+        webhook_baseUrl: webhookBaseUrl,
+        rest_api: [
+            'GET /',
+            'POST /message_menus',
+            'POST /dialog_request',
+            'POST /simple_dialog_request',
+            'POST /user_and_channel_dialog_request',
+            'POST /dialog_submit',
+            'POST /boolean_dialog_request',
+            'POST /slack_compatible_message_response',
+            'POST /send_message_to_channel',
+            'POST /post_outgoing_webhook',
+            'POST /send_oauth_credentials',
+            'GET /start_oauth',
+            'GET /complete_oauth',
+            'POST /post_oauth_message',
+        ],
     });
 }
 
@@ -59,6 +79,8 @@ let appSecret;
 let client;
 let authedUser;
 function postSendOauthCredentials(req, res) {
+    console.log('------ POST /send_oauth_credentials postSendOauthCredentials --------');
+    console.log('-- req.body:', req.body);
     appID = req.body.appID.trim();
     appSecret = req.body.appSecret.trim();
     client = new ClientOAuth2({
@@ -68,18 +90,25 @@ function postSendOauthCredentials(req, res) {
         accessTokenUri: getBaseUrl() + '/oauth/access_token',
         redirectUri: getWebhookBaseUrl() + '/complete_oauth',
     });
+    console.log('-- client:', client);
     return res.status(200).send('OK');
 }
 
 function getStartOAuth(req, res) {
+    console.log('------ GET /start_oauth getStartOAuth --------');
+    console.log('-- client:', client);
     return res.redirect(client.code.getUri());
 }
 
 function getCompleteOauth(req, res) {
+    console.log('------ GET /complete_oauth getCompleteOauth --------');
+    console.log('-- client:', client);
     client.code.getToken(req.originalUrl).then((user) => {
+        console.log('-- user:', user);
         authedUser = user;
         return res.status(200).send('OK');
     }).catch((reason) => {
+        console.log('-- error:', reason);
         return res.status(reason.status).send(reason);
     });
 }
@@ -87,6 +116,8 @@ function getCompleteOauth(req, res) {
 async function postOAuthMessage(req, res) {
     const {channelId, message, rootId, createAt} = req.body;
     const apiUrl = getBaseUrl() + '/api/v4/posts';
+    console.log('------ POST /post_oauth_message postOAuthMessage --------');
+    console.log('-- authedUser:', authedUser);
     authedUser.sign({
         method: 'post',
         url: apiUrl,
@@ -109,7 +140,10 @@ async function postOAuthMessage(req, res) {
                 root_id: rootId,
             },
         });
+        console.log('-- success');
     } catch (err) {
+        console.log('-- error:', err);
+        return res.status(501).send('Error');
         // Do nothing
     }
     return res.status(200).send('OK');
@@ -238,17 +272,17 @@ function postSendMessageToChannel(req, res) {
 }
 
 function getWebhookBaseUrl() {
-    return CYPRESS_webhookBaseUrl || 'http://localhost:3000';
+    return WEBHOOK_URL || CYPRESS_webhookBaseUrl || 'http://localhost:3000';
 }
 
 function getBaseUrl() {
-    return process.env.CYPRESS_baseUrl || 'http://localhost:8065';
+    return SITE_URL || CYPRESS_baseUrl || 'http://localhost:8065';
 }
 
 // Convenient way to send response in a channel by using sysadmin account
 function sendSysadminResponse(message, channelId) {
-    const username = CYPRESS_adminUsername || 'sysadmin';
-    const password = CYPRESS_adminPassword || 'Sys@dmin-sample1';
+    const username = SITE_ADMIN_USERNAME || CYPRESS_adminUsername || 'sysadmin';
+    const password = SITE_ADMIN_PASSWORD || CYPRESS_adminPassword || 'Sys@dmin-sample1';
     const baseUrl = getBaseUrl();
     postMessageAs({sender: {username, password}, message, channelId, baseUrl});
 }

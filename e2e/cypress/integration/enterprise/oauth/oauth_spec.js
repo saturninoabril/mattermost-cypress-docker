@@ -9,6 +9,7 @@
 
 // Group: @enterprise @integrations
 
+import {getRandomId} from '../../../utils';
 import {checkboxesTitleToIdMap} from '../../enterprise/system_console/channel_moderation/constants';
 
 import {
@@ -23,6 +24,8 @@ describe('Integrations page', () => {
     let testChannelUrl1;
     let oauthClientID;
     let oauthClientSecret;
+    const app1 = `Test1${getRandomId()}`;
+    const app2 = `Test2${getRandomId()}`;
 
     before(() => {
         cy.apiRequireLicense();
@@ -51,7 +54,7 @@ describe('Integrations page', () => {
         saveConfigForScheme();
     });
 
-    it('MM-T646 OAuth 2.0 trusted', () => {
+    it.only('MM-T646 OAuth 2.0 trusted', () => {
         cy.apiLogin(user1);
         cy.visit(testChannelUrl1);
 
@@ -70,7 +73,7 @@ describe('Integrations page', () => {
         cy.get('div.backstage-form > form > div:first').should('contain', 'Display Name');
     });
 
-    it('MM-T647 Copy icon for OAuth 2.0 Applications', () => {
+    it.only('MM-T647 Copy icon for OAuth 2.0 Applications', () => {
         cy.apiLogin(user1);
         cy.visit(testChannelUrl1);
 
@@ -83,8 +86,8 @@ describe('Integrations page', () => {
         cy.get('#addOauthApp').click();
 
         // # Fill all fields
-        cy.get('#name').type('Test');
-        cy.get('#description').type('Test');
+        cy.get('#name').type(app1);
+        cy.get('#description').type(app1);
         cy.get('#homepage').type('https://www.test.com/');
         cy.get('#callbackUrls').type('https://www.test.com/');
 
@@ -135,7 +138,7 @@ describe('Integrations page', () => {
         });
     });
 
-    it('MM-T648_1 OAuth 2.0 Application - Setup', () => {
+    it.only('MM-T648_1 OAuth 2.0 Application - Setup', () => {
         cy.apiLogin(user1);
         cy.visit(testChannelUrl1);
 
@@ -148,8 +151,8 @@ describe('Integrations page', () => {
         cy.get('#addOauthApp').click();
 
         // # Fill all fields
-        cy.get('#name').type('Test');
-        cy.get('#description').type('Test');
+        cy.get('#name').type(app2);
+        cy.get('#description').type(app2);
         cy.get('#homepage').type('https://www.test.com/');
         cy.get('#callbackUrls').type(getWebhookBaseUrl() + '/complete_oauth');
 
@@ -183,20 +186,20 @@ describe('Integrations page', () => {
         cy.get('#doneButton').click();
     });
 
-    it('MM-T648_2 OAuth 2.0 Application - Exchange tokens', () => {
+    it.only('MM-T648_2 OAuth 2.0 Application - Exchange tokens', () => {
         cy.apiLogin(user1);
 
         // # Visit the webhook url to start the OAuth handshake
         cy.visit(getWebhookBaseUrl() + '/start_oauth');
 
         // # Click on the allow button
-        cy.findByText('Allow').click();
+        cy.findByText('Allow').should('be.visible').click({force: true});
 
-        // * Exchange succesfull
+        // * Exchange successful
         cy.findByText('OK').should('exist');
     });
 
-    it('MM-T648_3 OAuth 2.0 Application - Post message using OAuth credentials', () => {
+    it.only('MM-T648_3 OAuth 2.0 Application - Post message using OAuth credentials', () => {
         // # Visit a channel
         cy.visit(testChannelUrl1);
 
@@ -204,7 +207,7 @@ describe('Integrations page', () => {
             const message = 'OAuth test 01';
 
             // # Post message using OAuth credentials
-            cy.postIncomingWebhook({url: getWebhookBaseUrl() + '/postOAuthMessage', data: {channelId, message}});
+            cy.postIncomingWebhook({url: getWebhookBaseUrl() + '/post_oauth_message', data: {channelId, message}});
 
             // * The message should be posted
             cy.findByText(message).should('exist');
@@ -257,7 +260,7 @@ describe('Integrations page', () => {
             const message = 'OAuth test 02';
 
             // # Post message using OAuth credentials
-            cy.postIncomingWebhook({url: getWebhookBaseUrl() + '/postOAuthMessage', data: {channelId, message}});
+            cy.postIncomingWebhook({url: getWebhookBaseUrl() + '/post_oauth_message', data: {channelId, message}});
 
             // * The message should be posted
             cy.findByText(message).should('exist');
@@ -290,7 +293,7 @@ describe('Integrations page', () => {
             const message = 'OAuth test 03';
 
             // # Post message using OAuth credentials
-            cy.postIncomingWebhook({url: getWebhookBaseUrl() + '/postOAuthMessage', data: {channelId, message}});
+            cy.postIncomingWebhook({url: getWebhookBaseUrl() + '/post_oauth_message', data: {channelId, message}});
 
             // * The message should not be posted
             cy.findByText(message).should('not.exist');
@@ -304,9 +307,9 @@ describe('Integrations page', () => {
         cy.visit(getWebhookBaseUrl() + '/start_oauth');
 
         // # Click on the allow button
-        cy.findByText('Allow').click();
+        cy.findByText('Allow').should('be.visible').click({force: true});
 
-        // * Exchange succesfull
+        // * Exchange successful
         cy.findByText('OK').should('exist');
     });
 
@@ -320,7 +323,7 @@ describe('Integrations page', () => {
             const message = 'OAuth test 04';
 
             // # Post message using OAuth credentials
-            cy.postIncomingWebhook({url: getWebhookBaseUrl() + '/postOAuthMessage', data: {channelId, message}});
+            cy.postIncomingWebhook({url: getWebhookBaseUrl() + '/post_oauth_message', data: {channelId, message}});
 
             // * The message should be posted
             cy.findByText(message).should('exist');
@@ -357,7 +360,7 @@ describe('Integrations page', () => {
             const message = 'OAuth test 05';
 
             // # Post message using OAuth credentials
-            cy.postIncomingWebhook({url: getWebhookBaseUrl() + '/postOAuthMessage', data: {channelId, message}});
+            cy.postIncomingWebhook({url: getWebhookBaseUrl() + '/post_oauth_message', data: {channelId, message}});
 
             // * The message should be posted
             cy.findByText(message).should('exist');
@@ -387,7 +390,7 @@ describe('Integrations page', () => {
         cy.visit(getWebhookBaseUrl() + '/start_oauth', {failOnStatusCode: false});
 
         // # Click on the allow button
-        cy.findByText('Allow').click();
+        cy.findByText('Allow').should('be.visible').click({force: true});
 
         // * Exchange successful
         cy.findByText('OK').should('exist');
@@ -416,7 +419,7 @@ describe('Integrations page', () => {
             const message = 'OAuth test 06';
 
             // # Post message using OAuth credentials
-            cy.postIncomingWebhook({url: getWebhookBaseUrl() + '/postOAuthMessage', data: {channelId, message}});
+            cy.postIncomingWebhook({url: getWebhookBaseUrl() + '/post_oauth_message', data: {channelId, message}});
 
             // * The message should not be posted
             cy.findByText(message).should('not.exist');
