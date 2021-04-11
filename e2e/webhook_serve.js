@@ -74,21 +74,23 @@ function ping(req, res) {
 
 server.listen(port, () => console.log(`Webhook test server listening on port ${port}!`));
 
-let appID;
-let appSecret;
 let client;
 let authedUser;
 function postSendOauthCredentials(req, res) {
     console.log('------ POST /send_oauth_credentials postSendOauthCredentials --------');
     console.log('-- req.body:', req.body);
-    appID = req.body.appID.trim();
-    appSecret = req.body.appSecret.trim();
+    const {
+        appID,
+        appSecret,
+        baseUrl,
+        webhookBaseUrl,
+    } = req.body;
     client = new ClientOAuth2({
         clientId: appID,
         clientSecret: appSecret,
-        authorizationUri: getBaseUrl() + '/oauth/authorize',
-        accessTokenUri: getBaseUrl() + '/oauth/access_token',
-        redirectUri: getWebhookBaseUrl() + '/complete_oauth',
+        authorizationUri: `${baseUrl}/oauth/authorize`,
+        accessTokenUri: `${baseUrl}/oauth/access_token`,
+        redirectUri: `${webhookBaseUrl}/complete_oauth`,
     });
     console.log('-- client:', client);
     return res.status(200).send('OK');
@@ -114,8 +116,8 @@ function getCompleteOauth(req, res) {
 }
 
 async function postOAuthMessage(req, res) {
-    const {channelId, message, rootId, createAt} = req.body;
-    const apiUrl = getBaseUrl() + '/api/v4/posts';
+    const {baseUrl, channelId, message, rootId, createAt} = req.body;
+    const apiUrl = `${baseUrl}/api/v4/posts`;
     console.log('------ POST /post_oauth_message postOAuthMessage --------');
     console.log('-- authedUser:', authedUser);
     authedUser.sign({
@@ -143,7 +145,6 @@ async function postOAuthMessage(req, res) {
         console.log('-- success');
     } catch (err) {
         console.log('-- error:', err);
-        return res.status(501).send('Error');
         // Do nothing
     }
     return res.status(200).send('OK');
