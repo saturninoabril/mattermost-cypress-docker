@@ -19,7 +19,6 @@ import {
 } from '../../enterprise/system_console/channel_moderation/helpers';
 
 describe('Integrations page', () => {
-    const baseUrl = Cypress.config('baseUrl');
     const webhookBaseUrl = Cypress.env('webhookBaseUrl');
 
     let user1;
@@ -27,8 +26,7 @@ describe('Integrations page', () => {
     let testChannelUrl1;
     let oauthClientID;
     let oauthClientSecret;
-    const app1 = `Test1${getRandomId()}`;
-    const app2 = `Test2${getRandomId()}`;
+    const testApp = `Test${getRandomId()}`;
 
     before(() => {
         cy.apiRequireLicense();
@@ -89,8 +87,9 @@ describe('Integrations page', () => {
         cy.get('#addOauthApp').click();
 
         // # Fill all fields
-        cy.get('#name').type(app1);
-        cy.get('#description').type(app1);
+        const randomApp = `Random${getRandomId()}`;
+        cy.get('#name').type(randomApp);
+        cy.get('#description').type(randomApp);
         cy.get('#homepage').type('https://www.test.com/');
         cy.get('#callbackUrls').type('https://www.test.com/');
 
@@ -154,8 +153,8 @@ describe('Integrations page', () => {
         cy.get('#addOauthApp').click();
 
         // # Fill all fields
-        cy.get('#name').type(app2);
-        cy.get('#description').type(app2);
+        cy.get('#name').type(testApp);
+        cy.get('#description').type(testApp);
         cy.get('#homepage').type('https://www.test.com/');
         cy.get('#callbackUrls').type(`${webhookBaseUrl}/complete_oauth`);
 
@@ -201,7 +200,7 @@ describe('Integrations page', () => {
         cy.visit(`${webhookBaseUrl}/start_oauth`);
 
         // # Click on the allow button
-        cy.findByText('Allow').should('be.visible').click({force: true});
+        cy.findByText('Allow').click();
 
         // * Exchange successful
         cy.findByText('OK').should('exist');
@@ -263,7 +262,7 @@ describe('Integrations page', () => {
 
         cy.contains('.item-details', oauthClientID).should('exist').within(() => {
             // * Description should be edited
-            cy.findByText(`${app2}Edited`).should('exist');
+            cy.findByText(`${testApp}Edited`).should('exist');
         });
 
         // # Visit a channel
@@ -330,7 +329,7 @@ describe('Integrations page', () => {
         cy.visit(`${webhookBaseUrl}/start_oauth`);
 
         // # Click on the allow button
-        cy.findByText('Allow').should('be.visible').click({force: true});
+        cy.findByText('Allow').click();
 
         // * Exchange successful
         cy.findByText('OK').should('exist');
@@ -428,7 +427,7 @@ describe('Integrations page', () => {
         cy.visit(`${webhookBaseUrl}/start_oauth`, {failOnStatusCode: false});
 
         // # Click on the allow button
-        cy.findByText('Allow').should('be.visible').click({force: true});
+        cy.findByText('Allow').click();
 
         // * Exchange successful
         cy.findByText('OK').should('exist');

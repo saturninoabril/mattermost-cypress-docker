@@ -20,7 +20,7 @@ server.use(express.urlencoded({extended: true}));
 process.title = process.argv[2];
 
 server.get('/', ping);
-server.post('/set_base_url', setBaseUrl);
+server.post('/setup', doSetup);
 server.post('/message_menus', postMessageMenus);
 server.post('/dialog_request', onDialogRequest);
 server.post('/simple_dialog_request', onSimpleDialogRequest);
@@ -38,12 +38,9 @@ server.post('/post_oauth_message', postOAuthMessage);
 server.listen(port, () => console.log(`Webhook test server listening on port ${port}!`));
 
 function ping(req, res) {
-
     return res.json({
         message: 'I\'m alive!',
-        base_url: baseUrl || 'should set baseUrl',
-        webhook_baseUrl: webhookBaseUrl || 'should set webhookBaseUrl',
-        rest_api: [
+        endpoints: [
             'GET /',
             'POST /message_menus',
             'POST /dialog_request',
@@ -62,30 +59,23 @@ function ping(req, res) {
     });
 }
 
-// set baseUrl and webhookBaseUrl to be accessible by any endpoint
+// Set base URLs and credential to be accessible by any endpoint
 let baseUrl;
 let webhookBaseUrl;
 let adminUsername;
 let adminPassword;
-function setBaseUrl(req, res) {
+function doSetup(req, res) {
     baseUrl = req.body.baseUrl;
     webhookBaseUrl = req.body.webhookBaseUrl;
     adminUsername = req.body.adminUsername;
     adminPassword = req.body.adminPassword;
 
-    return res.status(200).send({
-        baseUrl,
-        webhookBaseUrl,
-        adminUsername,
-        adminPassword,
-    });
+    return res.status(201).send('Successfully setup the new base URLs and credential.');
 }
 
 let client;
 let authedUser;
 function postSendOauthCredentials(req, res) {
-    console.log('------ POST /send_oauth_credentials postSendOauthCredentials --------');
-    console.log('-- req.body:', req.body);
     const {
         appID,
         appSecret,
@@ -97,25 +87,18 @@ function postSendOauthCredentials(req, res) {
         accessTokenUri: `${baseUrl}/oauth/access_token`,
         redirectUri: `${webhookBaseUrl}/complete_oauth`,
     });
-    console.log('-- client:', client);
     return res.status(200).send('OK');
 }
 
 function getStartOAuth(req, res) {
-    console.log('------ GET /start_oauth getStartOAuth --------');
-    console.log('-- client:', client);
     return res.redirect(client.code.getUri());
 }
 
 function getCompleteOauth(req, res) {
-    console.log('------ GET /complete_oauth getCompleteOauth --------');
-    console.log('-- client:', client);
     client.code.getToken(req.originalUrl).then((user) => {
-        console.log('-- user:', user);
         authedUser = user;
         return res.status(200).send('OK');
     }).catch((reason) => {
-        console.log('-- error:', reason);
         return res.status(reason.status).send(reason);
     });
 }
@@ -123,8 +106,6 @@ function getCompleteOauth(req, res) {
 async function postOAuthMessage(req, res) {
     const {channelId, message, rootId, createAt} = req.body;
     const apiUrl = `${baseUrl}/api/v4/posts`;
-    console.log('------ POST /post_oauth_message postOAuthMessage --------');
-    console.log('-- authedUser:', authedUser);
     authedUser.sign({
         method: 'post',
         url: apiUrl,
@@ -147,9 +128,7 @@ async function postOAuthMessage(req, res) {
                 root_id: rootId,
             },
         });
-        console.log('-- success');
     } catch (err) {
-        console.log('-- error:', err);
         // Do nothing
     }
     return res.status(200).send('OK');

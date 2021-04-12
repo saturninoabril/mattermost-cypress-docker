@@ -152,14 +152,14 @@ __Tips:__
     });
 
     cy.task('postIncomingWebhook', {
-        url: `${webhookBaseUrl}/set_base_url`,
+        url: `${webhookBaseUrl}/setup`,
         data: {
             baseUrl,
             webhookBaseUrl,
             adminUsername,
             adminPassword,
         }}).
-    its('status').should('be.equal', 200);
+        its('status').should('be.equal', 201);
 });
 
 Cypress.Commands.add('requireStorybookServer', () => {
