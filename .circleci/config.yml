@@ -103,7 +103,7 @@ commands:
       - run:
           name: Create the test server
           command: |
-            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&elasticsearch=false&keycloak=false"
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&elasticsearch=true&keycloak=true"
             CREATE_URL="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $CREATE_URL
             sleep 1m
@@ -217,10 +217,10 @@ jobs:
       REPO: mattermost-webapp
       MM_DOCKER_IMAGE: mattermost-enterprise-edition
       MM_EDITION: ee
-      MM_DOCKER_TAG: master
+      MM_DOCKER_TAG: 31a64f8
       SERVER_INSTANCE_COUNT: 4
-      TYPE: NONE
-      PULL_REQUEST: add-link
+      TYPE: PR
+      PULL_REQUEST: https://github.com/mattermost/mattermost-webapp/pull/7770
       BROWSER: chrome
       HEADLESS: true
       DASHBOARD_ENABLE: false
