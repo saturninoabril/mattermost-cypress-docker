@@ -48,7 +48,7 @@ const {
     REPO,
 } = process.env;
 
-async function runTest(specExecution, currentTestCount) {
+async function runCypressTest(specExecution, currentTestCount) {
     const browser = 'chrome';
     const headless = true;
 
@@ -129,52 +129,6 @@ async function runTest(specExecution, currentTestCount) {
     await recordSpecResult(specExecution.id, specPatch, testCases);
 }
 
-const maxRetryCount = 5;
-let retries = 0;
-
-async function testLoop() {
-    const spec = await getSpecToTest({
-        repo: REPO,
-        branch: BRANCH,
-        build: BUILD_ID,
-        server: CI_BASE_URL,
-    });
-
-    // Retry on connection/timeout errors
-    if (!spec || spec.code) {
-        if (retries >= maxRetryCount) {
-            console.log(chalk.red(`Test ended due to multiple (${retries}) connection/timeout errors with the dashboard server.`));
-            return;
-        }
-
-        retries++;
-        console.log(chalk.red(`Retry count: ${retries}`));
-        return testLoop(); // eslint-disable-line consistent-return
-    }
-
-    if (spec.summary) {
-        printSummary(spec.summary);
-    }
-
-    if (!spec.execution || !spec.execution.file) {
-        console.log(chalk.magenta(spec.message));
-        return;
-    }
-
-    const currentTestCount = spec.summary.reduce((total, item) => {
-        return total + parseInt(item.count, 10);
-    }, 0);
-
-    console.log(chalk.magenta(`(Testing ${currentTestCount} of ${spec.cycle.specs_registered})  - `, spec.execution.file));
-
-    await runTest(spec.execution, currentTestCount);
-
-    // Reset retry count on at least one successful run
-    retries = 0;
-
-    return testLoop(); // eslint-disable-line consistent-return
-}
-
 function printSummary(summary) {
     const obj = summary.reduce((acc, item) => {
         const {server, state, count} = item;
@@ -199,4 +153,68 @@ function printSummary(summary) {
     });
 }
 
-testLoop();
+const maxRetryCount = 5;
+const runSpecFragment = async function(count, retry) {
+    console.log(chalk.magenta(`Starting: ${count}`));
+
+    const spec = await getSpecToTest({
+        repo: REPO,
+        branch: BRANCH,
+        build: BUILD_ID,
+        server: CI_BASE_URL,
+    });
+
+    // Retry on connection/timeout errors
+    if (!spec || spec.code) {
+        if (retry >= maxRetryCount) {
+            return {
+                doNext: false,
+                count,
+                message: `Test ended due to multiple (${retry}) connection/timeout errors with the dashboard server.`,
+            };
+        }
+
+        console.log(chalk.red(`Retry count: ${retry}`));
+        return await runSpecFragment(count, retry + 1); // eslint-disable-line consistent-return
+    }
+
+    if (!spec.execution || !spec.execution.file) {
+        return {
+            doNext: false,
+            count,
+            message: spec.message,
+        }
+    }
+
+    const currentTestCount = spec.summary.reduce((total, item) => {
+        return total + parseInt(item.count, 10);
+    }, 0);
+
+    printSummary(spec.summary);
+    console.log(chalk.magenta(`\n(Testing ${currentTestCount} of ${spec.cycle.specs_registered})  - ${spec.execution.file}`));
+    console.log(chalk.magenta(`At "${process.env.CI_BASE_URL}" server`));
+
+    await runCypressTest(spec.execution, count);
+
+    return {
+        doNext: true,
+        count: count + 1,
+        retry: 0,
+        message: 'Continue testing',
+    }
+};
+
+const runSpec = async function(count = 1, retry = 0) {
+    const fragment = await runSpecFragment(count, retry)
+    if (fragment.doNext) {
+        return await runSpec(fragment.count, fragment.retry);
+    } else {
+        return {count: fragment.count, message: fragment.message}
+    }
+  }
+  
+
+runSpec().then(({count, message}) => {
+    console.log(chalk.magenta(message));
+    console.log(chalk.magenta(`Completed ${count} spec files`));
+});
