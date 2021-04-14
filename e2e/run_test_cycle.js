@@ -48,7 +48,7 @@ const {
     REPO,
 } = process.env;
 
-async function runCypressTest(specExecution, currentTestCount) {
+async function runCypressTest(specExecution, testIndex) {
     const browser = 'chrome';
     const headless = true;
 
@@ -85,7 +85,7 @@ async function runCypressTest(specExecution, currentTestCount) {
     });
 
     // Write and update test environment details once
-    if (currentTestCount === 1) {
+    if (testIndex === 0) {
         const environment = {
             cypress_version: result.cypressVersion,
             browser_name: result.browserName,
@@ -155,7 +155,7 @@ function printSummary(summary) {
 
 const maxRetryCount = 5;
 const runSpecFragment = async function(count, retry) {
-    console.log(chalk.magenta(`Starting: ${count}`));
+    console.log(chalk.magenta(`Preparing for: ${count + 1}`));
 
     const spec = await getSpecToTest({
         repo: REPO,
@@ -168,7 +168,7 @@ const runSpecFragment = async function(count, retry) {
     if (!spec || spec.code) {
         if (retry >= maxRetryCount) {
             return {
-                doNext: false,
+                tryNext: false,
                 count,
                 message: `Test ended due to multiple (${retry}) connection/timeout errors with the dashboard server.`,
             };
@@ -180,7 +180,7 @@ const runSpecFragment = async function(count, retry) {
 
     if (!spec.execution || !spec.execution.file) {
         return {
-            doNext: false,
+            tryNext: false,
             count,
             message: spec.message,
         }
@@ -191,22 +191,32 @@ const runSpecFragment = async function(count, retry) {
     }, 0);
 
     printSummary(spec.summary);
-    console.log(chalk.magenta(`\n(Testing ${currentTestCount} of ${spec.cycle.specs_registered})  - ${spec.execution.file}`));
+    console.log(chalk.magenta(`\n(Testing ${currentTestCount} of ${spec.cycle.specs_registered}) - ${spec.execution.file}`));
     console.log(chalk.magenta(`At "${process.env.CI_BASE_URL}" server`));
 
     await runCypressTest(spec.execution, count);
 
+    const newCount = count + 1;
+
+    if (spec.cycle.specs_registered === currentTestCount) {
+        return {
+            tryNext: false,
+            count: newCount,
+            message: `Completed testing of all registered ${currentTestCount} spec/s.`,
+        }
+    }
+
     return {
-        doNext: true,
-        count: count + 1,
+        tryNext: true,
+        count: newCount,
         retry: 0,
         message: 'Continue testing',
     }
 };
 
-const runSpec = async function(count = 1, retry = 0) {
+const runSpec = async function(count = 0, retry = 0) {
     const fragment = await runSpecFragment(count, retry)
-    if (fragment.doNext) {
+    if (fragment.tryNext) {
         return await runSpec(fragment.count, fragment.retry);
     } else {
         return {count: fragment.count, message: fragment.message}
@@ -216,5 +226,7 @@ const runSpec = async function(count = 1, retry = 0) {
 
 runSpec().then(({count, message}) => {
     console.log(chalk.magenta(message));
-    console.log(chalk.magenta(`Completed ${count} spec files`));
+    if (count > 0) {
+        console.log(chalk.magenta(`This test runner completed ${count} spec file/s.`));
+    }
 });
