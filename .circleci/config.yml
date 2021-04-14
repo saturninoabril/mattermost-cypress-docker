@@ -229,7 +229,7 @@ jobs:
       CYPRESS_chromeWebSecurity: false
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
-      CYPRESS_runLDAPSync: false
+      CYPRESS_runLDAPSync: true
       CYPRESS_serverEdition: E20
     steps:
       - attach-workspace
