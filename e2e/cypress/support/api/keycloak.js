@@ -16,6 +16,10 @@ const {
 } = Cypress.env();
 
 Cypress.Commands.add('apiKeycloakGetAccessToken', () => {
+    cy.log(`keycloakBaseUrl: ${keycloakBaseUrl}`);
+    cy.log(`keycloakAppName: ${keycloakAppName}`);
+    cy.log(`keycloakUsername: ${keycloakUsername}`);
+    cy.log(`keycloakPassword: ${keycloakPassword}`);
     return cy.task('keycloakRequest', {
         baseUrl: `${keycloakBaseUrl}/auth/realms/master/protocol/openid-connect/token`,
         method: 'POST',
