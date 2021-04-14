@@ -224,12 +224,6 @@ Cypress.Commands.add('shouldNotRunOnCloudEdition', () => {
     });
 });
 
-Cypress.Commands.add('shouldRunOnCloudEdition', () => {
-    isCloudEdition().then((isCloud) => {
-        expect(isCloud, isCloud ? '' : 'Should run on Cloud server').to.equal(true);
-    });
-});
-
 function isTeamEdition() {
     const isTeamServer = Cypress.env('serverEdition') === Constants.ServerEdition.TEAM;
 
