@@ -103,7 +103,7 @@ commands:
       - run:
           name: Create the test server
           command: |
-            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&elasticsearch=false&keycloak=false"
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&elasticsearch=true&keycloak=true"
             CREATE_URL="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $CREATE_URL
             sleep 1m
@@ -167,8 +167,6 @@ commands:
     parameters:
       ci_base_url:
         type: string
-      common_base_url:
-        type: string
     steps:
       - run:
           name: Run Cypress test
@@ -176,13 +174,13 @@ commands:
             curl --retry 10 --retry-delay 10 --retry-connrefused --max-time 120 << parameters.ci_base_url >>:8065/api/v4/system/ping
 
             export CI_BASE_URL=<< parameters.ci_base_url >>
-            export COMMON_BASE_URL=<< parameters.common_base_url >>
             export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
             export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export CYPRESS_elasticsearchConnectionUrl="http://${COMMON_BASE_URL}:9200"
-            export CYPRESS_minioS3Endpoint="${CI_BASE_URL}:9000"
+            export CYPRESS_elasticsearchConnectionUrl="http://${CI_BASE_URL}:9200"
             export CYPRESS_keycloakBaseUrl="http://${CI_BASE_URL}:8484"
+            export CYPRESS_ldapServer=${CI_BASE_URL}
+            export CYPRESS_minioS3Endpoint="${CI_BASE_URL}:9000"
 
             export CYPRESS_webhookBaseUrl="http://${CI_BASE_URL}:3000"
             export CYPRESS_smtpUrl="http://${CI_BASE_URL}:10080"
@@ -223,7 +221,6 @@ jobs:
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
-      DASHBOARD_ENABLE: false
       FULL_REPORT: false
       TM4J_ENABLE: false
       JIRA_PROJECT_KEY: MM
@@ -232,7 +229,7 @@ jobs:
       CYPRESS_chromeWebSecurity: false
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
-      CYPRESS_runLDAPSync: false
+      CYPRESS_runLDAPSync: true
       CYPRESS_serverEdition: E20
     steps:
       - attach-workspace
@@ -263,7 +260,7 @@ jobs:
           no_output_timeout: 30m
           command: |
             cd e2e
-            node generate_test_cycle.js --stage="@prod" --excludeGroup="@te_only,@high_availability" --sortLast="@elasticsearch,@ldap,@saml,@keycloak,@mfa"
+            node generate_test_cycle.js --stage="@prod" --excludeGroup="@te_only,@high_availability" --sortFirst="@elasticsearch,@ldap_group,@ldap" --sortLast="@saml,@keycloak,@mfa"
   merge-and-save-test-reports:
     docker:
       - image: cimg/node:lts
@@ -305,7 +302,6 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_1
-          common_base_url: $BASE_URL_COMMON
       - persist-and-store:
           folder: e2e-test-1
   
@@ -322,7 +318,6 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_2
-          common_base_url: $BASE_URL_COMMON
       - persist-and-store:
           folder: e2e-test-2
 
@@ -339,7 +334,6 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_3
-          common_base_url: $BASE_URL_COMMON
       - persist-and-store:
           folder: e2e-test-3
 
@@ -356,6 +350,5 @@ jobs:
       - apply-shared-env
       - run-cypress:
           ci_base_url: $BASE_URL_4
-          common_base_url: $BASE_URL_COMMON
       - persist-and-store:
           folder: e2e-test-4

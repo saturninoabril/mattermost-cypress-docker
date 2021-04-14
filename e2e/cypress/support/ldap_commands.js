@@ -163,6 +163,7 @@ Cypress.Commands.add('waitForLdapSyncCompletion', (start, timeout) => {
     }
 
     cy.getLdapSyncJobStatus(start).then((status) => {
+        cy.log(`getLdapSyncJobStatus status: ${status}`);
         if (status === 'success') {
             return;
         }
