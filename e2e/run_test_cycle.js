@@ -191,7 +191,8 @@ const runSpecFragment = async function(count, retry) {
     }, 0);
 
     printSummary(spec.summary);
-    console.log(chalk.magenta(`(Testing ${currentTestCount} of ${spec.cycle.specs_registered})  - `, spec.execution.file));
+    console.log(chalk.magenta(`\n(Testing ${currentTestCount} of ${spec.cycle.specs_registered})  - ${spec.execution.file}`));
+    console.log(chalk.magenta(`At "${process.env.CI_BASE_URL}" server`));
 
     await runCypressTest(spec.execution, count);
 
