@@ -103,7 +103,7 @@ commands:
       - run:
           name: Create the test server
           command: |
-            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&elasticsearch=true&keycloak=true"
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&elasticsearch=false&keycloak=false"
             CREATE_URL="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $CREATE_URL
             sleep 1m
@@ -133,6 +133,8 @@ commands:
             echo export MM_DOCKER_IMAGE=$MM_DOCKER_IMAGE >> shared
             echo export MM_DOCKER_TAG=$MM_DOCKER_TAG >> shared
 
+            echo export RELEASE_DATE=$RELEASE_DATE >> shared
+
             echo export TYPE=${TYPE} >> shared
             echo export PULL_REQUEST=${PULL_REQUEST} >> shared
             echo export REPO=${REPO} >> shared
@@ -146,6 +148,7 @@ commands:
             echo export TM4J_ENABLE=${TM4J_ENABLE} >> shared
             echo export JIRA_PROJECT_KEY=${JIRA_PROJECT_KEY} >> shared
             echo export TM4J_FOLDER_ID=${TM4J_FOLDER_ID} >> shared
+            echo export TM4J_CYCLE_NAME=${TM4J_CYCLE_NAME} >> shared
             echo export TM4J_ENVIRONMENT_NAME=${TM4J_ENVIRONMENT_NAME} >> shared
 
             echo export CYPRESS_chromeWebSecurity=${CYPRESS_chromeWebSecurity} >> shared
@@ -213,19 +216,21 @@ jobs:
     working_directory: ~/mattermost/env-var
     environment:
       REPO: mattermost-webapp
-      MM_DOCKER_IMAGE: mattermost-enterprise-edition
-      MM_EDITION: ee
-      MM_DOCKER_TAG: master
+      MM_DOCKER_IMAGE: mm-ee-test
+      MM_EDITION: ce
+      MM_DOCKER_TAG: 2703_f5f94a6f_c7b05797_79314a4c
+      RELEASE_DATE: "Cloud April 21"
       SERVER_INSTANCE_COUNT: 4
-      TYPE: MASTER
+      TYPE: CLOUD
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
       FULL_REPORT: false
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "1106027"
-      TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/master-e20-prod"
+      TM4J_CYCLE_NAME: "Cloud April 21 Cypress"
+      TM4J_FOLDER_ID: "1292669"
+      TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/cloud"
       CYPRESS_chromeWebSecurity: false
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
@@ -260,7 +265,7 @@ jobs:
           no_output_timeout: 30m
           command: |
             cd e2e
-            node generate_test_cycle.js --stage="@prod" --excludeGroup="@te_only,@high_availability" --sortFirst="@elasticsearch,@ldap_group,@ldap" --sortLast="@saml,@keycloak,@mfa"
+            node generate_test_cycle.js --stage="@prod" --excludeGroup="@not_cloud,@e20_only,@te_only,@high_availability" --sortFirst="@elasticsearch,@ldap_group,@ldap" --sortLast="@saml,@keycloak,@mfa"
   merge-and-save-test-reports:
     docker:
       - image: cimg/node:lts
