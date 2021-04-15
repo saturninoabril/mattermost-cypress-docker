@@ -71,7 +71,7 @@ describe('Authentication', () => {
 
         cy.findByText('Create Account').click();
 
-        // * Assert that we are not shown a MFA screen and instead a Teams You Can join page
+        // * Assert that we are not shown an MFA screen and instead a Teams You Can join page
         cy.findByText('Teams you can join:', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible');
     });
 
