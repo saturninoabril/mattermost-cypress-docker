@@ -291,7 +291,7 @@ jobs:
           path: ~/mattermost/e2e/results/junit
   e2e-test-1:
     docker:
-      - image: cypress/included:6.8.0
+      - image: cypress/included:7.1.0
     working_directory: ~/mattermost/e2e-test-1
     steps:
       - checkout
@@ -307,7 +307,7 @@ jobs:
   
   e2e-test-2:
     docker:
-      - image: cypress/included:6.8.0
+      - image: cypress/included:7.1.0
     working_directory: ~/mattermost/e2e-test-2
     steps:
       - checkout
@@ -323,7 +323,7 @@ jobs:
 
   e2e-test-3:
     docker:
-      - image: cypress/included:6.8.0
+      - image: cypress/included:7.1.0
     working_directory: ~/mattermost/e2e-test-3
     steps:
       - checkout
@@ -339,7 +339,7 @@ jobs:
 
   e2e-test-4:
     docker:
-      - image: cypress/included:6.8.0
+      - image: cypress/included:7.1.0
     working_directory: ~/mattermost/e2e-test-4
     steps:
       - checkout
