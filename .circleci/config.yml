@@ -86,6 +86,9 @@ commands:
           name: Save and publish reports
           when: always
           command: |
+            export TM4J_CYCLE_NAME="Cloud April 21 Cypress"
+            export RELEASE_DATE="Cloud April 21"
+
             # This is how it should be on main org repo
             # export PULL_REQUEST=$CIRCLE_PULL_REQUESTS
 
@@ -145,10 +148,7 @@ commands:
             echo export TM4J_ENABLE=${TM4J_ENABLE} >> shared
             echo export JIRA_PROJECT_KEY=${JIRA_PROJECT_KEY} >> shared
             echo export TM4J_FOLDER_ID=${TM4J_FOLDER_ID} >> shared
-            echo export TM4J_CYCLE_NAME=${TM4J_CYCLE_NAME} >> shared
             echo export TM4J_ENVIRONMENT_NAME=${TM4J_ENVIRONMENT_NAME} >> shared
-
-            echo export RELEASE_DATE=${RELEASE_DATE} >> shared
 
             echo export CYPRESS_chromeWebSecurity=${CYPRESS_chromeWebSecurity} >> shared
             echo export CYPRESS_numberOfTrialUsers=${CYPRESS_numberOfTrialUsers} >> shared
@@ -218,7 +218,6 @@ jobs:
       MM_DOCKER_IMAGE: mm-ee-test
       MM_EDITION: ce
       MM_DOCKER_TAG: 2703_f5f94a6f_c7b05797_79314a4c
-      RELEASE_DATE: "Cloud April 21"
       SERVER_INSTANCE_COUNT: 4
       TYPE: CLOUD
       PULL_REQUEST: add-link
@@ -227,7 +226,6 @@ jobs:
       FULL_REPORT: false
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
-      TM4J_CYCLE_NAME: "Cloud April 21 Cypress"
       TM4J_FOLDER_ID: "1292669"
       TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/cloud"
       CYPRESS_chromeWebSecurity: false
