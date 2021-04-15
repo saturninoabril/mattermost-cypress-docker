@@ -217,8 +217,8 @@ jobs:
       MM_EDITION: ee
       MM_DOCKER_TAG: master
       SERVER_INSTANCE_COUNT: 4
-      TYPE: NONE
-      PULL_REQUEST: add-link
+      TYPE: PR
+      PULL_REQUEST: https://github.com/mattermost/mattermost-webapp/pull/7923
       BROWSER: chrome
       HEADLESS: true
       FULL_REPORT: false
