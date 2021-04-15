@@ -133,8 +133,6 @@ commands:
             echo export MM_DOCKER_IMAGE=$MM_DOCKER_IMAGE >> shared
             echo export MM_DOCKER_TAG=$MM_DOCKER_TAG >> shared
 
-            echo export RELEASE_DATE=$RELEASE_DATE >> shared
-
             echo export TYPE=${TYPE} >> shared
             echo export PULL_REQUEST=${PULL_REQUEST} >> shared
             echo export REPO=${REPO} >> shared
@@ -142,7 +140,6 @@ commands:
             echo export BUILD_ID=${CIRCLE_BUILD_NUM} >> shared
             echo export BROWSER=${BROWSER} >> shared
             echo export HEADLESS=${HEADLESS} >> shared
-            echo export DASHBOARD_ENABLE=${DASHBOARD_ENABLE} >> shared
             echo export FULL_REPORT=${FULL_REPORT} >> shared
 
             echo export TM4J_ENABLE=${TM4J_ENABLE} >> shared
@@ -150,6 +147,8 @@ commands:
             echo export TM4J_FOLDER_ID=${TM4J_FOLDER_ID} >> shared
             echo export TM4J_CYCLE_NAME=${TM4J_CYCLE_NAME} >> shared
             echo export TM4J_ENVIRONMENT_NAME=${TM4J_ENVIRONMENT_NAME} >> shared
+
+            echo export RELEASE_DATE=${RELEASE_DATE} >> shared
 
             echo export CYPRESS_chromeWebSecurity=${CYPRESS_chromeWebSecurity} >> shared
             echo export CYPRESS_numberOfTrialUsers=${CYPRESS_numberOfTrialUsers} >> shared
