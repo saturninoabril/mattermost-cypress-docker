@@ -86,9 +86,6 @@ commands:
           name: Save and publish reports
           when: always
           command: |
-            export TM4J_CYCLE_NAME="Cloud April 21 Cypress"
-            export RELEASE_DATE="Cloud April 21"
-
             # This is how it should be on main org repo
             # export PULL_REQUEST=$CIRCLE_PULL_REQUESTS
 
