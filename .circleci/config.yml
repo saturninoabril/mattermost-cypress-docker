@@ -260,7 +260,7 @@ jobs:
           no_output_timeout: 30m
           command: |
             cd e2e
-            node generate_test_cycle.js --stage="@prod" --excludeGroup="@te_only,@high_availability" --sortFirst="@elasticsearch,@ldap_group,@ldap" --sortLast="@saml,@keycloak,@mfa" --invert
+            node generate_test_cycle.js --stage="@prod" --excludeGroup="@te_only,@cloud_only,@high_availability" --sortFirst="@compliance_export,@elasticsearch,@ldap_group,@ldap" --sortLast="@saml,@keycloak,@mfa" --invert
   merge-and-save-test-reports:
     docker:
       - image: cimg/node:lts
