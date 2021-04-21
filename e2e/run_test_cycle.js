@@ -121,15 +121,15 @@ async function saveResult(specExecution, result, testIndex) {
         test_end_at: stats.endedAt,
     };
 
-    const screenshotKeys = [];
+    const uploadedScreenshots = [];
     tests.forEach((t) => {
         const attempts = t.attempts[0];
         if (attempts.screenshots && attempts.screenshots.length > 0) {
             const path = t.attempts[0].screenshots[0].path;
-            screenshotKeys.push(uploadScreenshot(path, REPO, BRANCH, BUILD_ID));
+            uploadedScreenshots.push(uploadScreenshot(path, REPO, BRANCH, BUILD_ID));
         }
     });
-    const screenshotUrls = await Promise.all(screenshotKeys);
+    const screenshotUrls = await Promise.all(uploadedScreenshots);
 
     const testCases = [];
     tests.forEach((t, i) => {
