@@ -206,7 +206,11 @@ describe('User Management', () => {
         // # Revoke all sessions for the user
         cy.externalRequest({user: sysadmin, method: 'post', path: `users/${testUser.id}/sessions/revoke/all`});
 
-        cy.visit('/').wait(TIMEOUTS.HALF_MIN);
+        // # Visit default page and wait until it's redirected to login page
+        cy.visit('/');
+        cy.waitUntil(() => cy.url().then((url) => {
+            return url.includes('/login');
+        }), {timeout: TIMEOUTS.HALF_MIN});
 
         // # Check if user's session is automatically logged out and the user is redirected to the login page
         cy.url().should('contain', '/login');
@@ -437,7 +441,6 @@ describe('User Management', () => {
             console.log('data', data)
             // # Extract verification the link from the e-mail.
             const bodyText = splitEmailBodyText(data.body.text);
-            console.log('bodyText', bodyText)
             expect(bodyText[4]).to.contain('Verify Email');
             const line = bodyText[4].split(' ');
             expect(line[3]).to.contain(baseUrl);
@@ -446,8 +449,8 @@ describe('User Management', () => {
 
             // # Complete verification.
             cy.visit(verificationLink);
-            cy.get('.alert-success').should('be.visible').and('have.text', ' Email Verified');
-            cy.get('#loginId').should('be.visible').and('be.focused').and('have.value', userEmail);
+            cy.findByText('Email Verified').should('be.visible');
+            cy.get('#loginId').should('be.visible').and('have.value', userEmail);
         });
     }
 
