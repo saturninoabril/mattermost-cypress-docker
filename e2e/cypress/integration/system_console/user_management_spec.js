@@ -83,8 +83,8 @@ describe('User Management', () => {
         // * Invalid email address: "Please enter a valid email address"
         resetUserEmail(testUser.email, 'user-1(at)sample.mattermost.com', 'Please enter a valid email address');
 
-        // * Email address already in use: "This email is already taken. Please choose another."
-        resetUserEmail(testUser.email, 'sysadmin@sample.mattermost.com', 'This email is already taken. Please choose another.');
+        // * Email address already in use: "An account with that email already exists."
+        resetUserEmail(testUser.email, 'sysadmin@sample.mattermost.com', 'An account with that email already exists.');
     });
 
     it('MM-T929 Users - Change a user\'s email address, with verification off', () => {
@@ -434,17 +434,20 @@ describe('User Management', () => {
 
             // # Verify that the email subject is as expected.
             expect(data.subject).to.contain('Email Verification');
-
+            console.log('data', data)
             // # Extract verification the link from the e-mail.
             const bodyText = splitEmailBodyText(data.body.text);
-            expect(bodyText[6]).to.contain('Verify Email');
-            const line = bodyText[6].split(' ');
+            console.log('bodyText', bodyText)
+            expect(bodyText[4]).to.contain('Verify Email');
+            const line = bodyText[4].split(' ');
             expect(line[3]).to.contain(baseUrl);
 
             const verificationLink = line[3].replace(baseUrl, '');
 
             // # Complete verification.
             cy.visit(verificationLink);
+            cy.get('.alert-success').should('be.visible').and('have.text', ' Email Verified');
+            cy.get('#loginId').should('be.visible').and('be.focused').and('have.value', userEmail);
         });
     }
 
