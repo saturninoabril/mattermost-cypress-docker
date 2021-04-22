@@ -89,19 +89,23 @@ Cypress.Commands.add('cmdOrCtrlShortcut', {prevSubject: true}, (subject, text) =
 
 Cypress.Commands.add('postMessage', (message) => {
     cy.get('#postListContent').should('be.visible');
-    postMessageAndWait('#post_textbox', message);
+    cy.get('#post_textbox').uiPostMessageQuickly(message);
 });
 
 Cypress.Commands.add('postMessageReplyInRHS', (message) => {
     cy.get('#sidebar-right').should('be.visible');
-    postMessageAndWait('#reply_textbox', message);
+    cy.get('#reply_textbox').uiPostMessageQuickly(message);
 });
 
-Cypress.Commands.add('uiPostMessageQuickly', (message) => {
-    cy.get('#post_textbox', {timeout: TIMEOUTS.HALF_MIN}).should('be.visible').clear().
+Cypress.Commands.add('uiPostMessageQuickly', {prevSubject: true}, (subject, message) => {
+    // Add explicit wait to let the page load freely since `cy.get` seemed to block
+    // some operation which caused to prolong complete page loading.
+    cy.wait(TIMEOUTS.HALF_SEC);
+
+    cy.get(subject, {timeout: TIMEOUTS.HALF_MIN}).should('be.visible').clear().
         invoke('val', message).wait(TIMEOUTS.HALF_SEC).type(' {backspace}{enter}');
     cy.waitUntil(() => {
-        return cy.get('#post_textbox').then((el) => {
+        return cy.get(subject).then((el) => {
             return el[0].textContent === '';
         });
     });
@@ -113,12 +117,16 @@ function postMessageAndWait(textboxSelector, message) {
     cy.wait(TIMEOUTS.HALF_SEC);
 
     cy.get(textboxSelector, {timeout: TIMEOUTS.HALF_MIN}).should('be.visible').as('textboxSelector');
-    cy.get('@textboxSelector').clear().type(`${message}{enter}`).wait(TIMEOUTS.HALF_SEC);
-    cy.get('@textboxSelector').invoke('val').then((value) => {
-        if (value.length > 0 && value === message) {
-            cy.get('@textboxSelector').type('{enter}').wait(TIMEOUTS.HALF_SEC);
-        }
-    });
+    cy.get('@textboxSelector').
+        clear().type(message).
+        should('have.value', message).type('{enter}').wait(TIMEOUTS.HALF_SEC).
+        invoke('val').then((value) => {
+            if (value.length > 0 && value === message) {
+                cy.get('@textboxSelector').type('{enter}').wait(TIMEOUTS.HALF_SEC);
+            }
+
+            expect(value).to.equal('', 'Input box should be empty');
+        });
     cy.waitUntil(() => {
         return cy.get(textboxSelector).then((el) => {
             return el[0].textContent === '';
