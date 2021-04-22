@@ -71,7 +71,7 @@ describe('autocomplete', () => {
         });
 
         // # Post user mention
-        cy.postMessage(`@${testUser.username} `);
+        cy.uiPostMessageQuickly(`@${testUser.username} `);
         cy.uiWaitUntilMessagePostedIncludes(`${testUser.username}`);
 
         // # Check that the user name has been posted

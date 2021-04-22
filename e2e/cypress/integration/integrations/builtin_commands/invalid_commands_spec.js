@@ -75,7 +75,7 @@ describe('Invalid slash command', () => {
         });
 
         // # Type a incorrect slash command and press enter in RHS
-        cy.get('#reply_textbox', {timeout: TIMEOUTS.HALF_MIN}).should('be.visible').clear().type(`/${incorrectCommand1} {enter}`);
+        cy.get('#reply_textbox', {timeout: TIMEOUTS.HALF_MIN}).should('be.visible').click().clear().type(`/${incorrectCommand1} {enter}`);
 
         // # Move the text search for error inside the RHS container only, so we are certain it is rendered below RHS textbox
         cy.get('#rhsContainer').within(() => {

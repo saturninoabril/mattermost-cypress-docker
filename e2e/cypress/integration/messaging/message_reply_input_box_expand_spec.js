@@ -41,7 +41,7 @@ describe('Messaging', () => {
         // # Post several replies and verify last reply
         cy.get(`#${replyTextBoxId}`).clear().should('be.visible').as('replyTextBox');
         for (let i = 1; i <= maxReplyCount; i++) {
-            cy.get('@replyTextBox').type(`post ${i}`).type('{enter}');
+            cy.get('@replyTextBox').click().type(`post ${i}`).type('{enter}');
         }
         verifyLastReply(maxReplyCount);
 

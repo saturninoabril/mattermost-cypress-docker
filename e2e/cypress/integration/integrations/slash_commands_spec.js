@@ -73,14 +73,14 @@ describe('Integrations', () => {
 
         // # User, who is a member of the channel, try /join command without tilde
         cy.uiGetLhsSection('CHANNELS').findByText('Town Square').click();
-        cy.postMessage(`/join ${privateChannelName} `);
+        cy.uiPostMessageQuickly(`/join ${privateChannelName} `);
 
         // * Private channel should be active
         cy.uiGetLhsSection('CHANNELS').get('.active').should('contain', privateChannelName);
 
         // # User, who is a member of the channel, try /join command with tilde
         cy.uiGetLhsSection('CHANNELS').findByText('Town Square').click();
-        cy.postMessage(`/join ~${privateChannelName} `);
+        cy.uiPostMessageQuickly(`/join ~${privateChannelName} `);
 
         // * private channel should be active
         cy.uiGetLhsSection('CHANNELS').find('.active').should('contain', privateChannelName);
@@ -91,14 +91,14 @@ describe('Integrations', () => {
 
         // # User, who is *not* a member of the channel, try /join command without tilde
         cy.uiGetLhsSection('CHANNELS').findByText('Town Square').click();
-        cy.postMessage(`/join ${privateChannelName} `);
+        cy.uiPostMessageQuickly(`/join ${privateChannelName} `);
 
         // * Error message should be presented.
         cy.getLastPost().should('contain', 'An error occurred while joining the channel.').and('contain', 'System');
 
         // # User, who is *not* a member of the channel, try /join command with tilde
         cy.uiGetLhsSection('CHANNELS').findByText('Town Square').click();
-        cy.postMessage(`/join ~${privateChannelName} `);
+        cy.uiPostMessageQuickly(`/join ~${privateChannelName} `);
 
         // * Error message should be presented.
         cy.getLastPost().should('contain', 'An error occurred while joining the channel.').and('contain', 'System');
@@ -118,14 +118,14 @@ describe('Integrations', () => {
 
         // # User, who is a member of the channel, try /open command without tilde
         cy.uiGetLhsSection('CHANNELS').findByText('Town Square').click();
-        cy.postMessage(`/open ${privateChannelName} `);
+        cy.uiPostMessageQuickly(`/open ${privateChannelName} `);
 
         // * Private channel should be active
         cy.uiGetLhsSection('CHANNELS').find('.active').should('contain', privateChannelName);
 
         // # User, who is a member of the channel, try /open command with tilde
         cy.uiGetLhsSection('CHANNELS').findByText('Town Square').click();
-        cy.postMessage(`/open ~${privateChannelName} `);
+        cy.uiPostMessageQuickly(`/open ~${privateChannelName} `);
 
         // * Private channel should be active
         cy.uiGetLhsSection('CHANNELS').find('.active').should('contain', privateChannelName);
@@ -136,14 +136,14 @@ describe('Integrations', () => {
 
         // # User, who is *not* a member of the channel, try /open command without tilde
         cy.uiGetLhsSection('CHANNELS').findByText('Town Square').click();
-        cy.postMessage(`/open ${privateChannelName} `);
+        cy.uiPostMessageQuickly(`/open ${privateChannelName} `);
 
         // * Error message should be presented.
         cy.getLastPost().should('contain', 'An error occurred while joining the channel.').and('contain', 'System');
 
         // # User, who is *not* a member of the channel, try /open command with tilde
         cy.uiGetLhsSection('CHANNELS').findByText('Town Square').click();
-        cy.postMessage(`/open ~${privateChannelName} `);
+        cy.uiPostMessageQuickly(`/open ~${privateChannelName} `);
 
         // * Error message should be presented.
         cy.getLastPost().should('contain', 'An error occurred while joining the channel.').and('contain', 'System');
@@ -155,7 +155,7 @@ describe('Integrations', () => {
 
         // # Post message
         const firstMessage = 'First message';
-        cy.postMessage(`/msg @${user2.username} ${firstMessage} `);
+        cy.uiPostMessageQuickly(`/msg @${user2.username} ${firstMessage} `);
         cy.uiWaitUntilMessagePostedIncludes(firstMessage);
 
         // * The user stays in the same team
@@ -171,7 +171,7 @@ describe('Integrations', () => {
 
         // # Post message
         const secondMessage = 'Second message';
-        cy.postMessage(`/msg @${user2.username} ${secondMessage} `);
+        cy.uiPostMessageQuickly(`/msg @${user2.username} ${secondMessage} `);
         cy.uiWaitUntilMessagePostedIncludes(secondMessage);
 
         // * The user stays in the same team
@@ -193,7 +193,7 @@ describe('Integrations', () => {
         cy.getLastPostId().as('postID');
 
         // # Post command
-        cy.postMessage('/expand ');
+        cy.uiPostMessageQuickly('/expand ');
 
         cy.get('@postID').then((postID) => {
             cy.get(`#post_${postID}`).should('be.visible').within(() => {
@@ -265,7 +265,7 @@ describe('Integrations', () => {
         cy.findByText('Back to Mattermost').click();
 
         // # Post slash command
-        cy.postMessage(`/${commandTrigger} `);
+        cy.uiPostMessageQuickly(`/${commandTrigger} `);
         cy.getLastPost().within(() => {
             // * Should come from the webhook bot
             cy.get('.BotBadge').should('exist');

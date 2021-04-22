@@ -98,13 +98,11 @@ describe('/poll', () => {
         cy.postMessage(MESSAGES.SMALL);
         cy.clickPostCommentIcon();
 
-        cy.get('#rhsContainer').within(() => {
-            // # In RHS, post `/poll Reply`
-            cy.get('#reply_textbox').type('/poll reply{enter}');
+        // # In RHS, post `/poll Reply`
+        cy.postMessageReplyInRHS('/poll reply');
 
-            // * Poll displays as expected in RHS.
-            cy.findByLabelText('matterpoll').should('be.visible');
-        });
+        // * Poll displays as expected in RHS.
+        cy.get('#rhsContainer').findByLabelText('matterpoll').should('be.visible');
 
         cy.apiLogout();
         cy.apiLogin(user2);

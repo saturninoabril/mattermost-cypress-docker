@@ -149,7 +149,7 @@ describe('Messaging', () => {
 
     it('MM-T2196 Emoji reaction - not available on ephemeral message Save - not available on ephemeral message Pin - not available on ephemeral message Timestamp - not a link on ephemeral message Can close ephemeral message', () => {
         // # Post `/away` to create an ephemeral message
-        cy.postMessage('/away');
+        cy.postMessage('/away ');
 
         cy.getLastPostId().then((postId) => {
             // * (Only visible to you) displays next to timestamp (standard view) or after message text (compact view)
