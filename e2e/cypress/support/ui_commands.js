@@ -113,7 +113,7 @@ function postMessageAndWait(textboxSelector, message) {
     cy.wait(TIMEOUTS.HALF_SEC);
 
     cy.get(textboxSelector, {timeout: TIMEOUTS.HALF_MIN}).should('be.visible').as('textboxSelector');
-    cy.get('@textboxSelector').click().clear().type(`${message}{enter}`).wait(TIMEOUTS.HALF_SEC);
+    cy.get('@textboxSelector').clear().type(`${message}{enter}`).wait(TIMEOUTS.HALF_SEC);
     cy.get('@textboxSelector').invoke('val').then((value) => {
         if (value.length > 0 && value === message) {
             cy.get('@textboxSelector').type('{enter}').wait(TIMEOUTS.HALF_SEC);

@@ -8,15 +8,10 @@
 // ***************************************************************
 
 // Stage: @prod
-// Group: @not_cloud
-
-/**
- * Note: This test requires "matterpoll" plugin tar file under fixtures folder.
- * Download from: https://github.com/matterpoll/matterpoll
- * Copy to: ./e2e/cypress/fixtures/com.github.matterpoll.matterpoll.tar.gz
- */
+// Group: @plugin @not_cloud
 
 import * as MESSAGES from '../../fixtures/messages';
+import {matterpollPlugin} from '../../utils/plugins';
 
 describe('/poll', () => {
     let user1;
@@ -44,25 +39,14 @@ describe('/poll', () => {
             },
         });
 
-        // # Try to remove the plugin, just in case
-        cy.apiRemovePluginById('com.github.matterpoll.matterpoll');
-
         // # Upload and enable "matterpoll" plugin
-        cy.apiUploadPlugin('com.github.matterpoll.matterpoll.tar.gz').then(() => {
-            cy.apiEnablePluginById('com.github.matterpoll.matterpoll');
-        });
+        cy.apiUploadAndEnablePlugin(matterpollPlugin);
     });
 
     beforeEach(() => {
         cy.apiLogout();
         cy.apiLogin(user1);
         cy.visit(testChannelUrl);
-    });
-
-    after(() => {
-        // # Uninstall "matterpoll" plugin
-        cy.apiAdminLogin();
-        cy.apiRemovePluginById('com.github.matterpoll.matterpoll');
     });
 
     it('MM-T576_1 /poll', () => {
@@ -98,11 +82,13 @@ describe('/poll', () => {
         cy.postMessage(MESSAGES.SMALL);
         cy.clickPostCommentIcon();
 
-        // # In RHS, post `/poll Reply`
-        cy.postMessageReplyInRHS('/poll reply');
+        cy.get('#rhsContainer').within(() => {
+            // # In RHS, post `/poll Reply`
+            cy.get('#reply_textbox').type('/poll reply{enter}');
 
-        // * Poll displays as expected in RHS.
-        cy.get('#rhsContainer').findByLabelText('matterpoll').should('be.visible');
+            // * Poll displays as expected in RHS.
+            cy.findByLabelText('matterpoll').should('be.visible');
+        });
 
         cy.apiLogout();
         cy.apiLogin(user2);
