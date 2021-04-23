@@ -11,6 +11,7 @@
 // Group: @messaging
 
 import {getAdminAccount} from '../../support/env';
+import * as TIMEOUTS from '../../fixtures/timeouts';
 
 describe('Messaging', () => {
     const sysadmin = getAdminAccount();
@@ -126,7 +127,7 @@ describe('Messaging', () => {
 
             cy.get('@yesterdaysPost').then((postId) => {
                 // # Open RHS comment menu
-                cy.clickPostCommentIcon(postId);
+                cy.clickPostCommentIcon(postId).wait(TIMEOUTS.HALF_SEC);
 
                 // # Reply to message
                 cy.postMessageReplyInRHS('A reply to an older post with message attachment');

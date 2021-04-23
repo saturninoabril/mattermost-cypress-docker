@@ -22,17 +22,17 @@ describe('Messaging', () => {
 
     it('MM-T198 Emojis preceeded by 4 or more spaces are always treated as markdown', () => {
         [
-            '    :taco:',
-            '     :taco:',
-            '    :D',
-            '     :D',
+            '    :taco: ',
+            '     :taco: ',
+            '    :D ',
+            '     :D ',
         ].forEach((message) => {
             createAndVerifyMessage(message, true);
         });
 
         [
-            '   :taco:',
-            '   :D',
+            '   :taco: ',
+            '   :D ',
         ].forEach((message) => {
             createAndVerifyMessage(message, false);
         });
