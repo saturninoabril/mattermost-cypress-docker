@@ -139,20 +139,30 @@ function postMessageAndWait(textboxSelector, message, isComment = false) {
 
 // Wait until comment message is saved as draft from the localforage
 function waitForCommentDraft(message) {
-    const commentDraft = 'comment_draft_';
+    const draftPrefix = 'comment_draft_';
 
     cy.waitUntil(async () => {
+        // Get all keys from localforage
         const keys = await localforage.keys();
-        const draftKey = keys.filter((key) => key.includes(commentDraft));
-        const promises  = draftKey.map((key) => localforage.getItem(key));
-        const draftItems = await Promise.all(promises);
 
-        const draft = draftItems.filter((item) => {
+        // Get all draft comments matching the predefined prefix
+        const draftPromises = keys.
+            filter((key) => key.includes(draftPrefix)).
+            map((key) => localforage.getItem(key));
+        const draftItems = await Promise.all(draftPromises);
+
+        // Get the exact draft comment
+        const commentDraft = draftItems.filter((item) => {
             const draft = JSON.parse(item);
-            return draft && draft.value && draft.value.message === message;
+
+            if (draft && draft.value && draft.value.message) {
+                return draft.value.message === message;
+            }
+
+            return false;
         });
 
-        return Boolean(draft);
+        return Boolean(commentDraft);
     });
 }
 

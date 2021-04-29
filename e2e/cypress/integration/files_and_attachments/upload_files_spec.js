@@ -324,7 +324,7 @@ describe('Upload Files', () => {
         });
 
         // # Post message
-        cy.postMessage('');
+        cy.postMessage('hello');
 
         cy.getLastPost().within(() => {
             // * Click to open preview
