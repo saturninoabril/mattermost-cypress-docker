@@ -80,7 +80,7 @@ describe('Archived channels', () => {
 
                 // # Post the message in another channel
                 cy.get('#sidebarItem_off-topic').click();
-                cy.postMessage(`${permalink}`).wait(TIMEOUTS.ONE_SEC);
+                cy.postMessage(permalink).wait(TIMEOUTS.ONE_SEC);
             });
 
             // # Archive the channel

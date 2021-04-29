@@ -51,7 +51,7 @@ describe('Email notification', () => {
 
     it('post a message that mentions a user', () => {
         // # Post a message mentioning the new user
-        const text = `Hello @${mentionedUser.username}`;
+        const text = `Hello @${mentionedUser.username} `;
         cy.postMessage(text);
 
         // Wait for a while to ensure that email notification is sent.
