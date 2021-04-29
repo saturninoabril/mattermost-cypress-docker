@@ -16,7 +16,7 @@
  * @param  emojis  {string[]} [array of emojis]
  * @param  isJumbo {boolean}  [This parameter is used to verify what kind of matcher and size we need to compare in the emojis]
  */
-function checkEmojiSize(message, emojis, isJumbo) {
+ function checkEmojiSize(message, emojis, isJumbo) {
     const [height, width, size] = isJumbo ? ['min-Height', 'min-Width', '32px'] : ['height', 'width', '21px'];
 
     emojis.forEach((emoji) => {
@@ -39,7 +39,8 @@ describe('Messaging', () => {
         const emojis = [':book:', ':key:', ':gem:'];
 
         // # Post a message beginning with a new line and followed by emojis
-        cy.postMessage('\n' + emojis.join(' '));
+        cy.postMessage('hello');
+        cy.get('#post_textbox').type('\n' + emojis.join(' ')).type('{enter}');
 
         // # Get last post message text
         cy.getLastPostId().then((postId) => {
