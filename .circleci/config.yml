@@ -173,7 +173,7 @@ commands:
             export CYPRESS_baseUrl="http://${CI_BASE_URL}:8065"
             export CYPRESS_dbConnection="postgres://mmuser:mostest@${CI_BASE_URL}:5432/mattermost_test?sslmode=disable\u0026connect_timeout=10"
 
-            export CYPRESS_elasticsearchConnectionUrl="http://${CI_BASE_URL}:9200"
+            export CYPRESS_elasticsearchConnectionUrl="http://mm-elasticsearch:9200"
             export CYPRESS_keycloakBaseUrl="http://${CI_BASE_URL}:8484"
             export CYPRESS_ldapServer=${CI_BASE_URL}
             export CYPRESS_minioS3Endpoint="${CI_BASE_URL}:9000"
