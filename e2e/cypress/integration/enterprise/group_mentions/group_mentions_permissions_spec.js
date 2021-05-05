@@ -1,5 +1,6 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
+
 // ***************************************************************
 // - [#] indicates a test step (e.g. # Go to a page)
 // - [*] indicates an assertion (e.g. * Check the title)
@@ -17,9 +18,7 @@ import {
     enablePermission,
 } from '../system_console/channel_moderation/helpers';
 
-// assumes the CYPRESS_* variables are set
-// assumes that E20 license is uploaded
-// for setup with AWS: Follow the instructions mentioned in the mattermost/platform-private/config/ldap-test-setup.txt file
+import {enableGroupMention, saveConfig} from './helpers';
 
 describe('Group Mentions', () => {
     let groupID;
@@ -110,7 +109,7 @@ describe('Group Mentions', () => {
 
         // # Login as sysadmin and enable group mention with the group name
         cy.apiAdminLogin();
-        enableGroupMention(groupName);
+        enableGroupMention(groupName, groupID, boardUser.email);
 
         // # Disable Group Mentions for All Users & Channel Admins
         cy.visit('/admin_console/user_management/permissions/system_scheme');
@@ -185,7 +184,7 @@ describe('Group Mentions', () => {
 
         // # Login as sysadmin and enable group mention with the group name
         cy.apiAdminLogin();
-        enableGroupMention(groupName);
+        enableGroupMention(groupName, groupID, boardUser.email);
 
         // # Disable Group Mentions for All Users & Channel Admins & Team Admins
         cy.visit('/admin_console/user_management/permissions/system_scheme');
@@ -266,14 +265,13 @@ describe('Group Mentions', () => {
 
         // # Login as sysadmin and enable group mention with the group name
         cy.apiAdminLogin();
-        enableGroupMention(groupName);
+        enableGroupMention(groupName, groupID, boardUser.email);
 
-        // # Disable Group Mentions for All Users & Guest Users
+        // # Verify that group mentions for all users & guests are disabled
         cy.visit('/admin_console/user_management/permissions/system_scheme');
         cy.get('.admin-console__header', {timeout: TIMEOUTS.ONE_MIN}).should('be.visible').and('have.text', 'System Scheme');
-        disablePermission('all_users-posts-use_group_mentions-checkbox');
-        disablePermission('guests-guest_use_group_mentions-checkbox');
-        saveConfig();
+        cy.findByTestId('all_users-posts-use_group_mentions-checkbox').should('not.have.class', 'checked');
+        cy.findByTestId('guests-guest_use_group_mentions-checkbox').should('not.have.class', 'checked');
 
         // # Create a new channel as a sysadmin
         cy.apiCreateChannel(testTeam.id, 'group-mention', 'Group Mentions').then(({channel}) => {
@@ -345,41 +343,4 @@ describe('Group Mentions', () => {
             });
         });
     });
-
-    function enableGroupMention(groupName) {
-        // # Visit Group Configurations page
-        cy.visit(`/admin_console/user_management/groups/${groupID}`);
-
-        // # Scroll users list into view and then make sure it has loaded before scrolling back to the top
-        cy.get('#group_users', {timeout: TIMEOUTS.ONE_MIN}).scrollIntoView();
-        cy.findByText(boardUser.email).should('be.visible');
-        cy.get('#group_profile').scrollIntoView().wait(TIMEOUTS.TWO_SEC);
-
-        // # Click the allow reference button
-        cy.findByTestId('allowReferenceSwitch').then((el) => {
-            const button = el.find('button');
-            const classAttribute = button[0].getAttribute('class');
-            if (!classAttribute.includes('active')) {
-                button[0].click();
-            }
-        });
-
-        // # Give the group a custom name different from its DisplayName attribute
-        cy.get('#groupMention').find('input').clear().type(groupName);
-
-        // # Click save button
-        saveConfig();
-    }
-
-    function saveConfig() {
-        cy.get('#saveSetting').then((btn) => {
-            if (btn.is(':enabled')) {
-                btn.click();
-
-                cy.waitUntil(() => cy.get('#saveSetting').then((el) => {
-                    return el[0].innerText === 'Save';
-                }));
-            }
-        });
-    }
 });
