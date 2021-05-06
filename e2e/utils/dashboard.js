@@ -35,17 +35,21 @@ const {
 const connectionErrors = ['ECONNABORTED', 'ECONNREFUSED'];
 
 async function createAndStartCycle(data) {
-    const response = await axios({
-        url: `${AUTOMATION_DASHBOARD_URL}/cycles/start`,
-        headers: {
-            Authorization: `Bearer ${AUTOMATION_DASHBOARD_TOKEN}`,
-        },
-        method: 'post',
-        timeout,
-        data,
-    });
-
-    return response.data;
+    try {
+        const response = await axios({
+            url: `${AUTOMATION_DASHBOARD_URL}/cycles/start`,
+            headers: {
+                Authorization: `Bearer ${AUTOMATION_DASHBOARD_TOKEN}`,
+            },
+            method: 'post',
+            timeout,
+            data,
+        });
+        console.log('--- response', response)
+        return response.data;
+    } catch (e) {
+        console.log('--- e', e)
+    }
 }
 
 async function getSpecToTest({repo, branch, build, server}) {
