@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Stage: to investigate
+// Stage: @prod
 // Group: @emoji
 
 import * as TIMEOUTS from '../../fixtures/timeouts';
@@ -17,11 +17,15 @@ describe('Recent Emoji', () => {
         // # Login as test user and visit town-square
         cy.apiInitSetup({loginAfter: true}).then(({team}) => {
             cy.visit(`/${team.name}/channels/town-square`);
+            cy.get('#channelHeaderTitle').should('be.visible').and('contain', 'Town Square');
             cy.postMessage('hello');
         });
     });
 
     it('MM-T155 Recently used emoji reactions are shown first', () => {
+        // # Before test delete all recent emoji on local storage
+        cy.clearLocalStorage(/recent_emojis/);
+
         const firstEmoji = 5;
         const secondEmoji = 10;
 
@@ -47,11 +51,11 @@ describe('Recent Emoji', () => {
         // * Assert first emoji should equal with second recent emoji
         cy.get('.emoji-picker__item').eq(firstEmoji + 2).find('img').then(($el) => {
             cy.get('.emoji-picker__item').eq(1).find('img').should('have.attr', 'class', $el.attr('class'));
+        });
 
-            // * Assert second emoji should equal with first recent emoji
-            cy.get('.emoji-picker__item').eq(secondEmoji + 1).find('img').then(($el) => {
-                cy.get('.emoji-picker__item').eq(0).find('img').should('have.attr', 'class', $el.attr('class'));
-            });
+        // * Assert second emoji should equal with first recent emoji
+        cy.get('.emoji-picker__item').eq(secondEmoji + 1).find('img').then(($el) => {
+            cy.get('.emoji-picker__item').eq(0).find('img').should('have.attr', 'class', $el.attr('class'));
         });
     });
 });
