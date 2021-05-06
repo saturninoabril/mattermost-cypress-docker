@@ -7,7 +7,7 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
-// Group: @file_and_attachments
+// Group: @files_and_attachments
 
 describe('Image Link Preview', () => {
     let testTeam;
@@ -24,13 +24,16 @@ describe('Image Link Preview', () => {
         cy.apiInitSetup({loginAfter: true}).then(({team}) => {
             testTeam = team;
 
-            // # For test user, enable link previews and expand image previews
+            // # Enable link previews
             cy.apiSaveLinkPreviewsPreference('true');
-
-            cy.apiSaveCollapsePreviewsPreference('false');
 
             cy.visit(`/${testTeam.name}/channels/town-square`);
         });
+    });
+
+    beforeEach(() => {
+        // # Expand image previews
+        cy.apiSaveCollapsePreviewsPreference('false');
     });
 
     it('MM-T331 Image link preview - Collapse and expand', () => {
@@ -86,7 +89,7 @@ describe('Image Link Preview', () => {
         cy.findByLabelText('file thumbnail').should('not.exist');
 
         // # In RHS reply box, post slash command /expand
-        cy.postMessageReplyInRHS('/expand');
+        cy.postMessageReplyInRHS('/expand ');
 
         // # All image previews expand back open
         cy.findAllByLabelText('file thumbnail').should('be.visible').and('have.length', 4);
