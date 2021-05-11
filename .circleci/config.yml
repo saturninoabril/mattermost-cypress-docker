@@ -99,7 +99,7 @@ commands:
       - run:
           name: Create the test server
           command: |
-            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=${MM_DOCKER_IMAGE}&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&elasticsearch=true&keycloak=true"
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=${MM_DOCKER_TAG}&instance-count=$SERVER_INSTANCE_COUNT&elasticsearch=true&keycloak=true"
             CREATE_URL="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $CREATE_URL
             sleep 1m
@@ -117,7 +117,7 @@ commands:
           name: Set shared environment variables
           command: |
             DNS_ZONE_NAME=dev.spinmint.com
-            export BASE_URL_FULL=$CIRCLE_BRANCH-$MM_EDITION-$MM_DOCKER_TAG
+            export BASE_URL_FULL=$CIRCLE_BRANCH-$MM_EDITION-${MM_DOCKER_TAG}
             export BASE_URL_SUBSTR=${BASE_URL_FULL:0:45}
 
             BASE_URL_1="$BASE_URL_SUBSTR-1.$DNS_ZONE_NAME"
@@ -127,7 +127,7 @@ commands:
             BASE_URL_COMMON="$BASE_URL_SUBSTR-common.$DNS_ZONE_NAME"
 
             echo export MM_DOCKER_IMAGE=$MM_DOCKER_IMAGE >> shared
-            echo export MM_DOCKER_TAG=$MM_DOCKER_TAG >> shared
+            echo export MM_DOCKER_TAG=${MM_DOCKER_TAG} >> shared
 
             echo export TYPE=${TYPE} >> shared
             echo export PULL_REQUEST=${PULL_REQUEST} >> shared
