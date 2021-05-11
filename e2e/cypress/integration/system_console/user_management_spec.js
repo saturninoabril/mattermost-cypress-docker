@@ -439,9 +439,10 @@ describe('User Management', () => {
 
             // # Verify that the email subject is as expected.
             expect(data.subject).to.contain('Email Verification');
-            console.log('data', data)
+
             // # Extract verification the link from the e-mail.
             const bodyText = splitEmailBodyText(data.body.text);
+
             expect(bodyText[4]).to.contain('Verify Email');
             const line = bodyText[4].split(' ');
             expect(line[3]).to.contain(baseUrl);
