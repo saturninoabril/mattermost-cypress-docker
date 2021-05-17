@@ -82,6 +82,9 @@ commands:
           name: Save and publish reports
           when: always
           command: |
+            export TM4J_CYCLE_NAME="Cloud May 19 Cypress"
+            export RELEASE_DATE="Cloud May 19"
+
             # This is how it should be on main org repo
             # export PULL_REQUEST=$CIRCLE_PULL_REQUESTS
 
@@ -99,7 +102,7 @@ commands:
       - run:
           name: Create the test server
           command: |
-            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&elasticsearch=true&keycloak=true"
+            TEST_SERVER_QUERY="&workspace=$CIRCLE_BRANCH&edition=$MM_EDITION&docker-image=$MM_DOCKER_IMAGE&docker-tag=$MM_DOCKER_TAG&instance-count=$SERVER_INSTANCE_COUNT&elasticsearch=false&keycloak=false"
             CREATE_URL="$TEST_SERVER_CREATE_ENDPOINT$TEST_SERVER_QUERY"
             curl -X POST $CREATE_URL
             sleep 1m
@@ -136,7 +139,6 @@ commands:
             echo export BUILD_ID=${CIRCLE_BUILD_NUM} >> shared
             echo export BROWSER=${BROWSER} >> shared
             echo export HEADLESS=${HEADLESS} >> shared
-            echo export DASHBOARD_ENABLE=${DASHBOARD_ENABLE} >> shared
             echo export FULL_REPORT=${FULL_REPORT} >> shared
 
             echo export TM4J_ENABLE=${TM4J_ENABLE} >> shared
@@ -209,24 +211,24 @@ jobs:
     working_directory: ~/mattermost/env-var
     environment:
       REPO: mattermost-webapp
-      MM_DOCKER_IMAGE: mattermost-enterprise-edition
-      MM_EDITION: ee
-      MM_DOCKER_TAG: master
+      MM_DOCKER_IMAGE: mm-ee-test
+      MM_EDITION: ce
+      MM_DOCKER_TAG: 3035_ee2d700c_05bcd805_5f782c4f
       SERVER_INSTANCE_COUNT: 4
-      TYPE: MASTER
+      TYPE: CLOUD
       PULL_REQUEST: add-link
       BROWSER: chrome
       HEADLESS: true
       FULL_REPORT: false
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "1106027"
-      TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/master-e20-prod"
+      TM4J_FOLDER_ID: "1348387"
+      TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/cloud"
       CYPRESS_chromeWebSecurity: false
       CYPRESS_numberOfTrialUsers: 10000
       CYPRESS_resetBeforeTest: true
       CYPRESS_runLDAPSync: true
-      CYPRESS_serverEdition: E20
+      CYPRESS_serverEdition: Cloud
     steps:
       - attach-workspace
       - set-shared-env
@@ -256,7 +258,7 @@ jobs:
           no_output_timeout: 30m
           command: |
             cd e2e
-            node generate_test_cycle.js --stage="@prod" --excludeGroup="@te_only,@cloud_only,@high_availability" --sortFirst="@compliance_export,@elasticsearch,@ldap_group,@ldap" --sortLast="@saml,@keycloak,@plugin,@mfa"
+            node generate_test_cycle.js --stage="@prod" --excludeGroup="@not_cloud,@e20_only,@te_only,@high_availability" --sortFirst="@compliance_export,@elasticsearch,@ldap_group,@ldap" --sortLast="@saml,@keycloak,@plugin,@mfa"
   merge-and-save-test-reports:
     docker:
       - image: cimg/node:lts
