@@ -213,7 +213,7 @@ jobs:
       REPO: mattermost-webapp
       MM_DOCKER_IMAGE: mm-ee-test
       MM_EDITION: ce
-      MM_DOCKER_TAG: 3035_ee2d700c_05bcd805_5f782c4f
+      MM_DOCKER_TAG: 3081_ff47c862_05bcd805_d40dd1c8
       SERVER_INSTANCE_COUNT: 4
       TYPE: CLOUD
       PULL_REQUEST: add-link
