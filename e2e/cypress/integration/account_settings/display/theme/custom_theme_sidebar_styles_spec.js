@@ -85,7 +85,7 @@ describe('Custom Theme - Sidebar Styles', () => {
         cy.get('#accountSettingsHeader > .close').click();
     });
 
-    it('MM-T3853_3 Should take effect each custom color in Channel View', () => {
+    it.only('MM-T3853_3 Should take effect each custom color in Channel View', () => {
         // * Check Mention Jewel BG color
         cy.get('#unreadIndicatorBottom').should('have.css', 'background-color', rgbArrayToString(themeRgbColor.mentionBg));
 
@@ -105,7 +105,7 @@ describe('Custom Theme - Sidebar Styles', () => {
         cy.get('.away--icon').should('have.css', 'fill', rgbArrayToString(themeRgbColor.awayIndicator));
 
         // # Set user status to do not disturb
-        cy.uiOpenSetStatusMenu('Do Not Disturb');
+        cy.uiOpenSetStatusMenu();
 
         // * Check Do Not Disturb Indicator color
         cy.get('.dnd--icon').should('have.css', 'fill', rgbArrayToString(themeRgbColor.dndIndicator));
