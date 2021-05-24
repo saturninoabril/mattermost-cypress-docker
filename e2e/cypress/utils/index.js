@@ -23,7 +23,7 @@ export function getRandomId(length = 7) {
 }
 
 export function getRandomLetter(length) {
-    return Array.from({length}, () => String.fromCharCode(97 + Math.floor(Math.random() * 26))).join('')
+    return Array.from({length}, () => String.fromCharCode(97 + Math.floor(Math.random() * 26))).join('');
 }
 
 export function getMessageMenusPayload({dataSource, options, prefix = Date.now()} = {}) {
