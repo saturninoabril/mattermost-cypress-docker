@@ -82,8 +82,8 @@ commands:
           name: Save and publish reports
           when: always
           command: |
-            export TM4J_CYCLE_NAME="Cloud May 19 Cypress"
-            export RELEASE_DATE="Cloud May 19"
+            export TM4J_CYCLE_NAME="Cloud June 2 Cypress"
+            export RELEASE_DATE="Cloud June 2"
 
             # This is how it should be on main org repo
             # export PULL_REQUEST=$CIRCLE_PULL_REQUESTS
@@ -213,7 +213,7 @@ jobs:
       REPO: mattermost-webapp
       MM_DOCKER_IMAGE: mm-ee-test
       MM_EDITION: ce
-      MM_DOCKER_TAG: 3081_ff47c862_05bcd805_d40dd1c8
+      MM_DOCKER_TAG: 3279_62821273_bbbd57c6_e380b316
       SERVER_INSTANCE_COUNT: 4
       TYPE: CLOUD
       PULL_REQUEST: add-link
@@ -222,7 +222,7 @@ jobs:
       FULL_REPORT: false
       TM4J_ENABLE: true
       JIRA_PROJECT_KEY: MM
-      TM4J_FOLDER_ID: "1348387"
+      TM4J_FOLDER_ID: "1376322"
       TM4J_ENVIRONMENT_NAME: "Cypress/Chrome/cloud"
       CYPRESS_chromeWebSecurity: false
       CYPRESS_numberOfTrialUsers: 10000
