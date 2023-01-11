@@ -20,7 +20,7 @@
     "deepmerge": "4.2.2",
     "dotenv": "8.2.0",
     "express": "4.17.1",
-    "knex": "0.21.5",
+    "knex": "2.4.0",
     "localforage": "1.9.0",
     "lodash.intersection": "4.4.0",
     "lodash.mapkeys": "4.6.0",
